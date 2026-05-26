@@ -8,15 +8,38 @@ import {
   GalleryCategoryId,
   GalleryPhoto,
 } from "@/lib/gallery";
+import { isFirebaseConfigured } from "@/lib/firebase";
+import { listGallery } from "@/lib/admin-data";
 
 export default function Gallery() {
   const [category, setCategory] = useState<GalleryCategoryId>("tous");
   const [lightbox, setLightbox] = useState<GalleryPhoto | null>(null);
+  const [remote, setRemote] = useState<GalleryPhoto[]>([]);
+
+  // Fetch admin-uploaded photos from Firestore (best effort, public read)
+  useEffect(() => {
+    if (!isFirebaseConfigured()) return;
+    listGallery()
+      .then((items) =>
+        setRemote(
+          items.map((i) => ({
+            src: i.src,
+            alt: i.alt,
+            category: i.category,
+          }))
+        )
+      )
+      .catch(() => {
+        // ignore — galerie statique sera affichée seule
+      });
+  }, []);
+
+  const all = useMemo(() => [...remote, ...GALLERY], [remote]);
 
   const filtered = useMemo(() => {
-    if (category === "tous") return GALLERY;
-    return GALLERY.filter((p) => p.category === category);
-  }, [category]);
+    if (category === "tous") return all;
+    return all.filter((p) => p.category === category);
+  }, [all, category]);
 
   const closeLightbox = useCallback(() => setLightbox(null), []);
 
@@ -92,6 +115,7 @@ export default function Gallery() {
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  unoptimized={photo.src.startsWith("http")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3 sm:p-4">
                   <p className="text-white text-xs sm:text-sm font-medium line-clamp-2">
@@ -104,8 +128,8 @@ export default function Gallery() {
         )}
 
         <p className="mt-8 sm:mt-12 text-center text-gray-500 text-xs sm:text-sm italic">
-          Galerie en cours d&apos;enrichissement. De nouvelles photos seront
-          ajoutées prochainement.
+          Galerie alimentée par l&apos;équipe KSN. {all.length} photo
+          {all.length > 1 ? "s" : ""} disponibles.
         </p>
       </div>
 
@@ -138,6 +162,7 @@ export default function Gallery() {
                 sizes="100vw"
                 className="object-contain"
                 priority
+                unoptimized={lightbox.src.startsWith("http")}
               />
             </div>
             <p className="mt-4 text-center text-white/90 text-sm sm:text-base font-medium">

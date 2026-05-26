@@ -15,6 +15,7 @@ const NAV_LINKS = [
   { label: "Le Dahira", href: "/dahira" },
   { label: "Spiritualité", href: "/spiritualite" },
   { label: "Média", href: "/media" },
+  { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ];
 
