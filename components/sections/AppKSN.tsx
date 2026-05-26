@@ -9,8 +9,8 @@ const FEATURES = [
 
 export default function AppKSN() {
   return (
-    <section className="relative z-10 max-w-7xl mx-auto px-6 pb-28">
-      <div className="relative overflow-hidden rounded-[45px] bg-gradient-to-br from-[#0F5132] to-[#063822] p-12 md:p-16 text-white">
+    <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+      <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F5132] to-[#063822] p-6 sm:p-12 md:p-16 text-white">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#D4AF37]/10 blur-[140px] rounded-full" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[#B8860B]/10 blur-[120px] rounded-full" />
 

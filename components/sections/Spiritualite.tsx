@@ -30,10 +30,10 @@ export default function Spiritualite() {
   return (
     <section
       id="spiritualite"
-      className="relative z-10 max-w-7xl mx-auto px-6 pb-28"
+      className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
     >
       <div className="bg-[#0F5132] rounded-[40px] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.2)]">
-        <div className="p-12 md:p-16">
+        <div className="p-6 sm:p-12 md:p-16">
           <div className="text-center">
             <span className="text-[#D4AF37] uppercase tracking-[0.25em] font-semibold">
               Spiritualité KSN

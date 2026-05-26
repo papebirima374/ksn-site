@@ -33,8 +33,8 @@ const COMMISSIONS = [
 
 export default function Commissions() {
   return (
-    <section className="relative z-10 max-w-7xl mx-auto px-6 pb-28">
-      <div className="bg-[#0F5132] rounded-[45px] overflow-hidden p-12 md:p-16 text-white relative">
+    <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+      <div className="bg-[#0F5132] rounded-[28px] sm:rounded-[45px] overflow-hidden p-6 sm:p-12 md:p-16 text-white relative">
         <div className="absolute top-0 left-0 w-[350px] h-[350px] bg-[#D4AF37]/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-[#B8860B]/10 blur-[120px] rounded-full" />
 
