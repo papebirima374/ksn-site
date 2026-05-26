@@ -1,11 +1,19 @@
+import Image from "next/image";
+
 export default function OrangeMoneyLogo({ className }: { className?: string }) {
   return (
     <div
-      className={`inline-flex items-center justify-center rounded-2xl bg-[#FF7900] text-white font-bold leading-tight text-center ${
-        className ?? "w-14 h-14 text-[10px] px-1"
+      className={`relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-black ${
+        className ?? "w-14 h-14"
       }`}
     >
-      Orange<br />Money
+      <Image
+        src="/images/payment/orange-money.svg"
+        alt="Orange Money"
+        fill
+        sizes="80px"
+        className="object-contain"
+      />
     </div>
   );
 }

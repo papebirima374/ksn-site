@@ -1,11 +1,19 @@
+import Image from "next/image";
+
 export default function WaveLogo({ className }: { className?: string }) {
   return (
     <div
-      className={`inline-flex items-center justify-center rounded-2xl bg-[#1DCEDB] text-white font-black tracking-tight ${
-        className ?? "w-14 h-14 text-base"
+      className={`relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-[#1DCEDB] ${
+        className ?? "w-14 h-14"
       }`}
     >
-      WAVE
+      <Image
+        src="/images/payment/wave.svg"
+        alt="Wave"
+        fill
+        sizes="80px"
+        className="object-contain"
+      />
     </div>
   );
 }
