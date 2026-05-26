@@ -35,11 +35,14 @@ export default function InscriptionForm() {
     <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16">
         <div className="text-center mb-8 sm:mb-12">
-          <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            Formulaire d&apos;Adhésion
+          <span className="inline-flex items-center gap-2 uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
+            <span className="w-7 h-7 rounded-full bg-[#B8860B] text-white text-xs font-bold flex items-center justify-center">
+              1
+            </span>
+            Demande d&apos;Adhésion
           </span>
           <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F5132]">
-            Demande d&apos;Inscription
+            Étape 1 — Vos informations
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
             Remplissez ce formulaire et votre demande sera envoyée directement à

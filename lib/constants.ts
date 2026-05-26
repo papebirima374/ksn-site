@@ -36,3 +36,18 @@ export const NAV_ITEMS = [
   { label: "Média", href: "#media" },
   { label: "Contact", href: "#contact" },
 ];
+
+export const PAYMENT = {
+  membershipWave: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=1010",
+  membershipAmount: 1000,
+  orangeMoneyNumber: "221780178444",
+  ubaAccount: "À confirmer",
+};
+
+export const DON_AMOUNTS = [
+  { amount: 500, waveLink: "" },
+  { amount: 1000, waveLink: "" },
+  { amount: 2000, waveLink: "" },
+  { amount: 5000, waveLink: "" },
+  { amount: 10000, waveLink: "" },
+];

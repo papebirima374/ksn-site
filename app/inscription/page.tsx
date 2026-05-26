@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import InscriptionForm from "@/components/sections/InscriptionForm";
+import CotisationStep from "@/components/sections/CotisationStep";
 
 export const metadata: Metadata = {
   title: "Rejoindre la KSN",
@@ -69,6 +70,7 @@ export default function InscriptionPage() {
       </section>
 
       <InscriptionForm />
+      <CotisationStep />
     </>
   );
 }
