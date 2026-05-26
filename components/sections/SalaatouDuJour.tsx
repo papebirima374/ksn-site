@@ -1,4 +1,32 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { getSalaatuDuJour } from "@/lib/admin-data";
+import { isFirebaseConfigured } from "@/lib/firebase";
+import { SalaatuDuJour } from "@/lib/admin-types";
+
+const DEFAULT: SalaatuDuJour = {
+  arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
+  translit: "Allāhumma ṣalli ʿalā Muḥammadin wa ʿalā āli Muḥammad",
+  translation: "Ô Allah, prie sur Muhammad et sur la famille de Muhammad.",
+  lastUpdated: 0,
+  lastUpdatedBy: "",
+};
+
 export default function SalaatouDuJour() {
+  const [data, setData] = useState<SalaatuDuJour>(DEFAULT);
+
+  useEffect(() => {
+    if (!isFirebaseConfigured()) return;
+    getSalaatuDuJour()
+      .then((s) => {
+        if (s) setData(s);
+      })
+      .catch(() => {
+        // garde la version par défaut si Firestore est inaccessible
+      });
+  }, []);
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16">
@@ -10,22 +38,26 @@ export default function SalaatouDuJour() {
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
             Le Salaatu Recommandé
           </h2>
+
+          {data.date && (
+            <p className="mt-2 text-gray-500 text-sm italic">{data.date}</p>
+          )}
         </div>
 
         <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
           <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-8 sm:p-12 text-center text-white shadow-2xl">
             <p className="font-arabic text-3xl sm:text-4xl md:text-5xl leading-loose text-[#D4AF37]">
-              اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ
+              {data.arabic}
             </p>
 
             <div className="w-16 h-0.5 bg-[#D4AF37] mx-auto my-6" />
 
             <p className="font-display italic text-lg sm:text-xl text-white/90 leading-relaxed">
-              &ldquo;Allāhumma ṣalli ʿalā Muḥammadin wa ʿalā āli Muḥammad&rdquo;
+              &ldquo;{data.translit}&rdquo;
             </p>
 
             <p className="mt-5 text-base sm:text-lg text-white/80 leading-7 sm:leading-8">
-              Ô Allah, prie sur Muhammad et sur la famille de Muhammad.
+              {data.translation}
             </p>
           </div>
 
