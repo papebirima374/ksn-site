@@ -2,10 +2,6 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
-import Background from "@/components/layout/Background";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -85,15 +81,7 @@ export default function RootLayout({
       lang="fr"
       className={`${playfair.variable} ${inter.variable} ${amiri.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
-          <Background />
-          <Navbar />
-          {children}
-          <Footer />
-          <WhatsAppFloat />
-        </main>
-      </body>
+      <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   FaImages,
   FaNewspaper,
@@ -32,23 +32,26 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    if (!configured) return;
+    if (!loading && !user && pathname !== "/admin/login") {
+      router.replace("/admin/login");
+    }
+  }, [configured, loading, user, pathname, router]);
+
   if (!configured) {
     return <FirebaseNotConfigured />;
   }
 
-  if (loading) {
+  if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#082F22] flex items-center justify-center text-white">
-        Chargement…
+      <div className="min-h-screen bg-[#082F22] flex flex-col items-center justify-center text-white gap-4">
+        <div className="w-12 h-12 border-4 border-white/20 border-t-[#D4AF37] rounded-full animate-spin" />
+        <p className="text-white/80 text-sm">
+          {loading ? "Chargement…" : "Redirection vers la connexion…"}
+        </p>
       </div>
     );
-  }
-
-  if (!user) {
-    if (typeof window !== "undefined" && pathname !== "/admin/login") {
-      router.replace("/admin/login");
-    }
-    return null;
   }
 
   const visibleNav = NAV.filter((item) =>
