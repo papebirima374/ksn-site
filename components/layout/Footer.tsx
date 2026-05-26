@@ -1,108 +1,135 @@
 import Image from "next/image";
-import { LINKS, NAV_ITEMS, SITE } from "@/lib/constants";
+import Link from "next/link";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaYoutube,
+  FaTelegram,
+  FaWhatsapp,
+} from "react-icons/fa6";
+import { LINKS, SITE } from "@/lib/constants";
 
-const SOCIAL_LINKS = [
-  { label: "Facebook", href: LINKS.facebook },
-  { label: "YouTube", href: LINKS.youtube },
-  { label: "TikTok", href: LINKS.tiktok },
+const NAV_LINKS = [
+  { label: "Accueil", href: "/" },
+  { label: "Le Dahira", href: "/dahira" },
+  { label: "Spiritualité", href: "/spiritualite" },
+  { label: "Média", href: "/media" },
+  { label: "Contact", href: "/contact" },
+];
+
+const SOCIALS = [
+  { name: "Facebook", url: LINKS.facebook, Icon: FaFacebookF },
+  { name: "Instagram", url: LINKS.instagram, Icon: FaInstagram },
+  { name: "TikTok", url: LINKS.tiktok, Icon: FaTiktok },
+  { name: "YouTube", url: LINKS.youtube, Icon: FaYoutube },
+  { name: "Telegram", url: LINKS.telegram, Icon: FaTelegram },
+  { name: "WhatsApp", url: LINKS.whatsapp, Icon: FaWhatsapp },
 ];
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-[#0B2E1F]/90 backdrop-blur-xl mt-24">
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-4 gap-10">
+    <footer className="relative z-10 border-t border-white/10 bg-[#0B2E1F]/90 backdrop-blur-xl mt-16 sm:mt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           <div>
             <div className="flex items-center gap-4">
-              <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-[#D4AF37]">
+              <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-[#D4AF37] flex-shrink-0">
                 <Image
                   src="/logo/ksn-logo.png"
                   alt="KSN Logo"
                   fill
                   className="object-cover"
+                  sizes="64px"
                 />
               </div>
 
               <div>
-                <h3 className="text-2xl font-bold text-white">{SITE.name}</h3>
+                <h3 className="font-display text-2xl font-bold text-white">
+                  {SITE.name}
+                </h3>
                 <p className="text-white/60 text-sm">{SITE.tagline}</p>
               </div>
             </div>
 
-            <p className="mt-5 text-white/70 leading-8">
+            <p className="mt-5 text-white/70 leading-7 sm:leading-8 text-sm sm:text-base">
               {SITE.fullName} œuvre pour la promotion du Salaatu sur le Prophète
               Muhammad ﷺ à travers une communauté spirituelle moderne.
             </p>
           </div>
 
           <div>
-            <h4 className="text-[#D4AF37] font-bold text-lg">Navigation</h4>
-            <div className="mt-5 flex flex-col gap-3 text-white/70">
-              {NAV_ITEMS.map((item) => (
-                <a key={item.href} href={item.href} className="hover:text-[#D4AF37] transition">
+            <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
+              Navigation
+            </h4>
+            <div className="mt-4 sm:mt-5 flex flex-col gap-2.5 sm:gap-3 text-white/70 text-sm sm:text-base">
+              {NAV_LINKS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="hover:text-[#D4AF37] transition"
+                >
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <h4 className="text-[#D4AF37] font-bold text-lg">Contact</h4>
-            <div className="mt-5 space-y-3 text-white/70">
+            <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
+              Contact
+            </h4>
+            <div className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3 text-white/70 text-sm sm:text-base">
               <p>📍 {SITE.location}</p>
               <p>🌐 {SITE.domain}</p>
-              <p>📱 WhatsApp officiel</p>
+              <a
+                href={LINKS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 hover:text-[#D4AF37] transition"
+              >
+                <FaWhatsapp /> WhatsApp officiel
+              </a>
             </div>
           </div>
 
           <div>
-            <h4 className="text-[#D4AF37] font-bold text-lg">
-              Mission Spirituelle
+            <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
+              Suivez-nous
             </h4>
-
-            <p className="mt-5 text-white/70 leading-8 italic">
-              &ldquo;Œuvrer pour la promotion du Salaatu sur le Prophète
-              Muhammad ﷺ à travers une communauté spirituelle moderne, engagée
-              et internationale.&rdquo;
-            </p>
-
-            <a
-              href={LINKS.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex mt-6 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold shadow-xl px-5 py-3 rounded-2xl hover:scale-105 transition"
-            >
-              WhatsApp KSN
-            </a>
-
-            <div className="mt-6">
-              <h4 className="text-[#D4AF37] font-bold text-lg mb-4">
-                Réseaux Sociaux
-              </h4>
-              <div className="flex flex-wrap gap-3">
-                {SOCIAL_LINKS.map((s) => (
+            <div className="mt-4 sm:mt-5 grid grid-cols-3 gap-2">
+              {SOCIALS.map((s) => {
+                const Icon = s.Icon;
+                return (
                   <a
-                    key={s.label}
-                    href={s.href}
+                    key={s.name}
+                    href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-5 h-12 rounded-2xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F5132] transition text-white flex items-center justify-center font-medium"
+                    aria-label={s.name}
+                    title={s.name}
+                    className="aspect-square flex items-center justify-center rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F5132] text-white transition"
                   >
-                    {s.label}
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </a>
-                ))}
-              </div>
+                );
+              })}
             </div>
+
+            <p className="mt-5 text-white/70 leading-7 italic text-xs sm:text-sm">
+              &ldquo;Œuvrer pour la promotion du Salaatu sur le Prophète
+              Muhammad ﷺ.&rdquo;
+            </p>
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-14 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/50 text-sm">
+        <div className="border-t border-white/10 mt-10 sm:mt-14 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+          <p className="text-white/50 text-xs sm:text-sm text-center md:text-left">
             © 2021 - {new Date().getFullYear()} {SITE.fullName} ({SITE.name}).
             Tous droits réservés.
           </p>
 
-          <p className="text-[#D4AF37] text-sm">{SITE.domain}</p>
+          <p className="text-[#D4AF37] text-xs sm:text-sm">{SITE.domain}</p>
         </div>
       </div>
     </footer>
