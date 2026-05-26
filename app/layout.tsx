@@ -1,0 +1,79 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import { SITE } from "@/lib/constants";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
+  title: {
+    default: `${SITE.name} — ${SITE.fullName}`,
+    template: `%s | ${SITE.name}`,
+  },
+  description:
+    "Kippangog Salaatu 'Alaa Nabii (KSN) — Dahira international au service du Salaatu sur le Prophète Muhammad ﷺ. Fondé en 2021 à Touba, Sénégal.",
+  keywords: [
+    "KSN",
+    "Kippangog Salaatu",
+    "Salaatu Alaa Nabii",
+    "Dahira",
+    "Touba",
+    "Sénégal",
+    "Mouridiyya",
+    "Spiritualité",
+    "Islam",
+    "Prophète Muhammad",
+  ],
+  authors: [{ name: "KSN — Kippangog Salaatu 'Alaa Nabii" }],
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    url: SITE.url,
+    siteName: SITE.name,
+    title: `${SITE.name} — ${SITE.fullName}`,
+    description:
+      "Une communauté spirituelle moderne au service du Salaatu sur le Prophète Muhammad ﷺ.",
+    images: [
+      {
+        url: "/logo/ksn-logo.png",
+        width: 800,
+        height: 800,
+        alt: "Logo KSN",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE.name} — ${SITE.fullName}`,
+    description:
+      "Une communauté spirituelle moderne au service du Salaatu sur le Prophète Muhammad ﷺ.",
+    images: ["/logo/ksn-logo.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="fr"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">{children}</body>
+    </html>
+  );
+}
