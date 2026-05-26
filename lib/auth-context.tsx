@@ -40,7 +40,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const ref = doc(db, "users", fbUser.uid);
     const snap = await getDoc(ref);
     if (!snap.exists()) {
-      const newUser: AppUser = {
+      const docPayload: Record<string, unknown> = {
+        email: fbUser.email ?? "",
+        role: "admin",
+        permissions: ALL_PERMISSIONS,
+        createdAt: serverTimestamp(),
+      };
+      if (fbUser.displayName) docPayload.displayName = fbUser.displayName;
+      await setDoc(ref, docPayload);
+      return {
         uid: fbUser.uid,
         email: fbUser.email ?? "",
         displayName: fbUser.displayName ?? undefined,
@@ -48,8 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         permissions: ALL_PERMISSIONS,
         createdAt: Date.now(),
       };
-      await setDoc(ref, { ...newUser, createdAt: serverTimestamp() });
-      return newUser;
     }
     const data = snap.data() as Partial<AppUser>;
     return {
