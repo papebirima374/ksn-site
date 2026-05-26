@@ -1,7 +1,3 @@
-import Background from "@/components/layout/Background";
-import Footer from "@/components/layout/Footer";
-import Navbar from "@/components/layout/Navbar";
-import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import AppKSN from "@/components/sections/AppKSN";
 import Commissions from "@/components/sections/Commissions";
 import Contact from "@/components/sections/Contact";
@@ -15,11 +11,7 @@ import Stats from "@/components/sections/Stats";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
-      <Background />
-
-      <Navbar />
-
+    <>
       <Hero />
       <Stats />
       <Presidence />
@@ -30,10 +22,6 @@ export default function Home() {
       <ReseauxSociaux />
       <Contact />
       <Spiritualite />
-
-      <Footer />
-
-      <WhatsAppFloat />
-    </main>
+    </>
   );
 }
