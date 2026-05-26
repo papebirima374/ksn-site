@@ -9,6 +9,13 @@ export const SITE = {
   foundedYear: "2021",
 };
 
+export const WHATSAPP_PHONE = "221767257272";
+
+export function buildWhatsAppLink(prefilled: string): string {
+  const text = encodeURIComponent(prefilled);
+  return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
+}
+
 export const LINKS = {
   whatsapp: "https://wa.me/message/2RQFZOER66SOC1",
   facebook: "https://www.facebook.com/salaatualaanabii/",

@@ -1,5 +1,6 @@
 import AppKSN from "@/components/sections/AppKSN";
 import Commissions from "@/components/sections/Commissions";
+import CompteurSalaatu from "@/components/sections/CompteurSalaatu";
 import Contact from "@/components/sections/Contact";
 import Hero from "@/components/sections/Hero";
 import LeDahira from "@/components/sections/LeDahira";
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <CompteurSalaatu />
       <Stats />
       <Presidence />
       <LeDahira />
