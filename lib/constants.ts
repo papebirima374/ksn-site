@@ -41,13 +41,13 @@ export const PAYMENT = {
   membershipWave: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=1010",
   membershipAmount: 1000,
   orangeMoneyNumber: "221780178444",
-  ubaAccount: "À confirmer",
+  ubaAccount: "307500053070",
 };
 
 export const DON_AMOUNTS = [
-  { amount: 500, waveLink: "" },
-  { amount: 1000, waveLink: "" },
-  { amount: 2000, waveLink: "" },
-  { amount: 5000, waveLink: "" },
-  { amount: 10000, waveLink: "" },
+  { amount: 500, waveLink: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=505" },
+  { amount: 1000, waveLink: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=1010" },
+  { amount: 2000, waveLink: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=2020" },
+  { amount: 5000, waveLink: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=5050" },
+  { amount: 10000, waveLink: "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=10100" },
 ];

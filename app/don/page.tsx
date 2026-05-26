@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const orangeMoneyMessage = `*Don via Orange Money*\n\nBonjour, je souhaite faire un don à KSN via Orange Money.\nNuméro reçu : +${PAYMENT.orangeMoneyNumber}\n\nMontant : `;
-const ubaMessage = `*Don via virement UBA*\n\nBonjour, je souhaite faire un don à KSN par virement bancaire UBA. Merci de m'envoyer les coordonnées du compte.`;
+const ubaMessage = `*Don via virement UBA*\n\nBonjour, je viens d'effectuer un virement bancaire au compte UBA de KSN.\n\nMontant viré : \nDate du virement : \nRéférence : `;
 const customDonMessage = `*Don libre — KSN*\n\nBonjour, je souhaite faire un don d'un montant personnalisé. Merci de m'indiquer la marche à suivre.\n\nMontant souhaité : `;
 
 export default function DonPage() {
@@ -168,16 +168,21 @@ export default function DonPage() {
 
             <p className="mt-5 text-gray-600 leading-7 text-sm sm:text-base">
               Pour les dons importants ou les virements internationaux,
-              contactez-nous pour obtenir les coordonnées du compte UBA officiel
-              du Dahira.
+              effectuez un virement bancaire sur le compte UBA officiel du
+              Dahira KSN.
             </p>
 
             <div className="mt-5 bg-[#FFE5E5] rounded-2xl p-4 sm:p-5 border border-[#E60000]/20">
               <p className="text-xs uppercase tracking-widest text-[#E60000] font-bold">
-                Coordonnées
+                Numéro de compte
               </p>
-              <p className="mt-2 text-[#0F5132] text-sm sm:text-base font-semibold italic">
-                Disponibles sur demande
+              <p className="mt-2 font-display text-2xl sm:text-3xl font-bold text-[#0F5132] tabular-nums">
+                {PAYMENT.ubaAccount.slice(0, 4)}{" "}
+                {PAYMENT.ubaAccount.slice(4, 8)}{" "}
+                {PAYMENT.ubaAccount.slice(8)}
+              </p>
+              <p className="mt-2 text-xs text-[#0F5132]/70">
+                Bénéficiaire : Dahira Kippangog Salaatu &apos;Alaa Nabii
               </p>
             </div>
 
@@ -187,7 +192,7 @@ export default function DonPage() {
               rel="noopener noreferrer"
               className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F5132] hover:text-[#B8860B] text-sm font-semibold transition"
             >
-              <FaWhatsapp /> Demander les coordonnées UBA
+              <FaWhatsapp /> Confirmer votre virement sur WhatsApp
             </a>
           </div>
         </div>
