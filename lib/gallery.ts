@@ -20,9 +20,9 @@ export const GALLERY_CATEGORIES: { id: GalleryCategoryId; label: string }[] = [
   { id: "activites", label: "Activités" },
 ];
 
-// Pour ajouter une photo : la déposer dans /public/gallery/ puis ajouter
-// l'entrée ici avec la catégorie correspondante.
-export const GALLERY: GalleryPhoto[] = [
+// Pour ajouter une photo : déposer le fichier dans /public/gallery/ puis
+// ajouter une entrée ici (ou utiliser le panneau admin une fois en ligne).
+const FEATURED: GalleryPhoto[] = [
   {
     src: "/images/bassirou.jpeg",
     alt: "Serigne Bassirou Touré — Président d'Honneur",
@@ -39,3 +39,20 @@ export const GALLERY: GalleryPhoto[] = [
     category: "activites",
   },
 ];
+
+const KSN_PHOTOS = Array.from({ length: 46 }, (_, i): GalleryPhoto => {
+  const n = i + 1;
+  const padded = String(n).padStart(3, "0");
+  let category: GalleryPhoto["category"];
+  if (n <= 12) category = "gamou";
+  else if (n <= 24) category = "conferences";
+  else if (n <= 36) category = "evenements";
+  else category = "activites";
+  return {
+    src: `/gallery/ksn-${padded}.jpg`,
+    alt: `Activité KSN — Photo ${n}`,
+    category,
+  };
+});
+
+export const GALLERY: GalleryPhoto[] = [...FEATURED, ...KSN_PHOTOS];
