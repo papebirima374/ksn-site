@@ -3,16 +3,16 @@ import Image from "next/image";
 export default function WaveLogo({ className }: { className?: string }) {
   return (
     <div
-      className={`relative inline-flex items-center justify-center overflow-hidden rounded-2xl bg-[#1DCEDB] ${
+      className={`relative inline-flex overflow-hidden rounded-2xl ${
         className ?? "w-14 h-14"
       }`}
     >
       <Image
-        src="/images/payment/wave.svg"
+        src="/logo/wave.png"
         alt="Wave"
         fill
         sizes="80px"
-        className="object-contain"
+        className="object-cover"
       />
     </div>
   );
