@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import Media from "@/components/sections/Media";
+import Gallery from "@/components/sections/Gallery";
 import ReseauxSociaux from "@/components/sections/ReseauxSociaux";
 import AppKSN from "@/components/sections/AppKSN";
 
@@ -20,6 +21,7 @@ export default function MediaPage() {
       />
 
       <Media />
+      <Gallery />
       <ReseauxSociaux />
       <AppKSN />
     </>
