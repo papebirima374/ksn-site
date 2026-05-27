@@ -13,6 +13,7 @@ const PUBLIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
   { path: "/don", priority: 0.9, changeFrequency: "monthly" },
   { path: "/inscription", priority: 0.85, changeFrequency: "monthly" },
   { path: "/espace-membre", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/challenge", priority: 0.95, changeFrequency: "daily" },
   { path: "/mentions-legales", priority: 0.3, changeFrequency: "yearly" },
   { path: "/confidentialite", priority: 0.3, changeFrequency: "yearly" },
   { path: "/cgu", priority: 0.3, changeFrequency: "yearly" },

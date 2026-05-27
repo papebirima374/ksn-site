@@ -29,6 +29,7 @@ export default function Footer() {
     { label: t("nav.home"), href: "/" },
     { label: t("nav.dahira"), href: "/dahira" },
     { label: t("nav.spiritualite"), href: "/spiritualite" },
+    { label: "Challenge 1 Milliard", href: "/challenge" },
     { label: t("nav.media"), href: "/media" },
     { label: t("nav.boutique"), href: "/boutique" },
     { label: t("nav.blog"), href: "/blog" },
