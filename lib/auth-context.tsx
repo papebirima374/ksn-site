@@ -137,13 +137,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (usersSnap.empty) {
         return true; // Bootstrap mode
       }
-      const q = query(
+      
+      const targetEmail = email.toLowerCase().trim();
+
+      // 1. Try exact match first (fast index check)
+      const qExact = query(
         collection(db, "members"),
         where("email", "==", email.trim()),
         limit(1)
       );
-      const snap = await getDocs(q);
-      return !snap.empty;
+      const snapExact = await getDocs(qExact);
+      if (!snapExact.empty) {
+        return true;
+      }
+
+      // 2. Try lowercase exact match in case database is already lowercased
+      if (email.trim() !== targetEmail) {
+        const qLower = query(
+          collection(db, "members"),
+          where("email", "==", targetEmail),
+          limit(1)
+        );
+        const snapLower = await getDocs(qLower);
+        if (!snapLower.empty) {
+          return true;
+        }
+      }
+
+      // 3. Fallback: Search all members in-memory (case-insensitive) to ensure it works for all existing users with capitalized emails
+      const allMembersSnap = await getDocs(collection(db, "members"));
+      const match = allMembersSnap.docs.some(doc => {
+        const mEmail = doc.data().email;
+        return mEmail && mEmail.toLowerCase().trim() === targetEmail;
+      });
+      
+      return match;
     } catch {
       return false;
     }
