@@ -61,13 +61,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#082F22] via-[#0A3D24] to-[#0F5132] flex items-center justify-center p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#082F22] via-[#0A3D24] to-[#0F7C55] flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
         <div className="text-center">
           <div className="relative w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-[#D4AF37]">
             <Image src="/logo/ksn-logo.png" alt="KSN" fill className="object-cover" sizes="80px" />
           </div>
-          <h1 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-[#0F7C55]">
             Administration KSN
           </h1>
           <p className="mt-2 text-gray-500 text-sm">
@@ -82,7 +82,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Adresse email"
-            className="w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white text-[#0F5132]"
+            className="w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white text-[#0F7C55]"
             autoComplete="email"
           />
           <input
@@ -91,7 +91,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mot de passe"
-            className="w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white text-[#0F5132]"
+            className="w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white text-[#0F7C55]"
             autoComplete="current-password"
           />
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold hover:scale-[1.02] transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold hover:scale-[1.02] transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {submitting ? "Connexion…" : "Se connecter"}
           </button>
@@ -116,7 +116,7 @@ export default function LoginPage() {
 
         <Link
           href="/"
-          className="block mt-6 text-center text-sm text-[#0F5132] hover:text-[#B8860B] transition"
+          className="block mt-6 text-center text-sm text-[#0F7C55] hover:text-[#B8860B] transition"
         >
           ← Retour au site
         </Link>

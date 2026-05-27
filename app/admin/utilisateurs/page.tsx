@@ -80,7 +80,7 @@ export default function AdminUsersPage() {
       <AdminShell>
         <div className="bg-white rounded-3xl p-8 sm:p-12 text-center">
           <FaUserShield className="text-5xl text-[#B8860B] mx-auto" />
-          <h2 className="font-display mt-4 text-2xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-2xl font-bold text-[#0F7C55]">
             Accès réservé à l&apos;administrateur principal
           </h2>
           <p className="mt-3 text-gray-600 text-sm">
@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Comptes
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Utilisateurs & permissions
         </h1>
         <p className="mt-2 text-gray-600 text-sm max-w-2xl">
@@ -144,7 +144,7 @@ export default function AdminUsersPage() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-[#0F5132] text-base sm:text-lg">
+                      <p className="font-semibold text-[#0F7C55] text-base sm:text-lg">
                         {u.displayName || u.email}
                       </p>
                       {u.role === "admin" ? (
@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
                     <button
                       type="button"
                       onClick={() => setEditingId(editing ? null : u.uid)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] font-semibold"
+                      className="text-xs px-3 py-1.5 rounded-lg bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] font-semibold"
                     >
                       {editing ? "Fermer" : "Modifier"}
                     </button>
@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                           type="text"
                           defaultValue={u.displayName ?? ""}
                           onBlur={(e) => setDisplayName(u, e.target.value)}
-                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F5132] bg-white"
+                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
                         />
                       </div>
                       <div>
@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
                         <select
                           value={u.role}
                           onChange={(e) => setRole(u, e.target.value as UserRole)}
-                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F5132] bg-white"
+                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
                         >
                           <option value="admin">Administrateur</option>
                           <option value="commission">Commission</option>
@@ -222,7 +222,7 @@ export default function AdminUsersPage() {
                           defaultValue={u.commission ?? ""}
                           onBlur={(e) => setCommission(u, e.target.value)}
                           placeholder="ex: Communication, Finances, Éducation…"
-                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F5132] bg-white"
+                          className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
                         />
                       </div>
                     )}
@@ -247,9 +247,9 @@ export default function AdminUsersPage() {
                                   type="checkbox"
                                   checked={checked}
                                   onChange={() => togglePerm(u, p)}
-                                  className="w-4 h-4 accent-[#0F5132]"
+                                  className="w-4 h-4 accent-[#0F7C55]"
                                 />
-                                <span className="text-sm text-[#0F5132]">
+                                <span className="text-sm text-[#0F7C55]">
                                   {PERMISSION_LABELS[p]}
                                 </span>
                               </label>
@@ -266,7 +266,7 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="mt-8 bg-[#0F5132] rounded-3xl p-6 sm:p-8 text-white">
+      <div className="mt-8 bg-[#0F7C55] rounded-3xl p-6 sm:p-8 text-white">
         <h3 className="font-display text-lg sm:text-xl font-bold">
           Comment créer un nouveau compte de commission ?
         </h3>

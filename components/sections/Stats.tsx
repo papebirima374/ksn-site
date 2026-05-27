@@ -19,7 +19,7 @@ export default function Stats() {
             {t("stats.overline")}
           </span>
 
-          <h2 className="font-display mt-3 sm:mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-3 sm:mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             {t("stats.title")}
           </h2>
         </div>
@@ -30,7 +30,7 @@ export default function Stats() {
               key={s.label}
               className="bg-[#F8F5EF] rounded-[20px] sm:rounded-[30px] p-4 sm:p-8 text-center hover:scale-105 transition"
             >
-              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
                 {s.value}
               </h3>
               <p className="mt-2 sm:mt-3 text-gray-600 text-xs sm:text-base">
@@ -39,7 +39,7 @@ export default function Stats() {
             </div>
           ))}
 
-          <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[20px] sm:rounded-[30px] p-4 sm:p-8 text-center text-[#0F5132] hover:scale-105 transition col-span-2 md:col-span-1">
+          <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[20px] sm:rounded-[30px] p-4 sm:p-8 text-center text-[#0F7C55] hover:scale-105 transition col-span-2 md:col-span-1">
             <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold">🌍</h3>
             <p className="mt-2 sm:mt-3 font-semibold text-xs sm:text-base">
               {t("stats.international")}

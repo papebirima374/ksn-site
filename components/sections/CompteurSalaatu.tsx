@@ -63,7 +63,7 @@ export default function CompteurSalaatu() {
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-      <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F5132] via-[#0A3D24] to-[#082F22] p-6 sm:p-12 md:p-16 text-white">
+      <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-6 sm:p-12 md:p-16 text-white">
         <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#D4AF37]/15 blur-3xl" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#B8860B]/10 blur-3xl" />
 
@@ -131,7 +131,7 @@ export default function CompteurSalaatu() {
               <button
                 type="button"
                 onClick={increment}
-                className="mt-6 sm:mt-8 w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:scale-105 active:scale-95 transition"
+                className="mt-6 sm:mt-8 w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:scale-105 active:scale-95 transition"
               >
                 + 1 Salaatu
               </button>

@@ -114,7 +114,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     aria-label={s.name}
                     title={s.name}
-                    className="aspect-square flex items-center justify-center rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F5132] text-white transition"
+                    className="aspect-square flex items-center justify-center rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F7C55] text-white transition"
                   >
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </a>

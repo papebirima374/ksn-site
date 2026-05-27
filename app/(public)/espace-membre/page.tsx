@@ -99,7 +99,7 @@ function ContentInner() {
           <div className="relative w-20 h-20 mx-auto rounded-full overflow-hidden border-2 border-[#D4AF37]">
             <Image src="/logo/ksn-logo.png" alt="KSN" fill className="object-cover" sizes="80px" />
           </div>
-          <h1 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-[#0F7C55]">
             Espace Membre KSN
           </h1>
           <p className="mt-2 text-sm text-gray-500">
@@ -113,14 +113,14 @@ function ContentInner() {
           <button
             type="button"
             onClick={() => { setMode("login"); setShowForgot(false); }}
-            className={`py-2.5 rounded-xl transition ${mode === "login" ? "bg-[#0F5132] text-white shadow-md" : "text-[#0F5132]"}`}
+            className={`py-2.5 rounded-xl transition ${mode === "login" ? "bg-[#0F7C55] text-white shadow-md" : "text-[#0F7C55]"}`}
           >
             Connexion
           </button>
           <button
             type="button"
             onClick={() => { setMode("signup"); setShowForgot(false); }}
-            className={`py-2.5 rounded-xl transition ${mode === "signup" ? "bg-[#0F5132] text-white shadow-md" : "text-[#0F5132]"}`}
+            className={`py-2.5 rounded-xl transition ${mode === "signup" ? "bg-[#0F7C55] text-white shadow-md" : "text-[#0F7C55]"}`}
           >
             Inscription
           </button>
@@ -130,14 +130,14 @@ function ContentInner() {
           <button
             type="button"
             onClick={() => setIdType("email")}
-            className={`py-2 rounded-lg transition inline-flex items-center justify-center gap-1.5 ${idType === "email" ? "bg-white text-[#0F5132] shadow-sm" : "text-[#0F5132]/60"}`}
+            className={`py-2 rounded-lg transition inline-flex items-center justify-center gap-1.5 ${idType === "email" ? "bg-white text-[#0F7C55] shadow-sm" : "text-[#0F7C55]/60"}`}
           >
             <FaEnvelope className="w-3 h-3" /> Email
           </button>
           <button
             type="button"
             onClick={() => setIdType("phone")}
-            className={`py-2 rounded-lg transition inline-flex items-center justify-center gap-1.5 ${idType === "phone" ? "bg-white text-[#0F5132] shadow-sm" : "text-[#0F5132]/60"}`}
+            className={`py-2 rounded-lg transition inline-flex items-center justify-center gap-1.5 ${idType === "phone" ? "bg-white text-[#0F7C55] shadow-sm" : "text-[#0F7C55]/60"}`}
           >
             <FaPhone className="w-3 h-3" /> Téléphone
           </button>
@@ -193,7 +193,7 @@ function ContentInner() {
           <button
             type="submit"
             disabled={submitting || !configured}
-            className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "…" : mode === "login" ? "Se connecter" : "Créer mon compte (gratuit)"}
           </button>
@@ -245,7 +245,7 @@ function ContentInner() {
             href={LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 text-sm text-[#0F5132] hover:text-[#B8860B] transition"
+            className="flex items-center justify-center gap-2 text-sm text-[#0F7C55] hover:text-[#B8860B] transition"
           >
             <FaWhatsapp /> Besoin d&apos;aide ? Contactez le Dahira
           </a>
@@ -253,7 +253,7 @@ function ContentInner() {
 
         <Link
           href="/"
-          className="block mt-4 text-center text-xs text-gray-400 hover:text-[#0F5132] transition"
+          className="block mt-4 text-center text-xs text-gray-400 hover:text-[#0F7C55] transition"
         >
           ← Retour à l&apos;accueil
         </Link>
@@ -263,7 +263,7 @@ function ContentInner() {
 }
 
 const inputClass =
-  "w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-2xl border border-gray-200 p-4 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";
 
 export default function EspaceMembrePage() {
   return (

@@ -2,7 +2,7 @@
 
 @theme {
   /* === Couleurs KSN === */
-  --color-emerald: #0F5132;
+  --color-emerald: #0F7C55;
   --color-emerald-light: #1B7A4A;
   --color-emerald-dark: #0A3D24;
   --color-emerald-deep: #082F22;
@@ -121,7 +121,7 @@ body {
 @media print {
   .protected-content {
     background: white !important;
-    color: #0F5132 !important;
+    color: #0F7C55 !important;
     min-height: 200px;
     display: block !important;
   }

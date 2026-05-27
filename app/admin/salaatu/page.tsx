@@ -112,7 +112,7 @@ export default function AdminSalaatuPage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Spiritualité
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Salaatu du jour
         </h1>
         <p className="mt-2 text-gray-600 text-sm">
@@ -133,8 +133,8 @@ export default function AdminSalaatuPage() {
                 disabled={!canEdit}
                 className={`py-3 rounded-xl text-sm font-bold inline-flex items-center justify-center gap-2 transition ${
                   mode === "auto"
-                    ? "bg-[#0F5132] text-white shadow-md"
-                    : "text-[#0F5132] hover:bg-white"
+                    ? "bg-[#0F7C55] text-white shadow-md"
+                    : "text-[#0F7C55] hover:bg-white"
                 }`}
               >
                 <FaWandMagicSparkles /> Automatique
@@ -145,8 +145,8 @@ export default function AdminSalaatuPage() {
                 disabled={!canEdit}
                 className={`py-3 rounded-xl text-sm font-bold inline-flex items-center justify-center gap-2 transition ${
                   mode === "manual"
-                    ? "bg-[#0F5132] text-white shadow-md"
-                    : "text-[#0F5132] hover:bg-white"
+                    ? "bg-[#0F7C55] text-white shadow-md"
+                    : "text-[#0F7C55] hover:bg-white"
                 }`}
               >
                 <FaPenToSquare /> Manuel
@@ -175,8 +175,8 @@ export default function AdminSalaatuPage() {
                       onClick={() => applyLibraryItem(s)}
                       className={`text-start p-4 rounded-xl border transition ${
                         active
-                          ? "bg-[#0F5132] text-white border-[#0F5132]"
-                          : "bg-[#F8F5EF] border-[#0F5132]/10 hover:bg-[#E8E6E1] text-[#0F5132]"
+                          ? "bg-[#0F7C55] text-white border-[#0F7C55]"
+                          : "bg-[#F8F5EF] border-[#0F7C55]/10 hover:bg-[#E8E6E1] text-[#0F7C55]"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
@@ -188,7 +188,7 @@ export default function AdminSalaatuPage() {
                       <h4 className="font-display font-bold mt-1 text-sm sm:text-base">
                         {s.title}
                       </h4>
-                      <p className={`mt-2 font-arabic text-base line-clamp-1 ${active ? "text-[#D4AF37]" : "text-[#0F5132]/80"}`} dir="rtl">
+                      <p className={`mt-2 font-arabic text-base line-clamp-1 ${active ? "text-[#D4AF37]" : "text-[#0F7C55]/80"}`} dir="rtl">
                         {s.arabic.slice(0, 50)}
                       </p>
                     </button>
@@ -286,7 +286,7 @@ export default function AdminSalaatuPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+                  className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold disabled:opacity-50"
                 >
                   {saving ? "Enregistrement…" : "Enregistrer (mode manuel)"}
                 </button>
@@ -301,12 +301,12 @@ export default function AdminSalaatuPage() {
                 <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">
                   Aujourd&apos;hui ({new Date().toLocaleDateString("fr-FR")})
                 </p>
-                <h3 className="font-display text-xl font-bold text-[#0F5132]">
+                <h3 className="font-display text-xl font-bold text-[#0F7C55]">
                   {autoPick?.title ?? "—"}
                 </h3>
                 <p className="mt-2 text-sm text-gray-600">
                   La rotation est automatique : chaque jour de l&apos;année correspond à un Salaat différent. Pour épingler un favori spécifique, ouvrez{" "}
-                  <span className="font-semibold text-[#0F5132]">/admin/bibliotheque</span>{" "}
+                  <span className="font-semibold text-[#0F7C55]">/admin/bibliotheque</span>{" "}
                   et étoilez le Salaat — il devient le préféré du jour quelle que soit la rotation.
                 </p>
               </div>
@@ -318,7 +318,7 @@ export default function AdminSalaatuPage() {
               )}
 
               {dbMode === "auto" ? (
-                <div className="flex items-center gap-3 bg-emerald-50 text-[#0F5132] border border-emerald-200 rounded-2xl p-4 font-semibold text-sm">
+                <div className="flex items-center gap-3 bg-emerald-50 text-[#0F7C55] border border-emerald-200 rounded-2xl p-4 font-semibold text-sm">
                   <FaCheck className="text-emerald-600" />
                   <span>Le mode automatique (rotation quotidienne) est actuellement actif sur le site public.</span>
                 </div>
@@ -327,7 +327,7 @@ export default function AdminSalaatuPage() {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+                    className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold disabled:opacity-50"
                   >
                     {saving ? "Enregistrement…" : "Activer le mode automatique"}
                   </button>
@@ -341,7 +341,7 @@ export default function AdminSalaatuPage() {
             <p className="text-xs uppercase tracking-widest text-gray-500 font-bold mb-3">
               Aperçu sur le site public ({mode === "auto" ? "auto" : "manuel"})
             </p>
-            <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-3xl p-8 sm:p-10 text-center text-white">
+            <div className="bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-3xl p-8 sm:p-10 text-center text-white">
               {previewTitle && (
                 <p className="font-display text-xl sm:text-2xl font-bold mb-3 text-[#D4AF37]">
                   {previewTitle}
@@ -370,4 +370,4 @@ export default function AdminSalaatuPage() {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";

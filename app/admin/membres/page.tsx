@@ -107,7 +107,7 @@ export default function AdminMembresPage() {
           <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
             Communauté
           </p>
-          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
             Membres du Dahira
           </h1>
           <p className="mt-2 text-gray-600 text-sm">
@@ -120,13 +120,13 @@ export default function AdminMembresPage() {
             <button
               type="button"
               onClick={() => setImportOpen(true)}
-              className="inline-flex items-center gap-2 bg-white border border-[#0F5132] text-[#0F5132] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#F8F5EF] transition"
+              className="inline-flex items-center gap-2 bg-white border border-[#0F7C55] text-[#0F7C55] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#F8F5EF] transition"
             >
               <FaFileImport /> Importer JSON
             </button>
             <Link
               href="/admin/membres/nouveau"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
             >
               <FaPlus /> Nouveau membre
             </Link>
@@ -143,13 +143,13 @@ export default function AdminMembresPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher (nom, matricule, tel, ville…)"
-              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm text-[#0F5132] bg-white"
+              className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-200 text-sm text-[#0F7C55] bg-white"
             />
           </div>
           <select
             value={fRegion}
             onChange={(e) => setFRegion(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
           >
             <option value="all">Toutes régions</option>
             {regions.map((r) => (
@@ -159,7 +159,7 @@ export default function AdminMembresPage() {
           <select
             value={fVille}
             onChange={(e) => setFVille(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
           >
             <option value="all">Toutes villes</option>
             {villes.map((v) => (
@@ -169,7 +169,7 @@ export default function AdminMembresPage() {
           <select
             value={fProf}
             onChange={(e) => setFProf(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
           >
             <option value="all">Toutes professions</option>
             {professions.map((p) => (
@@ -185,8 +185,8 @@ export default function AdminMembresPage() {
               onClick={() => setFStatus(s)}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
                 fStatus === s
-                  ? "bg-[#0F5132] text-white"
-                  : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+                  ? "bg-[#0F7C55] text-white"
+                  : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
               }`}
             >
               {s === "all"
@@ -227,7 +227,7 @@ export default function AdminMembresPage() {
               key={m.id}
               className="bg-white rounded-2xl shadow-md p-4 sm:p-5 flex gap-4"
             >
-              <div className="relative w-20 h-24 rounded-xl overflow-hidden bg-[#F8F5EF] flex-shrink-0 flex items-center justify-center text-[#0F5132]/40 text-2xl font-bold">
+              <div className="relative w-20 h-24 rounded-xl overflow-hidden bg-[#F8F5EF] flex-shrink-0 flex items-center justify-center text-[#0F7C55]/40 text-2xl font-bold">
                 {m.photo ? (
                   <Image
                     src={m.photo}
@@ -248,7 +248,7 @@ export default function AdminMembresPage() {
                 <p className="text-xs font-mono tabular-nums text-[#B8860B] font-bold">
                   #{m.matricule}
                 </p>
-                <h3 className="font-display text-base sm:text-lg font-bold text-[#0F5132] truncate">
+                <h3 className="font-display text-base sm:text-lg font-bold text-[#0F7C55] truncate">
                   {m.prenom} {m.nom}
                 </h3>
                 <p className="text-xs text-gray-500 truncate">
@@ -273,7 +273,7 @@ export default function AdminMembresPage() {
                 <div className="flex gap-1 mt-3 flex-wrap">
                   <Link
                     href={`/admin/membres/${m.id}`}
-                    className="inline-flex items-center gap-1 text-xs text-[#0F5132] hover:text-[#B8860B] font-semibold"
+                    className="inline-flex items-center gap-1 text-xs text-[#0F7C55] hover:text-[#B8860B] font-semibold"
                   >
                     <FaIdCard /> Carte
                   </Link>
@@ -372,7 +372,7 @@ function ImportModal({
         className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-display text-2xl font-bold text-[#0F5132]">
+        <h2 className="font-display text-2xl font-bold text-[#0F7C55]">
           Importer des membres depuis JSON
         </h2>
         <p className="mt-2 text-sm text-gray-600 leading-6">
@@ -389,7 +389,7 @@ function ImportModal({
           onChange={(e) => setText(e.target.value)}
           rows={12}
           placeholder='[\n  { "prenom": "Birima", "nom": "Gueye", "telephone": "+221780178444", "ville": "Louga" }\n]'
-          className="mt-4 w-full font-mono text-xs rounded-xl border border-gray-200 p-3 text-[#0F5132] bg-white"
+          className="mt-4 w-full font-mono text-xs rounded-xl border border-gray-200 p-3 text-[#0F7C55] bg-white"
         />
 
         {error && (
@@ -417,7 +417,7 @@ function ImportModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#0F5132] font-semibold text-sm"
+            className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#0F7C55] font-semibold text-sm"
           >
             Fermer
           </button>
@@ -425,7 +425,7 @@ function ImportModal({
             <button
               type="button"
               onClick={onDone}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold text-sm"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold text-sm"
             >
               Voir la liste
             </button>
@@ -434,7 +434,7 @@ function ImportModal({
               type="button"
               onClick={handleImport}
               disabled={running || !text.trim()}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold text-sm disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold text-sm disabled:opacity-50"
             >
               {running ? "Import…" : "Importer"}
             </button>

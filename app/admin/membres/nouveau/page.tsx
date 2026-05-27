@@ -10,7 +10,7 @@ export default function NewMemberPage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Nouveau membre
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Enregistrer un membre
         </h1>
       </header>

@@ -82,7 +82,7 @@ export default function AdminMenuPage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Navigation
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Menu de navigation
         </h1>
         <p className="mt-2 text-gray-600 text-sm">
@@ -105,7 +105,7 @@ export default function AdminMenuPage() {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="ex: Boutique"
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
             />
           </div>
           <div>
@@ -118,12 +118,12 @@ export default function AdminMenuPage() {
               value={href}
               onChange={(e) => setHref(e.target.value)}
               placeholder="ex: /boutique"
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
             />
           </div>
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-2.5 px-5 rounded-xl font-bold"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-5 rounded-xl font-bold"
           >
             <FaPlus /> Ajouter
           </button>
@@ -156,7 +156,7 @@ export default function AdminMenuPage() {
                   className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-[#0F5132] font-semibold text-sm sm:text-base">
+                    <p className="text-[#0F7C55] font-semibold text-sm sm:text-base">
                       {item.label}
                     </p>
                     <p className="text-xs text-gray-500 truncate">
@@ -217,7 +217,7 @@ function IconButton({
   const color =
     variant === "danger"
       ? "bg-red-50 hover:bg-red-100 text-red-600"
-      : "bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132]";
+      : "bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55]";
   return (
     <button type="button" onClick={onClick} aria-label={label} title={label} className={`${base} ${color}`}>
       {children}

@@ -26,7 +26,7 @@ export default function Presidence() {
             Direction Spirituelle
           </span>
 
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             Présidence du Dahira
           </h2>
 
@@ -40,7 +40,7 @@ export default function Presidence() {
           {PRESIDENTS.map((p) => (
             <div
               key={p.name}
-              className="bg-[#F8F5EF] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-center border border-[#0F5132]/10 hover:shadow-[0_25px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 duration-300 transition"
+              className="bg-[#F8F5EF] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-center border border-[#0F7C55]/10 hover:shadow-[0_25px_60px_rgba(0,0,0,0.12)] hover:-translate-y-2 duration-300 transition"
             >
               <div className="relative w-36 h-36 sm:w-48 sm:h-48 mx-auto rounded-full overflow-hidden border-[4px] sm:border-[6px] border-[#D4AF37] shadow-xl">
                 <Image
@@ -55,7 +55,7 @@ export default function Presidence() {
                 {p.role}
               </div>
 
-              <h3 className="font-display mt-4 sm:mt-5 text-2xl sm:text-3xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-4 sm:mt-5 text-2xl sm:text-3xl font-bold text-[#0F7C55]">
                 {p.name}
               </h3>
 

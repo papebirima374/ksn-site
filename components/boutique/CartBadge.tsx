@@ -15,10 +15,10 @@ export default function CartBadge() {
       aria-label="Ouvrir le panier"
       className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 group"
     >
-      <div className="flex items-center gap-3 bg-[#0F5132] text-white px-4 py-3 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:scale-105 transition relative">
+      <div className="flex items-center gap-3 bg-[#0F7C55] text-white px-4 py-3 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:scale-105 transition relative">
         <div className="relative">
           <FaCartShopping className="text-xl" />
-          <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-[#0F5132] rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold tabular-nums">
+          <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-[#0F7C55] rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold tabular-nums">
             {count}
           </span>
         </div>

@@ -32,7 +32,7 @@ export default function Spiritualite() {
       id="spiritualite"
       className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
     >
-      <div className="bg-[#0F5132] rounded-[40px] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.2)]">
+      <div className="bg-[#0F7C55] rounded-[40px] overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.2)]">
         <div className="p-6 sm:p-12 md:p-16">
           <div className="text-center">
             <span className="text-[#D4AF37] uppercase tracking-[0.25em] font-semibold">
@@ -66,7 +66,7 @@ export default function Spiritualite() {
               </div>
             ))}
 
-            <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[30px] p-8 text-[#0F5132]">
+            <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[30px] p-8 text-[#0F7C55]">
               <div className="text-5xl">✨</div>
 
               <h3 className="mt-5 text-2xl font-bold">
@@ -80,7 +80,7 @@ export default function Spiritualite() {
 
               <button
                 type="button"
-                className="mt-8 bg-[#0F5132] text-white px-6 py-4 rounded-2xl font-semibold hover:opacity-90 transition"
+                className="mt-8 bg-[#0F7C55] text-white px-6 py-4 rounded-2xl font-semibold hover:opacity-90 transition"
               >
                 Explorer
               </button>

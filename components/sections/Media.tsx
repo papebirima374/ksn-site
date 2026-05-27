@@ -11,7 +11,7 @@ const MEDIA_CARDS = [
     title: "Vidéos & Conférences",
     text: "Visionnez conférences, zikr, Salaatou, rappels, lives et enseignements spirituels.",
     cta: "Regarder",
-    gradient: "from-[#0F5132] to-[#1F7A53]",
+    gradient: "from-[#0F7C55] to-[#1F7A53]",
   },
   {
     icon: "🕌",
@@ -42,7 +42,7 @@ export default function Media() {
               Média KSN
             </span>
 
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-[#0F5132]">
+            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-[#0F7C55]">
               Activités du Dahira
               <br />
               & Vie Communautaire
@@ -68,14 +68,14 @@ export default function Media() {
                 </div>
 
                 <div className="p-8">
-                  <h3 className="text-2xl font-bold text-[#0F5132]">
+                  <h3 className="text-2xl font-bold text-[#0F7C55]">
                     {card.title}
                   </h3>
                   <p className="mt-4 text-gray-600 leading-7">{card.text}</p>
 
                   <button
                     type="button"
-                    className="mt-6 bg-[#0F5132] text-white px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition"
+                    className="mt-6 bg-[#0F7C55] text-white px-6 py-3 rounded-2xl font-semibold hover:scale-105 transition"
                   >
                     {card.cta}
                   </button>
@@ -88,7 +88,7 @@ export default function Media() {
             {MEDIA_STATS.map((s) => (
               <div
                 key={s.label}
-                className="bg-[#0F5132] rounded-[30px] p-8 text-center text-white"
+                className="bg-[#0F7C55] rounded-[30px] p-8 text-center text-white"
               >
                 <h3 className="text-4xl font-bold text-[#D4AF37]">{s.value}</h3>
                 <p className="mt-2 text-white/70">{s.label}</p>

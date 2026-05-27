@@ -90,7 +90,7 @@ export default function AdminFinancesPage() {
           <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
             Commission Finance
           </p>
-          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
             Trésorerie du Dahira
           </h1>
           <p className="mt-2 text-gray-600 text-sm">
@@ -101,7 +101,7 @@ export default function AdminFinancesPage() {
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
           >
             <FaPlus /> Nouvelle transaction
           </button>
@@ -128,7 +128,7 @@ export default function AdminFinancesPage() {
           icon={<FaScaleBalanced />}
           colorClass={
             allStats.balance >= 0
-              ? "from-[#B8860B] to-[#D4AF37] text-[#0F5132]"
+              ? "from-[#B8860B] to-[#D4AF37] text-[#0F7C55]"
               : "from-red-700 to-red-900 text-white"
           }
         />
@@ -180,7 +180,7 @@ export default function AdminFinancesPage() {
               setFFrom("");
               setFTo("");
             }}
-            className="rounded-xl bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] text-sm font-semibold"
+            className="rounded-xl bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] text-sm font-semibold"
           >
             Réinitialiser
           </button>
@@ -196,7 +196,7 @@ export default function AdminFinancesPage() {
               −{fmtMoney(stats.totalExpense)}
             </span>{" "}
             = solde filtré{" "}
-            <span className="font-bold text-[#0F5132]">
+            <span className="font-bold text-[#0F7C55]">
               {fmtMoney(stats.balance)}
             </span>
           </p>
@@ -238,7 +238,7 @@ export default function AdminFinancesPage() {
                   {e.type === "income" ? <FaArrowDown /> : <FaArrowUp />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-[#0F5132] text-sm sm:text-base truncate">
+                  <p className="font-semibold text-[#0F7C55] text-sm sm:text-base truncate">
                     {e.category}
                   </p>
                   <p className="text-xs text-gray-500 truncate">
@@ -311,7 +311,7 @@ function StatCard({
 }
 
 const selectClass =
-  "rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white";
+  "rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white";
 
 function NewEntryModal({
   onClose,
@@ -377,7 +377,7 @@ function NewEntryModal({
         className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-4 my-8"
       >
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold text-[#0F5132]">
+          <h2 className="font-display text-2xl font-bold text-[#0F7C55]">
             Nouvelle transaction
           </h2>
           <button
@@ -543,7 +543,7 @@ function NewEntryModal({
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-xl font-bold disabled:opacity-50"
+          className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-xl font-bold disabled:opacity-50"
         >
           {saving ? "Enregistrement…" : "Enregistrer la transaction"}
         </button>

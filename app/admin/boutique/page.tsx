@@ -46,7 +46,7 @@ export default function AdminBoutiquePage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Commerce
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Boutique KSN
         </h1>
       </header>
@@ -80,7 +80,7 @@ function TabButton({
       type="button"
       onClick={onClick}
       className={`py-2.5 rounded-xl text-sm font-bold transition ${
-        active ? "bg-[#0F5132] text-white shadow-md" : "text-[#0F5132] hover:bg-white"
+        active ? "bg-[#0F7C55] text-white shadow-md" : "text-[#0F7C55] hover:bg-white"
       }`}
     >
       {children}
@@ -129,7 +129,7 @@ function ProductsTab({ canEdit }: { canEdit: boolean }) {
               setEditing(null);
               setShowForm(true);
             }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
           >
             <FaPlus /> Nouveau produit
           </button>
@@ -177,10 +177,10 @@ function ProductsTab({ canEdit }: { canEdit: boolean }) {
                 <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
                   {PRODUCT_CATEGORIES.find((c) => c.id === p.category)?.label}
                 </p>
-                <h3 className="font-display mt-1 text-base font-bold text-[#0F5132] line-clamp-2">
+                <h3 className="font-display mt-1 text-base font-bold text-[#0F7C55] line-clamp-2">
                   {p.title}
                 </h3>
-                <p className="mt-1 text-sm text-[#0F5132] font-bold tabular-nums">
+                <p className="mt-1 text-sm text-[#0F7C55] font-bold tabular-nums">
                   {fmt(p.price)}
                 </p>
                 {p.category === "physical" && typeof p.stock === "number" && (
@@ -194,7 +194,7 @@ function ProductsTab({ canEdit }: { canEdit: boolean }) {
                         setEditing(p);
                         setShowForm(true);
                       }}
-                      className="flex-1 inline-flex items-center justify-center gap-1 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] py-1.5 rounded-lg text-xs font-semibold"
+                      className="flex-1 inline-flex items-center justify-center gap-1 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] py-1.5 rounded-lg text-xs font-semibold"
                     >
                       <FaPenToSquare /> Éditer
                     </button>
@@ -314,7 +314,7 @@ function ProductFormModal({
         className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-4 my-8"
       >
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-2xl font-bold text-[#0F5132]">
+          <h2 className="font-display text-2xl font-bold text-[#0F7C55]">
             {initial ? "Modifier le produit" : "Nouveau produit"}
           </h2>
           <button
@@ -406,17 +406,17 @@ function ProductFormModal({
               const f = e.target.files?.[0];
               if (f) handleImage(f);
             }}
-            className="text-sm text-[#0F5132] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F5132] file:text-white file:font-semibold file:cursor-pointer"
+            className="text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
           />
           {uploading && <p className="text-xs text-gray-500 mt-2">Upload…</p>}
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-[#0F5132]">
+        <label className="flex items-center gap-2 text-sm text-[#0F7C55]">
           <input
             type="checkbox"
             checked={visible}
             onChange={(e) => setVisible(e.target.checked)}
-            className="w-4 h-4 accent-[#0F5132]"
+            className="w-4 h-4 accent-[#0F7C55]"
           />
           Visible dans la boutique publique
         </label>
@@ -430,7 +430,7 @@ function ProductFormModal({
         <button
           type="submit"
           disabled={saving}
-          className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-xl font-bold disabled:opacity-50"
+          className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-xl font-bold disabled:opacity-50"
         >
           {saving ? "Enregistrement…" : initial ? "Enregistrer" : "Créer le produit"}
         </button>
@@ -483,8 +483,8 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
             onClick={() => setFilter(s)}
             className={`px-4 py-2 rounded-full text-xs font-bold transition ${
               filter === s
-                ? "bg-[#0F5132] text-white"
-                : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+                ? "bg-[#0F7C55] text-white"
+                : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
             }`}
           >
             {s === "all"
@@ -521,7 +521,7 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-display font-bold text-[#0F5132]">
+                    <p className="font-display font-bold text-[#0F7C55]">
                       {o.customerName}
                     </p>
                     <StatusBadge status={o.status} />
@@ -534,12 +534,12 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
                     <p className="text-xs text-gray-500">📍 {o.deliveryAddress}</p>
                   )}
                 </div>
-                <p className="font-display text-xl font-bold text-[#0F5132] tabular-nums">
+                <p className="font-display text-xl font-bold text-[#0F7C55] tabular-nums">
                   {fmt(o.total)}
                 </p>
               </div>
 
-              <ul className="mt-3 space-y-1 text-sm text-[#0F5132]">
+              <ul className="mt-3 space-y-1 text-sm text-[#0F7C55]">
                 {o.items.map((i) => (
                   <li key={i.productId} className="flex justify-between gap-2">
                     <span className="truncate">
@@ -598,4 +598,4 @@ function StatusBadge({ status }: { status: OrderStatus }) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";

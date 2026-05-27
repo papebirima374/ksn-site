@@ -208,7 +208,7 @@ export default function ProfileDashboard({ user }: Props) {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-[#0F5132]">
+      <div className="flex flex-col items-center justify-center p-12 text-[#0F7C55]">
         <FaSpinner className="animate-spin text-4xl" />
         <p className="mt-4 text-sm font-semibold">Chargement de votre profil...</p>
       </div>
@@ -224,7 +224,7 @@ export default function ProfileDashboard({ user }: Props) {
             {user.memberStatus === "actif" ? "🏆" : user.memberStatus === "en_attente" ? "⏳" : "👤"}
           </div>
           <div>
-            <h2 className="font-display font-bold text-[#0F5132] text-xl">
+            <h2 className="font-display font-bold text-[#0F7C55] text-xl">
               {prenom} {nom}
             </h2>
             <p className="text-xs text-gray-500">
@@ -249,7 +249,7 @@ export default function ProfileDashboard({ user }: Props) {
           {user.memberStatus === "actif" && (
             <Link
               href="/spiritualite"
-              className="inline-flex items-center gap-2 bg-[#0F5132] text-white py-2.5 px-4 rounded-xl text-sm font-semibold hover:bg-[#0c4228] transition shadow-md"
+              className="inline-flex items-center gap-2 bg-[#0F7C55] text-white py-2.5 px-4 rounded-xl text-sm font-semibold hover:bg-[#0c4228] transition shadow-md"
             >
               <FaBookOpen /> Bibliothèque
             </Link>
@@ -269,7 +269,7 @@ export default function ProfileDashboard({ user }: Props) {
         {/* Left Column: Member Card or Callout */}
         <div className="md:col-span-6 space-y-6">
           <div className="text-center md:text-left">
-            <h3 className="font-display text-lg font-bold text-[#0F5132] mb-3">
+            <h3 className="font-display text-lg font-bold text-[#0F7C55] mb-3">
               Votre Carte de Membre KSN
             </h3>
             {user.memberStatus === "actif" && member ? (
@@ -280,7 +280,7 @@ export default function ProfileDashboard({ user }: Props) {
                 </p>
               </div>
             ) : (
-              <div className="bg-gradient-to-br from-[#ffffff] to-[#F8F5EF] rounded-3xl border border-[#0F5132]/10 p-6 shadow-lg text-center space-y-4">
+              <div className="bg-gradient-to-br from-[#ffffff] to-[#F8F5EF] rounded-3xl border border-[#0F7C55]/10 p-6 shadow-lg text-center space-y-4">
                 <div className="relative w-36 h-36 mx-auto rounded-full overflow-hidden bg-gray-200 border-4 border-white shadow-md flex items-center justify-center text-gray-400">
                   {photo ? (
                     <Image
@@ -294,7 +294,7 @@ export default function ProfileDashboard({ user }: Props) {
                     <span className="text-5xl">👤</span>
                   )}
                 </div>
-                <h4 className="font-display font-bold text-[#0F5132] text-base">
+                <h4 className="font-display font-bold text-[#0F7C55] text-base">
                   Aperçu de votre photo
                 </h4>
                 <p className="text-sm text-gray-600 max-w-sm mx-auto leading-relaxed">
@@ -326,7 +326,7 @@ export default function ProfileDashboard({ user }: Props) {
 
           {/* Upgrade Callout (if visitor) */}
           {user.memberStatus === "inactif" && (
-            <div className="bg-[#0F5132] text-white rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
+            <div className="bg-[#0F7C55] text-white rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl relative overflow-hidden">
               <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-[#D4AF37]/10 rounded-full blur-2xl" />
               <span className="uppercase text-xs font-black tracking-widest text-[#D4AF37]">
                 Avantage Adhérent
@@ -355,7 +355,7 @@ export default function ProfileDashboard({ user }: Props) {
                 href={PAYMENT.membershipWave}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-2xl font-black hover:scale-[1.02] transition text-sm shadow-xl"
+                className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-2xl font-black hover:scale-[1.02] transition text-sm shadow-xl"
               >
                 Payer 1000 FCFA via Wave
               </a>
@@ -363,7 +363,7 @@ export default function ProfileDashboard({ user }: Props) {
                 type="button"
                 onClick={handleUpgradeRequest}
                 disabled={saving || !photo}
-                className="w-full inline-flex items-center justify-center gap-2 bg-white text-[#0F5132] py-3.5 rounded-2xl font-bold hover:scale-[1.02] transition text-sm shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full inline-flex items-center justify-center gap-2 bg-white text-[#0F7C55] py-3.5 rounded-2xl font-bold hover:scale-[1.02] transition text-sm shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? "Soumission..." : "Soumettre ma demande d'adhésion"}
               </button>
@@ -379,7 +379,7 @@ export default function ProfileDashboard({ user }: Props) {
         {/* Right Column: Edit Profile Form */}
         <div className="md:col-span-6 bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-8 space-y-6">
           <div>
-            <h3 className="font-display text-lg font-bold text-[#0F5132]">
+            <h3 className="font-display text-lg font-bold text-[#0F7C55]">
               Modifier vos Informations
             </h3>
             <p className="text-xs text-gray-500 mt-1">
@@ -408,7 +408,7 @@ export default function ProfileDashboard({ user }: Props) {
                   )}
                 </div>
                 <div>
-                  <label className="inline-flex items-center gap-2 bg-[#0F5132] text-white py-2 px-4 rounded-xl text-xs font-semibold hover:bg-[#0c4228] transition cursor-pointer">
+                  <label className="inline-flex items-center gap-2 bg-[#0F7C55] text-white py-2 px-4 rounded-xl text-xs font-semibold hover:bg-[#0c4228] transition cursor-pointer">
                     <FaCamera /> Choisir une photo
                     <input
                       type="file"
@@ -496,7 +496,7 @@ export default function ProfileDashboard({ user }: Props) {
             <button
               type="submit"
               disabled={saving}
-              className="w-full bg-[#0F5132] text-white py-3 rounded-xl font-semibold hover:bg-[#0c4228] transition disabled:opacity-50"
+              className="w-full bg-[#0F7C55] text-white py-3 rounded-xl font-semibold hover:bg-[#0c4228] transition disabled:opacity-50"
             >
               {saving ? "Enregistrement..." : "Enregistrer les modifications"}
             </button>
@@ -508,7 +508,7 @@ export default function ProfileDashboard({ user }: Props) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";
 
 function Labelled({
   label,

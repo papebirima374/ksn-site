@@ -24,7 +24,7 @@ const SECTIONS = [
     desc: "Inscriptions, filtres par région/ville/profession, génération de carte de membre imprimable.",
     Icon: FaIdCard,
     perm: "members.write" as Permission,
-    color: "from-[#1B7A4A] to-[#0F5132]",
+    color: "from-[#1B7A4A] to-[#0F7C55]",
   },
   {
     href: "/admin/finances",
@@ -40,7 +40,7 @@ const SECTIONS = [
     desc: "Produits (Café G, livres PDF, physiques) + commandes (changer statut livrée / annulée).",
     Icon: FaBagShopping,
     perm: "boutique.write" as Permission,
-    color: "from-[#1DCEDB] to-[#0F5132]",
+    color: "from-[#1DCEDB] to-[#0F7C55]",
   },
   {
     href: "/admin/bibliotheque",
@@ -48,7 +48,7 @@ const SECTIONS = [
     desc: "Tous les Salaats avec arabe, traduction, bienfaits et secrets d'utilisation. Le favori épinglé devient le Salaatu du jour.",
     Icon: FaBookOpen,
     perm: "library.write" as Permission,
-    color: "from-[#082F22] to-[#0F5132]",
+    color: "from-[#082F22] to-[#0F7C55]",
   },
   {
     href: "/admin/galerie",
@@ -64,7 +64,7 @@ const SECTIONS = [
     desc: "Rédigez et publiez des articles, annonces et actualités du Dahira.",
     Icon: FaNewspaper,
     perm: "articles.write" as Permission,
-    color: "from-[#0F5132] to-[#1B7A4A]",
+    color: "from-[#0F7C55] to-[#1B7A4A]",
   },
   {
     href: "/admin/salaatu",
@@ -72,7 +72,7 @@ const SECTIONS = [
     desc: "Mettez à jour le Salaatu recommandé du jour : arabe, translittération, traduction.",
     Icon: FaHandsPraying,
     perm: "salaatu.write" as Permission,
-    color: "from-[#1DCEDB] to-[#0F5132]",
+    color: "from-[#1DCEDB] to-[#0F7C55]",
   },
   {
     href: "/admin/menu",
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Tableau de bord
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Bienvenue, {user?.displayName || user?.email?.split("@")[0]}
         </h1>
         <p className="mt-3 text-gray-600 text-sm sm:text-base max-w-2xl">
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
             href="https://salaatualaanabii.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#0F5132] underline font-medium"
+            className="text-[#0F7C55] underline font-medium"
           >
             salaatualaanabii.com
           </a>
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
               <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center text-2xl`}>
                 <Icon />
               </div>
-              <h3 className="font-display mt-5 text-xl sm:text-2xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-5 text-xl sm:text-2xl font-bold text-[#0F7C55]">
                 {s.label}
               </h3>
               <p className="mt-2 text-gray-600 text-sm leading-6">{s.desc}</p>

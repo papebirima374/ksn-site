@@ -43,7 +43,7 @@ export default function ProductGrid() {
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-8 sm:mb-12">
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F5132]">
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#0F7C55]">
             Notre catalogue
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -102,12 +102,12 @@ export default function ProductGrid() {
                         {PRODUCT_CATEGORIES.find((c) => c.id === p.category)?.emoji}
                       </div>
                     )}
-                    <p className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-[#0F5132]/90 text-white text-[10px] uppercase tracking-widest font-bold">
+                    <p className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-[#0F7C55]/90 text-white text-[10px] uppercase tracking-widest font-bold">
                       {PRODUCT_CATEGORIES.find((c) => c.id === p.category)?.label}
                     </p>
                   </div>
                   <div className="p-5 sm:p-6">
-                    <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F5132] line-clamp-2">
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F7C55] line-clamp-2">
                       {p.title}
                     </h3>
                     <p className="mt-2 text-gray-600 text-sm leading-6 line-clamp-2">
@@ -119,7 +119,7 @@ export default function ProductGrid() {
                       </p>
                     )}
                     <div className="mt-4 flex items-center justify-between gap-3">
-                      <p className="font-display text-2xl font-bold text-[#0F5132] tabular-nums">
+                      <p className="font-display text-2xl font-bold text-[#0F7C55] tabular-nums">
                         {fmt(p.price)}
                       </p>
                       <button
@@ -129,7 +129,7 @@ export default function ProductGrid() {
                         className={`inline-flex items-center gap-2 py-2.5 px-4 rounded-xl font-bold text-sm transition ${
                           wasJustAdded
                             ? "bg-emerald-600 text-white"
-                            : "bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                            : "bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] hover:scale-105 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
                         }`}
                       >
                         {wasJustAdded ? <FaCheck /> : <FaCartPlus />}
@@ -167,8 +167,8 @@ function CategoryPill({
       onClick={onClick}
       className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
         active
-          ? "bg-[#0F5132] text-white shadow-md"
-          : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+          ? "bg-[#0F7C55] text-white shadow-md"
+          : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
       }`}
     >
       {children}

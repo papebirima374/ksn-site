@@ -48,7 +48,7 @@ export default function InscriptionForm() {
             </span>
             Demande d&apos;Adhésion
           </span>
-          <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-3 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F7C55]">
             Étape 1 — Vos informations
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
@@ -65,7 +65,7 @@ export default function InscriptionForm() {
               value={prenom}
               onChange={(e) => setPrenom(e.target.value)}
               placeholder="Prénom"
-              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
             />
             <input
               type="text"
@@ -73,7 +73,7 @@ export default function InscriptionForm() {
               value={nom}
               onChange={(e) => setNom(e.target.value)}
               placeholder="Nom"
-              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
             />
           </div>
 
@@ -83,7 +83,7 @@ export default function InscriptionForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Adresse email"
-            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
           />
 
           <input
@@ -92,7 +92,7 @@ export default function InscriptionForm() {
             value={tel}
             onChange={(e) => setTel(e.target.value)}
             placeholder="Téléphone (avec indicatif, ex: +221...)"
-            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
           />
 
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
@@ -104,7 +104,7 @@ export default function InscriptionForm() {
                 type="date"
                 value={dateNaissance}
                 onChange={(e) => setDateNaissance(e.target.value)}
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
               />
             </div>
             <div>
@@ -117,7 +117,7 @@ export default function InscriptionForm() {
                 value={profession}
                 onChange={(e) => setProfession(e.target.value)}
                 placeholder="ex: Enseignant(e)"
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
               />
               <datalist id="prof-list">
                 {COMMON_PROFESSIONS.map((p) => (
@@ -134,7 +134,7 @@ export default function InscriptionForm() {
               value={pays}
               onChange={(e) => setPays(e.target.value)}
               placeholder="Pays"
-              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
             />
             <input
               type="text"
@@ -142,7 +142,7 @@ export default function InscriptionForm() {
               value={region}
               onChange={(e) => setRegion(e.target.value)}
               placeholder="Région"
-              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
             />
             <datalist id="region-list">
               {SENEGAL_REGIONS.map((r) => (
@@ -155,7 +155,7 @@ export default function InscriptionForm() {
               value={ville}
               onChange={(e) => setVille(e.target.value)}
               placeholder="Ville"
-              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white"
             />
           </div>
 
@@ -164,12 +164,12 @@ export default function InscriptionForm() {
             onChange={(e) => setMotivation(e.target.value)}
             placeholder="Votre motivation pour rejoindre la KSN (optionnel)"
             rows={4}
-            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white resize-none"
+            className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base text-[#0F7C55] bg-white resize-none"
           />
 
           <button
             type="submit"
-            className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 sm:py-5 rounded-[16px] sm:rounded-[20px] font-bold hover:scale-[1.02] transition text-sm sm:text-base shadow-xl"
+            className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 sm:py-5 rounded-[16px] sm:rounded-[20px] font-bold hover:scale-[1.02] transition text-sm sm:text-base shadow-xl"
           >
             <FaWhatsapp className="text-lg sm:text-xl" />
             Envoyer ma demande

@@ -35,7 +35,7 @@ export default function DonPage() {
               <span className="uppercase tracking-[0.2em] text-[#1DCEDB] text-xs sm:text-sm font-bold">
                 Paiement instantané
               </span>
-              <h2 className="font-display mt-1 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F5132]">
+              <h2 className="font-display mt-1 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F7C55]">
                 Don via Wave
               </h2>
               <p className="mt-2 text-gray-600 text-sm sm:text-base">
@@ -50,7 +50,7 @@ export default function DonPage() {
               const className =
                 "flex flex-col items-center justify-center rounded-2xl border-2 transition py-5 sm:py-7 px-3 text-center";
               const enabledClasses =
-                "border-[#1DCEDB] bg-[#1DCEDB]/5 hover:bg-[#1DCEDB] hover:text-white hover:scale-105 text-[#0F5132]";
+                "border-[#1DCEDB] bg-[#1DCEDB]/5 hover:bg-[#1DCEDB] hover:text-white hover:scale-105 text-[#0F7C55]";
               const disabledClasses =
                 "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed";
 
@@ -99,7 +99,7 @@ export default function DonPage() {
             href={buildWhatsAppLink(customDonMessage)}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F5132] hover:text-[#B8860B] text-sm sm:text-base font-semibold transition"
+            className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F7C55] hover:text-[#B8860B] text-sm sm:text-base font-semibold transition"
           >
             <FaWhatsapp /> Montant libre — contactez-nous sur WhatsApp
           </a>
@@ -118,7 +118,7 @@ export default function DonPage() {
                 <span className="uppercase tracking-[0.2em] text-[#FF7900] text-xs font-bold">
                   Mobile Money
                 </span>
-                <h3 className="font-display mt-1 text-2xl sm:text-3xl font-bold text-[#0F5132]">
+                <h3 className="font-display mt-1 text-2xl sm:text-3xl font-bold text-[#0F7C55]">
                   Orange Money
                 </h3>
               </div>
@@ -133,7 +133,7 @@ export default function DonPage() {
               <p className="text-xs uppercase tracking-widest text-[#FF7900] font-bold">
                 Numéro officiel
               </p>
-              <p className="mt-2 font-display text-2xl sm:text-3xl font-bold text-[#0F5132] tabular-nums">
+              <p className="mt-2 font-display text-2xl sm:text-3xl font-bold text-[#0F7C55] tabular-nums">
                 +{PAYMENT.orangeMoneyNumber.slice(0, 3)}{" "}
                 {PAYMENT.orangeMoneyNumber.slice(3, 5)}{" "}
                 {PAYMENT.orangeMoneyNumber.slice(5, 8)}{" "}
@@ -146,7 +146,7 @@ export default function DonPage() {
               href={buildWhatsAppLink(orangeMoneyMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F5132] hover:text-[#B8860B] text-sm font-semibold transition"
+              className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F7C55] hover:text-[#B8860B] text-sm font-semibold transition"
             >
               <FaWhatsapp /> Confirmer votre don sur WhatsApp
             </a>
@@ -160,7 +160,7 @@ export default function DonPage() {
                 <span className="uppercase tracking-[0.2em] text-[#E60000] text-xs font-bold">
                   Virement bancaire
                 </span>
-                <h3 className="font-display mt-1 text-2xl sm:text-3xl font-bold text-[#0F5132]">
+                <h3 className="font-display mt-1 text-2xl sm:text-3xl font-bold text-[#0F7C55]">
                   Compte UBA
                 </h3>
               </div>
@@ -176,12 +176,12 @@ export default function DonPage() {
               <p className="text-xs uppercase tracking-widest text-[#E60000] font-bold">
                 Numéro de compte
               </p>
-              <p className="mt-2 font-display text-2xl sm:text-3xl font-bold text-[#0F5132] tabular-nums">
+              <p className="mt-2 font-display text-2xl sm:text-3xl font-bold text-[#0F7C55] tabular-nums">
                 {PAYMENT.ubaAccount.slice(0, 4)}{" "}
                 {PAYMENT.ubaAccount.slice(4, 8)}{" "}
                 {PAYMENT.ubaAccount.slice(8)}
               </p>
-              <p className="mt-2 text-xs text-[#0F5132]/70">
+              <p className="mt-2 text-xs text-[#0F7C55]/70">
                 Bénéficiaire : Dahira Kippangog Salaatu &apos;Alaa Nabii
               </p>
             </div>
@@ -190,7 +190,7 @@ export default function DonPage() {
               href={buildWhatsAppLink(ubaMessage)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F5132] hover:text-[#B8860B] text-sm font-semibold transition"
+              className="mt-5 sm:mt-6 inline-flex items-center gap-2 text-[#0F7C55] hover:text-[#B8860B] text-sm font-semibold transition"
             >
               <FaWhatsapp /> Confirmer votre virement sur WhatsApp
             </a>
@@ -200,7 +200,7 @@ export default function DonPage() {
 
       {/* Footer CTA */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[28px] sm:rounded-[45px] p-6 sm:p-12 md:p-16 text-center text-white">
+        <div className="bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-[28px] sm:rounded-[45px] p-6 sm:p-12 md:p-16 text-center text-white">
           <p className="font-arabic text-3xl sm:text-4xl text-[#D4AF37] mb-4">
             بَارَكَ اللَّهُ فِيكُمْ
           </p>
@@ -225,7 +225,7 @@ export default function DonPage() {
             href={LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 mt-8 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition"
+            className="inline-flex items-center gap-3 mt-8 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition"
           >
             <FaWhatsapp className="text-xl sm:text-2xl" />
             Contacter KSN directement

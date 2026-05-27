@@ -40,7 +40,7 @@ export default function LeDahira() {
             Le Dahira
           </span>
 
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             Une Organisation Spirituelle
             <br />
             Moderne & Structurée
@@ -61,7 +61,7 @@ export default function LeDahira() {
               className="bg-[#F8F5EF] rounded-[20px] sm:rounded-[30px] p-6 sm:p-8"
             >
               <div className="text-4xl sm:text-5xl">{card.icon}</div>
-              <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold text-[#0F7C55]">
                 {card.title}
               </h3>
               <p className="mt-3 sm:mt-4 text-gray-600 leading-6 sm:leading-7 text-sm sm:text-base">
@@ -70,7 +70,7 @@ export default function LeDahira() {
             </div>
           ))}
 
-          <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[20px] sm:rounded-[30px] p-6 sm:p-8 text-[#0F5132]">
+          <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[20px] sm:rounded-[30px] p-6 sm:p-8 text-[#0F7C55]">
             <div className="text-4xl sm:text-5xl">✨</div>
 
             <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold">
@@ -86,7 +86,7 @@ export default function LeDahira() {
               href={LINKS.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex mt-6 sm:mt-8 bg-[#0F5132] text-white px-5 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base"
+              className="inline-flex mt-6 sm:mt-8 bg-[#0F7C55] text-white px-5 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base"
             >
               Adhérer Maintenant
             </a>

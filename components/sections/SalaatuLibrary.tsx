@@ -58,7 +58,7 @@ export default function SalaatuLibrary() {
     return (
       <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pb-20">
         <div className="bg-white/80 rounded-3xl p-12 text-center">
-          <div className="w-12 h-12 mx-auto border-4 border-[#0F5132]/20 border-t-[#D4AF37] rounded-full animate-spin" />
+          <div className="w-12 h-12 mx-auto border-4 border-[#0F7C55]/20 border-t-[#D4AF37] rounded-full animate-spin" />
         </div>
       </section>
     );
@@ -76,7 +76,7 @@ export default function SalaatuLibrary() {
 
         <div className="text-center">
           {isActive ? (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F5132]/10 text-[#0F5132] text-xs font-semibold mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F7C55]/10 text-[#0F7C55] text-xs font-semibold mb-3">
               <FaShieldHalved className="text-[#D4AF37]" /> Contenu protégé · Membre Actif
             </div>
           ) : !user ? (
@@ -95,7 +95,7 @@ export default function SalaatuLibrary() {
           <span className="block uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
             Bibliothèque Sacrée
           </span>
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             Bibliothèque des Salaats
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
@@ -106,14 +106,14 @@ export default function SalaatuLibrary() {
           </p>
           {user && (
             <p className="mt-3 text-xs text-gray-400">
-              Connecté en tant que <span className="font-semibold text-[#0F5132]">{user.displayName || user.email}</span>
+              Connecté en tant que <span className="font-semibold text-[#0F7C55]">{user.displayName || user.email}</span>
             </p>
           )}
         </div>
 
         {/* SALAATU DU JOUR — accès libre */}
         {today && (
-          <div className="mt-10 sm:mt-12 bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-white">
+          <div className="mt-10 sm:mt-12 bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-white">
             <p className="uppercase tracking-[0.2em] text-[#D4AF37] text-xs sm:text-sm font-bold mb-2">
               Salaatu du jour — {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
               <span className="ml-2 inline-block bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded-full text-[10px]">Accès libre</span>
@@ -146,7 +146,7 @@ export default function SalaatuLibrary() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
-                  c === category ? "bg-[#0F5132] text-white" : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+                  c === category ? "bg-[#0F7C55] text-white" : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
                 }`}
               >
                 {c}
@@ -158,7 +158,7 @@ export default function SalaatuLibrary() {
             placeholder="Rechercher..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="rounded-full border border-gray-200 px-4 py-2 text-sm text-[#0F5132] bg-white outline-none focus:border-[#0F5132] min-w-[180px]"
+            className="rounded-full border border-gray-200 px-4 py-2 text-sm text-[#0F7C55] bg-white outline-none focus:border-[#0F7C55] min-w-[180px]"
           />
         </div>
 
@@ -190,7 +190,7 @@ export default function SalaatuLibrary() {
         </div>
 
         {!isActive && (
-          <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F5132] text-center">
+          <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F7C55] text-center">
             <FaCrown className="inline text-2xl mb-2" />
             <h3 className="font-display text-xl sm:text-2xl font-bold">
               Débloquer la bibliothèque complète
@@ -200,7 +200,7 @@ export default function SalaatuLibrary() {
             </p>
             <Link
               href="/espace-membre/profil"
-              className="inline-flex items-center mt-5 bg-[#0F5132] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
+              className="inline-flex items-center mt-5 bg-[#0F7C55] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
             >
               Devenir Membre Actif →
             </Link>
@@ -228,7 +228,7 @@ function SalaatuCard({
 }) {
   return (
     <div className={`rounded-2xl sm:rounded-3xl overflow-hidden border relative transition ${
-      locked ? "bg-gray-50 border-gray-200" : "bg-[#F8F5EF] border-[#0F5132]/10"
+      locked ? "bg-gray-50 border-gray-200" : "bg-[#F8F5EF] border-[#0F7C55]/10"
     }`}>
       <button
         type="button"
@@ -248,30 +248,30 @@ function SalaatuCard({
               </span>
             )}
           </div>
-          <h3 className={`font-display text-lg sm:text-xl font-bold mt-0.5 ${locked ? "text-gray-400" : "text-[#0F5132]"}`}>
+          <h3 className={`font-display text-lg sm:text-xl font-bold mt-0.5 ${locked ? "text-gray-400" : "text-[#0F7C55]"}`}>
             {item.title}
           </h3>
         </div>
         {locked ? (
           <FaLock className="text-gray-400" />
         ) : (
-          <span className={`text-[#0F5132] transition-transform ${isOpen ? "rotate-180" : ""}`}>▾</span>
+          <span className={`text-[#0F7C55] transition-transform ${isOpen ? "rotate-180" : ""}`}>▾</span>
         )}
       </button>
       {!locked && isOpen && (
-        <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
+        <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F7C55]/10 relative">
           {watermark && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] -rotate-12 select-none">
-              <p className="font-display text-3xl text-[#0F5132] tracking-widest">{watermark}</p>
+              <p className="font-display text-3xl text-[#0F7C55] tracking-widest">{watermark}</p>
             </div>
           )}
-          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#0F5132] text-center mt-6 relative" dir="rtl">
+          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#0F7C55] text-center mt-6 relative" dir="rtl">
             {item.arabic}
           </p>
           {item.transliteration && (
             <div className="mt-5 relative">
               <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">Prononciation</p>
-              <p className="italic text-sm sm:text-base text-[#0F5132] leading-7">« {item.transliteration} »</p>
+              <p className="italic text-sm sm:text-base text-[#0F7C55] leading-7">« {item.transliteration} »</p>
             </div>
           )}
           {item.translation && (
@@ -285,7 +285,7 @@ function SalaatuCard({
               <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Bienfaits</p>
               <ul className="space-y-1.5">
                 {item.benefits.map((b, i) => (
-                  <li key={i} className="text-sm sm:text-base text-[#0F5132] flex gap-2">
+                  <li key={i} className="text-sm sm:text-base text-[#0F7C55] flex gap-2">
                     <span className="text-[#D4AF37]">✦</span><span>{b}</span>
                   </li>
                 ))}
@@ -297,7 +297,7 @@ function SalaatuCard({
               <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Secrets & Pratique</p>
               <ul className="space-y-2">
                 {item.usageNotes.map((n, i) => (
-                  <li key={i} className="text-sm sm:text-base text-gray-700 leading-7 bg-white rounded-xl p-3 border border-[#0F5132]/10">
+                  <li key={i} className="text-sm sm:text-base text-gray-700 leading-7 bg-white rounded-xl p-3 border border-[#0F7C55]/10">
                     <span className="text-[#B8860B] font-bold mr-1.5">{i + 1}.</span>{n}
                   </li>
                 ))}
@@ -328,10 +328,10 @@ function UpgradeModal({
         className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F5132] text-2xl">
+        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-2xl">
           {status === "en_attente" ? <FaClock /> : <FaCrown />}
         </div>
-        <h2 className="font-display mt-4 text-2xl font-bold text-[#0F5132]">
+        <h2 className="font-display mt-4 text-2xl font-bold text-[#0F7C55]">
           {status === "en_attente" ? "Validation en cours" : "Adhésion membre actif"}
         </h2>
         <p className="mt-3 text-gray-600 text-sm leading-7">
@@ -353,7 +353,7 @@ function UpgradeModal({
           ) : (
             <Link
               href={loggedIn ? "/espace-membre/profil" : "/espace-membre?next=/espace-membre/profil"}
-              className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 rounded-xl font-bold"
+              className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 rounded-xl font-bold"
             >
               {loggedIn ? "Compléter mon profil →" : "Créer un compte →"}
             </Link>
@@ -361,7 +361,7 @@ function UpgradeModal({
           <button
             type="button"
             onClick={onClose}
-            className="block w-full bg-gray-100 text-[#0F5132] py-3 rounded-xl font-semibold text-sm"
+            className="block w-full bg-gray-100 text-[#0F7C55] py-3 rounded-xl font-semibold text-sm"
           >
             Plus tard
           </button>

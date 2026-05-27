@@ -96,7 +96,7 @@ export default function AdminBibliothequePage() {
           <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
             Spiritualité
           </p>
-          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
             Bibliothèque des Salaats
           </h1>
           <p className="mt-2 text-gray-600 text-sm">
@@ -112,14 +112,14 @@ export default function AdminBibliothequePage() {
                 type="button"
                 onClick={handleImport}
                 disabled={importing}
-                className="inline-flex items-center gap-2 bg-[#0F5132]/10 hover:bg-[#0F5132]/20 text-[#0F5132] border border-[#0F5132]/20 py-3 px-5 rounded-xl font-semibold text-sm transition disabled:opacity-50"
+                className="inline-flex items-center gap-2 bg-[#0F7C55]/10 hover:bg-[#0F7C55]/20 text-[#0F7C55] border border-[#0F7C55]/20 py-3 px-5 rounded-xl font-semibold text-sm transition disabled:opacity-50"
               >
                 {importing ? "Importation..." : "Importer la bibliothèque (30)"}
               </button>
             )}
             <Link
               href="/admin/bibliotheque/nouveau"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
             >
               <FaPlus /> Ajouter un Salaat
             </Link>
@@ -139,12 +139,12 @@ export default function AdminBibliothequePage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un Salaat..."
-          className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+          className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+          className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
         >
           <option value="Toutes">Toutes catégories</option>
           {SALAATU_CATEGORIES.map((c) => (
@@ -194,7 +194,7 @@ export default function AdminBibliothequePage() {
                 <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
                   {s.category}
                 </p>
-                <h3 className="font-display text-base sm:text-lg font-bold text-[#0F5132] truncate">
+                <h3 className="font-display text-base sm:text-lg font-bold text-[#0F7C55] truncate">
                   {s.title}
                 </h3>
                 <p className="text-xs text-gray-500 truncate font-arabic" dir="rtl">
@@ -206,7 +206,7 @@ export default function AdminBibliothequePage() {
                 <div className="flex gap-2">
                   <Link
                     href={`/admin/bibliotheque/${s.id}`}
-                    className="inline-flex items-center gap-1 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] py-1.5 px-3 rounded-lg text-xs font-semibold"
+                    className="inline-flex items-center gap-1 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] py-1.5 px-3 rounded-lg text-xs font-semibold"
                   >
                     <FaPenToSquare /> Éditer
                   </Link>

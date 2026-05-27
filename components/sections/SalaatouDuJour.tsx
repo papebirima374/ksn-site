@@ -56,7 +56,7 @@ export default function SalaatouDuJour() {
             {t("salaatu.overline")}
           </span>
 
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             {title || t("salaatu.title")}
           </h2>
 
@@ -66,7 +66,7 @@ export default function SalaatouDuJour() {
         </div>
 
         <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
-          <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-8 sm:p-12 text-center text-white shadow-2xl">
+          <div className="bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-8 sm:p-12 text-center text-white shadow-2xl">
             <p className="font-arabic text-3xl sm:text-4xl md:text-5xl leading-loose text-[#D4AF37]" dir="rtl">
               {arabic}
             </p>
@@ -89,7 +89,7 @@ export default function SalaatouDuJour() {
           <div className="mt-10 grid sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">📿</div>
-              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F7C55]">
                 {t("salaatu.benefits")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">
@@ -99,7 +99,7 @@ export default function SalaatouDuJour() {
 
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">🕌</div>
-              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F7C55]">
                 {t("salaatu.when")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">
@@ -109,7 +109,7 @@ export default function SalaatouDuJour() {
 
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">✨</div>
-              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F7C55]">
                 {t("salaatu.reward")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">

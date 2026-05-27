@@ -47,7 +47,7 @@ export default function MemberDetailPage() {
       <div className="no-print mb-6 flex flex-wrap items-center justify-between gap-4">
         <Link
           href="/admin/membres"
-          className="inline-flex items-center gap-2 text-[#0F5132] hover:text-[#B8860B] text-sm font-semibold"
+          className="inline-flex items-center gap-2 text-[#0F7C55] hover:text-[#B8860B] text-sm font-semibold"
         >
           <FaArrowLeft /> Retour aux membres
         </Link>
@@ -57,13 +57,13 @@ export default function MemberDetailPage() {
             <button
               type="button"
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-2.5 px-4 rounded-xl font-bold text-sm"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-4 rounded-xl font-bold text-sm"
             >
               <FaPrint /> Imprimer la carte
             </button>
             <Link
               href={`/admin/membres/${member.id}/editer`}
-              className="inline-flex items-center gap-2 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] py-2.5 px-4 rounded-xl font-semibold text-sm"
+              className="inline-flex items-center gap-2 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] py-2.5 px-4 rounded-xl font-semibold text-sm"
             >
               <FaPenToSquare /> Éditer
             </Link>
@@ -113,7 +113,7 @@ function Info({ label, value, mono }: { label: string; value: string; mono?: boo
       <p className="text-xs uppercase tracking-widest text-gray-500 font-bold">
         {label}
       </p>
-      <p className={`mt-1 text-[#0F5132] ${mono ? "font-mono tabular-nums" : ""}`}>
+      <p className={`mt-1 text-[#0F7C55] ${mono ? "font-mono tabular-nums" : ""}`}>
         {value}
       </p>
     </div>

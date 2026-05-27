@@ -46,7 +46,7 @@ export default function AdminArticlesPage() {
           <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
             Contenu éditorial
           </p>
-          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+          <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
             Articles & blog
           </h1>
           <p className="mt-2 text-gray-600 text-sm">
@@ -56,7 +56,7 @@ export default function AdminArticlesPage() {
         {canEdit && (
           <Link
             href="/admin/articles/nouveau"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
           >
             <FaPlus /> Nouvel article
           </Link>
@@ -79,7 +79,7 @@ export default function AdminArticlesPage() {
           {canEdit && (
             <Link
               href="/admin/articles/nouveau"
-              className="inline-flex items-center gap-2 mt-5 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+              className="inline-flex items-center gap-2 mt-5 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
             >
               <FaPlus /> Créer le premier article
             </Link>
@@ -95,7 +95,7 @@ export default function AdminArticlesPage() {
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 flex-wrap">
-                    <h3 className="text-[#0F5132] font-semibold text-base sm:text-lg">
+                    <h3 className="text-[#0F7C55] font-semibold text-base sm:text-lg">
                       {article.title}
                     </h3>
                     <span
@@ -122,7 +122,7 @@ export default function AdminArticlesPage() {
                   <div className="flex flex-col gap-2">
                     <Link
                       href={`/admin/articles/${article.id}`}
-                      className="inline-flex items-center justify-center gap-1.5 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] py-1.5 px-3 rounded-lg text-xs font-semibold"
+                      className="inline-flex items-center justify-center gap-1.5 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] py-1.5 px-3 rounded-lg text-xs font-semibold"
                     >
                       <FaPenToSquare /> Éditer
                     </Link>

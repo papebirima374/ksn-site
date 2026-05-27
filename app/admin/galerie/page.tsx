@@ -103,7 +103,7 @@ export default function AdminGaleriePage() {
         <p className="text-[#B8860B] uppercase tracking-widest text-xs font-bold">
           Contenu
         </p>
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Galerie photos
         </h1>
         <p className="mt-2 text-gray-600 text-sm">
@@ -125,14 +125,14 @@ export default function AdminGaleriePage() {
               accept="image/*"
               required
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full text-sm text-[#0F5132] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F5132] file:text-white file:font-semibold file:cursor-pointer"
+              className="w-full text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
             />
             <input
               type="text"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
               placeholder="Légende (optionnel)"
-              className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F5132]"
+              className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55]"
             />
           </div>
           <div>
@@ -144,7 +144,7 @@ export default function AdminGaleriePage() {
               onChange={(e) =>
                 setCategory(e.target.value as GalleryItem["category"])
               }
-              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
             >
               {CATEGORIES.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -156,7 +156,7 @@ export default function AdminGaleriePage() {
           <button
             type="submit"
             disabled={!file || uploading}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-2.5 px-5 rounded-xl font-bold disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-5 rounded-xl font-bold disabled:opacity-50"
           >
             <FaPlus /> {uploading ? "Upload…" : "Ajouter"}
           </button>
@@ -213,7 +213,7 @@ export default function AdminGaleriePage() {
                 <p className="text-xs text-[#B8860B] uppercase tracking-widest font-bold">
                   {item.category}
                 </p>
-                <p className="mt-1 text-sm text-[#0F5132] line-clamp-2">
+                <p className="mt-1 text-sm text-[#0F7C55] line-clamp-2">
                   {item.alt}
                 </p>
                 {canEdit && (
@@ -221,7 +221,7 @@ export default function AdminGaleriePage() {
                     <button
                       type="button"
                       onClick={() => handleEdit(item)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] py-1.5 rounded-lg text-xs font-semibold"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] py-1.5 rounded-lg text-xs font-semibold"
                     >
                       <FaPenToSquare /> Éditer
                     </button>
@@ -258,8 +258,8 @@ function FilterPill({
       onClick={onClick}
       className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
         active
-          ? "bg-[#0F5132] text-white"
-          : "bg-white text-[#0F5132] hover:bg-[#F8F5EF]"
+          ? "bg-[#0F7C55] text-white"
+          : "bg-white text-[#0F7C55] hover:bg-[#F8F5EF]"
       }`}
     >
       {children}

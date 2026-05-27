@@ -27,7 +27,7 @@ export default function LanguageSwitcher({ variant = "navbar" }: { variant?: Var
   const buttonClass =
     variant === "navbar"
       ? "inline-flex items-center gap-1.5 sm:gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl font-semibold text-xs sm:text-sm transition"
-      : "inline-flex items-center gap-2 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] px-4 py-2.5 rounded-xl font-semibold text-sm transition";
+      : "inline-flex items-center gap-2 bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] px-4 py-2.5 rounded-xl font-semibold text-sm transition";
 
   return (
     <div ref={ref} className="relative">
@@ -63,8 +63,8 @@ export default function LanguageSwitcher({ variant = "navbar" }: { variant?: Var
                       isDisabled
                         ? "text-gray-400 cursor-not-allowed"
                         : active
-                        ? "bg-[#0F5132] text-white"
-                        : "text-[#0F5132] hover:bg-[#F8F5EF]"
+                        ? "bg-[#0F7C55] text-white"
+                        : "text-[#0F7C55] hover:bg-[#F8F5EF]"
                     }`}
                   >
                     <span className="flex items-center gap-2.5">

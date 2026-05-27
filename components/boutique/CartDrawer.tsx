@@ -91,8 +91,8 @@ export default function CartDrawer() {
         {/* HEADER */}
         <div className="px-5 sm:px-7 py-5 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FaCartShopping className="text-[#0F5132]" />
-            <h2 className="font-display text-xl font-bold text-[#0F5132]">
+            <FaCartShopping className="text-[#0F7C55]" />
+            <h2 className="font-display text-xl font-bold text-[#0F7C55]">
               {step === "cart" && "Votre panier"}
               {step === "checkout" && "Vos informations"}
               {step === "payment" && "Paiement"}
@@ -102,7 +102,7 @@ export default function CartDrawer() {
           <button
             type="button"
             onClick={close}
-            className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-[#0F5132]"
+            className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-[#0F7C55]"
             aria-label="Fermer"
           >
             <FaXmark />
@@ -126,13 +126,13 @@ export default function CartDrawer() {
                       className="bg-[#F8F5EF] rounded-2xl p-4 flex gap-3"
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-display font-bold text-[#0F5132] text-sm sm:text-base line-clamp-2">
+                        <p className="font-display font-bold text-[#0F7C55] text-sm sm:text-base line-clamp-2">
                           {i.title}
                         </p>
                         <p className="text-xs text-[#B8860B] uppercase tracking-widest font-bold mt-0.5">
                           {i.category}
                         </p>
-                        <p className="mt-1 text-sm text-[#0F5132] font-semibold tabular-nums">
+                        <p className="mt-1 text-sm text-[#0F7C55] font-semibold tabular-nums">
                           {fmt(i.price)}
                         </p>
                       </div>
@@ -149,18 +149,18 @@ export default function CartDrawer() {
                           <button
                             type="button"
                             onClick={() => update(i.productId, i.quantity - 1)}
-                            className="w-8 h-8 text-[#0F5132] hover:bg-[#F8F5EF] disabled:opacity-30"
+                            className="w-8 h-8 text-[#0F7C55] hover:bg-[#F8F5EF] disabled:opacity-30"
                             disabled={i.quantity <= 1}
                           >
                             −
                           </button>
-                          <span className="w-8 text-center text-sm font-bold text-[#0F5132] tabular-nums">
+                          <span className="w-8 text-center text-sm font-bold text-[#0F7C55] tabular-nums">
                             {i.quantity}
                           </span>
                           <button
                             type="button"
                             onClick={() => update(i.productId, i.quantity + 1)}
-                            className="w-8 h-8 text-[#0F5132] hover:bg-[#F8F5EF]"
+                            className="w-8 h-8 text-[#0F7C55] hover:bg-[#F8F5EF]"
                           >
                             +
                           </button>
@@ -213,7 +213,7 @@ export default function CartDrawer() {
               )}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-xl font-bold"
+                className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-xl font-bold"
               >
                 Continuer vers le paiement →
               </button>
@@ -251,14 +251,14 @@ export default function CartDrawer() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-xl font-bold disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-xl font-bold disabled:opacity-50"
               >
                 {submitting ? "Validation…" : `Confirmer ${fmt(subtotal)}`}
               </button>
               <button
                 type="button"
                 onClick={() => setStep("checkout")}
-                className="w-full text-center text-sm text-gray-500 hover:text-[#0F5132]"
+                className="w-full text-center text-sm text-gray-500 hover:text-[#0F7C55]"
               >
                 ← Modifier mes informations
               </button>
@@ -270,7 +270,7 @@ export default function CartDrawer() {
               <div className="w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-2xl">
                 ✓
               </div>
-              <h3 className="font-display mt-4 text-2xl font-bold text-[#0F5132]">
+              <h3 className="font-display mt-4 text-2xl font-bold text-[#0F7C55]">
                 Merci !
               </h3>
               <p className="mt-2 text-gray-600 text-sm leading-7">
@@ -281,7 +281,7 @@ export default function CartDrawer() {
                 </span>
               </p>
               {hasBook && (
-                <div className="mt-5 bg-[#F8F5EF] rounded-xl p-4 text-sm text-[#0F5132]">
+                <div className="mt-5 bg-[#F8F5EF] rounded-xl p-4 text-sm text-[#0F7C55]">
                   📚 Les livres PDF achetés vous seront envoyés à{" "}
                   <span className="font-semibold">{email}</span> dès validation
                   du paiement.
@@ -299,7 +299,7 @@ export default function CartDrawer() {
                 <p className="text-sm text-gray-600">
                   Sous-total ({count} article{count > 1 ? "s" : ""})
                 </p>
-                <p className="font-display text-2xl font-bold text-[#0F5132] tabular-nums">
+                <p className="font-display text-2xl font-bold text-[#0F7C55] tabular-nums">
                   {fmt(subtotal)}
                 </p>
               </div>
@@ -307,7 +307,7 @@ export default function CartDrawer() {
                 <button
                   type="button"
                   onClick={() => setStep("checkout")}
-                  className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3.5 rounded-xl font-bold"
+                  className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3.5 rounded-xl font-bold"
                 >
                   Passer la commande
                 </button>
@@ -320,7 +320,7 @@ export default function CartDrawer() {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3.5 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3.5 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";
 
 function PayButton({
   selected,
@@ -337,8 +337,8 @@ function PayButton({
       onClick={onClick}
       className={`flex items-center gap-2 py-3 px-3 rounded-xl border-2 text-sm font-semibold transition ${
         selected
-          ? "border-[#0F5132] bg-[#0F5132] text-white"
-          : "border-gray-200 bg-white text-[#0F5132] hover:bg-[#F8F5EF]"
+          ? "border-[#0F7C55] bg-[#0F7C55] text-white"
+          : "border-gray-200 bg-white text-[#0F7C55] hover:bg-[#F8F5EF]"
       }`}
     >
       {children}
@@ -359,7 +359,7 @@ function PaymentSimulator({
 }) {
   if (method === "wave") {
     return (
-      <div className="bg-[#F8F5EF] rounded-2xl p-4 text-sm text-[#0F5132]">
+      <div className="bg-[#F8F5EF] rounded-2xl p-4 text-sm text-[#0F7C55]">
         <p className="font-bold mb-2">Paiement Wave — {fmt(amount)}</p>
         <ol className="list-decimal list-inside space-y-1 text-xs leading-6">
           <li>Ouvrez Wave et envoyez {fmt(amount)} au +221 76 725 72 72</li>
@@ -378,7 +378,7 @@ function PaymentSimulator({
   }
   if (method === "orange-money") {
     return (
-      <div className="bg-[#FFF4E5] rounded-2xl p-4 text-sm text-[#0F5132]">
+      <div className="bg-[#FFF4E5] rounded-2xl p-4 text-sm text-[#0F7C55]">
         <p className="font-bold mb-2">Orange Money — {fmt(amount)}</p>
         <ol className="list-decimal list-inside space-y-1 text-xs leading-6">
           <li>Composez <span className="font-mono font-bold">#144#</span></li>
@@ -397,7 +397,7 @@ function PaymentSimulator({
   }
   if (method === "card") {
     return (
-      <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-2xl p-5 text-[#0F5132]">
+      <div className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-2xl p-5 text-[#0F7C55]">
         <p className="text-xs uppercase tracking-widest font-bold mb-3">
           Carte bancaire — {fmt(amount)}
         </p>
@@ -424,7 +424,7 @@ function PaymentSimulator({
   }
   if (method === "paypal") {
     return (
-      <div className="bg-[#003087]/10 rounded-2xl p-4 text-sm text-[#0F5132]">
+      <div className="bg-[#003087]/10 rounded-2xl p-4 text-sm text-[#0F7C55]">
         <p className="font-bold mb-2">PayPal — {fmt(amount)}</p>
         <p className="text-xs leading-6">
           Une fenêtre PayPal s&apos;ouvrirait normalement ici pour valider le

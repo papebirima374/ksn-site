@@ -85,7 +85,7 @@ export default function Navbar() {
 
             <Link
               href="/don"
-              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs sm:text-sm lg:text-base whitespace-nowrap"
+              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs sm:text-sm lg:text-base whitespace-nowrap"
             >
               {t("cta.donate")}
             </Link>
@@ -146,7 +146,7 @@ export default function Navbar() {
                       rel="noopener noreferrer"
                       onClick={() => setOpen(false)}
                       aria-label={s.name}
-                      className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F5132] text-white transition"
+                      className="flex items-center justify-center gap-2 px-3 py-3 rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F7C55] text-white transition"
                     >
                       <Icon className="w-4 h-4" />
                       <span className="text-xs font-medium">{s.name}</span>
@@ -167,7 +167,7 @@ export default function Navbar() {
               <Link
                 href="/don"
                 onClick={() => setOpen(false)}
-                className="block py-3 text-center font-bold text-[#0F5132] bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-xl"
+                className="block py-3 text-center font-bold text-[#0F7C55] bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-xl"
               >
                 {t("cta.donate")}
               </Link>

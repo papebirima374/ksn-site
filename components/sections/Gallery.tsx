@@ -63,7 +63,7 @@ export default function Gallery() {
           <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
             Galerie Photos KSN
           </span>
-          <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             Moments du Dahira
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto leading-7 text-sm sm:text-base">
@@ -82,8 +82,8 @@ export default function Gallery() {
                 onClick={() => setCategory(cat.id)}
                 className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition ${
                   active
-                    ? "bg-[#0F5132] text-white shadow-md"
-                    : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+                    ? "bg-[#0F7C55] text-white shadow-md"
+                    : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
                 }`}
               >
                 {cat.label}

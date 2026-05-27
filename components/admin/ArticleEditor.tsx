@@ -104,7 +104,7 @@ export default function ArticleEditor({ initial }: Props) {
                 setSlug(slugify(val));
               }
             }}
-            className="w-full rounded-xl border border-gray-200 p-3 text-lg font-bold text-[#0F5132] bg-white"
+            className="w-full rounded-xl border border-gray-200 p-3 text-lg font-bold text-[#0F7C55] bg-white"
             placeholder="Le titre de votre article"
           />
         </div>
@@ -121,7 +121,7 @@ export default function ArticleEditor({ initial }: Props) {
                 setAutoSlug(false);
                 setSlug(slugify(e.target.value));
               }}
-              className="flex-1 rounded-xl border border-gray-200 p-3 text-sm font-mono text-[#0F5132] bg-white"
+              className="flex-1 rounded-xl border border-gray-200 p-3 text-sm font-mono text-[#0F7C55] bg-white"
             />
             <button
               type="button"
@@ -129,7 +129,7 @@ export default function ArticleEditor({ initial }: Props) {
                 setAutoSlug(true);
                 setSlug(slugify(title));
               }}
-              className="text-xs px-3 rounded-xl bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F5132] font-semibold"
+              className="text-xs px-3 rounded-xl bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] font-semibold"
             >
               Auto
             </button>
@@ -144,7 +144,7 @@ export default function ArticleEditor({ initial }: Props) {
             value={excerpt}
             onChange={(e) => setExcerpt(e.target.value)}
             rows={2}
-            className="w-full rounded-xl border border-gray-200 p-3 text-sm text-[#0F5132] bg-white"
+            className="w-full rounded-xl border border-gray-200 p-3 text-sm text-[#0F7C55] bg-white"
           />
         </div>
         <div>
@@ -156,7 +156,7 @@ export default function ArticleEditor({ initial }: Props) {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={16}
-            className="w-full rounded-xl border border-gray-200 p-3 text-sm text-[#0F5132] bg-white font-mono leading-7"
+            className="w-full rounded-xl border border-gray-200 p-3 text-sm text-[#0F7C55] bg-white font-mono leading-7"
             placeholder="Écrivez votre article ici. Vous pouvez utiliser Markdown : ## titre, **gras**, *italique*, etc."
           />
         </div>
@@ -179,7 +179,7 @@ export default function ArticleEditor({ initial }: Props) {
               const f = e.target.files?.[0];
               if (f) handleCoverUpload(f);
             }}
-            className="text-sm text-[#0F5132] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F5132] file:text-white file:font-semibold file:cursor-pointer"
+            className="text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
           />
           {uploading && <p className="text-xs text-gray-500 mt-2">Upload…</p>}
         </div>
@@ -191,7 +191,7 @@ export default function ArticleEditor({ initial }: Props) {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as ArticleStatus)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F5132] bg-white"
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
           >
             <option value="draft">Brouillon (non visible)</option>
             <option value="published">Publié (visible sur le site)</option>
@@ -209,14 +209,14 @@ export default function ArticleEditor({ initial }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+          className="flex-1 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold disabled:opacity-50"
         >
           {saving ? "Enregistrement…" : initial ? "Enregistrer les modifications" : "Créer l'article"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/admin/articles")}
-          className="px-6 bg-white border border-gray-200 text-[#0F5132] rounded-2xl font-semibold"
+          className="px-6 bg-white border border-gray-200 text-[#0F7C55] rounded-2xl font-semibold"
         >
           Annuler
         </button>

@@ -30,7 +30,7 @@ export default function Contact() {
       id="contact"
       className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
     >
-      <div className="overflow-hidden rounded-[28px] sm:rounded-[45px] bg-[#0F5132] text-white">
+      <div className="overflow-hidden rounded-[28px] sm:rounded-[45px] bg-[#0F7C55] text-white">
         <div className="grid lg:grid-cols-2">
           <div className="p-6 sm:p-12 md:p-16">
             <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
@@ -84,7 +84,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="bg-[#F8F5EF] p-6 sm:p-12 md:p-16 text-[#0F5132]">
+          <div className="bg-[#F8F5EF] p-6 sm:p-12 md:p-16 text-[#0F7C55]">
             <h3 className="font-display text-2xl sm:text-3xl font-bold">
               Envoyer un message
             </h3>
@@ -101,7 +101,7 @@ export default function Contact() {
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
                 placeholder="Nom complet"
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white"
               />
 
               <input
@@ -110,7 +110,7 @@ export default function Contact() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Adresse email"
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white"
               />
 
               <input
@@ -118,7 +118,7 @@ export default function Contact() {
                 value={tel}
                 onChange={(e) => setTel(e.target.value)}
                 placeholder="Téléphone (optionnel)"
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white"
               />
 
               <textarea
@@ -127,12 +127,12 @@ export default function Contact() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Votre message..."
                 rows={5}
-                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base bg-white resize-none"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F7C55] text-sm sm:text-base bg-white resize-none"
               />
 
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 sm:py-5 rounded-[16px] sm:rounded-[20px] font-bold hover:scale-[1.02] transition text-sm sm:text-base"
+                className="w-full inline-flex items-center justify-center gap-3 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 sm:py-5 rounded-[16px] sm:rounded-[20px] font-bold hover:scale-[1.02] transition text-sm sm:text-base"
               >
                 <FaWhatsapp className="text-lg sm:text-xl" />
                 Envoyer via WhatsApp

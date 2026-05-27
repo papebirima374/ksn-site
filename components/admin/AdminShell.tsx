@@ -93,7 +93,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${
                   active
-                    ? "bg-[#D4AF37] text-[#0F5132]"
+                    ? "bg-[#D4AF37] text-[#0F7C55]"
                     : "text-white/80 hover:bg-white/10 hover:text-white"
                 }`}
               >
@@ -137,12 +137,12 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => setOpen(!open)}
-            className="text-[#0F5132] text-xl"
+            className="text-[#0F7C55] text-xl"
             aria-label="Menu"
           >
             {open ? <FaXmark /> : <FaBars />}
           </button>
-          <p className="font-display text-lg font-bold text-[#0F5132]">
+          <p className="font-display text-lg font-bold text-[#0F7C55]">
             KSN Admin
           </p>
           <div className="w-6" />
@@ -161,7 +161,7 @@ function FirebaseNotConfigured() {
     <div className="min-h-screen bg-[#F8F5EF] flex items-center justify-center p-6">
       <div className="max-w-2xl bg-white rounded-3xl shadow-xl p-8 sm:p-12 text-center">
         <p className="font-arabic text-3xl text-[#D4AF37]">⚙️</p>
-        <h1 className="font-display mt-4 text-3xl font-bold text-[#0F5132]">
+        <h1 className="font-display mt-4 text-3xl font-bold text-[#0F7C55]">
           Firebase non configuré
         </h1>
         <p className="mt-5 text-gray-600 leading-7">
@@ -179,7 +179,7 @@ function FirebaseNotConfigured() {
           <code className="bg-[#F8F5EF] px-2 py-0.5 rounded">.env.local</code>{" "}
           (cf. <code>.env.local.example</code>).
         </p>
-        <div className="mt-8 text-left bg-[#F8F5EF] rounded-2xl p-5 font-mono text-xs sm:text-sm text-[#0F5132] overflow-x-auto">
+        <div className="mt-8 text-left bg-[#F8F5EF] rounded-2xl p-5 font-mono text-xs sm:text-sm text-[#0F7C55] overflow-x-auto">
           NEXT_PUBLIC_FIREBASE_API_KEY=…<br />
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=…<br />
           NEXT_PUBLIC_FIREBASE_PROJECT_ID=…<br />
@@ -189,7 +189,7 @@ function FirebaseNotConfigured() {
         </div>
         <Link
           href="/"
-          className="inline-flex mt-8 text-[#0F5132] hover:text-[#B8860B] transition text-sm font-semibold"
+          className="inline-flex mt-8 text-[#0F7C55] hover:text-[#B8860B] transition text-sm font-semibold"
         >
           ← Retour au site
         </Link>

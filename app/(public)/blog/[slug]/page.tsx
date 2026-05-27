@@ -52,7 +52,7 @@ export default function ArticlePage() {
         </p>
         <Link
           href="/blog"
-          className="inline-flex mt-8 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 py-3 rounded-2xl font-bold"
+          className="inline-flex mt-8 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-3 rounded-2xl font-bold"
         >
           ← Retour au blog
         </Link>
@@ -94,7 +94,7 @@ export default function ArticlePage() {
           {article.authorName && ` • Par ${article.authorName}`}
         </p>
 
-        <h1 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132] leading-tight">
+        <h1 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55] leading-tight">
           {article.title}
         </h1>
 

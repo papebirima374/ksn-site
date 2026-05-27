@@ -246,7 +246,7 @@ export default function MemberForm({ initial }: Props) {
       <div className="bg-white rounded-3xl shadow-md p-6 sm:p-8 space-y-4">
         <Labelled label="Photo du membre">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="relative w-28 h-32 rounded-xl overflow-hidden bg-[#F8F5EF] flex items-center justify-center text-[#0F5132]/50 text-3xl">
+            <div className="relative w-28 h-32 rounded-xl overflow-hidden bg-[#F8F5EF] flex items-center justify-center text-[#0F7C55]/50 text-3xl">
               {photo ? (
                 <Image
                   src={photo}
@@ -268,7 +268,7 @@ export default function MemberForm({ initial }: Props) {
                   const f = e.target.files?.[0];
                   if (f) handlePhoto(f);
                 }}
-                className="text-sm text-[#0F5132] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F5132] file:text-white file:font-semibold file:cursor-pointer"
+                className="text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
               />
               {uploading && <p className="text-xs text-gray-500 mt-2">Upload…</p>}
               {photo && (
@@ -298,7 +298,7 @@ export default function MemberForm({ initial }: Props) {
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 min-w-[200px] bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+          className="flex-1 min-w-[200px] bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold disabled:opacity-50"
         >
           {saving
             ? "Enregistrement…"
@@ -309,7 +309,7 @@ export default function MemberForm({ initial }: Props) {
         <button
           type="button"
           onClick={() => router.push("/admin/membres")}
-          className="px-6 bg-white border border-gray-200 text-[#0F5132] rounded-2xl font-semibold"
+          className="px-6 bg-white border border-gray-200 text-[#0F7C55] rounded-2xl font-semibold"
         >
           Annuler
         </button>
@@ -319,7 +319,7 @@ export default function MemberForm({ initial }: Props) {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";
 
 function Labelled({
   label,

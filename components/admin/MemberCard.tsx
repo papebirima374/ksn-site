@@ -47,7 +47,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <path d="M 0,0 Q 90,28 200,8 L 200,0 Z" fill="#0F5132" />
+        <path d="M 0,0 Q 90,28 200,8 L 200,0 Z" fill="#0F7C55" />
         <path d="M 0,0 Q 90,28 200,8" fill="none" stroke="#D4AF37" strokeWidth="2" />
       </svg>
 
@@ -59,7 +59,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <path d="M 0,30 L 160,30 Q 95,4 0,16 Z" fill="#0F5132" />
+        <path d="M 0,30 L 160,30 Q 95,4 0,16 Z" fill="#0F7C55" />
         <path d="M 0,16 Q 95,4 160,30" fill="none" stroke="#D4AF37" strokeWidth="2" />
       </svg>
 
@@ -86,11 +86,11 @@ export default function MemberCard({ member, size = "preview" }: Props) {
             {/* Title / Subtitle */}
             <div>
               <h1
-                className="font-sans font-extrabold text-[#0F5132] tracking-wide flex items-center gap-1.5"
+                className="font-sans font-extrabold text-[#0F7C55] tracking-wide flex items-center gap-1.5"
                 style={{ fontSize: "12.5px" }}
               >
                 <span>KIPPAANGOG SALAATU &apos;ALAA NABII</span>
-                <span className="font-serif font-bold text-[#0F5132]">ﷺ</span>
+                <span className="font-serif font-bold text-[#0F7C55]">ﷺ</span>
               </h1>
               <p
                 className="text-[#D4AF37] font-sans font-black tracking-[0.24em] mt-0.5"
@@ -102,7 +102,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           </div>
           {/* Siège */}
           <p
-            className="text-[#0F5132]/85 font-bold font-sans text-right mr-[15%] sm:mr-[20%]"
+            className="text-[#0F7C55]/85 font-bold font-sans text-right mr-[15%] sm:mr-[20%]"
             style={{ fontSize: "8.5px" }}
           >
             Siège Social: Touba
@@ -113,7 +113,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         <div
           className="w-full h-[1.5px] mt-2.5"
           style={{
-            background: "linear-gradient(to right, #0F5132 0%, #D4AF37 35%, #FAF8F3 100%)",
+            background: "linear-gradient(to right, #0F7C55 0%, #D4AF37 35%, #FAF8F3 100%)",
           }}
         />
       </div>
@@ -122,7 +122,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
       <div className="relative z-20 px-[5%] pt-[3%] grid grid-cols-[28%_1fr] gap-[6%] items-start">
         {/* Photo Column */}
         <div
-          className="relative rounded-lg overflow-hidden bg-[#E8E6E1] shadow-sm border border-[#0F5132]/15 mt-1"
+          className="relative rounded-lg overflow-hidden bg-[#E8E6E1] shadow-sm border border-[#0F7C55]/15 mt-1"
           style={{ width: "100%", aspectRatio: "1 / 1.15" }}
         >
           {member.photo ? (
@@ -135,7 +135,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
               unoptimized={member.photo.startsWith("http")}
             />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-[#E8E6E1] text-[#0F5132]/45">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-[#E8E6E1] text-[#0F7C55]/45">
               <span className="font-serif font-bold text-2xl">
                 {(member.prenom?.[0] ?? "?")}
                 {(member.nom?.[0] ?? "")}
@@ -147,7 +147,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         {/* Details Column with Watermark Seal behind it */}
         <div className="relative w-full flex flex-col gap-2.5 mt-1">
           {/* Circular watermark seal */}
-          <div className="absolute right-[5%] bottom-[5%] w-[52%] aspect-square opacity-[0.09] text-[#0F5132] pointer-events-none z-0">
+          <div className="absolute right-[5%] bottom-[5%] w-[52%] aspect-square opacity-[0.09] text-[#0F7C55] pointer-events-none z-0">
             <svg viewBox="0 0 120 120" className="w-full h-full">
               <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1" />
               <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
@@ -198,11 +198,11 @@ function Field({
 }) {
   return (
     <div>
-      <p className="text-[#0F5132]/60 uppercase tracking-widest font-extrabold font-sans text-[7.5px] leading-none">
+      <p className="text-[#0F7C55]/60 uppercase tracking-widest font-extrabold font-sans text-[7.5px] leading-none">
         {label}
       </p>
       <p
-        className={`text-[#0F5132] leading-tight mt-1 ${
+        className={`text-[#0F7C55] leading-tight mt-1 ${
           isMatricule
             ? "font-sans font-black text-[18px] tracking-wide"
             : "font-sans font-bold text-[12.5px] truncate"

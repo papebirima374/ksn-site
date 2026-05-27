@@ -50,7 +50,7 @@ export default function ReseauxSociaux() {
             Communauté Digitale
           </span>
 
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
+          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
             Suivez KSN Partout
           </h2>
 
@@ -71,10 +71,10 @@ export default function ReseauxSociaux() {
                 rel="noopener noreferrer"
                 className="bg-[#F8F5EF] rounded-[24px] sm:rounded-[35px] p-6 sm:p-8 hover:-translate-y-2 duration-300 shadow-md transition"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#0F5132] to-[#0A3D24] flex items-center justify-center text-white text-2xl sm:text-3xl">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] flex items-center justify-center text-white text-2xl sm:text-3xl">
                   <Icon />
                 </div>
-                <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold text-[#0F5132]">
+                <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold text-[#0F7C55]">
                   {s.title}
                 </h3>
                 <p className="mt-3 sm:mt-4 text-gray-600 leading-6 sm:leading-7 text-sm sm:text-base">
@@ -88,9 +88,9 @@ export default function ReseauxSociaux() {
             href={LINKS.whatsapp}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[24px] sm:rounded-[35px] p-6 sm:p-8 hover:-translate-y-2 duration-300 shadow-md text-[#0F5132] transition"
+            className="bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-[24px] sm:rounded-[35px] p-6 sm:p-8 hover:-translate-y-2 duration-300 shadow-md text-[#0F7C55] transition"
           >
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#0F5132] flex items-center justify-center text-white text-2xl sm:text-3xl">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#0F7C55] flex items-center justify-center text-white text-2xl sm:text-3xl">
               <FaWhatsapp />
             </div>
             <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold">

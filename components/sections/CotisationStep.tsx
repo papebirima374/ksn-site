@@ -4,10 +4,10 @@ import WaveLogo from "@/components/ui/WaveLogo";
 export default function CotisationStep() {
   return (
     <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-      <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.2)] p-6 sm:p-12 md:p-14 text-white">
+      <div className="bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.2)] p-6 sm:p-12 md:p-14 text-white">
         <div className="text-center mb-8 sm:mb-10">
           <span className="inline-flex items-center gap-2 uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
-            <span className="w-7 h-7 rounded-full bg-[#D4AF37] text-[#0F5132] text-xs font-bold flex items-center justify-center">
+            <span className="w-7 h-7 rounded-full bg-[#D4AF37] text-[#0F7C55] text-xs font-bold flex items-center justify-center">
               2
             </span>
             Cotisation Annuelle

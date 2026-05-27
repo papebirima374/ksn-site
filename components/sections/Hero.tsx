@@ -41,7 +41,7 @@ export default function Hero() {
           <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-5">
             <Link
               href="/inscription"
-              className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
+              className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
               {t("cta.join")}
             </Link>

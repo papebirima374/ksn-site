@@ -163,12 +163,12 @@ export default function SalaatuLibraryForm({
           />
         </Field>
 
-        <label className="flex items-center gap-2 text-sm text-[#0F5132] font-semibold">
+        <label className="flex items-center gap-2 text-sm text-[#0F7C55] font-semibold">
           <input
             type="checkbox"
             checked={featured}
             onChange={(e) => setFeatured(e.target.checked)}
-            className="w-4 h-4 accent-[#0F5132]"
+            className="w-4 h-4 accent-[#0F7C55]"
           />
           Épingler comme Salaatu du jour (remplace la rotation automatique)
         </label>
@@ -184,14 +184,14 @@ export default function SalaatuLibraryForm({
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+          className="flex-1 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 rounded-2xl font-bold disabled:opacity-50"
         >
           {saving ? "Enregistrement…" : initial ? "Enregistrer" : "Créer le Salaat"}
         </button>
         <button
           type="button"
           onClick={() => router.push("/admin/bibliotheque")}
-          className="px-6 bg-white border border-gray-200 text-[#0F5132] rounded-2xl font-semibold"
+          className="px-6 bg-white border border-gray-200 text-[#0F7C55] rounded-2xl font-semibold"
         >
           Annuler
         </button>
@@ -201,7 +201,7 @@ export default function SalaatuLibraryForm({
 }
 
 const inputClass =
-  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F5132] text-sm text-[#0F5132] bg-white";
+  "w-full rounded-xl border border-gray-200 p-3 outline-none focus:border-[#0F7C55] text-sm text-[#0F7C55] bg-white";
 
 function Field({
   label,

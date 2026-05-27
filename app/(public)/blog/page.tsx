@@ -61,7 +61,7 @@ export default function BlogPage() {
                       />
                     </div>
                   ) : (
-                    <div className="aspect-video bg-gradient-to-br from-[#0F5132] to-[#B8860B] flex items-center justify-center text-5xl">
+                    <div className="aspect-video bg-gradient-to-br from-[#0F7C55] to-[#B8860B] flex items-center justify-center text-5xl">
                       📰
                     </div>
                   )}
@@ -74,7 +74,7 @@ export default function BlogPage() {
                           )
                         : "Récent"}
                     </p>
-                    <h3 className="font-display mt-2 text-lg sm:text-xl font-bold text-[#0F5132] line-clamp-2 group-hover:text-[#B8860B] transition">
+                    <h3 className="font-display mt-2 text-lg sm:text-xl font-bold text-[#0F7C55] line-clamp-2 group-hover:text-[#B8860B] transition">
                       {article.title}
                     </h3>
                     <p className="mt-2 text-gray-600 text-sm leading-6 line-clamp-3">
