@@ -78,10 +78,10 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: SITE.name,
+    title: "Site KSN",
     statusBarStyle: "black-translucent",
   },
-  applicationName: SITE.name,
+  applicationName: "Site KSN",
   formatDetection: {
     telephone: false,
   },

@@ -114,7 +114,7 @@ export default function PWAInstaller() {
           </div>
           <div className="min-w-0">
             <p className="font-bold text-sm sm:text-base">
-              Installer KSN sur votre iPhone
+              Installer le Site KSN sur votre iPhone
             </p>
             {showIOSHelp ? (
               <div className="mt-2 text-xs sm:text-sm text-white/85 leading-5 space-y-1">
@@ -157,11 +157,11 @@ export default function PWAInstaller() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-bold text-sm sm:text-base">
-            Installer l&apos;app KSN
+            Installer le Site KSN
           </p>
           <p className="mt-1 text-xs sm:text-sm text-white/80">
-            Accédez à KSN depuis votre écran d&apos;accueil, en plein écran,
-            comme une vraie application.
+            Accédez au site KSN depuis votre écran d&apos;accueil, en plein
+            écran, comme une vraie application (distinct de l&apos;app mobile).
           </p>
           <div className="mt-3 flex gap-2">
             <button

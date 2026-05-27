@@ -6,8 +6,8 @@ import { SITE } from "@/lib/constants";
  *  (banniere "Installer l'application"), et desktop Chrome/Edge. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: `${SITE.name} — ${SITE.fullName}`,
-    short_name: SITE.name,
+    name: `Site KSN — ${SITE.fullName}`,
+    short_name: "Site KSN",
     description:
       "Dahira international au service du Salaatu sur le Prophète Muhammad ﷺ. Compteur live du Challenge 1 Milliard, bibliothèque spirituelle, espace membre.",
     start_url: "/",

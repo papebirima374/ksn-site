@@ -5,6 +5,7 @@ import { SITE } from "@/lib/constants";
 const PUBLIC_ROUTES: { path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[0]["changeFrequency"] }[] = [
   { path: "/", priority: 1.0, changeFrequency: "weekly" },
   { path: "/dahira", priority: 0.9, changeFrequency: "monthly" },
+  { path: "/notre-histoire", priority: 0.85, changeFrequency: "monthly" },
   { path: "/spiritualite", priority: 0.95, changeFrequency: "daily" },
   { path: "/media", priority: 0.85, changeFrequency: "weekly" },
   { path: "/boutique", priority: 0.85, changeFrequency: "weekly" },

@@ -28,6 +28,7 @@ export default function Footer() {
   const navLinks = [
     { label: t("nav.home"), href: "/" },
     { label: t("nav.dahira"), href: "/dahira" },
+    { label: "Notre Histoire", href: "/notre-histoire" },
     { label: t("nav.spiritualite"), href: "/spiritualite" },
     { label: "Challenge 1 Milliard", href: "/challenge" },
     { label: "Journée Salaatu", href: "/journee-salaatu" },
