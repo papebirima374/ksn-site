@@ -181,21 +181,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string, displayName?: string) {
-    const isRegistered = await checkEmailRegistered(email);
-    if (!isRegistered) {
-      throw new Error(
-        "Cet e-mail n'est pas répertorié dans la liste officielle des membres de KSN. Veuillez contacter l'administration pour vous inscrire."
-      );
-    }
-
     const auth = getFirebaseAuth();
+    // 1. Create the user first (this signs them in)
     const cred = await createUserWithEmailAndPassword(auth, email, password);
-    if (displayName) {
-      try {
-        await updateProfile(cred.user, { displayName });
-      } catch {
-        // non-fatal
+
+    try {
+      // 2. Now that they are authenticated, they have permissions to read members!
+      const isRegistered = await checkEmailRegistered(email);
+      if (!isRegistered) {
+        // Not a registered member - delete their auth account and throw
+        await cred.user.delete();
+        throw new Error(
+          "Cet e-mail n'est pas répertorié dans la liste officielle des membres de KSN. Veuillez contacter l'administration pour vous inscrire."
+        );
       }
+
+      // 3. Update profile if needed
+      if (displayName) {
+        try {
+          await updateProfile(cred.user, { displayName });
+        } catch {
+          // non-fatal
+        }
+      }
+    } catch (err) {
+      // Clean up the created account if verification fails or errors occur
+      try {
+        if (auth.currentUser) {
+          await auth.currentUser.delete();
+        }
+      } catch {
+        // ignore
+      }
+      throw err;
     }
   }
 
