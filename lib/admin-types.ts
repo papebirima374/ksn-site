@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "commission";
+export type UserRole = "admin" | "commission" | "member";
 
 export type Permission =
   | "gallery.write"

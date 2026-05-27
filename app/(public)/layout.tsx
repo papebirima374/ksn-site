@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import { I18nProvider } from "@/lib/i18n/context";
+import { AuthProvider } from "@/lib/auth-context";
 
 export default function PublicLayout({
   children,
@@ -11,13 +12,15 @@ export default function PublicLayout({
 }) {
   return (
     <I18nProvider>
-      <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
-        <Background />
-        <Navbar />
-        {children}
-        <Footer />
-        <WhatsAppFloat />
-      </main>
+      <AuthProvider>
+        <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
+          <Background />
+          <Navbar />
+          {children}
+          <Footer />
+          <WhatsAppFloat />
+        </main>
+      </AuthProvider>
     </I18nProvider>
   );
 }

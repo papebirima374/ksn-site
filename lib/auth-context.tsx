@@ -10,12 +10,24 @@ import {
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as fbSignOut,
+  updateProfile,
   User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 import { getFirebaseAuth, getDb, isFirebaseConfigured } from "./firebase";
-import { AppUser, ALL_PERMISSIONS } from "./admin-types";
+import { AppUser, ALL_PERMISSIONS, UserRole } from "./admin-types";
 
 type AuthState = {
   user: AppUser | null;
@@ -23,6 +35,11 @@ type AuthState = {
   loading: boolean;
   configured: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    displayName?: string
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
 };
@@ -39,30 +56,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const db = getDb();
     const ref = doc(db, "users", fbUser.uid);
     const snap = await getDoc(ref);
+
     if (!snap.exists()) {
+      // Bootstrap: if no admin exists yet anywhere in users/, this account
+      // becomes the founding admin. Otherwise it's a regular member account.
+      let role: UserRole = "member";
+      let permissions: typeof ALL_PERMISSIONS = [];
+      try {
+        const adminSnap = await getDocs(
+          query(
+            collection(db, "users"),
+            where("role", "==", "admin"),
+            limit(1)
+          )
+        );
+        if (adminSnap.empty) {
+          role = "admin";
+          permissions = ALL_PERMISSIONS;
+        }
+      } catch {
+        // If the read fails (rules block listing), fall back to member.
+      }
+
       const docPayload: Record<string, unknown> = {
         email: fbUser.email ?? "",
-        role: "admin",
-        permissions: ALL_PERMISSIONS,
+        role,
+        permissions,
         createdAt: serverTimestamp(),
       };
       if (fbUser.displayName) docPayload.displayName = fbUser.displayName;
       await setDoc(ref, docPayload);
+
       return {
         uid: fbUser.uid,
         email: fbUser.email ?? "",
         displayName: fbUser.displayName ?? undefined,
-        role: "admin",
-        permissions: ALL_PERMISSIONS,
+        role,
+        permissions,
         createdAt: Date.now(),
       };
     }
+
     const data = snap.data() as Partial<AppUser>;
     return {
       uid: fbUser.uid,
       email: fbUser.email ?? data.email ?? "",
       displayName: data.displayName ?? fbUser.displayName ?? undefined,
-      role: data.role ?? "commission",
+      role: data.role ?? "member",
       commission: data.commission,
       permissions: data.permissions ?? [],
       createdAt: data.createdAt,
@@ -98,6 +138,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password);
   }
 
+  async function signUp(email: string, password: string, displayName?: string) {
+    const auth = getFirebaseAuth();
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    if (displayName) {
+      try {
+        await updateProfile(cred.user, { displayName });
+      } catch {
+        // non-fatal
+      }
+    }
+  }
+
   async function signOut() {
     const auth = getFirebaseAuth();
     await fbSignOut(auth);
@@ -109,7 +161,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, firebaseUser, loading, configured, signIn, signOut, refresh }}
+      value={{
+        user,
+        firebaseUser,
+        loading,
+        configured,
+        signIn,
+        signUp,
+        signOut,
+        refresh,
+      }}
     >
       {children}
     </AuthContext.Provider>
