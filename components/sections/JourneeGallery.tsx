@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useState } from "react";
 import { FaCamera, FaXmark, FaImage } from "react-icons/fa6";
+import { listGallery } from "@/lib/admin-data";
+import { GalleryItem as DBGalleryItem } from "@/lib/admin-types";
 
 /** Configuration des photos de la galerie.
  *  Pour ajouter de vraies photos :
@@ -58,9 +60,30 @@ const ITEMS: GalleryItem[] = [
 ];
 
 export default function JourneeGallery() {
+  const [dbItems, setDbItems] = useState<DBGalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
+  useEffect(() => {
+    listGallery()
+      .then((items) => {
+        const filtered = items.filter((item) => item.category === "journee");
+        setDbItems(filtered);
+      })
+      .catch((err) => console.error("Failed to fetch gallery items", err))
+      .finally(() => setLoading(false));
+  }, []);
+
   const closeLightbox = () => setOpenIdx(null);
+
+  const displayItems = dbItems.length > 0
+    ? dbItems.map((d) => ({
+        src: d.src,
+        caption: d.alt || "Souvenir KSN",
+        year: d.year || "2025",
+        bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
+      }))
+    : ITEMS;
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -79,45 +102,51 @@ export default function JourneeGallery() {
 
       {/* GRILLE */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
-        {ITEMS.map((item, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => item.src && setOpenIdx(i)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 hover:border-[#D4AF37]/50 transition shadow-lg"
-            aria-label={item.caption}
-          >
-            {item.src ? (
-              <Image
-                src={item.src}
-                alt={item.caption}
-                fill
-                sizes="(max-width: 768px) 50vw, 33vw"
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-            ) : (
-              // Placeholder esthétique en attendant les vraies photos
-              <div
-                className={`absolute inset-0 ${item.bgClass} flex flex-col items-center justify-center text-white/80 p-4`}
-              >
-                <FaImage className="text-3xl sm:text-4xl text-white/40 mb-3" />
-                <div className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-white/60">
-                  {item.year}
+        {loading ? (
+          <div className="col-span-full py-12 text-center text-white/50">
+            Chargement des photos...
+          </div>
+        ) : (
+          displayItems.map((item, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => item.src && setOpenIdx(i)}
+              className="group relative aspect-[4/3] overflow-hidden rounded-2xl sm:rounded-3xl border border-white/10 hover:border-[#D4AF37]/50 transition shadow-lg"
+              aria-label={item.caption}
+            >
+              {item.src ? (
+                <Image
+                  src={item.src}
+                  alt={item.caption}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              ) : (
+                // Placeholder esthétique en attendant les vraies photos
+                <div
+                  className={`absolute inset-0 ${item.bgClass} flex flex-col items-center justify-center text-white/80 p-4`}
+                >
+                  <FaImage className="text-3xl sm:text-4xl text-white/40 mb-3" />
+                  <div className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-white/60">
+                    {item.year}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Caption gradient au survol */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 sm:p-4 text-left opacity-0 group-hover:opacity-100 transition-opacity">
-              <p className="text-white text-xs sm:text-sm font-bold leading-snug">
-                {item.caption}
-              </p>
-              <p className="text-[#D4AF37] text-[10px] sm:text-xs mt-1 font-semibold">
-                {item.year}
-              </p>
-            </div>
-          </button>
-        ))}
+              {/* Caption gradient au survol */}
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3 sm:p-4 text-left opacity-0 group-hover:opacity-100 transition-opacity">
+                <p className="text-white text-xs sm:text-sm font-bold leading-snug">
+                  {item.caption}
+                </p>
+                <p className="text-[#D4AF37] text-[10px] sm:text-xs mt-1 font-semibold">
+                  {item.year}
+                </p>
+              </div>
+            </button>
+          ))
+        )}
       </div>
 
       {/* AVIS PHOTOS BIENVENUES */}
