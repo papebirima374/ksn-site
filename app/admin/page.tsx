@@ -10,6 +10,7 @@ import {
   FaIdCard,
   FaBookOpen,
   FaCoins,
+  FaBagShopping,
   FaArrowRight,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
@@ -32,6 +33,14 @@ const SECTIONS = [
     Icon: FaCoins,
     perm: "finances.write" as Permission,
     color: "from-[#B8860B] to-[#7a5d04]",
+  },
+  {
+    href: "/admin/boutique",
+    label: "Boutique",
+    desc: "Produits (Café G, livres PDF, physiques) + commandes (changer statut livrée / annulée).",
+    Icon: FaBagShopping,
+    perm: "boutique.write" as Permission,
+    color: "from-[#1DCEDB] to-[#0F5132]",
   },
   {
     href: "/admin/bibliotheque",

@@ -16,6 +16,7 @@ import {
   FaIdCard,
   FaBookOpen,
   FaCoins,
+  FaBagShopping,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -24,6 +25,7 @@ const NAV = [
   { href: "/admin", label: "Tableau de bord", Icon: FaHouse, perm: null },
   { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" as const },
   { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" as const },
+  { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write" as const },
   { href: "/admin/bibliotheque", label: "Bibliothèque Salaats", Icon: FaBookOpen, perm: "library.write" as const },
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },

@@ -22,7 +22,10 @@ import {
   GalleryItem,
   Member,
   MenuItem,
+  Order,
+  OrderStatus,
   Permission,
+  Product,
   SalaatuDuJour,
   SalaatuLibraryItem,
   UserRole,
@@ -429,6 +432,91 @@ export function financeStats(entries: FinanceEntry[]) {
     balance: totalIncome - totalExpense,
     count: entries.length,
   };
+}
+
+// ============ BOUTIQUE — PRODUCTS ============
+
+export async function listProducts(opts?: {
+  onlyVisible?: boolean;
+}): Promise<Product[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "products"), orderBy("createdAt", "desc"))
+  );
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<Product, "id">),
+  }));
+  if (opts?.onlyVisible) return items.filter((p) => p.visible !== false);
+  return items;
+}
+
+export async function createProduct(
+  data: Omit<Product, "id" | "createdAt">
+): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "products"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function updateProduct(id: string, patch: Partial<Product>) {
+  const db = getDb();
+  await updateDoc(doc(db, "products", id), patch);
+}
+
+export async function deleteProduct(p: Product) {
+  const db = getDb();
+  if (p.imagePath) {
+    try {
+      await deleteObject(ref(getBucket(), p.imagePath));
+    } catch {}
+  }
+  await deleteDoc(doc(db, "products", p.id));
+}
+
+export async function uploadProductImage(file: File): Promise<{
+  url: string;
+  path: string;
+}> {
+  const bucket = getBucket();
+  const path = `products/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  return { url, path };
+}
+
+// ============ BOUTIQUE — ORDERS ============
+
+export async function listOrders(): Promise<Order[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "orders"), orderBy("createdAt", "desc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<Order, "id">),
+  }));
+}
+
+export async function createOrder(
+  data: Omit<Order, "id" | "createdAt" | "status"> & { status?: OrderStatus }
+): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "orders"), {
+    ...data,
+    status: data.status ?? "pending",
+    createdAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function updateOrderStatus(id: string, status: OrderStatus) {
+  const db = getDb();
+  await updateDoc(doc(db, "orders", id), { status });
 }
 
 // ============ MEMBERS IMPORT ============

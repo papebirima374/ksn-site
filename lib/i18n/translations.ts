@@ -10,6 +10,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "Le Dahira",
     "nav.spiritualite": "Spiritualité",
     "nav.media": "Média",
+    "nav.boutique": "Boutique",
     "nav.blog": "Blog",
     "nav.contact": "Contact",
 
@@ -101,6 +102,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "Dahira ji",
     "nav.spiritualite": "Diiney",
     "nav.media": "Media",
+    "nav.boutique": "Boutique",
     "nav.blog": "Blog",
     "nav.contact": "Jokk",
 
@@ -183,6 +185,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "The Dahira",
     "nav.spiritualite": "Spirituality",
     "nav.media": "Media",
+    "nav.boutique": "Boutique",
     "nav.blog": "Blog",
     "nav.contact": "Contact",
 
@@ -266,6 +269,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "Il Dahira",
     "nav.spiritualite": "Spiritualità",
     "nav.media": "Media",
+    "nav.boutique": "Boutique",
     "nav.blog": "Blog",
     "nav.contact": "Contatti",
 
@@ -349,6 +353,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "El Dahira",
     "nav.spiritualite": "Espiritualidad",
     "nav.media": "Medios",
+    "nav.boutique": "Boutique",
     "nav.blog": "Blog",
     "nav.contact": "Contacto",
 
@@ -432,6 +437,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "nav.dahira": "الدائرة",
     "nav.spiritualite": "الروحانية",
     "nav.media": "الإعلام",
+    "nav.boutique": "المتجر",
     "nav.blog": "المدونة",
     "nav.contact": "اتصل بنا",
 

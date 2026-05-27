@@ -33,6 +33,7 @@ export default function Navbar() {
     { label: t("nav.dahira"), href: "/dahira" },
     { label: t("nav.spiritualite"), href: "/spiritualite" },
     { label: t("nav.media"), href: "/media" },
+    { label: t("nav.boutique"), href: "/boutique" },
     { label: t("nav.blog"), href: "/blog" },
     { label: t("nav.contact"), href: "/contact" },
   ];

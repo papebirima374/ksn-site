@@ -8,7 +8,8 @@ export type Permission =
   | "menu.write"
   | "users.write"
   | "members.write"
-  | "finances.write";
+  | "finances.write"
+  | "boutique.write";
 
 export const ALL_PERMISSIONS: Permission[] = [
   "gallery.write",
@@ -19,6 +20,7 @@ export const ALL_PERMISSIONS: Permission[] = [
   "users.write",
   "members.write",
   "finances.write",
+  "boutique.write",
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -30,6 +32,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "users.write": "Utilisateurs (créer / modifier)",
   "members.write": "Membres du Dahira (gérer + cartes)",
   "finances.write": "Finances du Dahira (commission finance)",
+  "boutique.write": "Boutique (produits + commandes)",
 };
 
 export type AppUser = {
@@ -186,6 +189,58 @@ export const FINANCE_METHODS = [
   "Chèque",
   "Autre",
 ];
+
+// ============ BOUTIQUE ============
+
+export type ProductCategory = "cafe" | "book" | "physical";
+
+export const PRODUCT_CATEGORIES: { id: ProductCategory; label: string; emoji: string }[] = [
+  { id: "cafe", label: "Café G", emoji: "☕" },
+  { id: "book", label: "Livres PDF", emoji: "📚" },
+  { id: "physical", label: "Produits Physiques", emoji: "🎁" },
+];
+
+export type Product = {
+  id: string;
+  title: string;
+  description: string;
+  category: ProductCategory;
+  price: number; // FCFA
+  image?: string;
+  imagePath?: string;
+  stock?: number; // for physical only
+  pdfUrl?: string; // for book only
+  featured?: boolean;
+  visible: boolean;
+  createdAt: number;
+};
+
+export type OrderStatus = "pending" | "delivered" | "cancelled";
+
+export type OrderItem = {
+  productId: string;
+  title: string;
+  category: ProductCategory;
+  price: number;
+  quantity: number;
+};
+
+export type Order = {
+  id: string;
+  items: OrderItem[];
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  deliveryAddress?: string;
+  paymentMethod: "wave" | "orange-money" | "card" | "paypal";
+  transactionId?: string;
+  total: number;
+  status: OrderStatus;
+  createdAt: number;
+  notes?: string;
+};
+
+export const ORDER_PERMISSION = "boutique.write" as const;
 
 export type FinanceEntry = {
   id: string;
