@@ -30,36 +30,43 @@ export const metadata: Metadata = {
   },
 };
 
+// Programme reconduit de l'edition precedente — mis a jour par le Dahira
+// chaque annee. Modifier ce tableau pour les editions a venir.
 const PROGRAM = [
   {
-    time: "08h00 — 09h30",
-    title: "Ouverture spirituelle",
-    text: "Récitation du Saint Coran, ouverture par le Khalife du Dahira, salutation collective au Prophète ﷺ.",
+    time: "07h00 — 10h00",
+    title: "Mise en place & ouverture",
+    text: "Petit-déjeuner communautaire, récital du Saint Coran et Rajass conduit par Serigne Khadim Sall et Serigne Fallou Fall.",
   },
   {
-    time: "09h30 — 11h30",
-    title: "Conférences",
-    text: "Interventions d'érudits et de cadres du Dahira sur la place du Salaatu dans la voie soufie et la mission de KSN.",
+    time: "10h00 — 14h00",
+    title: "Rajass — Muqàddamatul Xidma",
+    text: "Récitation collective avec Serigne Ibrahima LO, Serigne Moustapha NIANG Koul, Serigne Fallou TOURE et Serigne Mbaye Ndiaye.",
   },
   {
-    time: "11h30 — 13h00",
-    title: "Madih & Qasidas",
-    text: "Chants de louange au Prophète ﷺ par les groupes de chanteurs du Dahira et des Dahiras invités.",
+    time: "14h00 — 14h15",
+    title: "Prière & déjeuner",
+    text: "Pause prière de Dohr suivie du déjeuner partagé entre tous les participants.",
   },
   {
-    time: "13h00 — 14h30",
-    title: "Repas communautaire",
-    text: "Berakhe — repas béni partagé par toute la oumma présente. Les invités étrangers sont les hôtes d'honneur.",
+    time: "14h15 — 15h00",
+    title: "Déclamation des Khassida",
+    text: "Récitation des Khassida par le Kourel Hizbut Tarqiya.",
   },
   {
-    time: "14h30 — 17h00",
-    title: "Dhikr collectif géant",
-    text: "Récitation collective massive du Salaatu visant à contribuer significativement au Challenge 1 Milliard.",
+    time: "15h00 — 16h30",
+    title: "Conférence & Mot du Dahira",
+    text: "Conférence de Serigne Moustapha Badiane, suivie de la prière collective et du mot officiel du Dahira KSN.",
   },
   {
-    time: "17h00 — 19h00",
-    title: "Clôture & duas",
-    text: "Bénédictions, remise des distinctions aux membres méritants, dua finale pour la oumma et l'humanité.",
+    time: "17h00 — 18h30",
+    title: "Conférence — Darou Mouhty",
+    text: "Intervention de Serigne Ahmadou Mbacke Darou Mouhty.",
+  },
+  {
+    time: "18h30",
+    title: "Mot de la Fin",
+    text: "Allocution finale par Serigne Bassirou Toure, duas et clôture de la journée.",
   },
 ];
 
@@ -82,7 +89,7 @@ const HIGHLIGHTS = [
   {
     icon: <FaClock className="text-[#D4AF37] text-xl" />,
     title: "Durée",
-    text: "Journée complète — de l'aube après la prière du Soubh jusqu'au coucher du soleil.",
+    text: "De 07h00 à 18h30 — récital du Coran, Rajass, Khassida, conférences et mot de clôture.",
   },
 ];
 
@@ -153,11 +160,11 @@ export default function JourneeSalaatuPage() {
             Programme de la journée
           </span>
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            Six moments, une intention
+            Une journée, sept moments forts
           </h2>
           <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
-            Le programme peut être ajusté chaque année par le Khalife — voici la
-            trame habituelle suivie depuis 2021.
+            Programme officiel reconduit de l&apos;édition précédente — il
+            pourra être ajusté par le Khalife du Dahira avant le jour J.
           </p>
         </div>
 
