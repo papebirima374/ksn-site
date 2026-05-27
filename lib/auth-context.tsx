@@ -196,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!configured) {
-      setLoading(false);
+      Promise.resolve().then(() => setLoading(false));
       return;
     }
     const auth = getFirebaseAuth();

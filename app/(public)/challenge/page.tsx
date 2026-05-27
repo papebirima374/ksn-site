@@ -136,53 +136,83 @@ export default function ChallengePage() {
             </p>
           </div>
 
-          {/* HADITH PRINCIPAL — congregation 27x */}
-          <div className="relative z-10 mt-10 sm:mt-12 bg-[#0F7C55] rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white">
-            <p
-              className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37] text-center"
-              dir="rtl"
-            >
-              صَلَاةُ الْجَمَاعَةِ تَفْضُلُ صَلَاةَ الْفَذِّ بِسَبْعٍ وَعِشْرِينَ دَرَجَةً
-            </p>
-            <p className="mt-6 italic text-base sm:text-lg text-white/90 text-center leading-relaxed max-w-2xl mx-auto">
-              « La prière en groupe est supérieure à la prière individuelle de
-              vingt-sept degrés. »
-            </p>
-            <p className="mt-3 text-xs sm:text-sm text-[#D4AF37]/90 text-center">
-              — Le Prophète Muhammad ﷺ (rapporté par Al-Bukhari et Muslim)
-            </p>
-          </div>
+          {/* --- SECTION 1 : LES VERSETS CORANIQUES (EN HAUT) --- */}
+          <div className="relative z-10 mt-10 sm:mt-12 space-y-6">
+            <h3 className="text-center font-display text-sm sm:text-base font-bold uppercase tracking-[0.25em] text-[#0F5132]/80 flex items-center justify-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0F5132]/40" />
+              Les Versets Coraniques (Révélation)
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0F5132]/40" />
+            </h3>
 
-          {/* VERSET CORANIQUE — entraide */}
-          <div className="relative z-10 mt-6 sm:mt-8 grid sm:grid-cols-[1fr_auto_1fr] gap-4 sm:gap-6 items-center">
-            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6">
+            {/* Verset 1 — Al-Imran 103 (Appel fondamental à l'unité et à la reconnaissance) */}
+            <div className="bg-[#0F7C55] rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
               <p
-                className="font-arabic text-xl sm:text-2xl text-[#0F7C55] text-center leading-loose"
+                className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37] text-center"
+                dir="rtl"
+              >
+                وَاعْتَصِمُوا بِحَبْلِ اللَّهِ جَمِيعًا وَلَا تَفَرَّقُوا ۚ وَاذْكُرُوا نِعْمَتَ اللَّهِ عَلَيْكُمْ
+              </p>
+              <p className="mt-6 italic text-base sm:text-lg text-white/95 text-center leading-relaxed max-w-3xl mx-auto">
+                « Et cramponnez-vous tous ensemble au câble d&apos;Allah et ne vous divisez pas ; et rappelez-vous le bienfait d&apos;Allah sur vous. »
+              </p>
+              <p className="mt-4 text-xs sm:text-sm text-[#D4AF37] text-center font-bold tracking-wide">
+                — Coran, sourate Âl-&apos;Imrân (3), verset 103
+              </p>
+            </div>
+
+            {/* Verset 2 — Al-Ma'ida 2 */}
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6 max-w-2xl mx-auto border border-white/20 shadow-sm">
+              <p
+                className="font-arabic text-xl sm:text-2xl text-[#0F5132] text-center leading-loose"
                 dir="rtl"
               >
                 وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ
               </p>
-              <p className="mt-3 text-sm text-[#0F7C55] italic text-center">
+              <p className="mt-3 text-sm text-[#0F5132] italic text-center font-medium">
                 « Entraidez-vous dans la piété et la crainte de Dieu. »
               </p>
-              <p className="mt-1 text-xs text-[#0F7C55]/70 text-center">— Coran, sourate Al-Mâ&apos;ida, verset 2</p>
+              <p className="mt-1 text-xs text-[#0F5132]/70 text-center font-semibold">— Coran, sourate Al-Mâ&apos;ida (5), verset 2</p>
             </div>
+          </div>
 
-            <div className="hidden sm:flex w-12 h-12 mx-auto rounded-full bg-[#0F7C55] text-[#D4AF37] items-center justify-center text-xl">
-              ✦
-            </div>
+          {/* --- SECTION 2 : LES NOBLES HADITHS (APRES) --- */}
+          <div className="relative z-10 mt-12 sm:mt-16 space-y-6">
+            <h3 className="text-center font-display text-sm sm:text-base font-bold uppercase tracking-[0.25em] text-[#0F5132]/80 flex items-center justify-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0F5132]/40" />
+              Les Nobles Hadiths (Guidance)
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0F5132]/40" />
+            </h3>
 
-            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6">
+            {/* Hadith 1 — Prière en groupe 27x */}
+            <div className="bg-[#0F7C55] rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white shadow-lg relative overflow-hidden">
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
               <p
-                className="font-arabic text-xl sm:text-2xl text-[#0F7C55] text-center leading-loose"
+                className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37] text-center"
+                dir="rtl"
+              >
+                صَلَاةُ الْجَمَاعَةِ تَفْضُلُ صَلَاةَ الْفَذِّ بِسَبْعٍ وَعِشْرِينَ دَرَجَةً
+              </p>
+              <p className="mt-6 italic text-base sm:text-lg text-white/95 text-center leading-relaxed max-w-2xl mx-auto">
+                « La prière en groupe est supérieure à la prière individuelle de vingt-sept degrés. »
+              </p>
+              <p className="mt-4 text-xs sm:text-sm text-[#D4AF37] text-center font-bold tracking-wide">
+                — Le Prophète Muhammad ﷺ (rapporté par Al-Bukhari et Muslim)
+              </p>
+            </div>
+
+            {/* Hadith 2 — La main d'Allah */}
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6 max-w-2xl mx-auto border border-white/20 shadow-sm">
+              <p
+                className="font-arabic text-xl sm:text-2xl text-[#0F5132] text-center leading-loose"
                 dir="rtl"
               >
                 يَدُ اللَّهِ مَعَ الْجَمَاعَةِ
               </p>
-              <p className="mt-3 text-sm text-[#0F7C55] italic text-center">
+              <p className="mt-3 text-sm text-[#0F5132] italic text-center font-medium">
                 « La main d&apos;Allah est avec le groupe. »
               </p>
-              <p className="mt-1 text-xs text-[#0F7C55]/70 text-center">— Hadith rapporté par At-Tirmidhi</p>
+              <p className="mt-1 text-xs text-[#0F5132]/70 text-center font-semibold">— Hadith rapporté par At-Tirmidhi</p>
             </div>
           </div>
 

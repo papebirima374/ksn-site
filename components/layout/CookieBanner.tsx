@@ -13,15 +13,17 @@ export default function CookieBanner() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY) as Consent | null;
-      if (saved === "accepted" || saved === "rejected") {
-        setConsent(saved);
+    Promise.resolve().then(() => {
+      setMounted(true);
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY) as Consent | null;
+        if (saved === "accepted" || saved === "rejected") {
+          setConsent(saved);
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
+    });
   }, []);
 
   function setChoice(c: "accepted" | "rejected") {

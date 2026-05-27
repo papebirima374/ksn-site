@@ -36,14 +36,16 @@ export default function ProfilPage() {
   }, [loading, user, router]);
 
   useEffect(() => {
-    if (!user?.memberId) {
-      setFetching(false);
-      return;
-    }
-    getMember(user.memberId)
-      .then(setMember)
-      .catch(() => {})
-      .finally(() => setFetching(false));
+    Promise.resolve().then(() => {
+      if (!user?.memberId) {
+        setFetching(false);
+        return;
+      }
+      getMember(user.memberId)
+        .then(setMember)
+        .catch(() => {})
+        .finally(() => setFetching(false));
+    });
   }, [user?.memberId]);
 
   if (loading || !user) {
