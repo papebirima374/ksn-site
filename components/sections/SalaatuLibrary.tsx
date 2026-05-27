@@ -268,8 +268,11 @@ function SalaatuCard({
       {isOpen && (
         <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
           {/* Per-card faint watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] -rotate-12 select-none">
-            <p className="font-display text-3xl text-[#0F5132] tracking-widest">{watermark}</p>
+          <div className="absolute inset-0 flex flex-wrap items-center justify-around gap-x-12 gap-y-16 pointer-events-none opacity-[0.08] -rotate-12 select-none overflow-hidden py-12">
+            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
+            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
+            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
+            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
           </div>
 
           <p

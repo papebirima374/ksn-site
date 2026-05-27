@@ -103,7 +103,13 @@ export function useProtectionShield(enabled: boolean): ProtectionState {
       e.preventDefault();
       e.clipboardData?.setData("text/plain", "Contenu protégé KSN");
     }
-    function onContext(e: MouseEvent) {
+    function onContext(e: Event) {
+      e.preventDefault();
+    }
+    function onSelectionChange() {
+      window.getSelection()?.removeAllRanges();
+    }
+    function onDragStart(e: Event) {
       e.preventDefault();
     }
 
@@ -113,6 +119,8 @@ export function useProtectionShield(enabled: boolean): ProtectionState {
     window.addEventListener("keydown", onKey);
     document.addEventListener("copy", onCopy);
     document.addEventListener("contextmenu", onContext);
+    document.addEventListener("selectionchange", onSelectionChange);
+    document.addEventListener("dragstart", onDragStart);
 
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
@@ -121,6 +129,8 @@ export function useProtectionShield(enabled: boolean): ProtectionState {
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("copy", onCopy);
       document.removeEventListener("contextmenu", onContext);
+      document.removeEventListener("selectionchange", onSelectionChange);
+      document.removeEventListener("dragstart", onDragStart);
     };
   }, [enabled]);
 
