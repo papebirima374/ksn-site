@@ -14,6 +14,7 @@ const PUBLIC_ROUTES: { path: string; priority: number; changeFrequency: Metadata
   { path: "/inscription", priority: 0.85, changeFrequency: "monthly" },
   { path: "/espace-membre", priority: 0.7, changeFrequency: "monthly" },
   { path: "/challenge", priority: 0.95, changeFrequency: "daily" },
+  { path: "/journee-salaatu", priority: 0.9, changeFrequency: "monthly" },
   { path: "/mentions-legales", priority: 0.3, changeFrequency: "yearly" },
   { path: "/confidentialite", priority: 0.3, changeFrequency: "yearly" },
   { path: "/cgu", priority: 0.3, changeFrequency: "yearly" },
