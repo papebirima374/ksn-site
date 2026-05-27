@@ -4,7 +4,7 @@ export const alt = "Journée Salaatu ʿAlaa Nabii — 26 décembre 2026 — Toub
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Doit rester synchronise avec la date de l'evenement dans la page.
+// Doit rester synchronise avec la date dans la page journee-salaatu/page.tsx
 const EVENT_DATE_ISO = "2026-12-26T08:00:00+00:00";
 const EVENT_DATE_LABEL = "26 décembre 2026";
 
@@ -15,6 +15,8 @@ function daysUntil(targetIso: string): number {
 
 export default async function Image() {
   const days = daysUntil(EVENT_DATE_ISO);
+  const dateStr = `📅  ${EVENT_DATE_LABEL}`;
+  const daysStr = `⏳  J - ${days}`;
 
   return new ImageResponse(
     (
@@ -29,7 +31,6 @@ export default async function Image() {
           color: "#0F7C55",
           fontFamily: "serif",
           padding: 60,
-          position: "relative",
         }}
       >
         {/* HEADER */}
@@ -60,6 +61,7 @@ export default async function Image() {
               fontSize: 40,
               color: "#0F7C55",
               fontWeight: 700,
+              display: "flex",
             }}
           >
             ﷺ
@@ -74,6 +76,7 @@ export default async function Image() {
             color: "#0F7C55",
             marginTop: 40,
             lineHeight: 1,
+            display: "flex",
           }}
         >
           Journée Salaatu
@@ -84,6 +87,7 @@ export default async function Image() {
             fontWeight: 900,
             color: "#0F7C55",
             lineHeight: 1,
+            display: "flex",
           }}
         >
           ʿAlaa Nabii
@@ -95,6 +99,7 @@ export default async function Image() {
             color: "rgba(15,124,85,0.8)",
             marginTop: 16,
             fontStyle: "italic",
+            display: "flex",
           }}
         >
           Une journée entière de prières sur le Prophète Muhammad ﷺ
@@ -115,12 +120,12 @@ export default async function Image() {
               color: "#D4AF37",
               padding: "24px 36px",
               borderRadius: 24,
-              fontSize: 44,
+              fontSize: 42,
               fontWeight: 800,
               display: "flex",
             }}
           >
-            📅 {EVENT_DATE_LABEL}
+            {dateStr}
           </div>
           <div
             style={{
@@ -133,17 +138,14 @@ export default async function Image() {
               display: days > 0 ? "flex" : "none",
             }}
           >
-            ⏳ J-{days}
+            {daysStr}
           </div>
         </div>
 
         {/* FOOTER */}
         <div
           style={{
-            position: "absolute",
-            bottom: 40,
-            left: 60,
-            right: 60,
+            marginTop: "auto",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -152,8 +154,10 @@ export default async function Image() {
             fontWeight: 700,
           }}
         >
-          <span>📍 Touba, Sénégal</span>
-          <span>salaatualaanabii.com/journee-salaatu</span>
+          <div style={{ display: "flex" }}>📍 Touba, Sénégal</div>
+          <div style={{ display: "flex" }}>
+            salaatualaanabii.com/journee-salaatu
+          </div>
         </div>
       </div>
     ),

@@ -108,9 +108,9 @@ export default async function Image() {
             fontWeight: 600,
           }}
         >
-          <span>📍 Touba, Sénégal</span>
-          <span style={{ opacity: 0.4 }}>•</span>
-          <span>salaatualaanabii.com</span>
+          <div style={{ display: "flex" }}>📍 Touba, Sénégal</div>
+          <div style={{ display: "flex", opacity: 0.4 }}>•</div>
+          <div style={{ display: "flex" }}>salaatualaanabii.com</div>
         </div>
       </div>
     ),
