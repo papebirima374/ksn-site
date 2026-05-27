@@ -6,14 +6,16 @@ export default function Hero() {
       id="accueil"
       className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 lg:pt-48 pb-16 sm:pb-24"
     >
+      {/* Calligraphy header — centered & animated, full width */}
+      <div className="text-center mb-12 sm:mb-16">
+        <p className="animate-calligraphy font-arabic text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[#D4AF37] leading-none">
+          صلى الله على محمد
+        </p>
+        <div className="mt-6 sm:mt-8 mx-auto w-24 sm:w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
+      </div>
+
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        <div>
-          <p className="font-arabic text-3xl sm:text-4xl md:text-5xl text-[#D4AF37] mb-4">
-            صلى الله على محمد
-          </p>
-
-          <div className="w-16 h-0.5 bg-[#D4AF37] mb-6" />
-
+        <div className="text-center lg:text-left">
           <div className="inline-flex items-center rounded-full bg-[#B8860B]/15 border border-[#D4AF37]/20 px-5 sm:px-6 py-3 sm:py-4 text-[#D4AF37] font-semibold backdrop-blur-md text-sm sm:text-base">
             ✨ Kippangog Salaatu &apos;Alaa Nabii
           </div>
@@ -28,14 +30,14 @@ export default function Hero() {
             Salaatu ﷺ
           </h1>
 
-          <p className="mt-6 sm:mt-8 text-base sm:text-lg text-white/75 leading-8 sm:leading-9 max-w-2xl">
+          <p className="mt-6 sm:mt-8 text-base sm:text-lg text-white/75 leading-8 sm:leading-9 max-w-2xl mx-auto lg:mx-0">
             Créé le 02 Janvier 2021 à Touba, KSN œuvre pour la promotion du
             Salaatu sur le Prophète Muhammad ﷺ à travers une organisation
             structurée, des activités spirituelles et une communauté
             internationale engagée.
           </p>
 
-          <div className="mt-8 sm:mt-10 flex flex-wrap gap-3 sm:gap-5">
+          <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-5">
             <Link
               href="/inscription"
               className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"

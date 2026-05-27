@@ -5,7 +5,8 @@ export type Permission =
   | "articles.write"
   | "salaatu.write"
   | "menu.write"
-  | "users.write";
+  | "users.write"
+  | "members.write";
 
 export const ALL_PERMISSIONS: Permission[] = [
   "gallery.write",
@@ -13,6 +14,7 @@ export const ALL_PERMISSIONS: Permission[] = [
   "salaatu.write",
   "menu.write",
   "users.write",
+  "members.write",
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
@@ -21,6 +23,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "salaatu.write": "Salaatu du jour (mettre à jour)",
   "menu.write": "Menu de navigation (éditer)",
   "users.write": "Utilisateurs (créer / modifier)",
+  "members.write": "Membres du Dahira (gérer + cartes)",
 };
 
 export type AppUser = {
@@ -75,6 +78,33 @@ export type MenuItem = {
   href: string;
   order: number;
   visible: boolean;
+};
+
+export type MemberStatus = "actif" | "inactif";
+
+export type Member = {
+  id: string;
+  matricule: string;
+  prenom: string;
+  nom: string;
+  email?: string;
+  telephone?: string;
+  dateNaissance?: string;
+  profession?: string;
+  region?: string;
+  ville?: string;
+  pays?: string;
+  domicile?: string;
+  photo?: string;
+  photoPath?: string;
+  status: MemberStatus;
+  notes?: string;
+  joinedAt?: number;
+  createdAt: number;
+  createdBy?: string;
+  // Optional: original ID/uid from the mobile app project, used to avoid
+  // duplicates during the cross-project migration.
+  sourceUid?: string;
 };
 
 export function hasPermission(user: AppUser | null, p: Permission): boolean {

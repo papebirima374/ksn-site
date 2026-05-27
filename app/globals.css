@@ -30,3 +30,39 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
 }
+
+/* Subtle breathing glow used on the hero arabic calligraphy */
+@keyframes calligraphy-breathe {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.25));
+  }
+  50% {
+    opacity: 0.92;
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 60px rgba(212, 175, 55, 0.6));
+  }
+}
+
+@keyframes calligraphy-reveal {
+  0% { opacity: 0; transform: translateY(-12px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-calligraphy {
+  animation:
+    calligraphy-reveal 1.2s ease-out both,
+    calligraphy-breathe 5s ease-in-out 1.2s infinite;
+  will-change: transform, opacity, filter;
+}
+
+/* Hide print-only chrome (used on /admin/membres carte) */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+}
+.print-card {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}

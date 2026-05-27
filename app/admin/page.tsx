@@ -7,6 +7,7 @@ import {
   FaHandsPraying,
   FaListUl,
   FaUsers,
+  FaIdCard,
   FaArrowRight,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
@@ -14,6 +15,14 @@ import { useAuth } from "@/lib/auth-context";
 import { hasPermission, Permission } from "@/lib/admin-types";
 
 const SECTIONS = [
+  {
+    href: "/admin/membres",
+    label: "Membres du Dahira",
+    desc: "Inscriptions, filtres par région/ville/profession, génération de carte de membre imprimable.",
+    Icon: FaIdCard,
+    perm: "members.write" as Permission,
+    color: "from-[#1B7A4A] to-[#0F5132]",
+  },
   {
     href: "/admin/galerie",
     label: "Galerie photos",

@@ -10,6 +10,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  limit,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getDb, getBucket } from "./firebase";
@@ -17,6 +18,7 @@ import {
   Article,
   AppUser,
   GalleryItem,
+  Member,
   MenuItem,
   Permission,
   SalaatuDuJour,
@@ -214,4 +216,185 @@ export async function createUserDoc(
 export async function deleteUserDoc(uid: string) {
   const db = getDb();
   await deleteDoc(doc(db, "users", uid));
+}
+
+// ============ MEMBERS ============
+
+function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (v !== undefined && v !== "") out[k] = v;
+  }
+  return out as T;
+}
+
+function padMatricule(n: number): string {
+  return String(n).padStart(4, "0");
+}
+
+export async function nextMatricule(): Promise<string> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "members"), orderBy("matricule", "desc"), limit(1))
+  );
+  if (snap.empty) return padMatricule(1);
+  const top = snap.docs[0].data() as Member;
+  const n = parseInt(top.matricule ?? "0", 10);
+  return padMatricule(Number.isFinite(n) ? n + 1 : 1);
+}
+
+export async function listMembers(): Promise<Member[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "members"), orderBy("matricule", "asc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<Member, "id">),
+  }));
+}
+
+export async function getMember(id: string): Promise<Member | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "members", id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...(snap.data() as Omit<Member, "id">) };
+}
+
+export async function createMember(
+  data: Omit<Member, "id" | "matricule" | "createdAt"> & {
+    matricule?: string;
+  }
+): Promise<Member> {
+  const db = getDb();
+  const matricule = data.matricule || (await nextMatricule());
+  const payload = stripUndefined({
+    ...data,
+    matricule,
+    createdAt: Date.now(),
+    joinedAt: data.joinedAt ?? Date.now(),
+    status: data.status ?? ("actif" as const),
+  });
+  const docRef = await addDoc(collection(db, "members"), payload);
+  return { id: docRef.id, ...(payload as Omit<Member, "id">) };
+}
+
+export async function updateMember(id: string, patch: Partial<Member>) {
+  const db = getDb();
+  await updateDoc(doc(db, "members", id), stripUndefined(patch));
+}
+
+export async function deleteMember(member: Member) {
+  const db = getDb();
+  if (member.photoPath) {
+    try {
+      await deleteObject(ref(getBucket(), member.photoPath));
+    } catch {
+      // ignore — photo déjà supprimée
+    }
+  }
+  await deleteDoc(doc(db, "members", member.id));
+}
+
+export async function uploadMemberPhoto(file: File): Promise<{
+  url: string;
+  path: string;
+}> {
+  const bucket = getBucket();
+  const path = `members/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  return { url, path };
+}
+
+export type ImportMember = {
+  sourceUid?: string;
+  prenom?: string;
+  nom?: string;
+  email?: string;
+  telephone?: string;
+  profession?: string;
+  region?: string;
+  ville?: string;
+  pays?: string;
+  domicile?: string;
+  dateNaissance?: string;
+  photo?: string;
+  matricule?: string;
+};
+
+export type ImportReport = {
+  inserted: number;
+  skipped: number;
+  errors: string[];
+};
+
+export async function importMembersFromJson(
+  raw: ImportMember[],
+  createdBy: string
+): Promise<ImportReport> {
+  const report: ImportReport = { inserted: 0, skipped: 0, errors: [] };
+  const existing = await listMembers();
+  const existingByKey = new Set<string>();
+  for (const m of existing) {
+    if (m.sourceUid) existingByKey.add(`uid:${m.sourceUid}`);
+    if (m.email) existingByKey.add(`email:${m.email.toLowerCase()}`);
+    if (m.telephone) existingByKey.add(`tel:${m.telephone.replace(/\D+/g, "")}`);
+  }
+
+  // Find current highest matricule so we keep numbering sequential.
+  let next = parseInt((await nextMatricule()).replace(/^0+/, "") || "1", 10);
+
+  for (const r of raw) {
+    const sourceKey = r.sourceUid ? `uid:${r.sourceUid}` : null;
+    const emailKey = r.email ? `email:${r.email.toLowerCase()}` : null;
+    const telKey = r.telephone
+      ? `tel:${r.telephone.replace(/\D+/g, "")}`
+      : null;
+    if (
+      (sourceKey && existingByKey.has(sourceKey)) ||
+      (emailKey && existingByKey.has(emailKey)) ||
+      (telKey && existingByKey.has(telKey))
+    ) {
+      report.skipped++;
+      continue;
+    }
+    if (!r.prenom && !r.nom) {
+      report.errors.push(
+        `Membre ignoré: prénom et nom vides (sourceUid=${r.sourceUid ?? "?"})`
+      );
+      continue;
+    }
+    try {
+      const matricule = r.matricule || padMatricule(next++);
+      await createMember({
+        matricule,
+        prenom: r.prenom ?? "",
+        nom: r.nom ?? "",
+        email: r.email,
+        telephone: r.telephone,
+        profession: r.profession,
+        region: r.region,
+        ville: r.ville,
+        pays: r.pays,
+        domicile: r.domicile,
+        dateNaissance: r.dateNaissance,
+        photo: r.photo,
+        sourceUid: r.sourceUid,
+        status: "actif",
+        createdBy,
+      });
+      report.inserted++;
+      if (sourceKey) existingByKey.add(sourceKey);
+      if (emailKey) existingByKey.add(emailKey);
+      if (telKey) existingByKey.add(telKey);
+    } catch (e) {
+      report.errors.push(
+        e instanceof Error ? e.message : "Erreur inconnue à l'import"
+      );
+    }
+  }
+
+  return report;
 }

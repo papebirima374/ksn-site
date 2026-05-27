@@ -3,13 +3,17 @@
 import { useState, FormEvent } from "react";
 import { FaWhatsapp } from "react-icons/fa6";
 import { buildWhatsAppLink } from "@/lib/constants";
+import { SENEGAL_REGIONS, COMMON_PROFESSIONS } from "@/lib/regions";
 
 export default function InscriptionForm() {
   const [nom, setNom] = useState("");
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
-  const [pays, setPays] = useState("");
+  const [dateNaissance, setDateNaissance] = useState("");
+  const [profession, setProfession] = useState("");
+  const [pays, setPays] = useState("Sénégal");
+  const [region, setRegion] = useState("");
   const [ville, setVille] = useState("");
   const [motivation, setMotivation] = useState("");
 
@@ -22,7 +26,10 @@ export default function InscriptionForm() {
       `*Nom :* ${nom}`,
       `*Email :* ${email}`,
       `*Téléphone :* ${tel}`,
+      `*Date de naissance :* ${dateNaissance || "—"}`,
+      `*Profession :* ${profession || "—"}`,
       `*Pays :* ${pays}`,
+      `*Région :* ${region || "—"}`,
       `*Ville :* ${ville}`,
       "",
       "*Motivation :*",
@@ -89,6 +96,38 @@ export default function InscriptionForm() {
           />
 
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5 ml-2">
+                Date de naissance
+              </label>
+              <input
+                type="date"
+                value={dateNaissance}
+                onChange={(e) => setDateNaissance(e.target.value)}
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 mb-1.5 ml-2">
+                Profession
+              </label>
+              <input
+                type="text"
+                list="prof-list"
+                value={profession}
+                onChange={(e) => setProfession(e.target.value)}
+                placeholder="ex: Enseignant(e)"
+                className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+              />
+              <datalist id="prof-list">
+                {COMMON_PROFESSIONS.map((p) => (
+                  <option key={p} value={p} />
+                ))}
+              </datalist>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-5">
             <input
               type="text"
               required
@@ -97,6 +136,19 @@ export default function InscriptionForm() {
               placeholder="Pays"
               className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
             />
+            <input
+              type="text"
+              list="region-list"
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              placeholder="Région"
+              className="w-full rounded-[16px] sm:rounded-[20px] border border-gray-200 p-4 sm:p-5 outline-none focus:border-[#0F5132] text-sm sm:text-base text-[#0F5132] bg-white"
+            />
+            <datalist id="region-list">
+              {SENEGAL_REGIONS.map((r) => (
+                <option key={r} value={r} />
+              ))}
+            </datalist>
             <input
               type="text"
               required

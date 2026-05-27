@@ -13,12 +13,14 @@ import {
   FaRightFromBracket,
   FaBars,
   FaXmark,
+  FaIdCard,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
 
 const NAV = [
   { href: "/admin", label: "Tableau de bord", Icon: FaHouse, perm: null },
+  { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
