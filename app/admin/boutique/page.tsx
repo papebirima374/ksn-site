@@ -273,7 +273,7 @@ function ProductFormModal({
       if (!Number.isFinite(price) || price <= 0) throw new Error("Prix invalide");
       const stock =
         category === "physical" && stockStr ? parseInt(stockStr, 10) : undefined;
-      const data: Omit<Product, "id" | "createdAt"> = {
+      const rawData = {
         title,
         description,
         category,
@@ -284,6 +284,12 @@ function ProductFormModal({
         imagePath: imagePath || undefined,
         visible,
       };
+      
+      // Filter out undefined fields to prevent Firestore unsupported field value: undefined errors
+      const data = Object.fromEntries(
+        Object.entries(rawData).filter((entry) => entry[1] !== undefined)
+      ) as Omit<Product, "id" | "createdAt">;
+
       if (initial) {
         await updateProduct(initial.id, data);
       } else {
