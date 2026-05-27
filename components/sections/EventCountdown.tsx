@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useVisibleInterval } from "@/lib/useVisibleInterval";
 
 type EventCountdownProps = {
   /** Date cible ISO (ex. "2027-01-02T08:00:00+00:00") */
@@ -44,9 +45,10 @@ export default function EventCountdown({
 
   useEffect(() => {
     setMounted(true);
-    const id = setInterval(() => setR(compute(targetMs, Date.now())), 1000);
-    return () => clearInterval(id);
-  }, [targetMs]);
+  }, []);
+
+  // Tick chaque seconde mais SEULEMENT quand l'onglet est visible
+  useVisibleInterval(() => setR(compute(targetMs, Date.now())), 1000);
 
   if (!mounted) {
     // Placeholder cote serveur pour eviter mismatch

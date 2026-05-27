@@ -8,6 +8,7 @@ import {
   progressTowardTarget,
   type ChallengeStats,
 } from "@/lib/challenge";
+import { useVisibleInterval } from "@/lib/useVisibleInterval";
 
 type Tab = "thisWeek" | "lastWeek" | "today" | "thisMonth" | "lastMonth";
 
@@ -28,24 +29,27 @@ export default function ChallengeCounter() {
   const [displayTotal, setDisplayTotal] = useState(stats.total);
   const raf = useRef<number | null>(null);
 
-  // Mise a jour des stats brutes toutes les 1s
-  useEffect(() => {
-    const id = setInterval(() => {
-      setStats(estimatedChallengeStats());
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
+  // Mise a jour des stats brutes — pause quand l'onglet est cache
+  useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
 
-  // Animation fluide du compteur principal (tween 60fps)
+  // Animation fluide du compteur principal (tween 60fps).
+  // S'arrete des qu'on a rattrape la cible pour eviter une boucle rAF
+  // infinie qui ferait chauffer l'iPhone.
   useEffect(() => {
     function tick() {
+      let reached = false;
       setDisplayTotal((current) => {
         const target = stats.total;
         const diff = target - current;
-        if (Math.abs(diff) < 1) return target;
+        if (Math.abs(diff) < 1) {
+          reached = true;
+          return target;
+        }
         return Math.floor(current + diff * 0.08);
       });
-      raf.current = requestAnimationFrame(tick);
+      if (!reached) {
+        raf.current = requestAnimationFrame(tick);
+      }
     }
     raf.current = requestAnimationFrame(tick);
     return () => {

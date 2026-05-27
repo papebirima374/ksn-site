@@ -10,6 +10,7 @@ import {
   progressTowardTarget,
   type ChallengeStats,
 } from "@/lib/challenge";
+import { useVisibleInterval } from "@/lib/useVisibleInterval";
 
 const STORAGE_KEY = "ksn-salaatu-count";
 const DATE_KEY = "ksn-salaatu-date";
@@ -28,22 +29,26 @@ export default function CompteurSalaatu() {
   const [pulse, setPulse] = useState(false);
   const raf = useRef<number | null>(null);
 
-  // Refresh stats brutes (1s)
-  useEffect(() => {
-    const id = setInterval(() => setStats(estimatedChallengeStats()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  // Refresh stats brutes — uniquement quand l'onglet est visible
+  useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
 
-  // Animation fluide du compteur
+  // Animation fluide du compteur : on s'arrete des qu'on a rattrape la cible
+  // pour eviter une boucle rAF infinie qui chauffe le mobile.
   useEffect(() => {
     function tick() {
+      let reached = false;
       setDisplayTotal((current) => {
         const target = stats.total;
         const diff = target - current;
-        if (Math.abs(diff) < 1) return target;
+        if (Math.abs(diff) < 1) {
+          reached = true;
+          return target;
+        }
         return Math.floor(current + diff * 0.08);
       });
-      raf.current = requestAnimationFrame(tick);
+      if (!reached) {
+        raf.current = requestAnimationFrame(tick);
+      }
     }
     raf.current = requestAnimationFrame(tick);
     return () => {
