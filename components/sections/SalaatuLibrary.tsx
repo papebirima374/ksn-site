@@ -268,11 +268,13 @@ function SalaatuCard({
       {isOpen && (
         <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
           {/* Per-card faint watermark */}
-          <div className="absolute inset-0 flex flex-wrap items-center justify-around gap-x-12 gap-y-16 pointer-events-none opacity-[0.08] -rotate-12 select-none overflow-hidden py-12">
-            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
-            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
-            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
-            <p className="font-display text-lg text-[#0F5132] font-semibold tracking-wider">{watermark}</p>
+          <div className="absolute inset-0 grid grid-cols-2 gap-x-6 gap-y-10 items-center justify-items-center pointer-events-none opacity-[0.14] -rotate-12 select-none overflow-hidden py-16">
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
+            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
           </div>
 
           <p
