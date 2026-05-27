@@ -23,11 +23,19 @@ function todayKey() {
  *  Partage la meme source de donnees que /challenge (lib/challenge.ts)
  *  pour eviter toute incoherence de chiffres entre pages. */
 export default function CompteurSalaatu() {
-  const [stats, setStats] = useState<ChallengeStats>(() => estimatedChallengeStats());
-  const [displayTotal, setDisplayTotal] = useState(stats.total);
+  // IMPORTANT : on initialise a null pour eviter une hydration mismatch.
+  // estimatedChallengeStats() depend de Date.now() qui differe entre le
+  // rendu serveur (SSR) et l'hydratation client. On remplit en useEffect.
+  const [stats, setStats] = useState<ChallengeStats | null>(null);
+  const [displayTotal, setDisplayTotal] = useState(0);
   const [personal, setPersonal] = useState(0);
   const [pulse, setPulse] = useState(false);
   const raf = useRef<number | null>(null);
+
+  // Tick initial cote client uniquement
+  useEffect(() => {
+    setStats(estimatedChallengeStats());
+  }, []);
 
   // Refresh stats brutes — uniquement quand l'onglet est visible
   useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
@@ -35,10 +43,11 @@ export default function CompteurSalaatu() {
   // Animation fluide du compteur : on s'arrete des qu'on a rattrape la cible
   // pour eviter une boucle rAF infinie qui chauffe le mobile.
   useEffect(() => {
+    if (!stats) return;
+    const target = stats.total;
     function tick() {
       let reached = false;
       setDisplayTotal((current) => {
-        const target = stats.total;
         const diff = target - current;
         if (Math.abs(diff) < 1) {
           reached = true;
@@ -54,7 +63,7 @@ export default function CompteurSalaatu() {
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [stats.total]);
+  }, [stats]);
 
   // Compteur personnel quotidien (localStorage)
   useEffect(() => {

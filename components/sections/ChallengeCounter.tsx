@@ -24,10 +24,16 @@ const TABS: { id: Tab; label: string }[] = [
  *  Aujourd'hui : estimation animee, basee sur le rythme reel de l'app.
  *  Demain : branche sur Firestore KIPPAANGOG via une 2e Firebase app. */
 export default function ChallengeCounter() {
-  const [stats, setStats] = useState<ChallengeStats>(() => estimatedChallengeStats());
+  // null cote SSR pour eviter hydration mismatch sur Date.now()
+  const [stats, setStats] = useState<ChallengeStats | null>(null);
   const [tab, setTab] = useState<Tab>("thisWeek");
-  const [displayTotal, setDisplayTotal] = useState(stats.total);
+  const [displayTotal, setDisplayTotal] = useState(0);
   const raf = useRef<number | null>(null);
+
+  // Premier tick cote client uniquement
+  useEffect(() => {
+    setStats(estimatedChallengeStats());
+  }, []);
 
   // Mise a jour des stats brutes — pause quand l'onglet est cache
   useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
@@ -36,10 +42,11 @@ export default function ChallengeCounter() {
   // S'arrete des qu'on a rattrape la cible pour eviter une boucle rAF
   // infinie qui ferait chauffer l'iPhone.
   useEffect(() => {
+    if (!stats) return;
+    const target = stats.total;
     function tick() {
       let reached = false;
       setDisplayTotal((current) => {
-        const target = stats.total;
         const diff = target - current;
         if (Math.abs(diff) < 1) {
           reached = true;
@@ -55,10 +62,11 @@ export default function ChallengeCounter() {
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [stats.total]);
+  }, [stats]);
 
   const percent = progressTowardTarget(displayTotal);
   const tabValue = (() => {
+    if (!stats) return 0;
     switch (tab) {
       case "thisWeek":
         return stats.thisWeek;
@@ -128,7 +136,7 @@ export default function ChallengeCounter() {
 
           {/* INDICATEUR LIVE */}
           <div className="mt-6 sm:mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-            {stats.isLive ? (
+            {stats?.isLive ? (
               <>
                 <span className="relative flex w-2.5 h-2.5">
                   <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
