@@ -2,13 +2,21 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FaLock, FaRightToBracket, FaUserPlus, FaShieldHalved } from "react-icons/fa6";
+import {
+  FaLock,
+  FaRightToBracket,
+  FaUserPlus,
+  FaShieldHalved,
+  FaXmark,
+  FaHourglassHalf,
+} from "react-icons/fa6";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { listSalaatuLibrary } from "@/lib/admin-data";
 import { SALAATU_FALLBACK, pickSalaatuOfTheDay } from "@/lib/salaatu-seed";
 import { SalaatuLibraryItem, SALAATU_CATEGORIES } from "@/lib/admin-types";
 import { useAuth } from "@/lib/auth-context";
 import { useProtectionShield } from "@/lib/protection";
+import { PAYMENT } from "@/lib/constants";
 
 export default function SalaatuLibrary() {
   const { user, loading: authLoading, configured } = useAuth();
@@ -16,6 +24,7 @@ export default function SalaatuLibrary() {
   const [category, setCategory] = useState<string>("Toutes");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<string | null>(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const protectionEnabled = Boolean(user);
   const shield = useProtectionShield(protectionEnabled);
@@ -46,6 +55,8 @@ export default function SalaatuLibrary() {
         .includes(q);
     });
   }, [items, category, search]);
+
+  const isActive = user?.memberStatus === "actif" || user?.role === "admin";
 
   // While Firebase auth is still resolving, show a skeleton
   if (authLoading) {
@@ -88,6 +99,11 @@ export default function SalaatuLibrary() {
             translittération, traduction, bienfaits et secrets d&apos;utilisation.
             Consultez régulièrement — un Salaatu est mis à l&apos;honneur chaque jour.
           </p>
+          {!isActive && (
+            <p className="mt-3 text-xs text-amber-700 bg-amber-50 border border-amber-200/50 rounded-xl px-4 py-2 inline-block">
+              🔒 Mode aperçu : 2 Salaats accessibles. Devenez membre actif pour débloquer l&apos;intégralité.
+            </p>
+          )}
           <p className="mt-3 text-xs text-gray-400">
             Connecté en tant que <span className="font-semibold text-[#0F5132]">{user.displayName || user.email}</span>
           </p>
@@ -149,13 +165,15 @@ export default function SalaatuLibrary() {
               Aucun Salaat ne correspond à ces critères.
             </p>
           ) : (
-            filtered.map((s) => (
+            filtered.map((s, index) => (
               <SalaatuCard
                 key={s.id}
                 item={s}
                 isOpen={open === s.id}
                 onToggle={() => setOpen(open === s.id ? null : s.id)}
                 watermark={`${user.email}`}
+                isLocked={!isActive && index >= 2}
+                onLockedClick={() => setShowUpgradeModal(true)}
               />
             ))
           )}
@@ -163,6 +181,85 @@ export default function SalaatuLibrary() {
 
         <Watermark email={user.email} />
       </div>
+
+      {/* Upgrade / Subscription Modal */}
+      {showUpgradeModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl border border-gray-50 text-center space-y-6 animate-in fade-in zoom-in duration-200">
+            <button
+              type="button"
+              onClick={() => setShowUpgradeModal(false)}
+              className="absolute right-4 top-4 w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 transition"
+            >
+              <FaXmark className="text-base" />
+            </button>
+
+            {user.memberStatus === "en_attente" ? (
+              <>
+                <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 flex items-center justify-center text-amber-600 text-3xl">
+                  <FaHourglassHalf className="animate-spin duration-1000" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display text-xl font-bold text-[#0F5132]">
+                    Validation en cours
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Votre demande d&apos;adhésion active a bien été transmise à notre commission administrative. Elle est en attente de traitement.
+                  </p>
+                </div>
+                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-left space-y-2">
+                  <p className="text-xs text-amber-900 leading-relaxed font-semibold">
+                    Pour finaliser, assurez-vous d&apos;avoir réglé la cotisation unique de 1000 FCFA pour votre carte :
+                  </p>
+                  <a
+                    href={PAYMENT.membershipWave}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#10c3af] text-white py-2.5 rounded-xl font-bold hover:scale-[1.01] transition text-xs shadow-sm"
+                  >
+                    Régler 1000 FCFA via Wave
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-600 text-2xl">
+                  <FaLock />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display text-xl font-bold text-[#0F5132]">
+                    Débloquer la Bibliothèque Sacrée
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    L&apos;accès complet à tous les secrets spirituels, prononciations et bienfaits est réservé aux membres officiels actifs de la KSN.
+                  </p>
+                </div>
+                <div className="bg-[#F8F5EF] rounded-2xl p-4 text-left space-y-3">
+                  <h4 className="font-display font-bold text-[#0F5132] text-xs">
+                    Pour obtenir votre accès :
+                  </h4>
+                  <ul className="space-y-2 text-xs text-gray-600">
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#D4AF37] font-bold">1.</span>
+                      <span>Complétez votre profil avec votre photo (obligatoire pour votre carte d&apos;adhérent).</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[#D4AF37] font-bold">2.</span>
+                      <span>Réglez la cotisation unique de 1000 FCFA via Wave.</span>
+                    </li>
+                  </ul>
+                  <Link
+                    href="/espace-membre"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F5132] text-white py-3 rounded-xl font-bold hover:scale-[1.02] transition text-sm shadow-md"
+                  >
+                    Activer mon compte membre
+                  </Link>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -242,30 +339,46 @@ function SalaatuCard({
   isOpen,
   onToggle,
   watermark,
+  isLocked,
+  onLockedClick,
 }: {
   item: SalaatuLibraryItem;
   isOpen: boolean;
   onToggle: () => void;
   watermark: string;
+  isLocked?: boolean;
+  onLockedClick?: () => void;
 }) {
   return (
     <div className="bg-[#F8F5EF] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#0F5132]/10 relative">
       <button
         type="button"
-        onClick={onToggle}
+        onClick={isLocked ? onLockedClick : onToggle}
         className="w-full text-start px-5 sm:px-7 py-4 sm:py-5 flex items-center justify-between gap-4 hover:bg-[#F0EBDF] transition"
       >
-        <div>
-          <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
-            {item.category}
+        <div className="min-w-0 flex-1">
+          <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold flex items-center gap-2">
+            <span>{item.category}</span>
+            {isLocked && (
+              <span className="inline-flex items-center gap-1 bg-[#B8860B]/10 text-[#B8860B] text-[8px] sm:text-[9px] px-2 py-0.5 rounded font-extrabold tracking-wider uppercase">
+                <FaLock className="text-[8px]" /> Réservé Membres
+              </span>
+            )}
           </p>
-          <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F5132] mt-0.5">
+          <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F5132] mt-0.5 truncate">
             {item.title}
           </h3>
         </div>
-        <span className={`text-[#0F5132] transition-transform ${isOpen ? "rotate-180" : ""}`}>▾</span>
+        {isLocked ? (
+          <div className="w-8 h-8 rounded-full bg-[#B8860B]/10 flex items-center justify-center text-[#B8860B] flex-shrink-0">
+            <FaLock className="text-xs" />
+          </div>
+        ) : (
+          <span className={`text-[#0F5132] transition-transform ${isOpen ? "rotate-180" : ""} flex-shrink-0`}>▾</span>
+        )}
       </button>
-      {isOpen && (
+
+      {isOpen && !isLocked && (
         <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
           {/* Per-card faint watermark */}
           <div className="absolute inset-0 grid grid-cols-2 gap-x-6 gap-y-10 items-center justify-items-center pointer-events-none opacity-[0.14] -rotate-12 select-none overflow-hidden py-16">

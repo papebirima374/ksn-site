@@ -36,7 +36,7 @@ export default function SpiritualiteContent() {
       <PageHero
         overline="Spiritualité KSN"
         title="Nourrir le Cœur par le Salaatu ﷺ"
-        arabic="صلى الله sur Muhammad"
+        arabic="صلى الله عليه وسلم"
         description="Salaatou du jour, bibliothèque sacrée des Salaats, Khassidas, invocations et enseignements pour vivre pleinement votre lien avec le Prophète Muhammad ﷺ."
       />
 
@@ -46,3 +46,4 @@ export default function SpiritualiteContent() {
     </>
   );
 }
+

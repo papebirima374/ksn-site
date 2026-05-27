@@ -10,6 +10,7 @@ import {
   updateMember,
   uploadMemberPhoto,
   nextMatricule,
+  checkDuplicateEmailOrPhone,
 } from "@/lib/admin-data";
 import { COMMON_PROFESSIONS, SENEGAL_REGIONS } from "@/lib/regions";
 
@@ -61,6 +62,19 @@ export default function MemberForm({ initial }: Props) {
     setSaving(true);
     setError("");
     try {
+      // Check duplicates for email and telephone
+      const { emailDuplicate, phoneDuplicate } = await checkDuplicateEmailOrPhone(
+        email,
+        telephone,
+        initial?.id
+      );
+      if (emailDuplicate) {
+        throw new Error("Cette adresse e-mail est déjà attribuée à un membre.");
+      }
+      if (phoneDuplicate) {
+        throw new Error("Ce numéro de téléphone est déjà attribué à un membre.");
+      }
+
       if (initial) {
         await updateMember(initial.id, {
           matricule,

@@ -10,6 +10,7 @@ import {
   FaIdCard,
   FaTrash,
   FaPenToSquare,
+  FaCircleCheck,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
@@ -17,6 +18,7 @@ import { hasPermission, Member } from "@/lib/admin-types";
 import {
   listMembers,
   deleteMember,
+  updateMember,
   importMembersFromJson,
   ImportMember,
   ImportReport,
@@ -32,7 +34,7 @@ export default function AdminMembresPage() {
   const [fRegion, setFRegion] = useState("all");
   const [fVille, setFVille] = useState("all");
   const [fProf, setFProf] = useState("all");
-  const [fStatus, setFStatus] = useState<"all" | "actif" | "inactif">("all");
+  const [fStatus, setFStatus] = useState<"all" | "actif" | "en_attente" | "inactif">("all");
   const [importOpen, setImportOpen] = useState(false);
 
   async function reload() {
@@ -83,6 +85,17 @@ export default function AdminMembresPage() {
     if (!confirm(`Supprimer définitivement ${member.prenom} ${member.nom} ?`)) return;
     await deleteMember(member);
     await reload();
+  }
+
+  async function handleApprove(member: Member) {
+    if (!confirm(`Valider l'adhésion active de ${member.prenom} ${member.nom} ?`)) return;
+    try {
+      setError("");
+      await updateMember(member.id, { status: "actif" });
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur de validation");
+    }
   }
 
   return (
@@ -162,8 +175,8 @@ export default function AdminMembresPage() {
             ))}
           </select>
         </div>
-        <div className="flex gap-2 mt-3">
-          {(["all", "actif", "inactif"] as const).map((s) => (
+        <div className="flex gap-2 mt-3 flex-wrap">
+          {(["all", "actif", "en_attente", "inactif"] as const).map((s) => (
             <button
               key={s}
               type="button"
@@ -174,7 +187,13 @@ export default function AdminMembresPage() {
                   : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
               }`}
             >
-              {s === "all" ? "Tous statuts" : s === "actif" ? "Actifs" : "Inactifs"}
+              {s === "all"
+                ? "Tous statuts"
+                : s === "actif"
+                ? "Actifs"
+                : s === "en_attente"
+                ? "En attente"
+                : "Inactifs"}
             </button>
           ))}
           <span className="ml-auto self-center text-sm text-gray-500">
@@ -241,19 +260,30 @@ export default function AdminMembresPage() {
                     className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-widest ${
                       m.status === "actif"
                         ? "bg-emerald-100 text-emerald-700"
+                        : m.status === "en_attente"
+                        ? "bg-amber-100 text-amber-700"
                         : "bg-gray-100 text-gray-600"
                     }`}
                   >
-                    {m.status}
+                    {m.status === "en_attente" ? "en attente" : m.status}
                   </span>
                 </div>
-                <div className="flex gap-1 mt-3">
+                <div className="flex gap-1 mt-3 flex-wrap">
                   <Link
                     href={`/admin/membres/${m.id}`}
                     className="inline-flex items-center gap-1 text-xs text-[#0F5132] hover:text-[#B8860B] font-semibold"
                   >
                     <FaIdCard /> Carte
                   </Link>
+                  {canEdit && m.status === "en_attente" && (
+                    <button
+                      type="button"
+                      onClick={() => handleApprove(m)}
+                      className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-800 font-extrabold ml-3"
+                    >
+                      <FaCircleCheck /> Valider
+                    </button>
+                  )}
                   {canEdit && (
                     <>
                       <Link

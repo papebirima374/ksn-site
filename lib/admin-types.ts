@@ -43,6 +43,8 @@ export type AppUser = {
   commission?: string;
   permissions: Permission[];
   createdAt?: number;
+  memberStatus?: "actif" | "en_attente" | "inactif";
+  memberId?: string;
 };
 
 export type ArticleStatus = "draft" | "published";

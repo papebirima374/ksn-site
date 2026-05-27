@@ -615,3 +615,31 @@ export async function checkMemberEmailExists(email: string): Promise<boolean> {
   const snap = await getDocs(q);
   return !snap.empty;
 }
+
+export async function checkDuplicateEmailOrPhone(
+  email?: string,
+  telephone?: string,
+  excludeMemberId?: string
+): Promise<{ emailDuplicate: boolean; phoneDuplicate: boolean }> {
+  const members = await listMembers();
+  
+  const targetEmail = email ? email.toLowerCase().trim() : "";
+  const targetPhone = telephone ? telephone.replace(/\D+/g, "") : "";
+  
+  let emailDuplicate = false;
+  let phoneDuplicate = false;
+  
+  for (const m of members) {
+    if (excludeMemberId && m.id === excludeMemberId) continue;
+    
+    if (targetEmail && m.email && m.email.toLowerCase().trim() === targetEmail) {
+      emailDuplicate = true;
+    }
+    
+    if (targetPhone && m.telephone && m.telephone.replace(/\D+/g, "") === targetPhone) {
+      phoneDuplicate = true;
+    }
+  }
+  
+  return { emailDuplicate, phoneDuplicate };
+}
