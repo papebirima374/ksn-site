@@ -47,7 +47,8 @@ export default function Navbar() {
 
   const navItems = [
     { label: t("nav.home"), href: "/" },
-    { label: t("nav.dahira"), href: "/dahira" },
+    { label: "Dahira", href: "/dahira" },
+    { label: "Histoire", href: "/notre-histoire" },
     { label: t("nav.spiritualite"), href: "/spiritualite" },
     { label: t("nav.media"), href: "/media" },
     { label: "Challenge", href: "/challenge" },
@@ -87,7 +88,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-3 xl:gap-6 text-white font-medium text-[13px] xl:text-[15px]">
+          <nav className="hidden lg:flex items-center gap-2.5 xl:gap-5 text-white font-medium text-[12px] xl:text-[14px]">
             {navItems.map((item) => (
               <Link
                 key={item.href}
