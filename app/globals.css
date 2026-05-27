@@ -57,10 +57,22 @@ body {
   will-change: transform, opacity, filter;
 }
 
-/* Hide print-only chrome (used on /admin/membres carte) */
+/* Print: CR-80 ID card format (85.6 mm × 53.98 mm), one card per page */
+@page {
+  size: 85.6mm 53.98mm;
+  margin: 0;
+}
 @media print {
   .no-print { display: none !important; }
-  body { background: white !important; }
+  body { background: white !important; margin: 0 !important; padding: 0 !important; }
+  .print-card {
+    width: 85.6mm !important;
+    height: 53.98mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-after: always;
+  }
 }
 .print-card {
   page-break-inside: avoid;

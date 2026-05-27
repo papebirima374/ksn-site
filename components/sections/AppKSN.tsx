@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LINKS } from "@/lib/constants";
 
 const FEATURES = [
@@ -66,17 +67,15 @@ export default function AppKSN() {
             <div className="relative w-[320px] h-[620px] rounded-[50px] border-[10px] border-white/10 bg-black shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[140px] h-[35px] bg-black rounded-b-[20px]" />
 
-              <div className="h-full bg-gradient-to-br from-[#0F5132] to-[#B8860B] flex flex-col items-center justify-center text-center p-10">
-                <div className="w-28 h-28 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-5xl">
-                  📿
-                </div>
-
-                <h3 className="mt-8 text-3xl font-bold">Application KSN</h3>
-
-                <p className="mt-5 text-white/75 leading-8">
-                  Votre compagnon spirituel quotidien pour vivre le Salaatu
-                  &apos;Alaa Nabii.
-                </p>
+              <div className="relative h-full w-full bg-black">
+                <Image
+                  src="/images/appksn.jpeg"
+                  alt="Application mobile KSN — capture d'écran"
+                  fill
+                  sizes="320px"
+                  className="object-cover"
+                  priority
+                />
               </div>
             </div>
           </div>

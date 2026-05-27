@@ -7,8 +7,9 @@ type Props = {
 };
 
 export default function MemberCard({ member, size = "preview" }: Props) {
-  const w = size === "print" ? 1012 : 720;
-  const h = Math.round(w * 0.63);
+  // CR-80 ID-card aspect ratio (85.6 × 53.98 mm = ~1.586).
+  // Preview is small on screen; print CSS forces 85.6mm × 53.98mm via @page.
+  const w = size === "print" ? 540 : 460;
   const domicile =
     member.domicile ||
     [member.ville, member.region].filter(Boolean).join(", ") ||
@@ -20,11 +21,11 @@ export default function MemberCard({ member, size = "preview" }: Props) {
       style={{
         width: `${w}px`,
         maxWidth: "100%",
-        aspectRatio: "1.6 / 1",
+        aspectRatio: "1.586 / 1",
         boxShadow: "0 25px 60px rgba(0,0,0,0.15)",
       }}
     >
-      {/* Decorative gold corners */}
+      {/* Decorative gold + green corner waves */}
       <svg
         className="absolute top-0 left-0"
         width="55%"
@@ -62,117 +63,81 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         />
       </svg>
 
-      {/* Background watermark */}
-      <div className="absolute inset-0 flex items-center justify-end pr-6 sm:pr-10 opacity-10 pointer-events-none">
-        <div
-          className="relative"
-          style={{ width: `${h * 0.5}px`, height: `${h * 0.5}px` }}
-        >
+      {/* Watermark logo */}
+      <div className="absolute inset-0 flex items-center justify-end pr-4 opacity-10 pointer-events-none">
+        <div className="relative w-[40%] aspect-square">
           <Image
             src="/logo/ksn-logo.png"
             alt=""
             fill
-            sizes="300px"
+            sizes="200px"
             className="object-contain"
           />
         </div>
       </div>
 
       {/* Header */}
-      <div className="relative z-10 px-5 sm:px-8 pt-4 sm:pt-5 flex items-center gap-3 sm:gap-4">
-        <div className="relative w-10 h-10 sm:w-14 sm:h-14 flex-shrink-0">
+      <div className="relative z-10 px-3 sm:px-4 pt-2 sm:pt-3 flex items-center gap-2 sm:gap-3">
+        <div className="relative w-7 h-7 sm:w-9 sm:h-9 flex-shrink-0">
           <Image
             src="/logo/ksn-logo.png"
             alt="KSN"
             fill
-            sizes="60px"
+            sizes="40px"
             className="object-contain"
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p
-            className="font-display font-bold text-[#0F5132] leading-tight"
-            style={{ fontSize: size === "print" ? "22px" : "16px" }}
-          >
+          <p className="font-display font-bold text-[#0F5132] leading-tight text-[11px] sm:text-[13px]">
             KIPPAANGOG SALAATU &apos;ALAA NABII{" "}
             <span className="font-arabic">ﷺ</span>
           </p>
-          <p
-            className="text-[#B8860B] font-semibold tracking-widest"
-            style={{ fontSize: size === "print" ? "11px" : "9px" }}
-          >
+          <p className="text-[#B8860B] font-semibold tracking-widest text-[7px] sm:text-[8px]">
             CARTE DE MEMBRE
           </p>
         </div>
-        <p
-          className="text-[#0F5132] font-medium hidden sm:block"
-          style={{ fontSize: size === "print" ? "12px" : "10px" }}
-        >
-          Siège Social : Touba
+        <p className="text-[#0F5132] font-medium text-[7px] sm:text-[9px]">
+          Siège : Touba
         </p>
       </div>
 
       <div
-        className="relative z-10 mx-5 sm:mx-8 mt-2 h-px"
+        className="relative z-10 mx-3 sm:mx-4 mt-1 h-px"
         style={{ background: "linear-gradient(to right, #D4AF37, transparent)" }}
       />
 
       {/* Body */}
-      <div className="relative z-10 px-5 sm:px-8 pt-3 sm:pt-4 pb-4 sm:pb-6 grid grid-cols-[auto_1fr] gap-4 sm:gap-6 items-start">
-        <div
-          className="relative rounded-xl overflow-hidden bg-[#E8E6E1] flex-shrink-0"
-          style={{
-            width: size === "print" ? "180px" : "130px",
-            height: size === "print" ? "200px" : "150px",
-          }}
-        >
+      <div className="relative z-10 px-3 sm:px-4 pt-2 pb-3 grid grid-cols-[auto_1fr] gap-2 sm:gap-3 items-start">
+        <div className="relative w-[78px] h-[100px] sm:w-[95px] sm:h-[120px] rounded-md overflow-hidden bg-[#E8E6E1] flex-shrink-0">
           {member.photo ? (
             <Image
               src={member.photo}
               alt={`${member.prenom} ${member.nom}`}
               fill
-              sizes="200px"
+              sizes="120px"
               className="object-cover"
               unoptimized={member.photo.startsWith("http")}
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-[#0F5132]/50 text-4xl font-display font-bold">
+            <div className="absolute inset-0 flex items-center justify-center text-[#0F5132]/50 text-2xl font-display font-bold">
               {(member.prenom?.[0] ?? "?")}
               {(member.nom?.[0] ?? "")}
             </div>
           )}
         </div>
 
-        <div className="text-[#0F5132] space-y-2 sm:space-y-3 min-w-0">
+        <div className="text-[#0F5132] space-y-1 min-w-0">
           <Field
             label="Prénom & Nom"
             value={`${member.prenom} ${member.nom}`.trim() || "—"}
-            big={size === "print"}
           />
-          <Field
-            label="Téléphone"
-            value={member.telephone || "—"}
-            big={size === "print"}
-          />
-          <Field
-            label="Domicile"
-            value={domicile}
-            big={size === "print"}
-          />
-          <div className="pt-1">
-            <p
-              className="text-[#0F5132]/70"
-              style={{ fontSize: size === "print" ? "13px" : "11px" }}
-            >
+          <Field label="Téléphone" value={member.telephone || "—"} />
+          <Field label="Domicile" value={domicile} />
+          <div className="pt-0.5">
+            <p className="text-[#0F5132]/70 text-[7px] sm:text-[9px] leading-none">
               Matricule
             </p>
-            <p
-              className="font-display font-bold tabular-nums text-[#0F5132]"
-              style={{
-                fontSize: size === "print" ? "38px" : "30px",
-                lineHeight: 1,
-              }}
-            >
+            <p className="font-display font-bold tabular-nums text-[#0F5132] text-[20px] sm:text-[26px] leading-none mt-0.5">
               {member.matricule}
             </p>
           </div>
@@ -182,27 +147,13 @@ export default function MemberCard({ member, size = "preview" }: Props) {
   );
 }
 
-function Field({
-  label,
-  value,
-  big,
-}: {
-  label: string;
-  value: string;
-  big: boolean;
-}) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p
-        className="text-[#0F5132]/70"
-        style={{ fontSize: big ? "13px" : "11px" }}
-      >
+      <p className="text-[#0F5132]/70 text-[7px] sm:text-[9px] leading-tight">
         {label}
       </p>
-      <p
-        className="font-bold text-[#0F5132] truncate"
-        style={{ fontSize: big ? "20px" : "16px" }}
-      >
+      <p className="font-bold text-[#0F5132] truncate text-[10px] sm:text-[12px] leading-tight">
         {value}
       </p>
     </div>
