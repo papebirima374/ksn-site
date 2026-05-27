@@ -43,8 +43,10 @@ export type AppUser = {
   commission?: string;
   permissions: Permission[];
   createdAt?: number;
-  memberStatus?: "actif" | "en_attente" | "inactif";
+  memberStatus?: MemberStatus;
   memberId?: string;
+  memberMatricule?: string;
+  phone?: string;
 };
 
 export type ArticleStatus = "draft" | "published";
@@ -95,7 +97,7 @@ export type MenuItem = {
   visible: boolean;
 };
 
-export type MemberStatus = "actif" | "inactif";
+export type MemberStatus = "actif" | "en_attente" | "inactif";
 
 export type Member = {
   id: string;

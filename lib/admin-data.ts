@@ -268,16 +268,57 @@ export async function getMember(id: string): Promise<Member | null> {
   return { id: snap.id, ...(snap.data() as Omit<Member, "id">) };
 }
 
+function normalizePhone(p?: string): string {
+  return (p ?? "").replace(/\D+/g, "");
+}
+
+/** Throws if another member already uses the same email or telephone. */
+export async function assertNoDuplicateMember(args: {
+  email?: string;
+  telephone?: string;
+  excludeId?: string;
+}): Promise<void> {
+  const db = getDb();
+  const email = args.email?.trim().toLowerCase();
+  const phone = normalizePhone(args.telephone);
+
+  if (email) {
+    const snap = await getDocs(
+      query(collection(db, "members"), where("email", "==", email), limit(2))
+    );
+    const dup = snap.docs.find((d) => d.id !== args.excludeId);
+    if (dup) throw new Error("Cette adresse email est déjà utilisée par un autre membre.");
+  }
+  if (phone) {
+    const snap = await getDocs(
+      query(collection(db, "members"), where("telephoneNormalized", "==", phone), limit(2))
+    );
+    const dup = snap.docs.find((d) => d.id !== args.excludeId);
+    if (dup) throw new Error("Ce numéro de téléphone est déjà utilisé par un autre membre.");
+  }
+}
+
 export async function createMember(
   data: Omit<Member, "id" | "matricule" | "createdAt"> & {
     matricule?: string;
   }
 ): Promise<Member> {
   const db = getDb();
-  const matricule = data.matricule || (await nextMatricule());
+  // Duplicate guard
+  await assertNoDuplicateMember({
+    email: data.email,
+    telephone: data.telephone,
+  });
+  // Only "actif" members get a real matricule. "en_attente" placeholders
+  // are tagged with "PENDING" so they don't burn a sequence number until
+  // the admin validates them.
+  const isPending = data.status === "en_attente";
+  const matricule = data.matricule || (isPending ? "PENDING" : await nextMatricule());
   const payload = stripUndefined({
     ...data,
     matricule,
+    telephoneNormalized: normalizePhone(data.telephone),
+    emailLower: data.email?.trim().toLowerCase(),
     createdAt: Date.now(),
     joinedAt: data.joinedAt ?? Date.now(),
     status: data.status ?? ("actif" as const),
@@ -286,9 +327,35 @@ export async function createMember(
   return { id: docRef.id, ...(payload as Omit<Member, "id">) };
 }
 
+/** Promotes an en_attente member to actif and assigns a real matricule. */
+export async function validateMember(id: string): Promise<string> {
+  const db = getDb();
+  const matricule = await nextMatricule();
+  await updateDoc(doc(db, "members", id), {
+    status: "actif",
+    matricule,
+    validatedAt: Date.now(),
+  });
+  return matricule;
+}
+
 export async function updateMember(id: string, patch: Partial<Member>) {
   const db = getDb();
-  await updateDoc(doc(db, "members", id), stripUndefined(patch));
+  if (patch.email || patch.telephone) {
+    await assertNoDuplicateMember({
+      email: patch.email,
+      telephone: patch.telephone,
+      excludeId: id,
+    });
+  }
+  const finalPatch: Record<string, unknown> = stripUndefined({ ...patch });
+  if (patch.telephone !== undefined) {
+    finalPatch.telephoneNormalized = normalizePhone(patch.telephone);
+  }
+  if (patch.email !== undefined) {
+    finalPatch.emailLower = patch.email?.trim().toLowerCase();
+  }
+  await updateDoc(doc(db, "members", id), finalPatch);
 }
 
 export async function deleteMember(member: Member) {

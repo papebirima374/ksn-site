@@ -19,6 +19,7 @@ import {
   listMembers,
   deleteMember,
   updateMember,
+  validateMember,
   importMembersFromJson,
   ImportMember,
   ImportReport,
@@ -88,10 +89,11 @@ export default function AdminMembresPage() {
   }
 
   async function handleApprove(member: Member) {
-    if (!confirm(`Valider l'adhésion active de ${member.prenom} ${member.nom} ?`)) return;
+    if (!confirm(`Valider l'adhésion active de ${member.prenom} ${member.nom} ?\n\nUn matricule officiel lui sera attribué automatiquement.`)) return;
     try {
       setError("");
-      await updateMember(member.id, { status: "actif" });
+      const matricule = await validateMember(member.id);
+      alert(`✅ ${member.prenom} ${member.nom} validé. Matricule attribué : ${matricule}`);
       await reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de validation");

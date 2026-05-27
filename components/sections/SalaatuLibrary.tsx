@@ -2,14 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  FaLock,
-  FaRightToBracket,
-  FaUserPlus,
-  FaShieldHalved,
-  FaXmark,
-  FaHourglassHalf,
-} from "react-icons/fa6";
+import { FaLock, FaCrown, FaShieldHalved, FaClock } from "react-icons/fa6";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { listSalaatuLibrary } from "@/lib/admin-data";
 import { SALAATU_FALLBACK, pickSalaatuOfTheDay } from "@/lib/salaatu-seed";
@@ -18,25 +11,30 @@ import { useAuth } from "@/lib/auth-context";
 import { useProtectionShield } from "@/lib/protection";
 import { PAYMENT } from "@/lib/constants";
 
+const FREE_PREVIEW_COUNT = 2;
+
 export default function SalaatuLibrary() {
-  const { user, loading: authLoading, configured } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<SalaatuLibraryItem[]>(SALAATU_FALLBACK);
   const [category, setCategory] = useState<string>("Toutes");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<string | null>(null);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
-  const protectionEnabled = Boolean(user);
-  const shield = useProtectionShield(protectionEnabled);
+  const status = user?.memberStatus ?? "inactif";
+  const isActive = status === "actif";
+  // Protection only applies for active members (they see the full content).
+  // Visitors see the public preview without the aggressive blur.
+  const shield = useProtectionShield(isActive);
 
   useEffect(() => {
-    if (!isFirebaseConfigured() || !user) return;
+    if (!isFirebaseConfigured()) return;
     listSalaatuLibrary()
       .then((arr) => {
         if (arr.length > 0) setItems(arr);
       })
       .catch(() => {});
-  }, [user]);
+  }, []);
 
   const today = useMemo(() => pickSalaatuOfTheDay(items), [items]);
 
@@ -56,38 +54,44 @@ export default function SalaatuLibrary() {
     });
   }, [items, category, search]);
 
-  const isActive = user?.memberStatus === "actif" || user?.role === "admin";
-
-  // While Firebase auth is still resolving, show a skeleton
   if (authLoading) {
     return (
       <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pb-20">
         <div className="bg-white/80 rounded-3xl p-12 text-center">
           <div className="w-12 h-12 mx-auto border-4 border-[#0F5132]/20 border-t-[#D4AF37] rounded-full animate-spin" />
-          <p className="mt-4 text-gray-500 text-sm">Vérification…</p>
         </div>
       </section>
     );
   }
 
-  if (!user) {
-    return <AuthGate configured={configured} />;
-  }
-
   return (
     <section
       id="bibliotheque"
-      className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 protected-content"
-      onCopy={(e) => e.preventDefault()}
-      onContextMenu={(e) => e.preventDefault()}
+      className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 ${isActive ? "protected-content" : ""}`}
+      onCopy={isActive ? (e) => e.preventDefault() : undefined}
+      onContextMenu={isActive ? (e) => e.preventDefault() : undefined}
     >
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16 relative">
-        {shield.hidden && <ShieldOverlay reason={shield.reason} />}
+        {isActive && shield.hidden && <ShieldOverlay reason={shield.reason} />}
 
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F5132]/10 text-[#0F5132] text-xs font-semibold mb-3">
-            <FaShieldHalved className="text-[#D4AF37]" /> Contenu protégé
-          </div>
+          {isActive ? (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F5132]/10 text-[#0F5132] text-xs font-semibold mb-3">
+              <FaShieldHalved className="text-[#D4AF37]" /> Contenu protégé · Membre Actif
+            </div>
+          ) : !user ? (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
+              <FaLock /> Aperçu visiteur · 2 Salaats sur {items.length} accessibles
+            </div>
+          ) : status === "en_attente" ? (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
+              <FaClock /> En attente de validation · Réglez 1 000 FCFA pour débloquer
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
+              <FaLock /> Aperçu visiteur · Devenez membre actif pour tout débloquer
+            </div>
+          )}
           <span className="block uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
             Bibliothèque Sacrée
           </span>
@@ -97,22 +101,22 @@ export default function SalaatuLibrary() {
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
             {items.length} Salaat{items.length > 1 ? "s" : ""} avec arabe,
             translittération, traduction, bienfaits et secrets d&apos;utilisation.
-            Consultez régulièrement — un Salaatu est mis à l&apos;honneur chaque jour.
+            Le Salaatu du jour est en accès libre — la bibliothèque complète est
+            réservée aux membres actifs.
           </p>
-          {!isActive && (
-            <p className="mt-3 text-xs text-amber-700 bg-amber-50 border border-amber-200/50 rounded-xl px-4 py-2 inline-block">
-              🔒 Mode aperçu : 2 Salaats accessibles. Devenez membre actif pour débloquer l&apos;intégralité.
+          {user && (
+            <p className="mt-3 text-xs text-gray-400">
+              Connecté en tant que <span className="font-semibold text-[#0F5132]">{user.displayName || user.email}</span>
             </p>
           )}
-          <p className="mt-3 text-xs text-gray-400">
-            Connecté en tant que <span className="font-semibold text-[#0F5132]">{user.displayName || user.email}</span>
-          </p>
         </div>
 
+        {/* SALAATU DU JOUR — accès libre */}
         {today && (
           <div className="mt-10 sm:mt-12 bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-white">
             <p className="uppercase tracking-[0.2em] text-[#D4AF37] text-xs sm:text-sm font-bold mb-2">
               Salaatu du jour — {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
+              <span className="ml-2 inline-block bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded-full text-[10px]">Accès libre</span>
             </p>
             <h3 className="font-display text-2xl sm:text-3xl font-bold">
               {today.title}
@@ -133,6 +137,7 @@ export default function SalaatuLibrary() {
           </div>
         )}
 
+        {/* FILTERS */}
         <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3">
           <div className="flex flex-wrap gap-2 flex-1">
             {categories.map((c) => (
@@ -141,9 +146,7 @@ export default function SalaatuLibrary() {
                 type="button"
                 onClick={() => setCategory(c)}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
-                  c === category
-                    ? "bg-[#0F5132] text-white"
-                    : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
+                  c === category ? "bg-[#0F5132] text-white" : "bg-[#F8F5EF] text-[#0F5132] hover:bg-[#E8E6E1]"
                 }`}
               >
                 {c}
@@ -159,160 +162,212 @@ export default function SalaatuLibrary() {
           />
         </div>
 
+        {/* LIST */}
         <div className="mt-8 space-y-4">
           {filtered.length === 0 ? (
-            <p className="text-center py-12 text-gray-500">
-              Aucun Salaat ne correspond à ces critères.
-            </p>
+            <p className="text-center py-12 text-gray-500">Aucun Salaat ne correspond à ces critères.</p>
           ) : (
-            filtered.map((s, index) => (
-              <SalaatuCard
-                key={s.id}
-                item={s}
-                isOpen={open === s.id}
-                onToggle={() => setOpen(open === s.id ? null : s.id)}
-                watermark={`${user.email}`}
-                isLocked={!isActive && index >= 2}
-                onLockedClick={() => setShowUpgradeModal(true)}
-              />
-            ))
+            filtered.map((s, idx) => {
+              const locked = !isActive && idx >= FREE_PREVIEW_COUNT;
+              return (
+                <SalaatuCard
+                  key={s.id}
+                  item={s}
+                  isOpen={open === s.id}
+                  locked={locked}
+                  onToggle={() => {
+                    if (locked) {
+                      setUpgradeOpen(true);
+                    } else {
+                      setOpen(open === s.id ? null : s.id);
+                    }
+                  }}
+                  watermark={user?.email ?? ""}
+                />
+              );
+            })
           )}
         </div>
 
-        <Watermark email={user.email} />
-      </div>
-
-      {/* Upgrade / Subscription Modal */}
-      {showUpgradeModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl border border-gray-50 text-center space-y-6 animate-in fade-in zoom-in duration-200">
-            <button
-              type="button"
-              onClick={() => setShowUpgradeModal(false)}
-              className="absolute right-4 top-4 w-8 h-8 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 transition"
-            >
-              <FaXmark className="text-base" />
-            </button>
-
-            {user.memberStatus === "en_attente" ? (
-              <>
-                <div className="w-16 h-16 mx-auto rounded-full bg-amber-50 flex items-center justify-center text-amber-600 text-3xl">
-                  <FaHourglassHalf className="animate-spin duration-1000" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-display text-xl font-bold text-[#0F5132]">
-                    Validation en cours
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    Votre demande d&apos;adhésion active a bien été transmise à notre commission administrative. Elle est en attente de traitement.
-                  </p>
-                </div>
-                <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 text-left space-y-2">
-                  <p className="text-xs text-amber-900 leading-relaxed font-semibold">
-                    Pour finaliser, assurez-vous d&apos;avoir réglé la cotisation unique de 1000 FCFA pour votre carte :
-                  </p>
-                  <a
-                    href={PAYMENT.membershipWave}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#10c3af] text-white py-2.5 rounded-xl font-bold hover:scale-[1.01] transition text-xs shadow-sm"
-                  >
-                    Régler 1000 FCFA via Wave
-                  </a>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="w-16 h-16 mx-auto rounded-full bg-red-50 flex items-center justify-center text-red-600 text-2xl">
-                  <FaLock />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-display text-xl font-bold text-[#0F5132]">
-                    Débloquer la Bibliothèque Sacrée
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    L&apos;accès complet à tous les secrets spirituels, prononciations et bienfaits est réservé aux membres officiels actifs de la KSN.
-                  </p>
-                </div>
-                <div className="bg-[#F8F5EF] rounded-2xl p-4 text-left space-y-3">
-                  <h4 className="font-display font-bold text-[#0F5132] text-xs">
-                    Pour obtenir votre accès :
-                  </h4>
-                  <ul className="space-y-2 text-xs text-gray-600">
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#D4AF37] font-bold">1.</span>
-                      <span>Complétez votre profil avec votre photo (obligatoire pour votre carte d&apos;adhérent).</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#D4AF37] font-bold">2.</span>
-                      <span>Réglez la cotisation unique de 1000 FCFA via Wave.</span>
-                    </li>
-                  </ul>
-                  <Link
-                    href="/espace-membre"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F5132] text-white py-3 rounded-xl font-bold hover:scale-[1.02] transition text-sm shadow-md"
-                  >
-                    Activer mon compte membre
-                  </Link>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function AuthGate({ configured }: { configured: boolean }) {
-  return (
-    <section className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-      <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[28px] sm:rounded-[40px] p-8 sm:p-12 text-center text-white">
-        <p className="font-arabic text-3xl sm:text-4xl text-[#D4AF37]">صلى الله على محمد</p>
-        <div className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-white/10 border border-[#D4AF37]/30 text-[#D4AF37] text-xs font-semibold">
-          <FaLock /> Accès réservé aux membres
-        </div>
-        <h2 className="font-display mt-4 text-2xl sm:text-3xl font-bold">
-          Bibliothèque Sacrée des Salaats
-        </h2>
-        <p className="mt-5 text-white/80 leading-7 text-sm sm:text-base max-w-xl mx-auto">
-          Cette bibliothèque contient les secrets et bienfaits des Salaats sur
-          le Prophète Muhammad ﷺ. L&apos;accès est protégé : créez un compte
-          membre ou connectez-vous pour la consulter.
-        </p>
-
-        <div className="mt-6 bg-white/5 border border-[#D4AF37]/30 rounded-2xl p-5 text-start text-sm text-white/80 leading-7">
-          <p className="font-semibold text-[#D4AF37] mb-2">Engagement de respect</p>
-          <ul className="space-y-1.5">
-            <li>✦ Ne pas faire de capture d&apos;écran de ce contenu sacré</li>
-            <li>✦ Ne pas diffuser ces secrets hors du Dahira</li>
-            <li>✦ Revenir consulter régulièrement plutôt que sauvegarder</li>
-            <li>✦ Respecter la transmission orale et spirituelle</li>
-          </ul>
-        </div>
-
-        {!configured ? (
-          <p className="mt-6 text-sm text-amber-200 bg-amber-900/30 border border-amber-700/30 rounded-xl p-3">
-            Le service d&apos;authentification n&apos;est pas configuré. Contactez l&apos;administrateur.
-          </p>
-        ) : (
-          <div className="mt-8 grid sm:grid-cols-2 gap-3">
+        {!isActive && (
+          <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F5132] text-center">
+            <FaCrown className="inline text-2xl mb-2" />
+            <h3 className="font-display text-xl sm:text-2xl font-bold">
+              Débloquer la bibliothèque complète
+            </h3>
+            <p className="mt-2 text-sm leading-6 max-w-xl mx-auto">
+              {items.length - FREE_PREVIEW_COUNT} Salaats supplémentaires + leurs secrets sont réservés aux membres actifs.
+            </p>
             <Link
-              href="/espace-membre?next=/spiritualite%23bibliotheque"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition"
+              href="/espace-membre/profil"
+              className="inline-flex items-center mt-5 bg-[#0F5132] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
             >
-              <FaRightToBracket /> Se connecter
-            </Link>
-            <Link
-              href="/espace-membre?next=/spiritualite%23bibliotheque"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 border border-[#D4AF37]/40 text-[#D4AF37] px-6 py-4 rounded-2xl font-bold hover:bg-white/15 transition"
-            >
-              <FaUserPlus /> Créer un compte
+              Devenir Membre Actif →
             </Link>
           </div>
         )}
       </div>
+
+      {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} status={status} loggedIn={!!user} />}
     </section>
+  );
+}
+
+function SalaatuCard({
+  item,
+  isOpen,
+  locked,
+  onToggle,
+  watermark,
+}: {
+  item: SalaatuLibraryItem;
+  isOpen: boolean;
+  locked: boolean;
+  onToggle: () => void;
+  watermark: string;
+}) {
+  return (
+    <div className={`rounded-2xl sm:rounded-3xl overflow-hidden border relative transition ${
+      locked ? "bg-gray-50 border-gray-200" : "bg-[#F8F5EF] border-[#0F5132]/10"
+    }`}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`w-full text-start px-5 sm:px-7 py-4 sm:py-5 flex items-center justify-between gap-4 transition ${
+          locked ? "hover:bg-gray-100" : "hover:bg-[#F0EBDF]"
+        }`}
+      >
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
+              {item.category}
+            </p>
+            {locked && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
+                <FaLock className="w-2.5 h-2.5" /> Réservé Membres
+              </span>
+            )}
+          </div>
+          <h3 className={`font-display text-lg sm:text-xl font-bold mt-0.5 ${locked ? "text-gray-400" : "text-[#0F5132]"}`}>
+            {item.title}
+          </h3>
+        </div>
+        {locked ? (
+          <FaLock className="text-gray-400" />
+        ) : (
+          <span className={`text-[#0F5132] transition-transform ${isOpen ? "rotate-180" : ""}`}>▾</span>
+        )}
+      </button>
+      {!locked && isOpen && (
+        <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
+          {watermark && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.04] -rotate-12 select-none">
+              <p className="font-display text-3xl text-[#0F5132] tracking-widest">{watermark}</p>
+            </div>
+          )}
+          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#0F5132] text-center mt-6 relative" dir="rtl">
+            {item.arabic}
+          </p>
+          {item.transliteration && (
+            <div className="mt-5 relative">
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">Prononciation</p>
+              <p className="italic text-sm sm:text-base text-[#0F5132] leading-7">« {item.transliteration} »</p>
+            </div>
+          )}
+          {item.translation && (
+            <div className="mt-5 relative">
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">Traduction</p>
+              <p className="text-sm sm:text-base text-gray-700 leading-7">{item.translation}</p>
+            </div>
+          )}
+          {item.benefits && item.benefits.length > 0 && (
+            <div className="mt-5 relative">
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Bienfaits</p>
+              <ul className="space-y-1.5">
+                {item.benefits.map((b, i) => (
+                  <li key={i} className="text-sm sm:text-base text-[#0F5132] flex gap-2">
+                    <span className="text-[#D4AF37]">✦</span><span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {item.usageNotes && item.usageNotes.length > 0 && (
+            <div className="mt-5 relative">
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Secrets & Pratique</p>
+              <ul className="space-y-2">
+                {item.usageNotes.map((n, i) => (
+                  <li key={i} className="text-sm sm:text-base text-gray-700 leading-7 bg-white rounded-xl p-3 border border-[#0F5132]/10">
+                    <span className="text-[#B8860B] font-bold mr-1.5">{i + 1}.</span>{n}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function UpgradeModal({
+  onClose,
+  status,
+  loggedIn,
+}: {
+  onClose: () => void;
+  status: "actif" | "en_attente" | "inactif";
+  loggedIn: boolean;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F5132] text-2xl">
+          {status === "en_attente" ? <FaClock /> : <FaCrown />}
+        </div>
+        <h2 className="font-display mt-4 text-2xl font-bold text-[#0F5132]">
+          {status === "en_attente" ? "Validation en cours" : "Adhésion membre actif"}
+        </h2>
+        <p className="mt-3 text-gray-600 text-sm leading-7">
+          {status === "en_attente"
+            ? "Votre demande est en attente. Réglez la cotisation de 1 000 FCFA via Wave — votre statut passera automatiquement à Actif et la bibliothèque complète sera débloquée."
+            : "L'accès complet à la bibliothèque des Salaats (texte arabe, translittération, traduction, bienfaits et secrets d'utilisation) est réservé aux membres actifs. La cotisation est de 1 000 FCFA."}
+        </p>
+
+        <div className="mt-5 space-y-2">
+          {status === "en_attente" ? (
+            <a
+              href={PAYMENT.membershipWave}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block w-full bg-[#1DCEDB] hover:bg-[#16b8c4] text-white py-3 rounded-xl font-bold"
+            >
+              Payer 1 000 FCFA via Wave
+            </a>
+          ) : (
+            <Link
+              href={loggedIn ? "/espace-membre/profil" : "/espace-membre?next=/espace-membre/profil"}
+              className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 rounded-xl font-bold"
+            >
+              {loggedIn ? "Compléter mon profil →" : "Créer un compte →"}
+            </Link>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="block w-full bg-gray-100 text-[#0F5132] py-3 rounded-xl font-semibold text-sm"
+          >
+            Plus tard
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -322,154 +377,8 @@ function ShieldOverlay({ reason }: { reason: string }) {
       <div className="w-20 h-20 rounded-full bg-[#D4AF37]/15 flex items-center justify-center">
         <FaShieldHalved className="text-[#D4AF37] text-4xl" />
       </div>
-      <h3 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-white">
-        Contenu protégé
-      </h3>
+      <h3 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-white">Contenu protégé</h3>
       <p className="mt-3 text-white/80 max-w-md text-sm sm:text-base">{reason}</p>
-      <p className="mt-6 text-xs text-white/50 italic max-w-sm">
-        La bibliothèque se masque automatiquement lors d&apos;une tentative de
-        capture, d&apos;impression ou si la fenêtre passe à l&apos;arrière-plan.
-      </p>
     </div>
-  );
-}
-
-function SalaatuCard({
-  item,
-  isOpen,
-  onToggle,
-  watermark,
-  isLocked,
-  onLockedClick,
-}: {
-  item: SalaatuLibraryItem;
-  isOpen: boolean;
-  onToggle: () => void;
-  watermark: string;
-  isLocked?: boolean;
-  onLockedClick?: () => void;
-}) {
-  return (
-    <div className="bg-[#F8F5EF] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#0F5132]/10 relative">
-      <button
-        type="button"
-        onClick={isLocked ? onLockedClick : onToggle}
-        className="w-full text-start px-5 sm:px-7 py-4 sm:py-5 flex items-center justify-between gap-4 hover:bg-[#F0EBDF] transition"
-      >
-        <div className="min-w-0 flex-1">
-          <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold flex items-center gap-2">
-            <span>{item.category}</span>
-            {isLocked && (
-              <span className="inline-flex items-center gap-1 bg-[#B8860B]/10 text-[#B8860B] text-[8px] sm:text-[9px] px-2 py-0.5 rounded font-extrabold tracking-wider uppercase">
-                <FaLock className="text-[8px]" /> Réservé Membres
-              </span>
-            )}
-          </p>
-          <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F5132] mt-0.5 truncate">
-            {item.title}
-          </h3>
-        </div>
-        {isLocked ? (
-          <div className="w-8 h-8 rounded-full bg-[#B8860B]/10 flex items-center justify-center text-[#B8860B] flex-shrink-0">
-            <FaLock className="text-xs" />
-          </div>
-        ) : (
-          <span className={`text-[#0F5132] transition-transform ${isOpen ? "rotate-180" : ""} flex-shrink-0`}>▾</span>
-        )}
-      </button>
-
-      {isOpen && !isLocked && (
-        <div className="px-5 sm:px-7 pb-6 sm:pb-8 border-t border-[#0F5132]/10 relative">
-          {/* Per-card faint watermark */}
-          <div className="absolute inset-0 grid grid-cols-2 gap-x-6 gap-y-10 items-center justify-items-center pointer-events-none opacity-[0.14] -rotate-12 select-none overflow-hidden py-16">
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-            <p className="font-display text-base text-[#0F5132] font-extrabold tracking-widest">{watermark}</p>
-          </div>
-
-          <p
-            className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#0F5132] text-center mt-6 relative"
-            dir="rtl"
-          >
-            {item.arabic}
-          </p>
-          {item.transliteration && (
-            <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">
-                Prononciation
-              </p>
-              <p className="italic text-sm sm:text-base text-[#0F5132] leading-7">
-                « {item.transliteration} »
-              </p>
-            </div>
-          )}
-          {item.translation && (
-            <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">
-                Traduction
-              </p>
-              <p className="text-sm sm:text-base text-gray-700 leading-7">
-                {item.translation}
-              </p>
-            </div>
-          )}
-          {item.benefits && item.benefits.length > 0 && (
-            <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">
-                Bienfaits
-              </p>
-              <ul className="space-y-1.5">
-                {item.benefits.map((b, i) => (
-                  <li
-                    key={i}
-                    className="text-sm sm:text-base text-[#0F5132] flex gap-2"
-                  >
-                    <span className="text-[#D4AF37]">✦</span>
-                    <span>{b}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {item.usageNotes && item.usageNotes.length > 0 && (
-            <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">
-                Secrets & Pratique
-              </p>
-              <ul className="space-y-2">
-                {item.usageNotes.map((n, i) => (
-                  <li
-                    key={i}
-                    className="text-sm sm:text-base text-gray-700 leading-7 bg-white rounded-xl p-3 border border-[#0F5132]/10"
-                  >
-                    <span className="text-[#B8860B] font-bold mr-1.5">{i + 1}.</span>
-                    {n}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Watermark({ email }: { email: string }) {
-  const [stamp, setStamp] = useState("");
-  useEffect(() => {
-    const now = new Date();
-    const formatted = `${email} · ${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
-    setTimeout(() => {
-      setStamp(formatted);
-    }, 0);
-  }, [email]);
-  return (
-    <p className="mt-8 text-center text-xs text-gray-400 italic select-none">
-      {stamp} — Contenu sacré, ne pas diffuser
-    </p>
   );
 }
