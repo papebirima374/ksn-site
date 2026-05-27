@@ -70,7 +70,7 @@ export type GalleryItem = {
   id: string;
   src: string;
   alt: string;
-  category: "gamou" | "conferences" | "evenements" | "activites" | "journee";
+  category: "evenements" | "activites" | "journee" | "assemblee";
   /** Annee de l'evenement (surtout pour les editions de la Journee Salaatu).
    *  Format libre : "2024" / "2025" / "2025-12-26". */
   year?: string;

@@ -14,17 +14,16 @@ import {
 } from "@/lib/admin-data";
 
 const CATEGORIES: { id: GalleryItem["category"]; label: string }[] = [
-  { id: "gamou", label: "Gamou" },
-  { id: "conferences", label: "Conférences" },
   { id: "evenements", label: "Événements" },
   { id: "activites", label: "Activités" },
   { id: "journee", label: "Journée Salaatu" },
+  { id: "assemblee", label: "Assemblée générale" },
 ];
 
 /** Categories pour lesquelles le champ "Annee" est important (editions
  *  annuelles d'evenements). Pour les autres, on accepte mais on ne le
  *  rend pas obligatoire. */
-const YEAR_RELEVANT: GalleryItem["category"][] = ["journee", "gamou", "evenements"];
+const YEAR_RELEVANT: GalleryItem["category"][] = ["journee", "assemblee", "evenements"];
 
 export default function AdminGaleriePage() {
   const { user } = useAuth();
@@ -32,11 +31,12 @@ export default function AdminGaleriePage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [alt, setAlt] = useState("");
   const [category, setCategory] = useState<GalleryItem["category"]>("activites");
   const [year, setYear] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<{ current: number; total: number; failed: number } | null>(null);
   const [filter, setFilter] = useState<GalleryItem["category"] | "all">("all");
 
   async function reload() {
@@ -59,24 +59,41 @@ export default function AdminGaleriePage() {
 
   async function handleUpload(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!file || !user) return;
+    if (files.length === 0 || !user) return;
     setUploading(true);
-    try {
-      await uploadGalleryImage(file, {
-        alt: alt || file.name,
-        category,
-        year: year.trim() || undefined,
-        createdBy: user.uid,
-      });
-      setFile(null);
-      setAlt("");
-      setYear("");
-      await reload();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur d'upload");
-    } finally {
-      setUploading(false);
+    setError("");
+    setProgress({ current: 0, total: files.length, failed: 0 });
+    let failed = 0;
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      // Si plusieurs fichiers + legende fournie, on l'index (1/N, 2/N...)
+      // Sinon on garde la legende OU on retombe sur le nom de fichier.
+      const baseAlt = alt.trim() || f.name.replace(/\.[^.]+$/, "");
+      const finalAlt =
+        files.length > 1 ? `${baseAlt} (${i + 1}/${files.length})` : baseAlt;
+      try {
+        await uploadGalleryImage(f, {
+          alt: finalAlt,
+          category,
+          year: year.trim() || undefined,
+          createdBy: user.uid,
+        });
+      } catch (err) {
+        console.error("Upload failed for", f.name, err);
+        failed++;
+      }
+      setProgress({ current: i + 1, total: files.length, failed });
     }
+    if (failed > 0) {
+      setError(`${failed} fichier(s) sur ${files.length} ont échoué.`);
+    }
+    setFiles([]);
+    setAlt("");
+    setYear("");
+    setUploading(false);
+    // Laisse le toast de progression visible 2 sec
+    setTimeout(() => setProgress(null), 2000);
+    await reload();
   }
 
   async function handleDelete(item: GalleryItem) {
@@ -89,7 +106,7 @@ export default function AdminGaleriePage() {
     const newAlt = prompt("Légende de la photo :", item.alt);
     if (newAlt === null) return;
     const newCat = prompt(
-      "Catégorie (gamou / conferences / evenements / activites / journee) :",
+      "Catégorie (evenements / activites / journee / assemblee) :",
       item.category
     );
     if (newCat === null) return;
@@ -132,20 +149,31 @@ export default function AdminGaleriePage() {
         >
           <div className="sm:col-span-2 lg:col-span-1">
             <label className="block text-xs font-semibold text-gray-600 mb-2">
-              Photo
+              Photo{files.length > 1 && (
+                <span className="ml-2 text-[#B8860B] font-bold">
+                  · {files.length} fichiers sélectionnés
+                </span>
+              )}
             </label>
             <input
               type="file"
               accept="image/*"
+              multiple
               required
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              onChange={(e) =>
+                setFiles(e.target.files ? Array.from(e.target.files) : [])
+              }
               className="w-full text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
             />
             <input
               type="text"
               value={alt}
               onChange={(e) => setAlt(e.target.value)}
-              placeholder="Légende (optionnel)"
+              placeholder={
+                files.length > 1
+                  ? "Légende commune (numérotée auto: 1/N, 2/N…)"
+                  : "Légende (optionnel)"
+              }
               className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55]"
             />
           </div>
@@ -181,12 +209,43 @@ export default function AdminGaleriePage() {
           </div>
           <button
             type="submit"
-            disabled={!file || uploading}
+            disabled={files.length === 0 || uploading}
             className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-5 rounded-xl font-bold disabled:opacity-50 whitespace-nowrap"
           >
-            <FaPlus /> {uploading ? "Upload…" : "Ajouter"}
+            <FaPlus />{" "}
+            {uploading
+              ? `Upload ${progress?.current ?? 0}/${progress?.total ?? files.length}…`
+              : files.length > 1
+              ? `Envoyer ${files.length}`
+              : "Ajouter"}
           </button>
         </form>
+      )}
+
+      {progress && (
+        <div className="bg-white rounded-2xl border border-[#D4AF37]/30 p-4 mb-4 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-semibold text-[#0F7C55]">
+              Envoi en cours · {progress.current}/{progress.total}
+              {progress.failed > 0 && (
+                <span className="ml-2 text-red-600">
+                  ({progress.failed} échec{progress.failed > 1 ? "s" : ""})
+                </span>
+              )}
+            </p>
+            <span className="text-xs text-gray-500 tabular-nums">
+              {Math.round((progress.current / progress.total) * 100)} %
+            </span>
+          </div>
+          <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[#0F7C55] to-[#D4AF37] transition-all duration-300"
+              style={{
+                width: `${(progress.current / progress.total) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
       )}
 
       {error && (
