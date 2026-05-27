@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaFacebookF,
   FaInstagram,
@@ -10,12 +10,18 @@ import {
   FaYoutube,
   FaTelegram,
   FaWhatsapp,
+  FaChevronDown,
 } from "react-icons/fa6";
 import { FaUser, FaRightToBracket } from "react-icons/fa6";
 import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 import { useAuth } from "@/lib/auth-context";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+
+type NavLink = { kind: "link"; label: string; href: string };
+type NavChild = { label: string; href: string; description?: string };
+type NavGroup = { kind: "group"; label: string; children: NavChild[] };
+type NavEntry = NavLink | NavGroup;
 
 const SOCIALS = [
   { name: "Facebook", url: LINKS.facebook, Icon: FaFacebookF },
@@ -45,17 +51,31 @@ export default function Navbar() {
         .toUpperCase()
     : null;
 
-  const navItems = [
-    { label: t("nav.home"), href: "/" },
-    { label: "Dahira", href: "/dahira" },
-    { label: "Histoire", href: "/notre-histoire" },
-    { label: t("nav.spiritualite"), href: "/spiritualite" },
-    { label: t("nav.media"), href: "/media" },
-    { label: "Challenge", href: "/challenge" },
-    { label: "Journée", href: "/journee-salaatu" },
-    { label: t("nav.boutique"), href: "/boutique" },
-    { label: t("nav.blog"), href: "/blog" },
-    { label: t("nav.contact"), href: "/contact" },
+  const navItems: NavEntry[] = [
+    { kind: "link", label: t("nav.home"), href: "/" },
+    {
+      kind: "group",
+      label: "Dahira",
+      children: [
+        {
+          label: "Le Dahira",
+          href: "/dahira",
+          description: "Notre organisation, nos commissions, notre mission",
+        },
+        {
+          label: "Notre Histoire",
+          href: "/notre-histoire",
+          description: "Fondation 2021, jalons clés, valeurs",
+        },
+      ],
+    },
+    { kind: "link", label: t("nav.spiritualite"), href: "/spiritualite" },
+    { kind: "link", label: t("nav.media"), href: "/media" },
+    { kind: "link", label: "Challenge", href: "/challenge" },
+    { kind: "link", label: "Journée", href: "/journee-salaatu" },
+    { kind: "link", label: t("nav.boutique"), href: "/boutique" },
+    { kind: "link", label: t("nav.blog"), href: "/blog" },
+    { kind: "link", label: t("nav.contact"), href: "/contact" },
   ];
 
   return (
@@ -89,15 +109,19 @@ export default function Navbar() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-2.5 xl:gap-5 text-white font-medium text-[12px] xl:text-[14px]">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="hover:text-[#D4AF37] transition whitespace-nowrap"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.kind === "link" ? (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="hover:text-[#D4AF37] transition whitespace-nowrap"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <NavDropdown key={item.label} group={item} />
+              )
+            )}
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
@@ -194,16 +218,34 @@ export default function Navbar() {
             )}
 
             <div className="space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className="block py-3 px-4 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {navItems.map((item) =>
+                item.kind === "link" ? (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="block py-3 px-4 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <div key={item.label} className="pt-2">
+                    <p className="px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37] font-bold">
+                      {item.label}
+                    </p>
+                    {item.children.map((c) => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        onClick={() => setOpen(false)}
+                        className="block py-3 px-6 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                )
+              )}
 
               {user && (
                 <Link
@@ -262,5 +304,81 @@ export default function Navbar() {
         )}
       </div>
     </header>
+  );
+}
+
+/** Element navbar dropdown : ouvre au hover (desktop) + au clic (touch).
+ *  Ferme automatiquement en cliquant hors zone ou en pressant ESC. */
+function NavDropdown({ group }: { group: NavGroup }) {
+  const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  // Ferme au clic exterieur
+  useEffect(() => {
+    if (!open) return;
+    function onClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        className="inline-flex items-center gap-1 hover:text-[#D4AF37] transition whitespace-nowrap py-1"
+      >
+        {group.label}
+        <FaChevronDown
+          className={`text-[9px] transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          className="absolute left-1/2 top-full -translate-x-1/2 pt-3"
+          // Note : pt-3 cree une zone "ponts" entre le trigger et le panel
+          // pour eviter que onMouseLeave ferme prematurement
+        >
+          <div className="w-72 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl p-2">
+            {group.children.map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                onClick={() => setOpen(false)}
+                className="block p-3 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] transition group"
+              >
+                <span className="font-semibold text-sm group-hover:text-[#D4AF37]">
+                  {c.label}
+                </span>
+                {c.description && (
+                  <span className="block mt-0.5 text-[11px] text-white/60 leading-snug">
+                    {c.description}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

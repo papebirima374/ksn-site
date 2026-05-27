@@ -18,7 +18,13 @@ const CATEGORIES: { id: GalleryItem["category"]; label: string }[] = [
   { id: "conferences", label: "Conférences" },
   { id: "evenements", label: "Événements" },
   { id: "activites", label: "Activités" },
+  { id: "journee", label: "Journée Salaatu" },
 ];
+
+/** Categories pour lesquelles le champ "Annee" est important (editions
+ *  annuelles d'evenements). Pour les autres, on accepte mais on ne le
+ *  rend pas obligatoire. */
+const YEAR_RELEVANT: GalleryItem["category"][] = ["journee", "gamou", "evenements"];
 
 export default function AdminGaleriePage() {
   const { user } = useAuth();
@@ -29,6 +35,7 @@ export default function AdminGaleriePage() {
   const [file, setFile] = useState<File | null>(null);
   const [alt, setAlt] = useState("");
   const [category, setCategory] = useState<GalleryItem["category"]>("activites");
+  const [year, setYear] = useState("");
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState<GalleryItem["category"] | "all">("all");
 
@@ -58,10 +65,12 @@ export default function AdminGaleriePage() {
       await uploadGalleryImage(file, {
         alt: alt || file.name,
         category,
+        year: year.trim() || undefined,
         createdBy: user.uid,
       });
       setFile(null);
       setAlt("");
+      setYear("");
       await reload();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur d'upload");
@@ -80,7 +89,7 @@ export default function AdminGaleriePage() {
     const newAlt = prompt("Légende de la photo :", item.alt);
     if (newAlt === null) return;
     const newCat = prompt(
-      "Catégorie (gamou / conferences / evenements / activites) :",
+      "Catégorie (gamou / conferences / evenements / activites / journee) :",
       item.category
     );
     if (newCat === null) return;
@@ -88,9 +97,14 @@ export default function AdminGaleriePage() {
       alert("Catégorie invalide.");
       return;
     }
+    const newYear = prompt(
+      "Année (ex: 2024) — laissez vide si non applicable :",
+      item.year || ""
+    );
     await updateGalleryItem(item.id, {
       alt: newAlt,
       category: newCat as GalleryItem["category"],
+      year: newYear?.trim() || undefined,
     });
     await reload();
   }
@@ -114,9 +128,9 @@ export default function AdminGaleriePage() {
       {canEdit && (
         <form
           onSubmit={handleUpload}
-          className="bg-white rounded-3xl shadow-md p-6 sm:p-8 mb-8 grid sm:grid-cols-[1fr_1fr_auto] gap-4 items-end"
+          className="bg-white rounded-3xl shadow-md p-6 sm:p-8 mb-8 grid sm:grid-cols-2 lg:grid-cols-[1fr_1fr_140px_auto] gap-4 items-end"
         >
-          <div>
+          <div className="sm:col-span-2 lg:col-span-1">
             <label className="block text-xs font-semibold text-gray-600 mb-2">
               Photo
             </label>
@@ -153,10 +167,22 @@ export default function AdminGaleriePage() {
               ))}
             </select>
           </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-2">
+              Année {YEAR_RELEVANT.includes(category) && <span className="text-[#B8860B]">★</span>}
+            </label>
+            <input
+              type="text"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              placeholder="ex: 2024"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55]"
+            />
+          </div>
           <button
             type="submit"
             disabled={!file || uploading}
-            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-5 rounded-xl font-bold disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-2.5 px-5 rounded-xl font-bold disabled:opacity-50 whitespace-nowrap"
           >
             <FaPlus /> {uploading ? "Upload…" : "Ajouter"}
           </button>
@@ -212,6 +238,11 @@ export default function AdminGaleriePage() {
               <div className="p-3">
                 <p className="text-xs text-[#B8860B] uppercase tracking-widest font-bold">
                   {item.category}
+                  {item.year && (
+                    <span className="text-gray-400 normal-case font-medium ml-1.5">
+                      · {item.year}
+                    </span>
+                  )}
                 </p>
                 <p className="mt-1 text-sm text-[#0F7C55] line-clamp-2">
                   {item.alt}

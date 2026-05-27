@@ -3,7 +3,8 @@ export type GalleryCategoryId =
   | "gamou"
   | "conferences"
   | "evenements"
-  | "activites";
+  | "activites"
+  | "journee";
 
 export type GalleryPhoto = {
   src: string;
@@ -18,6 +19,7 @@ export const GALLERY_CATEGORIES: { id: GalleryCategoryId; label: string }[] = [
   { id: "conferences", label: "Conférences" },
   { id: "evenements", label: "Événements" },
   { id: "activites", label: "Activités" },
+  { id: "journee", label: "Journée Salaatu" },
 ];
 
 // Pour ajouter une photo : déposer le fichier dans /public/gallery/ puis

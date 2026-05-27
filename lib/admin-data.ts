@@ -44,7 +44,12 @@ export async function listGallery(): Promise<GalleryItem[]> {
 
 export async function uploadGalleryImage(
   file: File,
-  meta: { alt: string; category: GalleryItem["category"]; createdBy: string }
+  meta: {
+    alt: string;
+    category: GalleryItem["category"];
+    createdBy: string;
+    year?: string;
+  }
 ): Promise<GalleryItem> {
   const bucket = getBucket();
   const path = `gallery/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
@@ -52,19 +57,22 @@ export async function uploadGalleryImage(
   await uploadBytes(r, file);
   const url = await getDownloadURL(r);
   const db = getDb();
-  const docRef = await addDoc(collection(db, "gallery"), {
+  const data: Record<string, unknown> = {
     src: url,
     alt: meta.alt,
     category: meta.category,
     storagePath: path,
     createdAt: Date.now(),
     createdBy: meta.createdBy,
-  });
+  };
+  if (meta.year) data.year = meta.year;
+  const docRef = await addDoc(collection(db, "gallery"), data);
   return {
     id: docRef.id,
     src: url,
     alt: meta.alt,
     category: meta.category,
+    year: meta.year,
     storagePath: path,
     createdAt: Date.now(),
     createdBy: meta.createdBy,
@@ -73,7 +81,7 @@ export async function uploadGalleryImage(
 
 export async function updateGalleryItem(
   id: string,
-  patch: Partial<Pick<GalleryItem, "alt" | "category">>
+  patch: Partial<Pick<GalleryItem, "alt" | "category" | "year">>
 ) {
   const db = getDb();
   await updateDoc(doc(db, "gallery", id), patch);
