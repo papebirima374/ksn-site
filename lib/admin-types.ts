@@ -69,10 +69,14 @@ export type GalleryItem = {
   createdBy: string;
 };
 
+export type SalaatuMode = "auto" | "manual";
+
 export type SalaatuDuJour = {
+  mode?: SalaatuMode; // defaults to "auto" if absent
   arabic: string;
   translit: string;
   translation: string;
+  title?: string;
   date?: string;
   lastUpdated: number;
   lastUpdatedBy: string;
