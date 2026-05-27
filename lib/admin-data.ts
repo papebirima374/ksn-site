@@ -339,6 +339,25 @@ export async function validateMember(id: string): Promise<string> {
   return matricule;
 }
 
+/**
+ * Self-activation after a member declares they paid the Wave cotisation.
+ * Optimistically promotes them to actif + generates a matricule. The
+ * Firestore rule must allow the row owner to flip status en_attente → actif
+ * for themselves. Admin reconciliation happens after via the Wave merchant
+ * dashboard.
+ */
+export async function selfActivateMember(id: string): Promise<string> {
+  const db = getDb();
+  const matricule = await nextMatricule();
+  await updateDoc(doc(db, "members", id), {
+    status: "actif",
+    matricule,
+    selfActivatedAt: Date.now(),
+    paymentClaimed: true,
+  });
+  return matricule;
+}
+
 export async function updateMember(id: string, patch: Partial<Member>) {
   const db = getDb();
   if (patch.email || patch.telephone) {

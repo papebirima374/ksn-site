@@ -18,6 +18,7 @@ import {
   updateMember,
   createMember,
   uploadMemberPhoto,
+  selfActivateMember,
 } from "@/lib/admin-data";
 import { Member } from "@/lib/admin-types";
 import { PAYMENT } from "@/lib/constants";
@@ -106,7 +107,13 @@ export default function ProfilPage() {
           await refresh();
         }} />
       ) : status === "en_attente" && member ? (
-        <PendingDashboard member={member} />
+        <PendingDashboard
+          member={member}
+          onActivated={async () => {
+            if (user.memberId) setMember(await getMember(user.memberId));
+            await refresh();
+          }}
+        />
       ) : (
         <VisitorDashboard
           onSubmitted={async () => {
@@ -327,48 +334,148 @@ function ActiveMemberDashboard({
   );
 }
 
-function PendingDashboard({ member }: { member: Member }) {
+function PendingDashboard({
+  member,
+  onActivated,
+}: {
+  member: Member;
+  onActivated: () => Promise<void>;
+}) {
+  const [paymentOpened, setPaymentOpened] = useState(false);
+  const [activating, setActivating] = useState(false);
+  const [error, setError] = useState("");
+
+  function openWave() {
+    window.open(PAYMENT.membershipWave, "_blank", "noopener,noreferrer");
+    setPaymentOpened(true);
+  }
+
+  async function handleSelfActivate() {
+    if (
+      !confirm(
+        "Confirmer que vous avez payé 1 000 FCFA via Wave ?\n\nVotre compte sera activé immédiatement et un matricule officiel vous sera attribué.\n\nL'administration vérifiera le paiement sur le tableau de bord Wave."
+      )
+    )
+      return;
+    setActivating(true);
+    setError("");
+    try {
+      const matricule = await selfActivateMember(member.id);
+      alert(
+        `🎉 Bienvenue membre actif !\n\nVotre matricule officiel : ${matricule}\n\nVotre carte de membre est désormais disponible sur cette page.`
+      );
+      await onActivated();
+    } catch (e) {
+      const raw = e instanceof Error ? e.message : String(e);
+      if (/Missing or insufficient permissions/i.test(raw)) {
+        setError(
+          "L'administrateur doit autoriser l'auto-activation dans les règles Firestore. Contactez-le sur WhatsApp pour qu'il valide manuellement."
+        );
+      } else {
+        setError(raw);
+      }
+    } finally {
+      setActivating(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl p-6 sm:p-8 text-white">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 text-white text-xs font-bold">
-          <FaClock /> Validation en cours
+          <FaClock /> En attente — Étape finale : paiement
         </div>
         <h2 className="font-display mt-4 text-2xl sm:text-3xl font-bold">
           Bienvenue {member.prenom} !
         </h2>
         <p className="mt-3 text-white/90 leading-7 text-sm sm:text-base">
-          Votre demande d&apos;adhésion est en cours de validation par la
-          commission administrative. Dès que vous aurez réglé la cotisation
-          annuelle de <strong>1 000 FCFA</strong>, votre matricule officiel sera
-          généré et votre carte de membre activée.
+          Vos informations sont enregistrées. Pour activer votre compte et
+          recevoir votre matricule officiel + carte de membre, payez la
+          cotisation annuelle de <strong>1 000 FCFA</strong> via Wave en deux
+          étapes ci-dessous.
         </p>
       </div>
 
+      {/* STEP 1 — Wave */}
       <div className="bg-white rounded-3xl shadow-md p-6 sm:p-8">
         <div className="flex items-start gap-4">
           <WaveLogo className="w-14 h-14 flex-shrink-0" />
-          <div>
+          <div className="flex-1">
             <p className="text-xs uppercase tracking-widest text-[#1DCEDB] font-bold">
-              Étape finale
+              Étape 1 sur 2
             </p>
             <h3 className="font-display mt-1 text-xl font-bold text-[#0F7C55]">
-              Payer ma cotisation
+              Payer 1 000 FCFA via Wave
             </h3>
             <p className="mt-2 text-sm text-gray-600 leading-6">
-              1 000 FCFA — Vous serez redirigé vers Wave (paiement officiel).
-              Après confirmation, votre statut passera à <strong>Actif</strong>.
+              Cliquez ci-dessous — un onglet Wave s&apos;ouvre. Une fois le
+              paiement validé sur Wave, revenez sur cette page et cliquez sur
+              <strong> &quot;J&apos;ai payé&quot;</strong>.
+            </p>
+          </div>
+          {paymentOpened && (
+            <span className="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold">
+              ✓ Onglet ouvert
+            </span>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={openWave}
+          className="block mt-5 w-full bg-[#1DCEDB] hover:bg-[#16b8c4] text-white text-center py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition"
+        >
+          {paymentOpened ? "Rouvrir Wave →" : "Payer 1 000 FCFA via Wave →"}
+        </button>
+      </div>
+
+      {/* STEP 2 — Confirm payment */}
+      <div
+        className={`bg-white rounded-3xl shadow-md p-6 sm:p-8 transition ${
+          !paymentOpened ? "opacity-60" : ""
+        }`}
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-2xl font-display font-bold flex-shrink-0">
+            ✓
+          </div>
+          <div className="flex-1">
+            <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
+              Étape 2 sur 2
+            </p>
+            <h3 className="font-display mt-1 text-xl font-bold text-[#0F7C55]">
+              Activer mon compte
+            </h3>
+            <p className="mt-2 text-sm text-gray-600 leading-6">
+              Après le paiement Wave, cliquez ci-dessous. Votre statut passera
+              instantanément à <strong>Actif</strong>, votre matricule officiel
+              sera généré et votre carte de membre apparaîtra sur cette page.
             </p>
           </div>
         </div>
-        <a
-          href={PAYMENT.membershipWave}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block mt-5 w-full bg-[#1DCEDB] hover:bg-[#16b8c4] text-white text-center py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition"
+
+        {error && (
+          <p className="mt-4 text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={handleSelfActivate}
+          disabled={!paymentOpened || activating}
+          className="block mt-5 w-full bg-gradient-to-r from-[#0F7C55] to-[#0A3D24] hover:from-[#0A3D24] hover:to-[#0F7C55] text-white text-center py-4 rounded-2xl font-bold shadow-xl hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
         >
-          Payer 1 000 FCFA via Wave
-        </a>
+          {activating
+            ? "Activation en cours…"
+            : !paymentOpened
+            ? "Effectuez d'abord l'étape 1"
+            : "J'ai payé — Activer mon compte ✓"}
+        </button>
+
+        <p className="mt-3 text-xs text-gray-500 italic text-center leading-5">
+          La commission finance reconcilie les paiements via le tableau de bord
+          Wave. Toute fausse déclaration entraîne la suspension du compte.
+        </p>
       </div>
     </div>
   );
