@@ -1,12 +1,5 @@
 import { LINKS } from "@/lib/constants";
 
-const LANGUAGES = [
-  { code: "FR", flag: "🇫🇷" },
-  { code: "WO", flag: "🇸🇳" },
-  { code: "EN", flag: "🇬🇧" },
-  { code: "AR", flag: "🇸🇦" },
-];
-
 const CARDS = [
   {
     icon: "📜",
@@ -39,20 +32,8 @@ export default function LeDahira() {
   return (
     <section
       id="dahira"
-      className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
+      className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 pt-6 sm:pt-10"
     >
-      <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 pt-6 sm:pt-10">
-        {LANGUAGES.map((lang) => (
-          <button
-            key={lang.code}
-            type="button"
-            className="bg-white/10 backdrop-blur-md border border-white/10 text-white px-3 sm:px-5 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:bg-[#D4AF37] hover:text-[#0A4D2E] transition-all duration-300 font-semibold shadow-lg text-xs sm:text-base"
-          >
-            {lang.flag} {lang.code}
-          </button>
-        ))}
-      </div>
-
       <div className="bg-white rounded-[28px] sm:rounded-[40px] p-6 sm:p-12 shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
         <div className="text-center">
           <span className="text-[#B8860B] uppercase tracking-[0.2em] sm:tracking-[0.25em] font-semibold text-xs sm:text-sm">

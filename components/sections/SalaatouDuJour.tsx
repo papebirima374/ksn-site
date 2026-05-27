@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getSalaatuDuJour } from "@/lib/admin-data";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { SalaatuDuJour } from "@/lib/admin-types";
+import { useT } from "@/lib/i18n/context";
 
 const DEFAULT: SalaatuDuJour = {
   arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
@@ -14,6 +15,7 @@ const DEFAULT: SalaatuDuJour = {
 };
 
 export default function SalaatouDuJour() {
+  const { t } = useT();
   const [data, setData] = useState<SalaatuDuJour>(DEFAULT);
 
   useEffect(() => {
@@ -22,9 +24,7 @@ export default function SalaatouDuJour() {
       .then((s) => {
         if (s) setData(s);
       })
-      .catch(() => {
-        // garde la version par défaut si Firestore est inaccessible
-      });
+      .catch(() => {});
   }, []);
 
   return (
@@ -32,11 +32,11 @@ export default function SalaatouDuJour() {
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16">
         <div className="text-center">
           <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            Salaatou du Jour
+            {t("salaatu.overline")}
           </span>
 
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132]">
-            Le Salaatu Recommandé
+            {t("salaatu.title")}
           </h2>
 
           {data.date && (
@@ -46,7 +46,7 @@ export default function SalaatouDuJour() {
 
         <div className="mt-10 sm:mt-14 max-w-3xl mx-auto">
           <div className="bg-gradient-to-br from-[#0F5132] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-8 sm:p-12 text-center text-white shadow-2xl">
-            <p className="font-arabic text-3xl sm:text-4xl md:text-5xl leading-loose text-[#D4AF37]">
+            <p className="font-arabic text-3xl sm:text-4xl md:text-5xl leading-loose text-[#D4AF37]" dir="rtl">
               {data.arabic}
             </p>
 
@@ -65,33 +65,30 @@ export default function SalaatouDuJour() {
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">📿</div>
               <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
-                Bienfaits
+                {t("salaatu.benefits")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">
-                Lumière dans le cœur, proximité du Prophète ﷺ et bénédictions
-                divines.
+                {t("salaatu.benefits_text")}
               </p>
             </div>
 
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">🕌</div>
               <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
-                Quand le réciter
+                {t("salaatu.when")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">
-                À tout moment, particulièrement après les prières et le
-                vendredi.
+                {t("salaatu.when_text")}
               </p>
             </div>
 
             <div className="bg-[#F8F5EF] rounded-2xl p-5 sm:p-6 text-center">
               <div className="text-3xl sm:text-4xl">✨</div>
               <h3 className="font-display mt-3 text-lg sm:text-xl font-bold text-[#0F5132]">
-                Récompense
+                {t("salaatu.reward")}
               </h3>
               <p className="mt-2 text-gray-600 text-sm">
-                Allah prie 10 fois sur celui qui prie une fois sur le Prophète
-                ﷺ.
+                {t("salaatu.reward_text")}
               </p>
             </div>
           </div>

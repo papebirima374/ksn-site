@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,15 +11,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6";
 import { LINKS, SITE } from "@/lib/constants";
-
-const NAV_LINKS = [
-  { label: "Accueil", href: "/" },
-  { label: "Le Dahira", href: "/dahira" },
-  { label: "Spiritualité", href: "/spiritualite" },
-  { label: "Média", href: "/media" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
-];
+import { useT } from "@/lib/i18n/context";
 
 const SOCIALS = [
   { name: "Facebook", url: LINKS.facebook, Icon: FaFacebookF },
@@ -29,6 +23,17 @@ const SOCIALS = [
 ];
 
 export default function Footer() {
+  const { t } = useT();
+
+  const navLinks = [
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.dahira"), href: "/dahira" },
+    { label: t("nav.spiritualite"), href: "/spiritualite" },
+    { label: t("nav.media"), href: "/media" },
+    { label: t("nav.blog"), href: "/blog" },
+    { label: t("nav.contact"), href: "/contact" },
+  ];
+
   return (
     <footer className="relative z-10 border-t border-white/10 bg-[#0B2E1F]/90 backdrop-blur-xl mt-16 sm:mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
@@ -49,22 +54,21 @@ export default function Footer() {
                 <h3 className="font-display text-2xl font-bold text-white">
                   {SITE.name}
                 </h3>
-                <p className="text-white/60 text-sm">{SITE.tagline}</p>
+                <p className="text-white/60 text-sm">{t("site.tagline")}</p>
               </div>
             </div>
 
             <p className="mt-5 text-white/70 leading-7 sm:leading-8 text-sm sm:text-base">
-              {SITE.fullName} œuvre pour la promotion du Salaatu sur le Prophète
-              Muhammad ﷺ à travers une communauté spirituelle moderne.
+              {t("footer.mission_quote")}
             </p>
           </div>
 
           <div>
             <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
-              Navigation
+              {t("footer.navigation")}
             </h4>
             <div className="mt-4 sm:mt-5 flex flex-col gap-2.5 sm:gap-3 text-white/70 text-sm sm:text-base">
-              {NAV_LINKS.map((item) => (
+              {navLinks.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -78,10 +82,10 @@ export default function Footer() {
 
           <div>
             <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
-              Contact
+              {t("footer.contact")}
             </h4>
             <div className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3 text-white/70 text-sm sm:text-base">
-              <p>📍 {SITE.location}</p>
+              <p>📍 {t("site.location")}</p>
               <p>🌐 {SITE.domain}</p>
               <a
                 href={LINKS.whatsapp}
@@ -89,14 +93,14 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 hover:text-[#D4AF37] transition"
               >
-                <FaWhatsapp /> WhatsApp officiel
+                <FaWhatsapp /> WhatsApp
               </a>
             </div>
           </div>
 
           <div>
             <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
-              Suivez-nous
+              {t("footer.suivez")}
             </h4>
             <div className="mt-4 sm:mt-5 grid grid-cols-3 gap-2">
               {SOCIALS.map((s) => {
@@ -118,16 +122,15 @@ export default function Footer() {
             </div>
 
             <p className="mt-5 text-white/70 leading-7 italic text-xs sm:text-sm">
-              &ldquo;Œuvrer pour la promotion du Salaatu sur le Prophète
-              Muhammad ﷺ.&rdquo;
+              {SITE.motto}
             </p>
           </div>
         </div>
 
         <div className="border-t border-white/10 mt-10 sm:mt-14 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
           <p className="text-white/50 text-xs sm:text-sm text-center md:text-left">
-            © 2021 - {new Date().getFullYear()} {SITE.fullName} ({SITE.name}).
-            Tous droits réservés.
+            © 2021 - {new Date().getFullYear()} {SITE.fullName} ({SITE.name}).{" "}
+            {t("footer.copyright")}
           </p>
 
           <p className="text-[#D4AF37] text-xs sm:text-sm">{SITE.domain}</p>

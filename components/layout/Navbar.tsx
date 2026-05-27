@@ -12,15 +12,8 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6";
 import { LINKS, SITE } from "@/lib/constants";
-
-const NAV_ITEMS = [
-  { label: "Accueil", href: "/" },
-  { label: "Le Dahira", href: "/dahira" },
-  { label: "Spiritualité", href: "/spiritualite" },
-  { label: "Média", href: "/media" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact", href: "/contact" },
-];
+import { useT } from "@/lib/i18n/context";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 const SOCIALS = [
   { name: "Facebook", url: LINKS.facebook, Icon: FaFacebookF },
@@ -32,7 +25,17 @@ const SOCIALS = [
 ];
 
 export default function Navbar() {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
+
+  const navItems = [
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.dahira"), href: "/dahira" },
+    { label: t("nav.spiritualite"), href: "/spiritualite" },
+    { label: t("nav.media"), href: "/media" },
+    { label: t("nav.blog"), href: "/blog" },
+    { label: t("nav.contact"), href: "/contact" },
+  ];
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
@@ -56,16 +59,16 @@ export default function Navbar() {
                 {SITE.name}
               </h1>
               <p className="text-white/60 text-xs lg:text-sm tracking-wide">
-                {SITE.tagline}
+                {t("site.tagline")}
               </p>
               <p className="text-[#D4AF37] text-[10px] lg:text-sm mt-0.5">
-                {SITE.motto}
+                {t("site.motto")}
               </p>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex gap-8 xl:gap-12 text-white font-medium">
-            {NAV_ITEMS.map((item) => (
+          <nav className="hidden lg:flex gap-6 xl:gap-10 text-white font-medium">
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -77,11 +80,13 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
+
             <Link
               href="/don"
-              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-sm sm:text-base whitespace-nowrap"
+              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] font-bold px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs sm:text-sm lg:text-base whitespace-nowrap"
             >
-              Faire un Don
+              {t("cta.donate")}
             </Link>
 
             <button
@@ -113,7 +118,7 @@ export default function Navbar() {
         {open && (
           <nav className="lg:hidden mt-3 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 shadow-2xl">
             <div className="space-y-1">
-              {NAV_ITEMS.map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -127,7 +132,7 @@ export default function Navbar() {
 
             <div className="border-t border-white/10 mt-4 pt-4">
               <p className="text-xs uppercase tracking-[0.2em] text-[#D4AF37] font-bold mb-3 px-2">
-                Suivez-nous
+                {t("cta.follow_us")}
               </p>
               <div className="grid grid-cols-3 gap-2">
                 {SOCIALS.map((s) => {
@@ -156,14 +161,14 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="block py-3 text-center font-semibold text-[#D4AF37] border border-[#D4AF37]/40 rounded-xl"
               >
-                Rejoindre
+                {t("cta.member")}
               </Link>
               <Link
                 href="/don"
                 onClick={() => setOpen(false)}
                 className="block py-3 text-center font-bold text-[#0F5132] bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-xl"
               >
-                Faire un Don
+                {t("cta.donate")}
               </Link>
             </div>
           </nav>

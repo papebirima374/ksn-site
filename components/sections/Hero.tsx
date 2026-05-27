@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useT } from "@/lib/i18n/context";
 
 export default function Hero() {
+  const { t } = useT();
   return (
     <section
       id="accueil"
@@ -15,26 +19,23 @@ export default function Hero() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        <div className="text-center lg:text-left">
+        <div className="text-center lg:text-start">
           <div className="inline-flex items-center rounded-full bg-[#B8860B]/15 border border-[#D4AF37]/20 px-5 sm:px-6 py-3 sm:py-4 text-[#D4AF37] font-semibold backdrop-blur-md text-sm sm:text-base">
-            ✨ Kippangog Salaatu &apos;Alaa Nabii
+            ✨ {t("hero.badge")}
           </div>
 
           <h1 className="font-display mt-6 sm:mt-8 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] tracking-tight">
-            Une communauté
+            {t("hero.title_line1")}
             <br />
-            spirituelle moderne
+            {t("hero.title_line2")}
             <br />
-            au service du
+            {t("hero.title_line3")}
             <br />
-            Salaatu ﷺ
+            {t("hero.title_line4")}
           </h1>
 
           <p className="mt-6 sm:mt-8 text-base sm:text-lg text-white/75 leading-8 sm:leading-9 max-w-2xl mx-auto lg:mx-0">
-            Créé le 02 Janvier 2021 à Touba, KSN œuvre pour la promotion du
-            Salaatu sur le Prophète Muhammad ﷺ à travers une organisation
-            structurée, des activités spirituelles et une communauté
-            internationale engagée.
+            {t("hero.subtitle")}
           </p>
 
           <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-5">
@@ -42,14 +43,14 @@ export default function Hero() {
               href="/inscription"
               className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
-              Rejoindre le Dahira
+              {t("cta.join")}
             </Link>
 
             <Link
               href="/dahira"
               className="border border-[#D4AF37]/30 text-[#D4AF37] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl backdrop-blur-md hover:bg-white/10 transition text-sm sm:text-base"
             >
-              Découvrir KSN
+              {t("cta.discover")}
             </Link>
           </div>
         </div>
@@ -59,13 +60,11 @@ export default function Hero() {
 
           <div className="relative bg-white/[0.07] backdrop-blur-2xl border border-white/10 rounded-[32px] sm:rounded-[44px] p-6 sm:p-8 lg:p-10 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
             <p className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#D4AF37] text-xs sm:text-sm font-semibold">
-              Vie Institutionnelle KSN
+              {t("hero.card_overline")}
             </p>
 
             <h2 className="font-display mt-4 sm:mt-5 text-3xl sm:text-4xl font-bold text-white leading-tight">
-              Organisation
-              <br />
-              & Fonctionnement
+              {t("hero.card_title")}
             </h2>
 
             <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
@@ -74,10 +73,10 @@ export default function Hero() {
                 className="block bg-white/10 hover:bg-white/15 rounded-2xl p-4 sm:p-5 transition"
               >
                 <h3 className="text-white font-semibold text-sm sm:text-base">
-                  📜 Règlement Intérieur
+                  📜 {t("hero.card_reglement")}
                 </h3>
                 <p className="text-white/60 text-xs sm:text-sm mt-1">
-                  Statuts, discipline et fonctionnement du Dahira.
+                  {t("hero.card_reglement_desc")}
                 </p>
               </Link>
 
@@ -86,11 +85,10 @@ export default function Hero() {
                 className="block bg-white/10 hover:bg-white/15 rounded-2xl p-4 sm:p-5 transition"
               >
                 <h3 className="text-white font-semibold text-sm sm:text-base">
-                  🏛️ Commissions Officielles
+                  🏛️ {t("hero.card_commissions")}
                 </h3>
                 <p className="text-white/60 text-xs sm:text-sm mt-1">
-                  Éducation, Communication, Finances, Sociale, Organisation et
-                  Relations Extérieures.
+                  {t("hero.card_commissions_desc")}
                 </p>
               </Link>
 
@@ -99,11 +97,10 @@ export default function Hero() {
                 className="block bg-white/10 hover:bg-white/15 rounded-2xl p-4 sm:p-5 transition"
               >
                 <h3 className="text-white font-semibold text-sm sm:text-base">
-                  👥 Vie du Membre
+                  👥 {t("hero.card_membre")}
                 </h3>
                 <p className="text-white/60 text-xs sm:text-sm mt-1">
-                  Adhésion, participation spirituelle et engagement
-                  communautaire.
+                  {t("hero.card_membre_desc")}
                 </p>
               </Link>
             </div>
