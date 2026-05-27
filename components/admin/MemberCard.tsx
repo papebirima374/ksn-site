@@ -7,7 +7,6 @@ type Props = {
 };
 
 // CR-80 ID card layout: 85.6 × 53.98 mm (aspect ratio 1.586).
-// The preview renders at 520 px wide; print CSS overrides to real mm via @page.
 export default function MemberCard({ member, size = "preview" }: Props) {
   const w = size === "print" ? 540 : 520;
   const domicile =
@@ -18,117 +17,113 @@ export default function MemberCard({ member, size = "preview" }: Props) {
 
   return (
     <div
-      className="print-card relative bg-[#FAF8F3] overflow-hidden mx-auto"
+      className="print-card relative overflow-hidden mx-auto"
       style={{
         width: `${w}px`,
         maxWidth: "100%",
         aspectRatio: "1.586 / 1",
         borderRadius: "14px",
-        boxShadow: size === "print" ? "none" : "0 25px 60px rgba(0,0,0,0.18)",
-        border: "1px solid rgba(184, 134, 11, 0.2)",
+        boxShadow: size === "print" ? "none" : "0 20px 50px rgba(0,0,0,0.12)",
+        border: "1px solid rgba(15, 81, 50, 0.15)",
+        // Soft white paper texture background
+        background: "linear-gradient(135deg, #ffffff 0%, #faf9f6 50%, #f4f2eb 100%)",
       }}
     >
-      {/* Decorative background curves (green + gold) */}
+      {/* Background paper texture pattern (subtle dot grid) */}
+      <div
+        className="absolute inset-0 opacity-[0.4] pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(#0c4228 0.5px, transparent 0.5px)",
+          backgroundSize: "10px 10px",
+        }}
+      />
+
+      {/* Decorative accent waves from the old design */}
+      {/* Top Edge Wave (green with gold trim) */}
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        viewBox="0 0 540 340"
+        className="absolute top-0 right-0 pointer-events-none z-10"
+        style={{ width: "42%", height: "16%" }}
+        viewBox="0 0 200 40"
         preserveAspectRatio="none"
         aria-hidden="true"
       >
-        <defs>
-          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#8C6207" />
-            <stop offset="30%" stopColor="#D4AF37" />
-            <stop offset="70%" stopColor="#F3E5AB" />
-            <stop offset="100%" stopColor="#AA7C11" />
-          </linearGradient>
-          <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#072215" />
-            <stop offset="50%" stopColor="#0F5132" />
-            <stop offset="100%" stopColor="#1B5E3A" />
-          </linearGradient>
-        </defs>
-        
-        {/* Top-left curves */}
-        <path d="M 0,0 L 340,0 C 270,95 190,130 0,115 Z" fill="url(#greenGrad)" />
-        <path d="M 0,0 L 310,0 C 250,80 180,105 0,90 Z" fill="url(#goldGrad)" opacity="0.9" />
-        
-        {/* Bottom-right curves */}
-        <path d="M 540,340 L 200,340 C 270,245 350,210 540,225 Z" fill="url(#greenGrad)" />
-        <path d="M 540,340 L 230,340 C 290,260 360,235 540,250 Z" fill="url(#goldGrad)" opacity="0.9" />
+        <path d="M 0,0 Q 90,28 200,8 L 200,0 Z" fill="#0F5132" />
+        <path d="M 0,0 Q 90,28 200,8" fill="none" stroke="#D4AF37" strokeWidth="2" />
       </svg>
 
-      {/* Premium inner border frame */}
-      <div className="absolute inset-[10px] border border-[#D4AF37]/30 rounded-[10px] pointer-events-none z-20" />
+      {/* Bottom Edge Wave (green with gold trim) */}
+      <svg
+        className="absolute bottom-0 left-0 pointer-events-none z-10"
+        style={{ width: "35%", height: "14%" }}
+        viewBox="0 0 160 30"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M 0,30 L 160,30 Q 95,4 0,16 Z" fill="#0F5132" />
+        <path d="M 0,16 Q 95,4 160,30" fill="none" stroke="#D4AF37" strokeWidth="2" />
+      </svg>
 
-      {/* Circular Seal Watermark (in the background, behind layout) */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-        <svg
-          viewBox="0 0 120 120"
-          className="w-[48%] aspect-square opacity-[0.08] text-[#0F5132]"
-          style={{ transform: "rotate(-12deg) translateX(40px)" }}
-        >
-          <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="0.6" strokeDasharray="3,1.5" />
-          <circle cx="60" cy="60" r="42" fill="none" stroke="currentColor" strokeWidth="0.8" />
-          <path id="seal-text-path" d="M 60,60 m -46,0 a 46,46 0 1,1 92,0 a 46,46 0 1,1 -92,0" fill="none" />
-          <text className="font-sans font-bold uppercase tracking-wider" style={{ fontSize: "7px", fill: "currentColor" }}>
-            <textPath href="#seal-text-path" startOffset="50%" textAnchor="middle">
-              KIPPAANGOG SALAATU • TOUBA SENEGAL •
-            </textPath>
-          </text>
-          <text x="60" y="68" textAnchor="middle" className="font-serif font-extrabold" style={{ fontSize: "24px", fill: "currentColor" }}>
-            ﷺ
-          </text>
-          <circle cx="60" cy="60" r="30" fill="none" stroke="currentColor" strokeWidth="0.4" strokeDasharray="1,2" />
-        </svg>
-      </div>
+      {/* Clean border frame */}
+      <div className="absolute inset-[8px] border border-[#0f5132]/10 rounded-[10px] pointer-events-none z-20" />
 
-      {/* Top Header Section */}
-      <div className="relative z-10 pt-[3.8%] px-[5%] flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5">
-          <div
-            className="relative rounded-full overflow-hidden bg-white border border-[#D4AF37]/50 shadow-sm"
-            style={{ width: "13%", aspectRatio: "1 / 1", minWidth: 32 }}
+      {/* Header Section */}
+      <div className="relative z-20 pt-[4%] px-[5%]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            {/* Logo container */}
+            <div
+              className="relative rounded-full overflow-hidden bg-white border border-[#0f5132]/20 shadow-sm"
+              style={{ width: "38px", height: "38px" }}
+            >
+              <Image
+                src="/logo/ksn-logo.png"
+                alt="KSN Logo"
+                fill
+                sizes="60px"
+                className="object-contain p-0.5"
+              />
+            </div>
+            {/* Title / Subtitle */}
+            <div>
+              <h1
+                className="font-sans font-extrabold text-[#0F5132] tracking-wide flex items-center gap-1.5"
+                style={{ fontSize: "12.5px" }}
+              >
+                <span>KIPPAANGOG SALAATU &apos;ALAA NABII</span>
+                <span className="font-serif font-bold text-[#0F5132]">ﷺ</span>
+              </h1>
+              <p
+                className="text-[#D4AF37] font-sans font-black tracking-[0.24em] mt-0.5"
+                style={{ fontSize: "8.5px" }}
+              >
+                CARTE DE MEMBRE
+              </p>
+            </div>
+          </div>
+          {/* Siège */}
+          <p
+            className="text-[#0F5132]/85 font-bold font-sans text-right mr-[15%] sm:mr-[20%]"
+            style={{ fontSize: "8.5px" }}
           >
-            <Image
-              src="/logo/ksn-logo.png"
-              alt="KSN"
-              fill
-              sizes="60px"
-              className="object-contain p-0.5"
-            />
-          </div>
-          <div className="leading-tight">
-            <p
-              className="font-sans font-extrabold text-white tracking-wide flex items-center gap-1"
-              style={{ fontSize: size === "print" ? "12px" : "11px" }}
-            >
-              <span>KIPPAANGOG SALAATU &apos;ALAA NABII</span>
-              <span className="font-serif font-bold text-[#D4AF37]">ﷺ</span>
-            </p>
-            <p
-              className="text-[#D4AF37] font-sans font-extrabold tracking-[0.22em] text-shadow-sm"
-              style={{ fontSize: "8px" }}
-            >
-              CARTE DE MEMBRE
-            </p>
-          </div>
+            Siège Social: Touba
+          </p>
         </div>
-        <p
-          className="text-white/95 font-bold font-sans text-right"
-          style={{ fontSize: "9px" }}
-        >
-          Siège : Touba
-        </p>
+
+        {/* Separator Line */}
+        <div
+          className="w-full h-[1.5px] mt-2.5"
+          style={{
+            background: "linear-gradient(to right, #0F5132 0%, #D4AF37 35%, #FAF8F3 100%)",
+          }}
+        />
       </div>
 
-      {/* Main content grid */}
-      <div className="relative z-10 px-[5%] pt-[3.5%] grid grid-cols-[30%_1fr] gap-[5%] items-center">
-        {/* Photo Holder */}
+      {/* Main Grid Content */}
+      <div className="relative z-20 px-[5%] pt-[3%] grid grid-cols-[28%_1fr] gap-[6%] items-start">
+        {/* Photo Column */}
         <div
-          className="relative rounded-lg overflow-hidden bg-[#E8E6E1] shadow-md border border-[#D4AF37]/45"
-          style={{ aspectRatio: "3 / 4" }}
+          className="relative rounded-lg overflow-hidden bg-[#E8E6E1] shadow-sm border border-[#0F5132]/15 mt-1"
+          style={{ width: "100%", aspectRatio: "1 / 1.15" }}
         >
           {member.photo ? (
             <Image
@@ -140,7 +135,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
               unoptimized={member.photo.startsWith("http")}
             />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#FAF8F3] to-[#E8E6E1] text-[#0F5132]/40">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-[#E8E6E1] text-[#0F5132]/45">
               <span className="font-serif font-bold text-2xl">
                 {(member.prenom?.[0] ?? "?")}
                 {(member.nom?.[0] ?? "")}
@@ -149,48 +144,42 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           )}
         </div>
 
-        {/* Info Column */}
-        <div className="space-y-[4%] text-[#0F5132]">
-          <Field
-            label="Prénom & Nom"
-            value={fullName}
-            primary
-          />
-          
-          <div className="grid grid-cols-2 gap-2">
-            <Field
-              label="Téléphone"
-              value={member.telephone || "—"}
-            />
-            <Field
-              label="Domicile"
-              value={domicile}
-            />
+        {/* Details Column with Watermark Seal behind it */}
+        <div className="relative w-full flex flex-col gap-2.5 mt-1">
+          {/* Circular watermark seal */}
+          <div className="absolute right-[5%] bottom-[5%] w-[52%] aspect-square opacity-[0.09] text-[#0F5132] pointer-events-none z-0">
+            <svg viewBox="0 0 120 120" className="w-full h-full">
+              <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1" />
+              <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+              <circle cx="60" cy="60" r="41" fill="none" stroke="currentColor" strokeWidth="0.8" />
+              <path id="seal-text-path-2" d="M 60,60 m -45,0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" fill="none" />
+              <text className="font-sans font-bold uppercase tracking-wider" style={{ fontSize: "6.5px", fill: "currentColor" }}>
+                <textPath href="#seal-text-path-2" startOffset="50%" textAnchor="middle">
+                  KIPPAANGOG SALAATU • TOUBA SENEGAL •
+                </textPath>
+              </text>
+              <text x="60" y="66" textAnchor="middle" className="font-serif font-bold" style={{ fontSize: "20px", fill: "currentColor" }}>
+                ﷺ
+              </text>
+              <circle cx="60" cy="60" r="30" fill="none" stroke="currentColor" strokeWidth="0.4" strokeDasharray="1,2" />
+            </svg>
           </div>
 
-          <div className="flex items-end justify-between border-t border-[#0F5132]/10 pt-1.5 mt-1">
-            <div>
-              <p
-                className="text-[#0F5132]/60 uppercase tracking-wider font-semibold font-sans leading-none"
-                style={{ fontSize: "7.5px" }}
-              >
-                Matricule
-              </p>
-              <p
-                className="font-sans font-black tabular-nums leading-none mt-1 text-[#0F5132]"
-                style={{
-                  fontSize: size === "print" ? "24px" : "26px",
-                  letterSpacing: "0.5px",
-                }}
-              >
-                {member.matricule}
-              </p>
-            </div>
-            
-            {/* Fine watermark decorative text */}
-            <p className="text-right text-[#0F5132]/40 font-mono text-[7px] leading-none mb-1 select-none">
-              KSN-MEMBRE-OFFICIEL
-            </p>
+          {/* Details fields */}
+          <div className="relative z-10">
+            <Field label="Prénom & Nom" value={fullName} />
+          </div>
+
+          <div className="relative z-10">
+            <Field label="Téléphone" value={member.telephone || "—"} />
+          </div>
+
+          <div className="relative z-10">
+            <Field label="Domicile" value={domicile} />
+          </div>
+
+          <div className="relative z-10">
+            <Field label="Matricule" value={member.matricule} isMatricule />
           </div>
         </div>
       </div>
@@ -201,26 +190,27 @@ export default function MemberCard({ member, size = "preview" }: Props) {
 function Field({
   label,
   value,
-  primary,
+  isMatricule,
 }: {
   label: string;
   value: string;
-  primary?: boolean;
+  isMatricule?: boolean;
 }) {
   return (
     <div>
-      <p
-        className="text-[#0F5132]/60 uppercase tracking-wider font-semibold font-sans leading-none"
-        style={{ fontSize: "7.5px" }}
-      >
+      <p className="text-[#0F5132]/60 uppercase tracking-widest font-extrabold font-sans text-[7.5px] leading-none">
         {label}
       </p>
       <p
-        className="font-bold text-[#0F5132] truncate leading-tight mt-0.5"
-        style={{ fontSize: primary ? "14px" : "11px" }}
+        className={`text-[#0F5132] leading-tight mt-1 ${
+          isMatricule
+            ? "font-sans font-black text-[18px] tracking-wide"
+            : "font-sans font-bold text-[12.5px] truncate"
+        }`}
       >
         {value}
       </p>
     </div>
   );
 }
+
