@@ -13,19 +13,20 @@ import PageHero from "@/components/layout/PageHero";
 import EventCountdown from "@/components/sections/EventCountdown";
 import { LINKS, SITE } from "@/lib/constants";
 
-// Anniversaire de fondation du Dahira : 2 janvier 2021.
-// La Journée Salaatu 'Alaa Nabii commémore cette date chaque année.
-// Date cible utilisée pour le compte à rebours : prochaine occurrence.
-const EVENT_DATE_ISO = "2027-01-02T08:00:00+00:00"; // 2 janvier 2027, 08h GMT
+// Prochaine edition de la Journee Salaatu 'Alaa Nabii : 26 decembre 2026, Touba.
+// La date est fixee chaque annee par le Khalife du Dahira ; le Dahira a ete
+// fonde le 2 janvier 2021. Mettre a jour cette constante chaque annee.
+const EVENT_DATE_ISO = "2026-12-26T08:00:00+00:00"; // 26 decembre 2026, 08h GMT
+const EVENT_DATE_LABEL = "26 décembre 2026 — Touba";
 
 export const metadata: Metadata = {
-  title: "Journée Salaatu ʿAlaa Nabii",
+  title: "Journée Salaatu ʿAlaa Nabii — 26 décembre 2026",
   description:
-    "Chaque 2 janvier, anniversaire de fondation du Dahira KSN, la oumma se réunit pour célébrer la Journée Salaatu ʿAlaa Nabii : prières, chants, conférences et dhikr collectif autour du Prophète Muhammad ﷺ.",
+    "Le 26 décembre 2026, la oumma KSN se réunit à Touba pour la Journée Salaatu ʿAlaa Nabii : prières, chants, conférences et dhikr collectif autour du Prophète Muhammad ﷺ.",
   openGraph: {
-    title: "Journée Salaatu ʿAlaa Nabii — KSN",
+    title: "Journée Salaatu ʿAlaa Nabii — 26 décembre 2026 — KSN",
     description:
-      "L'événement spirituel annuel du Dahira Kippangog Salaatu ʿAlaa Nabii — 2 janvier, Touba.",
+      "L'événement spirituel annuel du Dahira Kippangog Salaatu ʿAlaa Nabii — 26 décembre 2026, Touba.",
   },
 };
 
@@ -66,7 +67,7 @@ const HIGHLIGHTS = [
   {
     icon: <FaCalendarDays className="text-[#D4AF37] text-xl" />,
     title: "Date",
-    text: "2 janvier de chaque année — anniversaire de fondation du Dahira (2 janvier 2021).",
+    text: "26 décembre 2026 — date fixée par le Khalife du Dahira pour cette édition annuelle.",
   },
   {
     icon: <FaLocationDot className="text-[#D4AF37] text-xl" />,
@@ -92,7 +93,7 @@ export default function JourneeSalaatuPage() {
         overline="Événement spirituel annuel"
         title="Journée Salaatu ʿAlaa Nabii"
         arabic="يوم الصلاة على النبي ﷺ"
-        description="Chaque 2 janvier, anniversaire de fondation du Dahira KSN, la oumma se réunit à Touba pour une journée entière de prières, chants et dhikr autour du Prophète Muhammad ﷺ."
+        description="Le 26 décembre 2026, la oumma KSN se réunit à Touba pour une journée entière de prières, chants et dhikr autour du Prophète Muhammad ﷺ — sous l'autorité spirituelle du Khalife du Dahira."
       />
 
       {/* COMPTE A REBOURS */}
@@ -101,7 +102,7 @@ export default function JourneeSalaatuPage() {
         <p className="text-center mt-4 text-white/60 text-xs sm:text-sm">
           Prochaine édition :{" "}
           <span className="text-[#D4AF37] font-semibold">
-            2 janvier 2027 — Touba
+            {EVENT_DATE_LABEL}
           </span>
         </p>
       </section>
@@ -117,12 +118,12 @@ export default function JourneeSalaatuPage() {
               Une oumma, un Prophète, une voix
             </h2>
             <p className="mt-5 max-w-3xl mx-auto text-gray-600 text-sm sm:text-base leading-7">
-              Le 2 janvier 2021, le Dahira{" "}
-              <strong>{SITE.fullName}</strong> a été fondé à Touba pour
-              promouvoir la prière sur le Prophète Muhammad ﷺ à travers le
-              monde. Chaque année, à cette même date, la communauté se réunit
-              pour réaffirmer cette mission lors d&apos;une journée entière
-              dédiée au Salaatu collectif.
+              Fondé le 2 janvier 2021 à Touba, le Dahira{" "}
+              <strong>{SITE.fullName}</strong> œuvre pour promouvoir la prière
+              sur le Prophète Muhammad ﷺ à travers le monde. Chaque année, le
+              Khalife du Dahira convoque la communauté pour une journée entière
+              dédiée au Salaatu collectif — cette année, le{" "}
+              <strong className="text-[#0F7C55]">26 décembre 2026</strong>.
             </p>
           </div>
 
