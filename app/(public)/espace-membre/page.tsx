@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/auth-context";
 import { LINKS } from "@/lib/constants";
 
 function ContentInner() {
-  const { signIn, signUp, user, loading, configured } = useAuth();
+  const { signIn, signUp, resetPassword, user, loading, configured } = useAuth();
   const router = useRouter();
   const search = useSearchParams();
   const returnTo = search?.get("next") || "/spiritualite";
@@ -20,14 +20,35 @@ function ContentInner() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     if (!loading && user) router.replace(returnTo);
   }, [loading, user, returnTo, router]);
 
+  async function handleResetPassword() {
+    if (!email) {
+      setError("Veuillez saisir votre adresse e-mail dans le champ ci-dessus pour réinitialiser votre mot de passe.");
+      return;
+    }
+    setError("");
+    setResetMessage("");
+    setResetting(true);
+    try {
+      await resetPassword(email.trim());
+      setResetMessage("Un e-mail de réinitialisation de mot de passe a été envoyé à cette adresse.");
+    } catch {
+      setError("Impossible d'envoyer l'e-mail de réinitialisation. Vérifiez l'adresse saisie.");
+    } finally {
+      setResetting(false);
+    }
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+    setResetMessage("");
     setSubmitting(true);
     try {
       if (mode === "login") {
@@ -145,6 +166,25 @@ function ContentInner() {
             className={inputClass}
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
           />
+
+          {mode === "login" && (
+            <div className="text-right px-1">
+              <button
+                type="button"
+                onClick={handleResetPassword}
+                disabled={resetting}
+                className="text-xs text-[#B8860B] hover:text-[#D4AF37] font-semibold transition"
+              >
+                {resetting ? "Envoi..." : "Mot de passe oublié ?"}
+              </button>
+            </div>
+          )}
+
+          {resetMessage && (
+            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+              {resetMessage}
+            </p>
+          )}
 
           {error && (
             <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">

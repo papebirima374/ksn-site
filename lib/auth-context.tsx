@@ -14,6 +14,7 @@ import {
   signOut as fbSignOut,
   updateProfile,
   User,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import {
   doc,
@@ -42,6 +43,7 @@ type AuthState = {
   ) => Promise<void>;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -250,6 +252,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await fbSignOut(auth);
   }
 
+  async function resetPassword(email: string) {
+    const auth = getFirebaseAuth();
+    await sendPasswordResetEmail(auth, email.trim());
+  }
+
   async function refresh() {
     if (firebaseUser) setUser(await loadUserDoc(firebaseUser));
   }
@@ -265,6 +272,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signUp,
         signOut,
         refresh,
+        resetPassword,
       }}
     >
       {children}
