@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
+import OrganizationSchema from "@/components/seo/OrganizationSchema";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -81,6 +82,9 @@ export default function RootLayout({
       lang="fr"
       className={`${playfair.variable} ${inter.variable} ${amiri.variable} h-full antialiased`}
     >
+      <head>
+        <OrganizationSchema />
+      </head>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

@@ -2,6 +2,7 @@ import Background from "@/components/layout/Background";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
+import CookieBanner from "@/components/layout/CookieBanner";
 import CartDrawer from "@/components/boutique/CartDrawer";
 import CartBadge from "@/components/boutique/CartBadge";
 import { I18nProvider } from "@/lib/i18n/context";
@@ -25,6 +26,7 @@ export default function PublicLayout({
             <WhatsAppFloat />
             <CartBadge />
             <CartDrawer />
+            <CookieBanner />
           </main>
         </CartProvider>
       </AuthProvider>

@@ -128,13 +128,21 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-10 sm:mt-14 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-white/50 text-xs sm:text-sm text-center md:text-left">
-            © 2021 - {new Date().getFullYear()} {SITE.fullName} ({SITE.name}).{" "}
-            {t("footer.copyright")}
-          </p>
-
-          <p className="text-[#D4AF37] text-xs sm:text-sm">{SITE.domain}</p>
+        <div className="border-t border-white/10 mt-10 sm:mt-14 pt-6 sm:pt-8">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-white/60 mb-5">
+            <Link href="/mentions-legales" className="hover:text-[#D4AF37] transition">Mentions légales</Link>
+            <Link href="/confidentialite" className="hover:text-[#D4AF37] transition">Confidentialité</Link>
+            <Link href="/cgu" className="hover:text-[#D4AF37] transition">CGU</Link>
+            <Link href="/cgv" className="hover:text-[#D4AF37] transition">CGV</Link>
+            <Link href="/cookies" className="hover:text-[#D4AF37] transition">Cookies</Link>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+            <p className="text-white/50 text-xs sm:text-sm text-center md:text-left">
+              © 2021 - {new Date().getFullYear()} {SITE.fullName} ({SITE.name}).{" "}
+              {t("footer.copyright")}
+            </p>
+            <p className="text-[#D4AF37] text-xs sm:text-sm">{SITE.domain}</p>
+          </div>
         </div>
       </div>
     </footer>
