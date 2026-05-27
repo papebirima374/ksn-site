@@ -78,3 +78,26 @@ body {
   page-break-inside: avoid;
   break-inside: avoid;
 }
+
+/* Best-effort screenshot / copy protection for sacred Salaatu content.
+   Real DRM is impossible in a browser — OS-level screenshots can't be blocked.
+   But we make it harder: no text selection, no right-click, no native print. */
+.protected-content {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.protected-content img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+@media print {
+  .protected-content { display: none !important; }
+  .protected-content::before {
+    content: "Contenu protégé — impression désactivée.";
+    display: block;
+    color: #0F5132;
+    padding: 2rem;
+  }
+}

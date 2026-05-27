@@ -17,11 +17,14 @@ import { getDb, getBucket } from "./firebase";
 import {
   Article,
   AppUser,
+  FinanceEntry,
+  FinanceType,
   GalleryItem,
   Member,
   MenuItem,
   Permission,
   SalaatuDuJour,
+  SalaatuLibraryItem,
   UserRole,
 } from "./admin-types";
 
@@ -329,6 +332,106 @@ export type ImportReport = {
   skipped: number;
   errors: string[];
 };
+
+// ============ SALAATU LIBRARY ============
+
+export async function listSalaatuLibrary(): Promise<SalaatuLibraryItem[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "salaatuLibrary"), orderBy("order", "asc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<SalaatuLibraryItem, "id">),
+  }));
+}
+
+export async function getSalaatuLibraryItem(
+  id: string
+): Promise<SalaatuLibraryItem | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "salaatuLibrary", id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...(snap.data() as Omit<SalaatuLibraryItem, "id">) };
+}
+
+export async function createSalaatuLibraryItem(
+  data: Omit<SalaatuLibraryItem, "id" | "createdAt">
+): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "salaatuLibrary"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function updateSalaatuLibraryItem(
+  id: string,
+  patch: Partial<SalaatuLibraryItem>
+) {
+  const db = getDb();
+  await updateDoc(doc(db, "salaatuLibrary", id), patch);
+}
+
+export async function deleteSalaatuLibraryItem(id: string) {
+  const db = getDb();
+  await deleteDoc(doc(db, "salaatuLibrary", id));
+}
+
+// ============ FINANCES ============
+
+export async function listFinanceEntries(): Promise<FinanceEntry[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "finances"), orderBy("date", "desc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<FinanceEntry, "id">),
+  }));
+}
+
+export async function createFinanceEntry(
+  data: Omit<FinanceEntry, "id" | "recordedAt">
+): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "finances"), {
+    ...data,
+    recordedAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function updateFinanceEntry(
+  id: string,
+  patch: Partial<FinanceEntry>
+) {
+  const db = getDb();
+  await updateDoc(doc(db, "finances", id), patch);
+}
+
+export async function deleteFinanceEntry(id: string) {
+  const db = getDb();
+  await deleteDoc(doc(db, "finances", id));
+}
+
+export function financeStats(entries: FinanceEntry[]) {
+  let totalIncome = 0;
+  let totalExpense = 0;
+  for (const e of entries) {
+    if (e.type === "income") totalIncome += e.amount;
+    else totalExpense += e.amount;
+  }
+  return {
+    totalIncome,
+    totalExpense,
+    balance: totalIncome - totalExpense,
+    count: entries.length,
+  };
+}
+
+// ============ MEMBERS IMPORT ============
 
 export async function importMembersFromJson(
   raw: ImportMember[],

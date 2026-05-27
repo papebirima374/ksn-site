@@ -4,26 +4,32 @@ export type Permission =
   | "gallery.write"
   | "articles.write"
   | "salaatu.write"
+  | "library.write"
   | "menu.write"
   | "users.write"
-  | "members.write";
+  | "members.write"
+  | "finances.write";
 
 export const ALL_PERMISSIONS: Permission[] = [
   "gallery.write",
   "articles.write",
   "salaatu.write",
+  "library.write",
   "menu.write",
   "users.write",
   "members.write",
+  "finances.write",
 ];
 
 export const PERMISSION_LABELS: Record<Permission, string> = {
   "gallery.write": "Galerie photos (ajouter / supprimer)",
   "articles.write": "Articles / blog (publier)",
   "salaatu.write": "Salaatu du jour (mettre à jour)",
+  "library.write": "Bibliothèque des Salaats (gérer)",
   "menu.write": "Menu de navigation (éditer)",
   "users.write": "Utilisateurs (créer / modifier)",
   "members.write": "Membres du Dahira (gérer + cartes)",
+  "finances.write": "Finances du Dahira (commission finance)",
 };
 
 export type AppUser = {
@@ -112,3 +118,83 @@ export function hasPermission(user: AppUser | null, p: Permission): boolean {
   if (user.role === "admin") return true;
   return user.permissions.includes(p);
 }
+
+// ============ SALAATU LIBRARY ============
+
+export type SalaatuLibraryItem = {
+  id: string;
+  title: string;
+  category: string;
+  arabic: string;
+  transliteration?: string;
+  translation?: string;
+  benefits?: string[]; // bienfaits courts (1-2 lignes chacun)
+  usageNotes?: string[]; // notes / secrets d'utilisation
+  featured?: boolean; // si vrai, devient le Salaatu du jour
+  order: number;
+  createdAt: number;
+  createdBy?: string;
+};
+
+export const SALAATU_CATEGORIES = [
+  "Salaatu Ibrahimiyya",
+  "Quotidien",
+  "Vendredi",
+  "Protection",
+  "Élévation & Succès",
+  "Subsistance",
+  "Guérison",
+  "Famille",
+  "Autres",
+];
+
+// ============ FINANCES ============
+
+export type FinanceType = "income" | "expense";
+
+export const FINANCE_CATEGORIES: Record<FinanceType, string[]> = {
+  income: [
+    "Cotisation mensuelle",
+    "Cotisation annuelle",
+    "Don général",
+    "Don événement",
+    "Vente / Boutique",
+    "Subvention",
+    "Autres recettes",
+  ],
+  expense: [
+    "Événement / Gamou",
+    "Aide sociale",
+    "Achat fournitures",
+    "Transport",
+    "Communication",
+    "Loyer / Local",
+    "Autres dépenses",
+  ],
+};
+
+export const FINANCE_METHODS = [
+  "Wave",
+  "Orange Money",
+  "Free Money",
+  "Espèces",
+  "Virement bancaire UBA",
+  "Chèque",
+  "Autre",
+];
+
+export type FinanceEntry = {
+  id: string;
+  type: FinanceType;
+  category: string;
+  amount: number; // FCFA
+  description?: string;
+  reference?: string;
+  date: string; // ISO date (YYYY-MM-DD)
+  method?: string;
+  memberId?: string; // si lié à un membre
+  memberMatricule?: string;
+  memberName?: string;
+  recordedBy: string;
+  recordedAt: number;
+};

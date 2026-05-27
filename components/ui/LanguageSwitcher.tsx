@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaCheck } from "react-icons/fa6";
-import { LOCALES } from "@/lib/i18n/locales";
+import { LOCALES, ACTIVE_LOCALES } from "@/lib/i18n/locales";
 import { useT } from "@/lib/i18n/context";
 
 type Variant = "navbar" | "compact";
@@ -48,16 +48,21 @@ export default function LanguageSwitcher({ variant = "navbar" }: { variant?: Var
           <ul role="listbox" className="py-1">
             {LOCALES.map((l) => {
               const active = l.code === locale;
+              const isDisabled = l.disabled === true;
               return (
                 <li key={l.code} role="option" aria-selected={active}>
                   <button
                     type="button"
+                    disabled={isDisabled}
                     onClick={() => {
+                      if (isDisabled) return;
                       setLocale(l.code);
                       setOpen(false);
                     }}
                     className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm font-medium transition ${
-                      active
+                      isDisabled
+                        ? "text-gray-400 cursor-not-allowed"
+                        : active
                         ? "bg-[#0F5132] text-white"
                         : "text-[#0F5132] hover:bg-[#F8F5EF]"
                     }`}
@@ -66,7 +71,12 @@ export default function LanguageSwitcher({ variant = "navbar" }: { variant?: Var
                       <span className="text-base">{l.flag}</span>
                       <span>{l.label}</span>
                     </span>
-                    {active && <FaCheck className="w-3 h-3" />}
+                    {active && !isDisabled && <FaCheck className="w-3 h-3" />}
+                    {l.comingSoon && (
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-[#B8860B] bg-[#D4AF37]/10 rounded px-1.5 py-0.5">
+                        Bientôt
+                      </span>
+                    )}
                   </button>
                 </li>
               );

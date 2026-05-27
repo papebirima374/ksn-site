@@ -14,6 +14,8 @@ import {
   FaBars,
   FaXmark,
   FaIdCard,
+  FaBookOpen,
+  FaCoins,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -21,9 +23,11 @@ import { hasPermission } from "@/lib/admin-types";
 const NAV = [
   { href: "/admin", label: "Tableau de bord", Icon: FaHouse, perm: null },
   { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" as const },
+  { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" as const },
+  { href: "/admin/bibliotheque", label: "Bibliothèque Salaats", Icon: FaBookOpen, perm: "library.write" as const },
+  { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
-  { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/menu", label: "Menu", Icon: FaListUl, perm: "menu.write" as const },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];

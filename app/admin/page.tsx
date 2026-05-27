@@ -8,6 +8,8 @@ import {
   FaListUl,
   FaUsers,
   FaIdCard,
+  FaBookOpen,
+  FaCoins,
   FaArrowRight,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
@@ -22,6 +24,22 @@ const SECTIONS = [
     Icon: FaIdCard,
     perm: "members.write" as Permission,
     color: "from-[#1B7A4A] to-[#0F5132]",
+  },
+  {
+    href: "/admin/finances",
+    label: "Finances",
+    desc: "Entrées (cotisations, dons), sorties, solde du Dahira. Pour la commission finance.",
+    Icon: FaCoins,
+    perm: "finances.write" as Permission,
+    color: "from-[#B8860B] to-[#7a5d04]",
+  },
+  {
+    href: "/admin/bibliotheque",
+    label: "Bibliothèque Salaats",
+    desc: "Tous les Salaats avec arabe, traduction, bienfaits et secrets d'utilisation. Le favori épinglé devient le Salaatu du jour.",
+    Icon: FaBookOpen,
+    perm: "library.write" as Permission,
+    color: "from-[#082F22] to-[#0F5132]",
   },
   {
     href: "/admin/galerie",

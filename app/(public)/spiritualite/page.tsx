@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import PageHero from "@/components/layout/PageHero";
 import Spiritualite from "@/components/sections/Spiritualite";
 import SalaatouDuJour from "@/components/sections/SalaatouDuJour";
+import SalaatuLibrary from "@/components/sections/SalaatuLibrary";
 
 export const metadata: Metadata = {
   title: "Spiritualité",
   description:
-    "Salaatou du jour, Khassidas, Azkâr, invocations, audios et vidéos spirituelles du Dahira KSN.",
+    "Salaatou du jour, Bibliothèque des Salaats avec leurs bienfaits et secrets, Khassidas, Azkâr, et ressources spirituelles du Dahira KSN.",
 };
 
 export default function SpiritualitePage() {
@@ -16,10 +17,11 @@ export default function SpiritualitePage() {
         overline="Spiritualité KSN"
         title="Nourrir le Cœur par le Salaatu ﷺ"
         arabic="صلى الله على محمد"
-        description="Salaatou du jour, Khassidas, invocations, enseignements et ressources spirituelles pour vivre pleinement votre lien avec le Prophète Muhammad ﷺ."
+        description="Salaatou du jour, bibliothèque sacrée des Salaats, Khassidas, invocations et enseignements pour vivre pleinement votre lien avec le Prophète Muhammad ﷺ."
       />
 
       <SalaatouDuJour />
+      <SalaatuLibrary />
       <Spiritualite />
     </>
   );

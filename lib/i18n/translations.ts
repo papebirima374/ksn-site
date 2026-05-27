@@ -261,6 +261,172 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
       "Allah prays 10 times upon the one who prays once upon the Prophet ﷺ.",
   },
 
+  it: {
+    "nav.home": "Home",
+    "nav.dahira": "Il Dahira",
+    "nav.spiritualite": "Spiritualità",
+    "nav.media": "Media",
+    "nav.blog": "Blog",
+    "nav.contact": "Contatti",
+
+    "cta.donate": "Fai una Donazione",
+    "cta.join": "Unisciti al Dahira",
+    "cta.discover": "Scopri KSN",
+    "cta.member": "Diventa Membro",
+    "cta.read_more": "Leggi l'articolo",
+    "cta.send_whatsapp": "Invia via WhatsApp",
+    "cta.contact_whatsapp": "Contatta su WhatsApp",
+    "cta.follow_us": "Seguici",
+
+    "site.tagline": "Sito Ufficiale Internazionale",
+    "site.motto": "Preghiera • Spiritualità • Irraggiamento",
+    "site.location": "Touba, Senegal",
+
+    "hero.badge": "Kippangog Salaatu 'Alaa Nabii",
+    "hero.title_line1": "Una comunità",
+    "hero.title_line2": "spirituale moderna",
+    "hero.title_line3": "al servizio del",
+    "hero.title_line4": "Salaatu ﷺ",
+    "hero.subtitle":
+      "Fondato il 2 gennaio 2021 a Touba, KSN promuove la preghiera sul Profeta Muhammad ﷺ attraverso un'organizzazione strutturata, attività spirituali e una comunità internazionale impegnata.",
+    "hero.card_overline": "Vita Istituzionale KSN",
+    "hero.card_title": "Organizzazione & Funzionamento",
+    "hero.card_reglement": "Regolamento Interno",
+    "hero.card_reglement_desc": "Statuti, disciplina e funzionamento del Dahira.",
+    "hero.card_commissions": "Commissioni Ufficiali",
+    "hero.card_commissions_desc":
+      "Educazione, Comunicazione, Finanze, Sociale, Organizzazione e Relazioni Esterne.",
+    "hero.card_membre": "Vita del Membro",
+    "hero.card_membre_desc":
+      "Adesione, partecipazione spirituale e impegno comunitario.",
+
+    "stats.overline": "Irraggiamento KSN",
+    "stats.title": "Una Comunità Spirituale Internazionale",
+    "stats.creation": "Fondazione KSN",
+    "stats.social": "Social Network",
+    "stats.members": "Membri Attivi",
+    "stats.app_users": "Utenti dell'App",
+    "stats.international": "Irraggiamento Internazionale",
+
+    "section.direction_spirituelle": "Direzione Spirituale",
+    "section.presidence_title": "Presidenza del Dahira",
+    "section.presidence_desc":
+      "Una direzione impegnata al servizio del Salaatu, dello sviluppo spirituale e dell'irraggiamento internazionale di KSN.",
+    "section.organisation_ksn": "Organizzazione KSN",
+    "section.commissions_title": "Commissioni Ufficiali",
+    "section.media_ksn": "Media KSN",
+    "section.media_title": "Attività del Dahira & Vita Comunitaria",
+    "section.communaute_digitale": "Comunità Digitale",
+    "section.suivez_partout": "Segui KSN Ovunque",
+    "section.contact_officiel": "Contatto Ufficiale",
+    "section.contact_title": "Mettiti in Contatto",
+    "section.spiritualite_ksn": "Spiritualità KSN",
+    "section.spiritualite_title": "Nutrire il Cuore con il Salaatu ﷺ",
+
+    "footer.navigation": "Navigazione",
+    "footer.contact": "Contatti",
+    "footer.suivez": "Seguici",
+    "footer.mission_title": "Missione Spirituale",
+    "footer.mission_quote":
+      "Lavorare per promuovere la preghiera sul Profeta Muhammad ﷺ attraverso una comunità spirituale moderna, impegnata e internazionale.",
+    "footer.copyright": "Tutti i diritti riservati.",
+
+    "salaatu.overline": "Salaatu del Giorno",
+    "salaatu.title": "Il Salaatu Consigliato",
+    "salaatu.benefits": "Benefici",
+    "salaatu.benefits_text":
+      "Luce nel cuore, vicinanza al Profeta ﷺ e benedizioni divine.",
+    "salaatu.when": "Quando recitarlo",
+    "salaatu.when_text":
+      "In qualsiasi momento, specialmente dopo le preghiere e il venerdì.",
+    "salaatu.reward": "Ricompensa",
+    "salaatu.reward_text":
+      "Allah prega 10 volte su chi prega una volta sul Profeta ﷺ.",
+  },
+
+  es: {
+    "nav.home": "Inicio",
+    "nav.dahira": "El Dahira",
+    "nav.spiritualite": "Espiritualidad",
+    "nav.media": "Medios",
+    "nav.blog": "Blog",
+    "nav.contact": "Contacto",
+
+    "cta.donate": "Hacer una Donación",
+    "cta.join": "Únete al Dahira",
+    "cta.discover": "Descubre KSN",
+    "cta.member": "Hazte Miembro",
+    "cta.read_more": "Leer el artículo",
+    "cta.send_whatsapp": "Enviar por WhatsApp",
+    "cta.contact_whatsapp": "Contactar por WhatsApp",
+    "cta.follow_us": "Síguenos",
+
+    "site.tagline": "Sitio Oficial Internacional",
+    "site.motto": "Oración • Espiritualidad • Difusión",
+    "site.location": "Touba, Senegal",
+
+    "hero.badge": "Kippangog Salaatu 'Alaa Nabii",
+    "hero.title_line1": "Una comunidad",
+    "hero.title_line2": "espiritual moderna",
+    "hero.title_line3": "al servicio del",
+    "hero.title_line4": "Salaatu ﷺ",
+    "hero.subtitle":
+      "Fundada el 2 de enero de 2021 en Touba, KSN trabaja para promover el rezo sobre el Profeta Muhammad ﷺ a través de una organización estructurada, actividades espirituales y una comunidad internacional comprometida.",
+    "hero.card_overline": "Vida Institucional KSN",
+    "hero.card_title": "Organización y Funcionamiento",
+    "hero.card_reglement": "Reglamento Interno",
+    "hero.card_reglement_desc": "Estatutos, disciplina y funcionamiento del Dahira.",
+    "hero.card_commissions": "Comisiones Oficiales",
+    "hero.card_commissions_desc":
+      "Educación, Comunicación, Finanzas, Social, Organización y Relaciones Exteriores.",
+    "hero.card_membre": "Vida del Miembro",
+    "hero.card_membre_desc":
+      "Membresía, participación espiritual y compromiso comunitario.",
+
+    "stats.overline": "Difusión KSN",
+    "stats.title": "Una Comunidad Espiritual Internacional",
+    "stats.creation": "Creación KSN",
+    "stats.social": "Redes Sociales",
+    "stats.members": "Miembros Activos",
+    "stats.app_users": "Usuarios de la App",
+    "stats.international": "Difusión Internacional",
+
+    "section.direction_spirituelle": "Dirección Espiritual",
+    "section.presidence_title": "Presidencia del Dahira",
+    "section.presidence_desc":
+      "Una dirección comprometida al servicio del Salaatu, el desarrollo espiritual y la difusión internacional de KSN.",
+    "section.organisation_ksn": "Organización KSN",
+    "section.commissions_title": "Comisiones Oficiales",
+    "section.media_ksn": "Medios KSN",
+    "section.media_title": "Actividades del Dahira y Vida Comunitaria",
+    "section.communaute_digitale": "Comunidad Digital",
+    "section.suivez_partout": "Sigue a KSN en todas partes",
+    "section.contact_officiel": "Contacto Oficial",
+    "section.contact_title": "Ponte en Contacto",
+    "section.spiritualite_ksn": "Espiritualidad KSN",
+    "section.spiritualite_title": "Nutrir el Corazón con el Salaatu ﷺ",
+
+    "footer.navigation": "Navegación",
+    "footer.contact": "Contacto",
+    "footer.suivez": "Síguenos",
+    "footer.mission_title": "Misión Espiritual",
+    "footer.mission_quote":
+      "Trabajar para promover el rezo sobre el Profeta Muhammad ﷺ a través de una comunidad espiritual moderna, comprometida e internacional.",
+    "footer.copyright": "Todos los derechos reservados.",
+
+    "salaatu.overline": "Salaatu del Día",
+    "salaatu.title": "El Salaatu Recomendado",
+    "salaatu.benefits": "Beneficios",
+    "salaatu.benefits_text":
+      "Luz en el corazón, cercanía al Profeta ﷺ y bendiciones divinas.",
+    "salaatu.when": "Cuándo recitarlo",
+    "salaatu.when_text":
+      "En cualquier momento, especialmente después de las oraciones y los viernes.",
+    "salaatu.reward": "Recompensa",
+    "salaatu.reward_text":
+      "Allah reza 10 veces sobre quien reza una vez sobre el Profeta ﷺ.",
+  },
+
   ar: {
     "nav.home": "الرئيسية",
     "nav.dahira": "الدائرة",
