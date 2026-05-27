@@ -3,6 +3,7 @@ import Commissions from "@/components/sections/Commissions";
 import CompteurSalaatu from "@/components/sections/CompteurSalaatu";
 import Contact from "@/components/sections/Contact";
 import Hero from "@/components/sections/Hero";
+import JourneeBanner from "@/components/sections/JourneeBanner";
 import LeDahira from "@/components/sections/LeDahira";
 import Media from "@/components/sections/Media";
 import Presidence from "@/components/sections/Presidence";
@@ -15,6 +16,7 @@ export default function Home() {
     <>
       <Hero />
       <CompteurSalaatu />
+      <JourneeBanner />
       <Stats />
       <Presidence />
       <LeDahira />
