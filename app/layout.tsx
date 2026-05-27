@@ -3,6 +3,7 @@ import { Playfair_Display, Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
+import PWAInstaller from "@/components/layout/PWAInstaller";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -111,7 +112,10 @@ export default function RootLayout({
       <head>
         <OrganizationSchema />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <PWAInstaller />
+      </body>
     </html>
   );
 }
