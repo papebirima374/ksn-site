@@ -1,23 +1,57 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { FaArrowRight, FaBolt } from "react-icons/fa6";
+import {
+  estimatedChallengeStats,
+  CHALLENGE_TARGET,
+  fmtNumber,
+  progressTowardTarget,
+  type ChallengeStats,
+} from "@/lib/challenge";
 
 const STORAGE_KEY = "ksn-salaatu-count";
 const DATE_KEY = "ksn-salaatu-date";
-
-const BASE_GLOBAL = 127_384_219;
-const PER_SECOND = 7;
-const OBJECTIF = 1_000_000_000;
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
+/** Mini-compteur sur la home : teaser du Challenge 1 Milliard.
+ *  Partage la meme source de donnees que /challenge (lib/challenge.ts)
+ *  pour eviter toute incoherence de chiffres entre pages. */
 export default function CompteurSalaatu() {
+  const [stats, setStats] = useState<ChallengeStats>(() => estimatedChallengeStats());
+  const [displayTotal, setDisplayTotal] = useState(stats.total);
   const [personal, setPersonal] = useState(0);
-  const [global, setGlobal] = useState(BASE_GLOBAL);
   const [pulse, setPulse] = useState(false);
+  const raf = useRef<number | null>(null);
 
+  // Refresh stats brutes (1s)
+  useEffect(() => {
+    const id = setInterval(() => setStats(estimatedChallengeStats()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Animation fluide du compteur
+  useEffect(() => {
+    function tick() {
+      setDisplayTotal((current) => {
+        const target = stats.total;
+        const diff = target - current;
+        if (Math.abs(diff) < 1) return target;
+        return Math.floor(current + diff * 0.08);
+      });
+      raf.current = requestAnimationFrame(tick);
+    }
+    raf.current = requestAnimationFrame(tick);
+    return () => {
+      if (raf.current) cancelAnimationFrame(raf.current);
+    };
+  }, [stats.total]);
+
+  // Compteur personnel quotidien (localStorage)
   useEffect(() => {
     const today = todayKey();
     const savedDate = localStorage.getItem(DATE_KEY);
@@ -28,19 +62,7 @@ export default function CompteurSalaatu() {
     } else {
       val = Number(localStorage.getItem(STORAGE_KEY) || "0");
     }
-    setTimeout(() => {
-      setPersonal(val);
-    }, 0);
-  }, []);
-
-  useEffect(() => {
-    const start = Date.now();
-    const tick = () => {
-      const elapsed = (Date.now() - start) / 1000;
-      setGlobal(BASE_GLOBAL + Math.floor(elapsed * PER_SECOND));
-    };
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
+    setPersonal(val);
   }, []);
 
   const increment = () => {
@@ -59,7 +81,7 @@ export default function CompteurSalaatu() {
     }
   };
 
-  const percentage = (global / OBJECTIF) * 100;
+  const percent = progressTowardTarget(displayTotal);
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -68,30 +90,36 @@ export default function CompteurSalaatu() {
         <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#B8860B]/10 blur-3xl" />
 
         <div className="relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-
+          {/* COLONNE GAUCHE — TEASER DU CHALLENGE */}
           <div className="text-center lg:text-left">
             <p className="font-arabic text-3xl sm:text-4xl text-[#D4AF37] mb-3">
               صلى الله على محمد
             </p>
 
-            <span className="uppercase tracking-[0.2em] sm:tracking-[0.3em] text-[#D4AF37] text-xs sm:text-sm font-semibold">
-              Compteur Communautaire
-            </span>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 mb-4">
+              <span className="relative flex w-2 h-2">
+                <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                <span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-500" />
+              </span>
+              <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-[10px] sm:text-xs font-bold">
+                Challenge 1 Milliard
+              </span>
+            </div>
 
-            <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-              Salaatou offerts par
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+              Salaatu offerts par
               <br />
               la communauté KSN
             </h2>
 
             <div className="font-display mt-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tabular-nums tracking-tight">
-              {global.toLocaleString("fr-FR")}
+              {fmtNumber(displayTotal)}
             </div>
 
             <p className="mt-3 text-sm sm:text-base text-white/70">
               sur{" "}
               <span className="text-[#D4AF37] font-semibold">
-                {OBJECTIF.toLocaleString("fr-FR")}
+                {fmtNumber(CHALLENGE_TARGET)}
               </span>{" "}
               — Challenge du milliard
             </p>
@@ -99,25 +127,37 @@ export default function CompteurSalaatu() {
             <div className="mt-6 sm:mt-8 max-w-md mx-auto lg:mx-0">
               <div className="h-2 sm:h-3 bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: `${Math.min(percentage, 100)}%` }}
+                  className="h-full bg-gradient-to-r from-[#B8860B] via-[#D4AF37] to-[#F5D76E] rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${Math.max(percent, 0.5)}%` }}
                 />
               </div>
-              <div className="flex justify-between mt-2 sm:mt-3 text-xs text-white/60 tracking-wider">
-                <span>{percentage.toFixed(2)} %</span>
-                <span>1 Milliard</span>
+              <div className="flex justify-between mt-2 sm:mt-3 text-xs text-white/60 tracking-wider tabular-nums">
+                <span className="text-[#D4AF37] font-bold">{percent.toFixed(3)} %</span>
+                <span>1 Milliard 🎯</span>
               </div>
             </div>
+
+            <Link
+              href="/challenge"
+              className="inline-flex items-center gap-2 mt-7 sm:mt-9 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-xl hover:scale-105 transition text-sm sm:text-base"
+            >
+              Voir le Challenge complet
+              <FaArrowRight className="text-sm" />
+            </Link>
           </div>
 
+          {/* COLONNE DROITE — COMPTEUR PERSO */}
           <div className="relative">
             <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-center">
-              <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-xs sm:text-sm font-semibold">
-                Mon Compteur du Jour
-              </span>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
+                <FaBolt className="text-[#D4AF37] text-xs" />
+                <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-[10px] sm:text-xs font-bold">
+                  Mon Compteur du Jour
+                </span>
+              </div>
 
               <div
-                className={`font-display mt-4 text-6xl sm:text-7xl md:text-8xl font-bold tabular-nums transition-transform ${
+                className={`font-display mt-2 text-6xl sm:text-7xl md:text-8xl font-bold tabular-nums transition-transform ${
                   pulse ? "scale-110 text-[#D4AF37]" : "text-white"
                 }`}
               >
@@ -150,7 +190,6 @@ export default function CompteurSalaatu() {
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </section>

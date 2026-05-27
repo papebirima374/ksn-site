@@ -61,70 +61,70 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
         <div className="bg-white/[0.06] backdrop-blur-2xl border border-white/10 rounded-[24px] sm:rounded-[30px] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-[0_10px_50px_rgba(0,0,0,0.35)]">
 
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full overflow-hidden bg-white shadow-xl flex-shrink-0">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full overflow-hidden bg-white shadow-xl flex-shrink-0">
               <Image
                 src="/logo/ksn-logo.png"
                 alt="KSN Logo"
                 fill
                 className="object-cover"
-                sizes="(max-width: 640px) 48px, (max-width: 1024px) 64px, 80px"
+                sizes="(max-width: 640px) 48px, (max-width: 1280px) 56px, 64px"
                 priority
               />
             </div>
 
-            <div className="hidden sm:block">
-              <h1 className="font-display text-white font-bold text-xl lg:text-3xl leading-tight">
+            <div className="hidden sm:block min-w-0">
+              <h1 className="font-display text-white font-bold text-lg xl:text-2xl leading-tight whitespace-nowrap">
                 {SITE.name}
               </h1>
-              <p className="text-white/60 text-xs lg:text-sm tracking-wide">
+              <p className="hidden xl:block text-white/60 text-xs tracking-wide whitespace-nowrap">
                 {t("site.tagline")}
               </p>
-              <p className="text-[#D4AF37] text-[10px] lg:text-sm mt-0.5">
+              <p className="hidden xl:block text-[#D4AF37] text-[11px] mt-0.5 whitespace-nowrap">
                 {t("site.motto")}
               </p>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex gap-6 xl:gap-10 text-white font-medium">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-white font-medium text-sm xl:text-[15px]">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="hover:text-[#D4AF37] transition"
+                className="hover:text-[#D4AF37] transition whitespace-nowrap"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             <LanguageSwitcher />
 
             {user ? (
               <Link
                 href="/espace-membre/profil"
-                className="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-3 lg:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs lg:text-sm whitespace-nowrap"
+                className="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
                 title={user.email}
               >
                 <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-[10px] font-black">
                   {memberInitials}
                 </span>
-                <span className="hidden lg:inline">{memberLabel}</span>
+                <span className="hidden xl:inline">{memberLabel}</span>
               </Link>
             ) : (
               <Link
                 href="/espace-membre"
-                className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-3 lg:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs lg:text-sm whitespace-nowrap"
+                className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
               >
-                <FaRightToBracket className="text-[10px]" />
-                <span className="hidden lg:inline">Connexion</span>
+                <FaRightToBracket className="text-[11px]" />
+                <span className="hidden xl:inline">Connexion</span>
               </Link>
             )}
 
             <Link
               href="/don"
-              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs sm:text-sm lg:text-base whitespace-nowrap"
+              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-3 xl:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs xl:text-sm whitespace-nowrap"
             >
               {t("cta.donate")}
             </Link>
