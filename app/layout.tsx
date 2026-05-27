@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Inter, Amiri } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
@@ -69,7 +69,33 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
+    apple: [
+      { url: "/logo/ksn-logo.png", sizes: "180x180", type: "image/png" },
+    ],
   },
+  // PWA — site installable comme application
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: SITE.name,
+    statusBarStyle: "black-translucent",
+  },
+  applicationName: SITE.name,
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+/** Theme color + viewport — Next 16 separe ces metadata du reste */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0F7C55" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A3D24" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
