@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import EventCountdown from "@/components/sections/EventCountdown";
+import JourneeGallery from "@/components/sections/JourneeGallery";
 import { LINKS, SITE } from "@/lib/constants";
 
 // Prochaine edition de la Journee Salaatu 'Alaa Nabii : 26 decembre 2026, Touba.
@@ -223,6 +224,9 @@ export default function JourneeSalaatuPage() {
           </div>
         </div>
       </section>
+
+      {/* GALERIE EDITIONS PRECEDENTES */}
+      <JourneeGallery />
 
       {/* PARTICIPER */}
       <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
