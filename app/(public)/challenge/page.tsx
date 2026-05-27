@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FaWhatsapp, FaApple, FaGooglePlay, FaTrophy } from "react-icons/fa6";
+import { FaWhatsapp, FaApple, FaGooglePlay, FaHandshakeAngle } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import { LINKS } from "@/lib/constants";
@@ -35,14 +35,6 @@ const HOW_TO_STEPS = [
     text: "Partagez le challenge sur WhatsApp, Telegram, Facebook. Plus on est nombreux, plus vite on atteint le milliard.",
     icon: "🌍",
   },
-];
-
-const PLACEHOLDER_LEADERBOARD = [
-  { rank: 1, label: "Serigne Bassirou Touré", count: "+ 1 250 000" },
-  { rank: 2, label: "Serigne Birima Gueye", count: "+ 980 000" },
-  { rank: 3, label: "Commission Éducation", count: "+ 620 000" },
-  { rank: 4, label: "Commission Communication", count: "+ 480 000" },
-  { rank: 5, label: "Diaspora Europe", count: "+ 340 000" },
 ];
 
 export default function ChallengePage() {
@@ -123,50 +115,87 @@ export default function ChallengePage() {
         </div>
       </section>
 
-      {/* TABLEAU D'HONNEUR */}
-      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="bg-gradient-to-br from-[#B8860B] via-[#D4AF37] to-[#B8860B] rounded-[28px] sm:rounded-[45px] p-6 sm:p-12 md:p-14 text-[#0F7C55]">
-          <div className="text-center mb-8 sm:mb-12">
-            <div className="inline-flex items-center gap-2 bg-[#0F7C55] text-[#D4AF37] px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
-              <FaTrophy /> Tableau d&apos;honneur
+      {/* LA FORCE DU CULTE COLLECTIF */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#B8860B] via-[#D4AF37] to-[#B8860B] p-6 sm:p-12 md:p-16 text-[#0F7C55]">
+          {/* Decorative motifs */}
+          <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-white/20 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-[#0F7C55]/15 blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 text-center">
+            <div className="inline-flex items-center gap-2 bg-[#0F7C55] text-[#D4AF37] px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-5">
+              <FaHandshakeAngle /> La force du groupe
             </div>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold">
-              Les contributeurs majeurs
+              Pourquoi prier ensemble ?
             </h2>
-            <p className="mt-3 text-sm sm:text-base opacity-80 italic">
-              Classement provisoire — sera mis à jour avec les données live de l&apos;application
+            <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base opacity-90 italic">
+              L&apos;Islam met le culte collectif au cœur de la spiritualité.
+              C&apos;est le sens même du Dahira : multiplier l&apos;effort
+              individuel par la baraka du groupe.
             </p>
           </div>
 
-          <div className="bg-white/30 backdrop-blur-md rounded-2xl sm:rounded-3xl overflow-hidden">
-            <ul className="divide-y divide-[#0F7C55]/10">
-              {PLACEHOLDER_LEADERBOARD.map((row) => (
-                <li
-                  key={row.rank}
-                  className="flex items-center gap-4 px-5 sm:px-7 py-4 hover:bg-white/20 transition"
-                >
-                  <div
-                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-display text-lg sm:text-xl font-black ${
-                      row.rank === 1
-                        ? "bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900"
-                        : row.rank === 2
-                        ? "bg-gradient-to-br from-gray-200 to-gray-400 text-gray-700"
-                        : row.rank === 3
-                        ? "bg-gradient-to-br from-orange-300 to-orange-500 text-orange-900"
-                        : "bg-[#0F7C55] text-[#D4AF37]"
-                    }`}
-                  >
-                    {row.rank}
-                  </div>
-                  <p className="flex-1 font-display text-base sm:text-lg font-bold truncate">
-                    {row.label}
-                  </p>
-                  <p className="font-mono tabular-nums font-bold text-sm sm:text-base">
-                    {row.count}
-                  </p>
-                </li>
-              ))}
-            </ul>
+          {/* HADITH PRINCIPAL — congregation 27x */}
+          <div className="relative z-10 mt-10 sm:mt-12 bg-[#0F7C55] rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white">
+            <p
+              className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37] text-center"
+              dir="rtl"
+            >
+              صَلَاةُ الْجَمَاعَةِ تَفْضُلُ صَلَاةَ الْفَذِّ بِسَبْعٍ وَعِشْرِينَ دَرَجَةً
+            </p>
+            <p className="mt-6 italic text-base sm:text-lg text-white/90 text-center leading-relaxed max-w-2xl mx-auto">
+              « La prière en groupe est supérieure à la prière individuelle de
+              vingt-sept degrés. »
+            </p>
+            <p className="mt-3 text-xs sm:text-sm text-[#D4AF37]/90 text-center">
+              — Le Prophète Muhammad ﷺ (rapporté par Al-Bukhari et Muslim)
+            </p>
+          </div>
+
+          {/* VERSET CORANIQUE — entraide */}
+          <div className="relative z-10 mt-6 sm:mt-8 grid sm:grid-cols-[1fr_auto_1fr] gap-4 sm:gap-6 items-center">
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6">
+              <p
+                className="font-arabic text-xl sm:text-2xl text-[#0F7C55] text-center leading-loose"
+                dir="rtl"
+              >
+                وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ
+              </p>
+              <p className="mt-3 text-sm text-[#0F7C55] italic text-center">
+                « Entraidez-vous dans la piété et la crainte de Dieu. »
+              </p>
+              <p className="mt-1 text-xs text-[#0F7C55]/70 text-center">— Coran, sourate Al-Mâ&apos;ida, verset 2</p>
+            </div>
+
+            <div className="hidden sm:flex w-12 h-12 mx-auto rounded-full bg-[#0F7C55] text-[#D4AF37] items-center justify-center text-xl">
+              ✦
+            </div>
+
+            <div className="bg-white/30 backdrop-blur-sm rounded-2xl p-5 sm:p-6">
+              <p
+                className="font-arabic text-xl sm:text-2xl text-[#0F7C55] text-center leading-loose"
+                dir="rtl"
+              >
+                يَدُ اللَّهِ مَعَ الْجَمَاعَةِ
+              </p>
+              <p className="mt-3 text-sm text-[#0F7C55] italic text-center">
+                « La main d&apos;Allah est avec le groupe. »
+              </p>
+              <p className="mt-1 text-xs text-[#0F7C55]/70 text-center">— Hadith rapporté par At-Tirmidhi</p>
+            </div>
+          </div>
+
+          {/* MORALE / APPLICATION AU CHALLENGE */}
+          <div className="relative z-10 mt-8 sm:mt-10 text-center max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base text-[#0F7C55] leading-7">
+              <strong>C&apos;est l&apos;esprit du Challenge KSN :</strong> chaque
+              Salaatu individuel récité au sein de la communauté est multiplié
+              par la baraka du groupe. Un milliard de Salaatu, c&apos;est{" "}
+              <em>impossible seul</em> — mais ensemble, sous l&apos;autorité
+              spirituelle du Dahira et avec la permission d&apos;Allah, ce
+              défi devient réalité.
+            </p>
           </div>
         </div>
       </section>
