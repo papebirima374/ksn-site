@@ -2,7 +2,6 @@
 
 import { useState, FormEvent } from "react";
 import { FaXmark, FaTrash, FaCartShopping } from "react-icons/fa6";
-import Image from "next/image";
 import { useCart } from "@/lib/cart-context";
 import { createOrder } from "@/lib/admin-data";
 import { isFirebaseConfigured } from "@/lib/firebase";

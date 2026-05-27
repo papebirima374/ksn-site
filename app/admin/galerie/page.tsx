@@ -45,7 +45,9 @@ export default function AdminGaleriePage() {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   async function handleUpload(e: FormEvent<HTMLFormElement>) {

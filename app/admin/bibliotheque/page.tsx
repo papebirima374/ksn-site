@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { FaPlus, FaPenToSquare, FaTrash, FaStar, FaRegStar } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
@@ -14,6 +14,7 @@ import {
   listSalaatuLibrary,
   deleteSalaatuLibraryItem,
   updateSalaatuLibraryItem,
+  importSalaatuFullLibrary,
 } from "@/lib/admin-data";
 
 export default function AdminBibliothequePage() {
@@ -24,6 +25,8 @@ export default function AdminBibliothequePage() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("Toutes");
+  const [importing, setImporting] = useState(false);
+  const [importSuccess, setImportSuccess] = useState(false);
 
   async function reload() {
     setLoading(true);
@@ -37,8 +40,25 @@ export default function AdminBibliothequePage() {
     }
   }
 
+  async function handleImport() {
+    setImporting(true);
+    setImportSuccess(false);
+    setError("");
+    try {
+      await importSalaatuFullLibrary();
+      setImportSuccess(true);
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de l'importation");
+    } finally {
+      setImporting(false);
+    }
+  }
+
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   const filtered = useMemo(() => {
@@ -86,14 +106,32 @@ export default function AdminBibliothequePage() {
           </p>
         </div>
         {canEdit && (
-          <Link
-            href="/admin/bibliotheque/nouveau"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
-          >
-            <FaPlus /> Ajouter un Salaat
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {items.length < 10 && (
+              <button
+                type="button"
+                onClick={handleImport}
+                disabled={importing}
+                className="inline-flex items-center gap-2 bg-[#0F5132]/10 hover:bg-[#0F5132]/20 text-[#0F5132] border border-[#0F5132]/20 py-3 px-5 rounded-xl font-semibold text-sm transition disabled:opacity-50"
+              >
+                {importing ? "Importation..." : "Importer la bibliothèque (30)"}
+              </button>
+            )}
+            <Link
+              href="/admin/bibliotheque/nouveau"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-3 px-5 rounded-xl font-bold text-sm"
+            >
+              <FaPlus /> Ajouter un Salaat
+            </Link>
+          </div>
         )}
       </header>
+
+      {importSuccess && (
+        <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200 mb-4">
+          La bibliothèque complète a été importée avec succès !
+        </p>
+      )}
 
       <div className="bg-white rounded-3xl shadow-md p-4 sm:p-5 mb-6 grid sm:grid-cols-[1fr_auto] gap-3">
         <input

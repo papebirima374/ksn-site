@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
@@ -37,10 +37,6 @@ export default function ArticleEditor({ initial }: Props) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [autoSlug, setAutoSlug] = useState(!initial);
-
-  useEffect(() => {
-    if (autoSlug) setSlug(slugify(title));
-  }, [title, autoSlug]);
 
   async function handleCoverUpload(file: File) {
     setUploading(true);
@@ -101,8 +97,13 @@ export default function ArticleEditor({ initial }: Props) {
           <input
             type="text"
             required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setTitle(val);
+              if (autoSlug) {
+                setSlug(slugify(val));
+              }
+            }}
             className="w-full rounded-xl border border-gray-200 p-3 text-lg font-bold text-[#0F5132] bg-white"
             placeholder="Le titre de votre article"
           />

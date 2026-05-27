@@ -21,13 +21,16 @@ export default function CompteurSalaatu() {
   useEffect(() => {
     const today = todayKey();
     const savedDate = localStorage.getItem(DATE_KEY);
+    let val = 0;
     if (savedDate !== today) {
       localStorage.setItem(DATE_KEY, today);
       localStorage.setItem(STORAGE_KEY, "0");
-      setPersonal(0);
     } else {
-      setPersonal(Number(localStorage.getItem(STORAGE_KEY) || "0"));
+      val = Number(localStorage.getItem(STORAGE_KEY) || "0");
     }
+    setTimeout(() => {
+      setPersonal(val);
+    }, 0);
   }, []);
 
   useEffect(() => {

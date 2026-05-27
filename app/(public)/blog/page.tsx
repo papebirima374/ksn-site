@@ -10,13 +10,10 @@ import { Article } from "@/lib/admin-types";
 
 export default function BlogPage() {
   const [articles, setArticles] = useState<Article[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isFirebaseConfigured());
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) {
-      setLoading(false);
-      return;
-    }
+    if (!isFirebaseConfigured()) return;
     listArticles()
       .then((items) =>
         setArticles(items.filter((a) => a.status === "published"))

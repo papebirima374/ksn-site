@@ -48,7 +48,9 @@ export default function AdminMembresPage() {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   const regions = useMemo(

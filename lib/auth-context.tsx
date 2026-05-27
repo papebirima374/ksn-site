@@ -49,8 +49,8 @@ const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AppUser | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const configured = isFirebaseConfigured();
+  const [loading, setLoading] = useState(configured);
 
   async function loadUserDoc(fbUser: User): Promise<AppUser> {
     const db = getDb();
@@ -110,10 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    if (!configured) {
-      setLoading(false);
-      return;
-    }
+    if (!configured) return;
     const auth = getFirebaseAuth();
     const unsub = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
@@ -133,12 +130,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return unsub;
   }, [configured]);
 
+  async function checkEmailRegistered(email: string): Promise<boolean> {
+    const db = getDb();
+    try {
+      const usersSnap = await getDocs(query(collection(db, "users"), limit(1)));
+      if (usersSnap.empty) {
+        return true; // Bootstrap mode
+      }
+      const q = query(
+        collection(db, "members"),
+        where("email", "==", email.trim()),
+        limit(1)
+      );
+      const snap = await getDocs(q);
+      return !snap.empty;
+    } catch {
+      return false;
+    }
+  }
+
   async function signIn(email: string, password: string) {
     const auth = getFirebaseAuth();
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: unknown) {
+      const firebaseError = error as { code?: string };
+      if (
+        firebaseError.code === "auth/user-not-found" ||
+        firebaseError.code === "auth/invalid-credential" ||
+        firebaseError.code === "auth/wrong-password"
+      ) {
+        const isRegistered = await checkEmailRegistered(email);
+        if (isRegistered) {
+          const db = getDb();
+          const q = query(
+            collection(db, "users"),
+            where("email", "==", email.trim()),
+            limit(1)
+          );
+          const userSnap = await getDocs(q);
+          if (userSnap.empty) {
+            throw new Error(
+              "DÉFINIR_MOT_DE_PASSE: Votre e-mail est reconnu comme membre, mais vous n'avez pas encore défini de mot de passe sur le site. Veuillez vous rendre sur l'onglet 'Inscription' pour configurer votre mot de passe et activer votre accès."
+            );
+          }
+        }
+      }
+      throw error;
+    }
   }
 
   async function signUp(email: string, password: string, displayName?: string) {
+    const isRegistered = await checkEmailRegistered(email);
+    if (!isRegistered) {
+      throw new Error(
+        "Cet e-mail n'est pas répertorié dans la liste officielle des membres de KSN. Veuillez contacter l'administration pour vous inscrire."
+      );
+    }
+
     const auth = getFirebaseAuth();
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     if (displayName) {

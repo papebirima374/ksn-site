@@ -108,7 +108,9 @@ function ProductsTab({ canEdit }: { canEdit: boolean }) {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   async function handleDelete(p: Product) {
@@ -450,7 +452,9 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   const filtered = useMemo(

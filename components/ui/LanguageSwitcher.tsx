@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FaChevronDown, FaCheck } from "react-icons/fa6";
-import { LOCALES, ACTIVE_LOCALES } from "@/lib/i18n/locales";
+import { LOCALES } from "@/lib/i18n/locales";
 import { useT } from "@/lib/i18n/context";
 
 type Variant = "navbar" | "compact";

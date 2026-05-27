@@ -344,7 +344,10 @@ function Watermark({ email }: { email: string }) {
   const [stamp, setStamp] = useState("");
   useEffect(() => {
     const now = new Date();
-    setStamp(`${email} · ${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`);
+    const formatted = `${email} · ${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+    setTimeout(() => {
+      setStamp(formatted);
+    }, 0);
   }, [email]);
   return (
     <p className="mt-8 text-center text-xs text-gray-400 italic select-none">

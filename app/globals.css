@@ -62,26 +62,49 @@ body {
   size: 85.6mm 53.98mm;
   margin: 0;
 }
+
 @media print {
-  .no-print { display: none !important; }
-  body { background: white !important; margin: 0 !important; padding: 0 !important; }
-  .print-card {
+  /* Hide common layout components by default when printing */
+  header, footer, aside, nav, button, .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Isolate print-card */
+  body:has(.print-card) * {
+    visibility: hidden;
+  }
+  body:has(.print-card) .print-card,
+  body:has(.print-card) .print-card * {
+    visibility: visible;
+  }
+  body:has(.print-card) .print-card {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 85.6mm !important;
     height: 53.98mm !important;
     margin: 0 !important;
+    padding: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+    border: none !important;
     page-break-after: always;
   }
 }
+
 .print-card {
   page-break-inside: avoid;
   break-inside: avoid;
 }
 
-/* Best-effort screenshot / copy protection for sacred Salaatu content.
-   Real DRM is impossible in a browser — OS-level screenshots can't be blocked.
-   But we make it harder: no text selection, no right-click, no native print. */
+/* Best-effort screenshot / copy protection for sacred Salaatu content. */
 .protected-content {
   user-select: none;
   -webkit-user-select: none;
@@ -92,12 +115,29 @@ body {
   pointer-events: none;
   -webkit-user-drag: none;
 }
+
 @media print {
-  .protected-content { display: none !important; }
+  .protected-content {
+    background: white !important;
+    color: #0F5132 !important;
+    min-height: 200px;
+    display: block !important;
+  }
+  .protected-content * {
+    display: none !important;
+  }
   .protected-content::before {
-    content: "Contenu protégé — impression désactivée.";
-    display: block;
-    color: #0F5132;
-    padding: 2rem;
+    content: "⚠️ Contenu sacré protégé — Impression désactivée.";
+    display: block !important;
+    color: #0c4228 !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    padding: 4rem 1rem !important;
+    border: 2px dashed #D4AF37;
+    border-radius: 12px;
+    margin: 2rem auto;
+    max-width: 500px;
   }
 }
+

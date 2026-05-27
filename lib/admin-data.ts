@@ -11,6 +11,7 @@ import {
   query,
   serverTimestamp,
   limit,
+  where,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getDb, getBucket } from "./firebase";
@@ -18,7 +19,6 @@ import {
   Article,
   AppUser,
   FinanceEntry,
-  FinanceType,
   GalleryItem,
   Member,
   MenuItem,
@@ -30,6 +30,7 @@ import {
   SalaatuLibraryItem,
   UserRole,
 } from "./admin-types";
+import { SALAATU_FULL_SEED } from "./salaatu-full-seed";
 
 // ============ GALLERY ============
 
@@ -588,4 +589,29 @@ export async function importMembersFromJson(
   }
 
   return report;
+}
+
+export async function importSalaatuFullLibrary(): Promise<void> {
+  const db = getDb();
+  const colRef = collection(db, "salaatuLibrary");
+  const existing = await listSalaatuLibrary();
+
+  for (const s of SALAATU_FULL_SEED) {
+    if (existing.some((e) => e.title === s.title)) continue;
+    await addDoc(colRef, {
+      ...s,
+      createdAt: Date.now(),
+    });
+  }
+}
+
+export async function checkMemberEmailExists(email: string): Promise<boolean> {
+  const db = getDb();
+  const q = query(
+    collection(db, "members"),
+    where("email", "==", email),
+    limit(1)
+  );
+  const snap = await getDocs(q);
+  return !snap.empty;
 }

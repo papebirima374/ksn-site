@@ -33,15 +33,21 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   // Restore from localStorage on mount (client only)
   useEffect(() => {
+    let savedLocale: Locale | null = null;
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
       if (saved && LOCALES.some((l) => l.code === saved)) {
-        setLocaleState(saved);
+        savedLocale = saved;
       }
     } catch {
       // ignore — localStorage may be unavailable
     }
-    setHydrated(true);
+    setTimeout(() => {
+      if (savedLocale) {
+        setLocaleState(savedLocale);
+      }
+      setHydrated(true);
+    }, 0);
   }, []);
 
   // Reflect locale on <html> element for screen readers & native styling

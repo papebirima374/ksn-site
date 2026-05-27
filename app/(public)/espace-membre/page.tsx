@@ -39,17 +39,22 @@ function ContentInner() {
       router.replace(returnTo);
     } catch (err) {
       const m = err instanceof Error ? err.message : "Erreur";
-      setError(
-        m.includes("auth/invalid-credential") ||
-          m.includes("auth/wrong-password") ||
-          m.includes("auth/user-not-found")
-          ? "Identifiants incorrects."
-          : m.includes("auth/email-already-in-use")
-          ? "Cet email a déjà un compte. Connectez-vous."
-          : m.includes("auth/weak-password")
-          ? "Mot de passe trop court (6 caractères min.)."
-          : m
-      );
+      if (m.includes("DÉFINIR_MOT_DE_PASSE:")) {
+        setError(m.replace("DÉFINIR_MOT_DE_PASSE:", "").trim());
+        setMode("signup");
+      } else {
+        setError(
+          m.includes("auth/invalid-credential") ||
+            m.includes("auth/wrong-password") ||
+            m.includes("auth/user-not-found")
+            ? "Identifiants incorrects."
+            : m.includes("auth/email-already-in-use")
+            ? "Cet email a déjà un compte. Connectez-vous."
+            : m.includes("auth/weak-password")
+            ? "Mot de passe trop court (6 caractères min.)."
+            : m
+        );
+      }
     } finally {
       setSubmitting(false);
     }

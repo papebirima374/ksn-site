@@ -54,7 +54,9 @@ export default function AdminFinancesPage() {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   const filtered = useMemo(() => {

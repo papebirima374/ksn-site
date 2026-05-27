@@ -17,7 +17,7 @@ export default function ArticlePage() {
 
   useEffect(() => {
     if (!slug || !isFirebaseConfigured()) {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 0);
       return;
     }
     listArticles()

@@ -34,8 +34,10 @@ export default function AdminUsersPage() {
   }
 
   useEffect(() => {
-    if (isAdmin) reload();
-    else setLoading(false);
+    setTimeout(() => {
+      if (isAdmin) reload();
+      else setLoading(false);
+    }, 0);
   }, [isAdmin]);
 
   async function updateUser(u: AppUser, patch: Partial<AppUser>) {

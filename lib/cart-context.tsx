@@ -7,6 +7,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Product, OrderItem } from "./admin-types";
@@ -32,18 +33,26 @@ const STORAGE_KEY = "ksn-cart-v1";
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartLine[]>([]);
   const [open, setOpen] = useState(false);
+  const isMounted = useRef(false);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setItems(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setTimeout(() => setItems(parsed), 0);
+      }
     } catch {}
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch {}
+    if (isMounted.current) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch {}
+    } else {
+      isMounted.current = true;
+    }
   }, [items]);
 
   const add = useCallback((product: Product, qty = 1) => {

@@ -36,6 +36,7 @@ export default function AdminSalaatuPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [dbMode, setDbMode] = useState<SalaatuMode>("auto");
 
   useEffect(() => {
     (async () => {
@@ -44,7 +45,10 @@ export default function AdminSalaatuPage() {
           getSalaatuDuJour(),
           listSalaatuLibrary().catch(() => [] as SalaatuLibraryItem[]),
         ]);
-        if (s) setData({ ...DEFAULT, ...s });
+        if (s) {
+          setData({ ...DEFAULT, ...s });
+          setDbMode(s.mode ?? "auto");
+        }
         setLibrary(lib.length > 0 ? lib : SALAATU_FALLBACK);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erreur de chargement");
@@ -87,7 +91,8 @@ export default function AdminSalaatuPage() {
         date: data.date,
         lastUpdatedBy: user.uid,
       });
-      setMessage("Salaatu du jour mis à jour. Visible immédiatement sur le site public.");
+      setDbMode(mode);
+      setMessage("Le mode de rotation a été mis à jour avec succès.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur");
     } finally {
@@ -312,14 +317,21 @@ export default function AdminSalaatuPage() {
                 </p>
               )}
 
-              {canEdit && (
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
-                >
-                  {saving ? "Enregistrement…" : "Activer le mode automatique"}
-                </button>
+              {dbMode === "auto" ? (
+                <div className="flex items-center gap-3 bg-emerald-50 text-[#0F5132] border border-emerald-200 rounded-2xl p-4 font-semibold text-sm">
+                  <FaCheck className="text-emerald-600" />
+                  <span>Le mode automatique (rotation quotidienne) est actuellement actif sur le site public.</span>
+                </div>
+              ) : (
+                canEdit && (
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F5132] py-4 rounded-2xl font-bold disabled:opacity-50"
+                  >
+                    {saving ? "Enregistrement…" : "Activer le mode automatique"}
+                  </button>
+                )
               )}
             </form>
           )}

@@ -33,7 +33,9 @@ export default function AdminMenuPage() {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   async function handleAdd(e: FormEvent<HTMLFormElement>) {

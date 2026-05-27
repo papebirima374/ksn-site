@@ -28,7 +28,9 @@ export default function AdminArticlesPage() {
   }
 
   useEffect(() => {
-    reload();
+    setTimeout(() => {
+      reload();
+    }, 0);
   }, []);
 
   async function handleDelete(article: Article) {

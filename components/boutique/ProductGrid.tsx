@@ -15,15 +15,12 @@ function fmt(n: number) {
 export default function ProductGrid() {
   const { add, items, setOpen } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(isFirebaseConfigured());
   const [category, setCategory] = useState<"all" | ProductCategory>("all");
   const [justAdded, setJustAdded] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isFirebaseConfigured()) {
-      setLoading(false);
-      return;
-    }
+    if (!isFirebaseConfigured()) return;
     listProducts({ onlyVisible: true })
       .then(setProducts)
       .catch(() => {})
