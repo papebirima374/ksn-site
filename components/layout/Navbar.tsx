@@ -51,6 +51,7 @@ export default function Navbar() {
     { label: t("nav.spiritualite"), href: "/spiritualite" },
     { label: t("nav.media"), href: "/media" },
     { label: "Challenge", href: "/challenge" },
+    { label: "Journée", href: "/journee-salaatu" },
     { label: t("nav.boutique"), href: "/boutique" },
     { label: t("nav.blog"), href: "/blog" },
     { label: t("nav.contact"), href: "/contact" },
@@ -86,7 +87,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-7 text-white font-medium text-sm xl:text-[15px]">
+          <nav className="hidden lg:flex items-center gap-3 xl:gap-6 text-white font-medium text-[13px] xl:text-[15px]">
             {navItems.map((item) => (
               <Link
                 key={item.href}
