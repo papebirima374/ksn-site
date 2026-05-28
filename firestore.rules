@@ -101,6 +101,20 @@ service cloud.firestore {
       allow write: if hasPerm("articles.write");
     }
 
+    // ─── Éducation & Culture — Modules (Tazawwud, etc.) ─────────────────
+    match /education_modules/{id} {
+      allow read: if true;  // public peut voir la structure
+      allow write: if hasPerm("education.write");
+    }
+
+    // ─── Éducation & Culture — Leçons ───────────────────────────────────
+    match /education_lessons/{id} {
+      // Public peut lire les leçons published; admin/edu voient tout
+      allow read: if resource.data.publishStatus == "published"
+                  || hasPerm("education.write");
+      allow create, update, delete: if hasPerm("education.write");
+    }
+
     // ─── Bibliothèque Salaatu ───────────────────────────────────────────
     match /salaatuLibrary/{id} {
       allow read: if true;

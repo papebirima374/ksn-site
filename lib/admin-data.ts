@@ -19,6 +19,10 @@ import { getDb, getBucket, getSecondaryAuth } from "./firebase";
 import {
   Article,
   AppUser,
+  EducationLesson,
+  EducationLessonAudio,
+  EducationModule,
+  EducationLanguage,
   FinanceEntry,
   GalleryItem,
   Member,
@@ -991,4 +995,288 @@ export async function deleteOfficialDocument(item: OfficialDocument): Promise<vo
     }
   }
   await deleteDoc(doc(db, "documents", item.id));
+}
+
+// ============ EDUCATION — MODULES ============
+
+export async function listEducationModules(): Promise<EducationModule[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "education_modules"), orderBy("order", "asc"))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<EducationModule, "id">) }));
+}
+
+export async function getEducationModule(id: string): Promise<EducationModule | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "education_modules", id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...(snap.data() as Omit<EducationModule, "id">) };
+}
+
+export async function createEducationModule(
+  data: Omit<EducationModule, "id" | "createdAt" | "updatedAt">
+): Promise<string> {
+  const db = getDb();
+  const ref = await addDoc(collection(db, "education_modules"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+export async function updateEducationModule(
+  id: string,
+  patch: Partial<Omit<EducationModule, "id" | "createdAt">>
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, "education_modules", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
+}
+
+export async function deleteEducationModule(id: string): Promise<void> {
+  const db = getDb();
+  // Supprime aussi toutes les lecons du module
+  const lessonsSnap = await getDocs(
+    query(collection(db, "education_lessons"), where("moduleId", "==", id))
+  );
+  await Promise.all(lessonsSnap.docs.map((d) => deleteDoc(d.ref)));
+  await deleteDoc(doc(db, "education_modules", id));
+}
+
+// ============ EDUCATION — LECONS ============
+
+export async function listEducationLessons(moduleId?: string): Promise<EducationLesson[]> {
+  const db = getDb();
+  const baseQuery = moduleId
+    ? query(
+        collection(db, "education_lessons"),
+        where("moduleId", "==", moduleId),
+        orderBy("order", "asc")
+      )
+    : query(collection(db, "education_lessons"), orderBy("order", "asc"));
+  const snap = await getDocs(baseQuery);
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<EducationLesson, "id">) }));
+}
+
+export async function getEducationLesson(id: string): Promise<EducationLesson | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "education_lessons", id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...(snap.data() as Omit<EducationLesson, "id">) };
+}
+
+export async function createEducationLesson(
+  data: Omit<EducationLesson, "id" | "createdAt" | "updatedAt">
+): Promise<string> {
+  const db = getDb();
+  const ref = await addDoc(collection(db, "education_lessons"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+export async function updateEducationLesson(
+  id: string,
+  patch: Partial<Omit<EducationLesson, "id" | "createdAt">>
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, "education_lessons", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
+}
+
+export async function deleteEducationLesson(id: string): Promise<void> {
+  const db = getDb();
+  // Recupere la lecon pour supprimer aussi les audios Storage
+  const snap = await getDoc(doc(db, "education_lessons", id));
+  if (snap.exists()) {
+    const lesson = snap.data() as EducationLesson;
+    if (lesson.audio) {
+      const paths = Object.values(lesson.audio)
+        .map((a) => a?.storagePath)
+        .filter(Boolean) as string[];
+      await Promise.all(
+        paths.map((p) =>
+          deleteObject(ref(getBucket(), p)).catch(() => undefined)
+        )
+      );
+    }
+  }
+  await deleteDoc(doc(db, "education_lessons", id));
+}
+
+/** Upload un buffer audio dans Storage + attache à la leçon Firestore. */
+export async function attachLessonAudio(
+  lessonId: string,
+  language: EducationLanguage,
+  audioBlob: Blob,
+  meta: {
+    contentHash: string;
+    voiceId: string;
+    provider: "google" | "edge" | "manual_upload";
+    durationSec: number;
+  }
+): Promise<EducationLessonAudio> {
+  const bucket = getBucket();
+  const path = `education_audio/${lessonId}/${language}-${meta.contentHash.slice(0, 12)}.mp3`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, audioBlob, { contentType: "audio/mpeg" });
+  const url = await getDownloadURL(r);
+  const audio: EducationLessonAudio = {
+    url,
+    storagePath: path,
+    contentHash: meta.contentHash,
+    voiceId: meta.voiceId,
+    provider: meta.provider,
+    durationSec: meta.durationSec,
+    sizeBytes: audioBlob.size,
+    generatedAt: Date.now(),
+  };
+  // Patch la leçon avec le nouvel audio (en supprimant l'ancien Storage)
+  const lesson = await getEducationLesson(lessonId);
+  if (lesson?.audio?.[language]?.storagePath
+      && lesson.audio[language]?.storagePath !== path) {
+    await deleteObject(ref(bucket, lesson.audio[language]!.storagePath)).catch(() => undefined);
+  }
+  const db = getDb();
+  await updateDoc(doc(db, "education_lessons", lessonId), {
+    [`audio.${language}`]: audio,
+    updatedAt: Date.now(),
+  });
+  return audio;
+}
+
+/** Calcule un hash court d'un texte (pour cache invalidation). */
+export async function computeContentHash(text: string): Promise<string> {
+  // Utilise SubtleCrypto en navigateur
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// ============ EDUCATION — SEED TAZAWWUD ============
+
+/** Insère les 6 modules + 25 leçons skeletons du Tazawwud.
+ *  À appeler une fois depuis l'admin si la base est vide. */
+export async function seedTazawwud(): Promise<{ modules: number; lessons: number }> {
+  const existing = await listEducationModules();
+  if (existing.length > 0) {
+    throw new Error("Des modules existent déjà — refusé pour éviter l'écrasement.");
+  }
+
+  const TAZAWWUD_SEED = [
+    {
+      slug: "fondements",
+      titleFr: "Les Fondements de la Foi",
+      titleArabic: "أصول الإيمان",
+      iconKey: "seedling",
+      lessons: [
+        "Les piliers de l'Islam",
+        "Les piliers de la foi",
+        "La connaissance d'Allah",
+        "La connaissance du Prophète ﷺ",
+      ],
+    },
+    {
+      slug: "tahara",
+      titleFr: "La Purification",
+      titleArabic: "الطهارة",
+      iconKey: "water",
+      lessons: [
+        "Les types d'eau",
+        "L'ablution (Wudu)",
+        "La grande purification (Ghusl)",
+        "Le tayammum",
+      ],
+    },
+    {
+      slug: "salat",
+      titleFr: "La Prière",
+      titleArabic: "الصلاة",
+      iconKey: "prayer",
+      lessons: [
+        "Les 5 prières obligatoires (Farata)",
+        "Conditions de validité",
+        "Piliers et obligations (Wajibat)",
+        "Actes recommandés (Sunna)",
+        "Ce qui annule la prière",
+      ],
+    },
+    {
+      slug: "sawm-zakat-hajj",
+      titleFr: "Jeûne, Zakat et Hajj",
+      titleArabic: "الصوم والزكاة والحج",
+      iconKey: "moon",
+      lessons: [
+        "Le jeûne (Sawm) — règles essentielles",
+        "Ce qui rompt le jeûne",
+        "La Zakat — obligations et bénéficiaires",
+        "Le pèlerinage (Hajj) — vue d'ensemble",
+      ],
+    },
+    {
+      slug: "adab",
+      titleFr: "Adab & Akhlaq",
+      titleArabic: "الآداب والأخلاق",
+      iconKey: "flower",
+      lessons: [
+        "Éthique au quotidien",
+        "Comportements louables",
+        "Comportements blâmables",
+        "Le rapport aux parents et aux aînés",
+      ],
+    },
+    {
+      slug: "salaatu",
+      titleFr: "La Salaatu sur le Prophète ﷺ",
+      titleArabic: "الصلاة على النبي ﷺ",
+      iconKey: "star",
+      lessons: [
+        "Le commandement divin (Coran 33:56)",
+        "Les vertus de la Salaatu (10x récompense)",
+        "Les formules enseignées par le Prophète ﷺ",
+        "La pratique communautaire — le sens du Dahira KSN",
+      ],
+    },
+  ];
+
+  let lessonsCount = 0;
+
+  for (let m = 0; m < TAZAWWUD_SEED.length; m++) {
+    const moduleSeed = TAZAWWUD_SEED[m];
+    const moduleId = await createEducationModule({
+      slug: moduleSeed.slug,
+      title: { fr: moduleSeed.titleFr },
+      titleArabic: moduleSeed.titleArabic,
+      description: { fr: "" },
+      iconKey: moduleSeed.iconKey,
+      order: m + 1,
+      publishStatus: "draft",
+      sourceWork: "tazawwud",
+    });
+
+    for (let l = 0; l < moduleSeed.lessons.length; l++) {
+      const lessonTitle = moduleSeed.lessons[l];
+      await createEducationLesson({
+        moduleId,
+        slug: `${moduleSeed.slug}-${l + 1}`,
+        reference: `${m + 1}.${l + 1}`,
+        order: l + 1,
+        title: { fr: lessonTitle },
+        content: { fr: "" },
+        publishStatus: "draft",
+        publicAccess: false,
+      });
+      lessonsCount++;
+    }
+  }
+
+  return { modules: TAZAWWUD_SEED.length, lessons: lessonsCount };
 }

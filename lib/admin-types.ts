@@ -9,7 +9,8 @@ export type Permission =
   | "users.write"
   | "members.write"
   | "finances.write"
-  | "boutique.write";
+  | "boutique.write"
+  | "education.write";
 
 export const ALL_PERMISSIONS: Permission[] = [
   "gallery.write",
@@ -21,6 +22,7 @@ export const ALL_PERMISSIONS: Permission[] = [
   "members.write",
   "finances.write",
   "boutique.write",
+  "education.write",
 ];
 
 /** Commissions officielles du Dahira KSN. Source unique reutilisee par
@@ -48,6 +50,7 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "members.write": "Membres du Dahira (gérer + cartes)",
   "finances.write": "Finances du Dahira (commission finance)",
   "boutique.write": "Boutique (produits + commandes)",
+  "education.write": "Éducation & Culture (Tazawwud, leçons, audio)",
 };
 
 export type AppUser = {
@@ -62,6 +65,89 @@ export type AppUser = {
   memberId?: string;
   memberMatricule?: string;
   phone?: string;
+};
+
+// ════════════════════════════════════════════════════════════════════
+//   ÉDUCATION & CULTURE — Tazawwud et autres ouvrages
+// ════════════════════════════════════════════════════════════════════
+
+export type EducationLanguage = "fr" | "en" | "ar" | "it" | "es" | "wo";
+
+export type EducationPublishStatus = "draft" | "preview" | "published";
+
+/** Module éducatif (chapitre du Tazawwud par exemple). */
+export type EducationModule = {
+  id: string;
+  /** Slug court pour URL : "fondements", "tahara", ... */
+  slug: string;
+  /** Titre par langue. FR est toujours rempli. */
+  title: Partial<Record<EducationLanguage, string>>;
+  /** Titre arabe (calligraphie) — affiché en hero du module. */
+  titleArabic?: string;
+  /** Description courte (1-2 phrases). */
+  description: Partial<Record<EducationLanguage, string>>;
+  /** Icône emoji ou clé sémantique : "seedling", "water", "salat"... */
+  iconKey?: string;
+  /** Ordre d'affichage (1, 2, 3, ...). */
+  order: number;
+  publishStatus: EducationPublishStatus;
+  /** Œuvre source : "tazawwud", "massalik", "custom", ... */
+  sourceWork: string;
+  createdAt: number;
+  updatedAt?: number;
+};
+
+/** Audio attaché à une leçon, par langue + provider. */
+export type EducationLessonAudio = {
+  /** URL publique Firebase Storage. */
+  url: string;
+  /** Path dans Storage pour suppression. */
+  storagePath: string;
+  /** Hash du contenu texte au moment de la génération. Permet de
+   *  détecter si le texte a changé et qu'il faut régénérer. */
+  contentHash: string;
+  voiceId: string;
+  provider: "google" | "edge" | "manual_upload";
+  durationSec: number;
+  sizeBytes: number;
+  generatedAt: number;
+};
+
+/** Leçon individuelle (sous un module). */
+export type EducationLesson = {
+  id: string;
+  moduleId: string;
+  slug: string;
+  /** Numéro affiché : 1.1, 1.2, 2.3, etc. */
+  reference: string;
+  /** Ordre dans le module (1, 2, 3, ...). */
+  order: number;
+  title: Partial<Record<EducationLanguage, string>>;
+  titleArabic?: string;
+  /** Intention spirituelle (Niya) — court paragraphe avant la leçon. */
+  intention?: Partial<Record<EducationLanguage, string>>;
+  /** Corps principal de la leçon, format Markdown. */
+  content: Partial<Record<EducationLanguage, string>>;
+  /** Citation centrale (verset / hadith / Serigne Touba). */
+  citation?: {
+    author?: string;
+    sourceRef?: string; // ex: "Coran 33:56"
+    arabic?: string;
+    translations?: Partial<Record<EducationLanguage, string>>;
+  };
+  /** Application pratique dans la vie quotidienne. */
+  application?: Partial<Record<EducationLanguage, string>>;
+  /** Rappel à mémoriser (1 phrase). */
+  reminder?: Partial<Record<EducationLanguage, string>>;
+  /** Audio par langue. */
+  audio?: Partial<Record<EducationLanguage, EducationLessonAudio>>;
+  /** Temps de lecture estimé en minutes. */
+  readingTimeMin?: number;
+  publishStatus: EducationPublishStatus;
+  /** Vue gratuite pour tous (true) ou réservée membres actifs. */
+  publicAccess: boolean;
+  createdAt: number;
+  updatedAt?: number;
 };
 
 /** Document officiel téléchargeable (PDF, DOC, etc.).
