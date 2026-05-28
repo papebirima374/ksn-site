@@ -997,19 +997,19 @@ export async function deleteOfficialDocument(item: OfficialDocument): Promise<vo
   await deleteDoc(doc(db, "documents", item.id));
 }
 
-/** Nettoie un objet en supprimant recursivement toutes les valeurs
- *  undefined avant un updateDoc(). Firestore refuse undefined et
- *  retourne "Unsupported field value: undefined". */
-function stripUndefined<T>(obj: T): T {
+/** Nettoie recursivement les valeurs undefined avant un updateDoc().
+ *  Different de stripUndefined() (line 279) qui est shallow et strip
+ *  aussi les chaines vides : ici on est deep et on garde les "". */
+function stripUndefinedDeep<T>(obj: T): T {
   if (obj === null || obj === undefined) return obj;
   if (Array.isArray(obj)) {
-    return obj.map((v) => stripUndefined(v)) as unknown as T;
+    return obj.map((v) => stripUndefinedDeep(v)) as unknown as T;
   }
   if (typeof obj === "object") {
     const out: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
       if (v === undefined) continue;
-      out[k] = stripUndefined(v);
+      out[k] = stripUndefinedDeep(v);
     }
     return out as T;
   }
@@ -1051,7 +1051,7 @@ export async function updateEducationModule(
   const db = getDb();
   await updateDoc(
     doc(db, "education_modules", id),
-    stripUndefined({
+    stripUndefinedDeep({
       ...patch,
       updatedAt: Date.now(),
     })
@@ -1112,7 +1112,7 @@ export async function updateEducationLesson(
   const db = getDb();
   await updateDoc(
     doc(db, "education_lessons", id),
-    stripUndefined({
+    stripUndefinedDeep({
       ...patch,
       updatedAt: Date.now(),
     })
