@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import {
   AppUser,
   ALL_PERMISSIONS,
+  COMMISSIONS_LIST,
   PERMISSION_LABELS,
   Permission,
   UserRole,
@@ -32,9 +33,16 @@ export default function AdminUsersPage() {
   const [newPassword, setNewPassword] = useState("");
   const [newName, setNewName] = useState("");
   const [newRole, setNewRole] = useState<UserRole>("commission");
-  const [newCommission, setNewCommission] = useState("");
+  const [newCommission, setNewCommission] = useState<string>(COMMISSIONS_LIST[0]);
+  const [newPermissions, setNewPermissions] = useState<Permission[]>([]);
   const [creating, setCreating] = useState(false);
   const [createSuccess, setCreateSuccess] = useState("");
+
+  function toggleNewPermission(p: Permission) {
+    setNewPermissions((prev) =>
+      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]
+    );
+  }
 
   async function reload() {
     setLoading(true);
@@ -90,19 +98,27 @@ export default function AdminUsersPage() {
     }
     setCreating(true);
     try {
+      // Un admin a TOUTES les permissions par definition.
+      // Un membre de commission n'a que les permissions cochees.
+      const permissions: Permission[] =
+        newRole === "admin" ? [...ALL_PERMISSIONS] : newPermissions;
       await createUserAccount(newEmail.trim(), newPassword, {
         displayName: newName.trim() || undefined,
         role: newRole,
-        commission: newRole === "commission" ? newCommission.trim() || undefined : undefined,
-        permissions: [], // l'admin attribuera ensuite via "Modifier"
+        commission: newRole === "commission" ? newCommission : undefined,
+        permissions,
       });
+      const permsCount = permissions.length;
       setCreateSuccess(
-        `Compte ${newEmail} créé. Cliquez « Modifier » sur sa ligne pour attribuer les permissions.`
+        newRole === "admin"
+          ? `Compte admin ${newEmail} créé avec toutes les permissions.`
+          : `Compte ${newEmail} créé avec ${permsCount} permission${permsCount > 1 ? "s" : ""}.`
       );
       setNewEmail("");
       setNewPassword("");
       setNewName("");
-      setNewCommission("");
+      setNewCommission(COMMISSIONS_LIST[0]);
+      setNewPermissions([]);
       setNewRole("commission");
       await reload();
       // Toast disparait apres 5s
@@ -260,18 +276,84 @@ export default function AdminUsersPage() {
                 <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                   Nom de la commission
                 </label>
-                <input
-                  type="text"
+                <select
                   value={newCommission}
                   onChange={(e) => setNewCommission(e.target.value)}
-                  placeholder="Ex: Communication"
                   className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
-                />
+                >
+                  {COMMISSIONS_LIST.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
               </div>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-3 items-center pt-2">
+          {/* PERMISSIONS — visibles uniquement pour role "commission" */}
+          {newRole === "commission" ? (
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <label className="block text-xs font-semibold text-gray-600">
+                  Permissions de ce compte ({newPermissions.length}/{ALL_PERMISSIONS.length})
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewPermissions([...ALL_PERMISSIONS])}
+                    className="text-[11px] px-2.5 py-1 rounded-md bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] font-semibold"
+                  >
+                    Tout cocher
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewPermissions([])}
+                    className="text-[11px] px-2.5 py-1 rounded-md bg-[#F8F5EF] hover:bg-[#E8E6E1] text-[#0F7C55] font-semibold"
+                  >
+                    Tout décocher
+                  </button>
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {ALL_PERMISSIONS.map((p) => {
+                  const checked = newPermissions.includes(p);
+                  return (
+                    <label
+                      key={p}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition ${
+                        checked
+                          ? "bg-[#0F7C55]/10 border border-[#0F7C55]/30"
+                          : "bg-[#F8F5EF] hover:bg-[#E8E6E1] border border-transparent"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleNewPermission(p)}
+                        className="w-4 h-4 accent-[#0F7C55]"
+                      />
+                      <span className="text-sm text-[#0F7C55]">
+                        {PERMISSION_LABELS[p]}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="pt-2 px-4 py-3 bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl">
+              <p className="text-sm text-[#B8860B] flex items-center gap-2">
+                <FaUserShield />
+                <span>
+                  <strong>Administrateur</strong> — accès complet à toutes les
+                  sections, toutes les permissions activées automatiquement.
+                </span>
+              </p>
+            </div>
+          )}
+
+          <div className="flex flex-wrap gap-3 items-center pt-3">
             <button
               type="submit"
               disabled={creating || !newEmail || !newPassword}
@@ -280,9 +362,7 @@ export default function AdminUsersPage() {
               <FaUserPlus /> {creating ? "Création…" : "Créer le compte"}
             </button>
             <p className="text-xs text-gray-500">
-              {newRole === "admin"
-                ? "L'admin aura accès à toutes les sections."
-                : "Les permissions s'attribuent ensuite via le bouton « Modifier »."}
+              Les permissions peuvent être modifiées plus tard via le bouton « Modifier ».
             </p>
           </div>
         </form>
@@ -388,13 +468,26 @@ export default function AdminUsersPage() {
                         <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                           Nom de la commission
                         </label>
-                        <input
-                          type="text"
-                          defaultValue={u.commission ?? ""}
-                          onBlur={(e) => setCommission(u, e.target.value)}
-                          placeholder="ex: Communication, Finances, Éducation…"
+                        <select
+                          value={
+                            u.commission && (COMMISSIONS_LIST as readonly string[]).includes(u.commission)
+                              ? u.commission
+                              : COMMISSIONS_LIST[0]
+                          }
+                          onChange={(e) => setCommission(u, e.target.value)}
                           className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
-                        />
+                        >
+                          {COMMISSIONS_LIST.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                        {u.commission && !(COMMISSIONS_LIST as readonly string[]).includes(u.commission) && (
+                          <p className="text-[11px] text-orange-600 mt-1.5">
+                            ⚠️ Commission « {u.commission} » non standard. Sélectionnez une commission officielle ci-dessus.
+                          </p>
+                        )}
                       </div>
                     )}
                     {u.role === "admin" ? (

@@ -23,6 +23,19 @@ export const ALL_PERMISSIONS: Permission[] = [
   "boutique.write",
 ];
 
+/** Commissions officielles du Dahira KSN. Source unique reutilisee par
+ *  le formulaire de creation, l'edition et la section publique. */
+export const COMMISSIONS_LIST = [
+  "Éducation & Culture",
+  "Finances",
+  "Sociale & Développement",
+  "Organisation",
+  "Communication",
+  "Relations Extérieures",
+] as const;
+
+export type CommissionName = (typeof COMMISSIONS_LIST)[number];
+
 export const PERMISSION_LABELS: Record<Permission, string> = {
   "gallery.write": "Galerie photos (ajouter / supprimer)",
   "articles.write": "Articles / blog (publier)",
