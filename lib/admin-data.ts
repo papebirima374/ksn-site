@@ -1272,6 +1272,40 @@ export async function fillTazawwudContent(opts?: {
   return { filled, skipped, notFound };
 }
 
+// ============ EDUCATION — PUBLISH ALL ============
+
+/** Passe TOUS les modules et leçons (ou seulement Tazawwud) en
+ *  statut "published" en un clic. Pratique apres le premier seed
+ *  + remplissage de contenu pour ouvrir au public d'un coup. */
+export async function publishAllTazawwud(): Promise<{
+  modules: number;
+  lessons: number;
+}> {
+  const [modules, lessons] = await Promise.all([
+    listEducationModules(),
+    listEducationLessons(),
+  ]);
+  let modulesUpdated = 0;
+  let lessonsUpdated = 0;
+
+  for (const m of modules) {
+    if (m.publishStatus !== "published") {
+      await updateEducationModule(m.id, { publishStatus: "published" });
+      modulesUpdated++;
+    }
+  }
+  for (const l of lessons) {
+    if (l.publishStatus !== "published") {
+      await updateEducationLesson(l.id, {
+        publishStatus: "published",
+        publicAccess: true,
+      });
+      lessonsUpdated++;
+    }
+  }
+  return { modules: modulesUpdated, lessons: lessonsUpdated };
+}
+
 // ============ EDUCATION — SEED TAZAWWUD ============
 
 /** Insère les 6 modules + 25 leçons skeletons du Tazawwud.

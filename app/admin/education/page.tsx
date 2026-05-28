@@ -14,6 +14,7 @@ import {
   listEducationLessons,
   seedTazawwud,
   fillTazawwudContent,
+  publishAllTazawwud,
 } from "@/lib/admin-data";
 import {
   FaGraduationCap,
@@ -52,6 +53,7 @@ export default function AdminEducationOverviewPage() {
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
   const [filling, setFilling] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -89,6 +91,33 @@ export default function AdminEducationOverviewPage() {
       setError(e instanceof Error ? e.message : "Erreur lors du seed");
     } finally {
       setSeeding(false);
+    }
+  }
+
+  async function handlePublishAll() {
+    if (!confirm(
+      "Publier TOUS les modules et leçons du Tazawwud d'un coup ?\n\n" +
+      "Tous les modules et les 25 leçons passeront en statut « Publié »\n" +
+      "et seront visibles sur /education côté public.\n\n" +
+      "Le gating séquentiel reste en place : la 1ère leçon sera accessible,\n" +
+      "les suivantes se débloqueront au fur et à mesure de la progression.\n\n" +
+      "Continuer ?"
+    )) return;
+    setPublishing(true);
+    setError("");
+    setSuccess("");
+    try {
+      const result = await publishAllTazawwud();
+      setSuccess(
+        `✓ ${result.modules} modules et ${result.lessons} leçons publiés. ` +
+        `Le Tazawwud est désormais accessible sur /education.`
+      );
+      await reload();
+      setTimeout(() => setSuccess(""), 10000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la publication");
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -152,15 +181,25 @@ export default function AdminEducationOverviewPage() {
             <FaWaveSquare /> Atelier audio TTS
           </Link>
           {canEdit && modules.length > 0 && (
-            <button
-              type="button"
-              onClick={handleFillContent}
-              disabled={filling}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-4 py-2 rounded-xl shadow-md hover:scale-105 transition text-sm disabled:opacity-50"
-            >
-              <FaWandMagicSparkles />
-              {filling ? "Remplissage…" : "Remplir tout le Tazawwud (FR)"}
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleFillContent}
+                disabled={filling}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-4 py-2 rounded-xl shadow-md hover:scale-105 transition text-sm disabled:opacity-50"
+              >
+                <FaWandMagicSparkles />
+                {filling ? "Remplissage…" : "Remplir tout le Tazawwud (FR)"}
+              </button>
+              <button
+                type="button"
+                onClick={handlePublishAll}
+                disabled={publishing}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-bold px-4 py-2 rounded-xl shadow-md hover:scale-105 transition text-sm disabled:opacity-50"
+              >
+                🌍 {publishing ? "Publication…" : "Publier tout le Tazawwud"}
+              </button>
+            </>
           )}
         </div>
       </header>
