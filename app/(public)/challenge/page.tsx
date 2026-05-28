@@ -3,6 +3,8 @@ import Link from "next/link";
 import { FaWhatsapp, FaApple, FaGooglePlay, FaHandshakeAngle } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
+import ChallengeProgression from "@/components/sections/ChallengeProgression";
+import TableauHonneur from "@/components/sections/TableauHonneur";
 import { LINKS } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -49,6 +51,12 @@ export default function ChallengePage() {
 
       {/* COMPTEUR LIVE */}
       <ChallengeCounter />
+
+      {/* GRAPHIQUE PROGRESSION */}
+      <ChallengeProgression />
+
+      {/* TABLEAU D'HONNEUR */}
+      <TableauHonneur />
 
       {/* COMMENT PARTICIPER */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
