@@ -12,6 +12,7 @@ import {
   serverTimestamp,
   limit,
   where,
+  deleteField,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
@@ -1190,6 +1191,87 @@ export async function computeContentHash(text: string): Promise<string> {
     .join("");
 }
 
+/** Supprime un audio spécifique d'une leçon (Storage + maj Firestore). */
+export async function deleteLessonAudio(
+  lessonId: string,
+  language: EducationLanguage
+): Promise<void> {
+  const lesson = await getEducationLesson(lessonId);
+  if (!lesson || !lesson.audio?.[language]) return;
+
+  const storagePath = lesson.audio[language]!.storagePath;
+  if (storagePath) {
+    const bucket = getBucket();
+    await deleteObject(ref(bucket, storagePath)).catch(() => undefined);
+  }
+
+  const db = getDb();
+  await updateDoc(doc(db, "education_lessons", lessonId), {
+    [`audio.${language}`]: deleteField(),
+    updatedAt: Date.now(),
+  });
+}
+
+// ============ EDUCATION — FILL TAZAWWUD CONTENT ============
+
+/** Remplit toutes les lecons du Tazawwud avec le contenu prepare
+ *  (lib/education/tazawwud-content.ts). Match les lecons par leur
+ *  champ "reference" (ex: "6.1"). Necessite que seedTazawwud() ait
+ *  ete execute au prealable.
+ *
+ *  Retourne le nombre de lecons remplies. Si une lecon a deja du
+ *  contenu, elle est ECRASEE (idempotent / utile pour reapplique
+ *  des corrections).
+ *
+ *  Cette fonction NE MODIFIE PAS les audios existants (ils sont
+ *  attaches au contentHash et seront simplement obsoletes). */
+export async function fillTazawwudContent(opts?: {
+  overrideExisting?: boolean;
+}): Promise<{ filled: number; skipped: number; notFound: string[] }> {
+  const override = opts?.overrideExisting ?? true;
+  const { TAZAWWUD_CONTENT } = await import("./education/tazawwud-content");
+  const allLessons = await listEducationLessons();
+  const byRef = new Map(allLessons.map((l) => [l.reference, l]));
+
+  let filled = 0;
+  let skipped = 0;
+  const notFound: string[] = [];
+
+  for (const c of TAZAWWUD_CONTENT) {
+    const lesson = byRef.get(c.reference);
+    if (!lesson) {
+      notFound.push(c.reference);
+      continue;
+    }
+    const hasContent = Boolean(lesson.content?.fr?.trim());
+    if (hasContent && !override) {
+      skipped++;
+      continue;
+    }
+    await updateEducationLesson(lesson.id, {
+      titleArabic: c.titleArabic,
+      intention: { ...lesson.intention, fr: c.intention },
+      content: { ...lesson.content, fr: c.content },
+      citation: c.citation
+        ? {
+            author: c.citation.author,
+            sourceRef: c.citation.sourceRef,
+            arabic: c.citation.arabic,
+            translations: {
+              ...lesson.citation?.translations,
+              fr: c.citation.translationFr,
+            },
+          }
+        : lesson.citation,
+      application: { ...lesson.application, fr: c.application },
+      reminder: { ...lesson.reminder, fr: c.reminder },
+    });
+    filled++;
+  }
+
+  return { filled, skipped, notFound };
+}
+
 // ============ EDUCATION — SEED TAZAWWUD ============
 
 /** Insère les 6 modules + 25 leçons skeletons du Tazawwud.
@@ -1276,6 +1358,201 @@ export async function seedTazawwud(): Promise<{ modules: number; lessons: number
     },
   ];
 
+  const DETAILED_LESSONS_SEEDS: Record<string, any> = {
+    "1.1": {
+      title: {
+        fr: "Les piliers de l'Islam",
+        wo: "Yoonu Lislaam (Pilier yi)",
+      },
+      intention: {
+        fr: "Prendre conscience des cinq piliers qui soutiennent notre soumission et guident nos actions physiques au service du Créateur.",
+        wo: "Xam li tegu yoonu Lislaam ngir dëgëral sunu ngëm ci sunu jëf.",
+      },
+      content: {
+        fr: "L'Islam est fondé sur cinq piliers fondamentaux que chaque croyant doit accomplir pour consolider sa foi et sa soumission à Allah. Ces piliers sont :\n\n1. **La Profession de Foi (Chahada)** : Attester qu'il n'y a de divinité d'Allah et que Muhammad est Son messager.\n2. **La Prière (Salat)** : Accomplir les cinq prières quotidiennes.\n3. **L'Aumône Légale (Zakat)** : Purifier ses biens en donnant aux nécessiteux.\n4. **Le Jeûne (Sawm)** : Jeûner durant le mois béni de Ramadan.\n5. **Le Pèlerinage (Hajj)** : Se rendre à la Mecque une fois dans sa vie pour ceux qui en ont les moyens physiques et financiers.\n\nDans le *Tazawwudu-ss-Sighar*, Serigne Touba nous exhorte dès la jeunesse à accorder une importance capitale à l'apprentissage et à la pratique de ces cinq fondements.",
+        wo: "Lislaam dafa tegu ci juróomi ponk yu mag:\n\n1. **Sereere si (Chahada)** : Sereere ne amul keneen ku fi yalla ku dul Allah te Muhammad mi ngi fi ab yonentam.\n2. **Julli gi (Salat)** : Di julli juróomi yoon bës bu ne.\n3. **Asaka ji (Zakat)** : Joxe asaka.\n4. **Koor gi (Sawm)** : Woor weeru Koor.\n5. **Aj gi (Hajj)** : Dem Aj Màkka ci ku ko man.\n\nSerigne Touba ci téereem *Tazawwudu-ss-Sighar* dafa ñuy sàkku ñu jox ponk yi cër bu mag ci sunu ndaw.",
+      },
+      citation: {
+        author: "Le Prophète Muhammad ﷺ",
+        sourceRef: "Hadith (Rapporté par Muslim)",
+        arabic: "بُنِيَ الإسْلامُ علَى خَمْسٍ",
+        translations: {
+          fr: "L'Islam est bâti sur cinq [piliers].",
+          wo: "Lislaam juróomi ponk la tegu.",
+        },
+      },
+      application: {
+        fr: "Passez en revue votre assiduité sur chacun de ces cinq piliers. Aujourd'hui, faites l'effort particulier de parfaire l'intention de vos prières.",
+        wo: "Saytul say julli ak say ponk. Tey jéema rafatal say niia ci sa julli.",
+      },
+      reminder: {
+        fr: "L'Islam est un édifice qui repose sur la mise en pratique harmonieuse de ses cinq piliers.",
+        wo: "Lislaam tabax la buy tegu ci ponk yi ko dëgëral.",
+      },
+      quiz: {
+        questions: [
+          {
+            id: "1.1-q1",
+            question: {
+              fr: "Combien y a-t-il de piliers de l'Islam ?",
+              wo: "Ñata ponki Lislaam lañu ?",
+            },
+            options: [
+              { id: "A", text: { fr: "3", wo: "3" } },
+              { id: "B", text: { fr: "5", wo: "5" } },
+              { id: "C", text: { fr: "6", wo: "6" } },
+              { id: "D", text: { fr: "7", wo: "7" } },
+            ],
+            correctOptionId: "B",
+            explanation: {
+              fr: "L'Islam repose sur 5 piliers : Chahada, Salat, Zakat, Sawm et Hajj.",
+              wo: "Lislaam juróomi ponk la tegu: Chahada, Salat, Zakat, Sawm ak Hajj.",
+            },
+          },
+          {
+            id: "1.1-q2",
+            question: {
+              fr: "Quel est le premier pilier de l'Islam ?",
+              wo: "Ban ponk mooy bu jiitu ci Lislaam ?",
+            },
+            options: [
+              { id: "A", text: { fr: "La Prière (Salat)", wo: "Julli gi (Salat)" } },
+              { id: "B", text: { fr: "L'Aumône (Zakat)", wo: "Asaka ji (Zakat)" } },
+              { id: "C", text: { fr: "La Profession de Foi (Chahada)", wo: "Sereere si (Chahada)" } },
+            ],
+            correctOptionId: "C",
+            explanation: {
+              fr: "La Profession de Foi (Chahada) est le premier pilier, l'attestation qu'il n'y a de divinité d'Allah et que Muhammad est Son messager.",
+              wo: "Sereere si (Chahada) mooy ponk bu jiitu ci bépp jëf ngir duggu ci Lislaam.",
+            },
+          },
+        ],
+      },
+      publishStatus: "published",
+      publicAccess: true,
+    },
+    "1.2": {
+      title: {
+        fr: "Les piliers de la foi",
+        wo: "Ponk yi dëgëral Ngëm (Imân)",
+      },
+      intention: {
+        fr: "Ancrer sa croyance dans les six piliers de la foi pour stabiliser son cœur face aux épreuves de la vie.",
+        wo: "Ngëm ci ponk yi dëgëral xol bi ci jafé-jafé yi.",
+      },
+      content: {
+        fr: "La Foi (Imân) est la dimension intérieure et spirituelle de la religion. Elle repose sur six piliers intangibles :\n\n1. **La croyance en Allah** : Croire en Son existence, Son unicité et Ses attributs de perfection.\n2. **La croyance en Ses Anges** : Êtres créés de lumière, entièrement dévoués à l'obéissance divine.\n3. **La croyance en Ses Livres** : Les Écritures révélées aux prophètes (la Torah, l'Évangile, les Psaumes et le Saint Coran).\n4. **La croyance en Ses Messagers** : Les prophètes envoyés pour guider l'humanité, de Adam à Muhammad ﷺ.\n5. **La croyance au Jour Dernier** : La résurrection, le jugement final et la vie éternelle.\n6. **La croyance au Destin (Al-Qadar)** : Accepter que tout ce qui se produit relève de la volonté et de la science d'Allah.\n\nSerigne Touba souligne que ces piliers sont indispensables pour purifier l'âme et s'élever vers la droiture.",
+        wo: "Ngëm (Imân) mooy li nekk ci biir xol bi. Juróom-benni ponk la am:\n\n1. **Gëm Yalla** : Gëm ne am na, kenn la te mat na mboolem mat.\n2. **Gëm Malaaka yi** : Créatures yu ñu liggéeye ci leer te dëgër ci sañ-sañu Yalla.\n3. **Gëm Téere yi** : Mboolem téere yi wacc ci yonent yi (Tawret, Linjil, Zabur, ak Alxuraan).\n4. **Gëm Yonent yi** : Ñi Yalla yoni ngir nite ñi, jiitu ci Adam ba ci seex bi Muhammad ﷺ.\n5. **Gëm bësu Allaxira** : Dekki gi ak àtte bi.\n6. **Gëm Dogal bi (Al-Qadar)** : Gëm ne lépp li am ci dogalu Yalla la jogé.\n\nSerigne Touba dafa dëgëral ne ponk yi ñooy dundal xol bi.",
+      },
+      citation: {
+        author: "Le Prophète Muhammad ﷺ",
+        sourceRef: "Hadith (Rapporté par Muslim)",
+        arabic: "أَنْ تُؤْمِنَ بِاللَّهِ وَمَلَائِكَتِهِ وَكُتُبِهِ وَرُسُلِهِ وَالْيَوْمِ الْآخِرِ وَتُؤْمِنَ بِالْقَدَرِ خَيْرِهِ وَشَرِّهِ",
+        translations: {
+          fr: "[La foi consiste] à croire en Allah, en Ses Anges, en Ses Livres, en Ses Messagers, au Jour Dernier, et au Destin, qu'il soit favorable ou défavorable.",
+          wo: "Ngëm mooy nga gëm Yalla, Malaaka yi, Téere yi, Yonent yi, bësu Allaxira, ak dogal bi, lu la ci neex ak lu la ci naxari.",
+        },
+      },
+      application: {
+        fr: "Méditez sur la présence des Anges autour de vous, écrivant vos actions et priant pour votre pardon. Cela favorise la présence d'esprit dans vos actions.",
+        wo: "Xalaatal ne Malaaka yi ñi ngi lay dundal te di bind say jëf, loolu dafay joxe worma ci sa dund.",
+      },
+      reminder: {
+        fr: "La foi est une certitude du cœur, prononcée par la langue et mise en œuvre par les membres.",
+        wo: "Ngëm mooy lu dëgër ci xol bi, di ko wax ci làmmiñ bi te di ko jëfe ci say cër.",
+      },
+      quiz: {
+        questions: [
+          {
+            id: "1.2-q1",
+            question: {
+              fr: "Combien y a-t-il de piliers de la foi (Imân) ?",
+              wo: "Ñata ponki ngëm (Imân) lañu ?",
+            },
+            options: [
+              { id: "A", text: { fr: "5", wo: "5" } },
+              { id: "B", text: { fr: "6", wo: "6" } },
+              { id: "C", text: { fr: "7", wo: "7" } },
+            ],
+            correctOptionId: "B",
+            explanation: {
+              fr: "La foi repose sur 6 piliers : croire en Allah, Ses Anges, Ses Livres, Ses Prophètes, le Jour Dernier et le Destin.",
+              wo: "Ngëm juróom-benni ponk la tegu: croire en Allah, malaaka yi, téere yi, yonent yi, bësu allaxira ak dogal bi.",
+            },
+          },
+        ],
+      },
+      publishStatus: "published",
+      publicAccess: true,
+    },
+    "1.3": {
+      title: {
+        fr: "La connaissance d'Allah (Tawhîd)",
+        wo: "Xam Yalla (Tawhîd)",
+      },
+      intention: {
+        fr: "Comprendre les attributs indispensables d'Allah pour parfaire son monothéisme et purifier sa dévotion.",
+        wo: "Xam mbaxu Yalla ngir rafatal sa jaamu.",
+      },
+      content: {
+        fr: "Le Tawhîd (l'unicité divine) est le premier devoir de tout croyant responsable. Dans le *Tazawwudu-ss-Sighar*, Serigne Touba insiste sur l'importance de connaître les attributs indispensables de notre Créateur :\n\n* **Le Savant (Al-'Alîm)** : Sa science englobe tout ce qui existe.\n* **Le Vivant (Al-Hayy)** : Sa vie est éternelle, sans début ni fin.\n* **L'Audiant (Al-Samî')** : Il entend les moindres murmures.\n* **Le Voyant (Al-Basîr)** : Il observe toute chose, même dans l'obscurité.\n* **Le Parlant (Al-Mutakallim)** : Sa parole est un attribut de perfection.\n\nÀ l'inverse, des attributs de manque tels que la pluralité, la mort, l'impuissance, la surdité ou la cécité sont incompatibles avec Sa Majesté. La connaissance de ces attributs protège le croyant du doute et renforce sa certitude.",
+        wo: "Tawhîd mooy ponk bu jiitu ci jaamu yalla. Serigne Touba dafa sàkku ñu xam melokani sunu Boroom:\n\n* **Boroom Xam-xam bi (Al-'Alîm)** : Xam-xamam dëgër na ci lépp.\n* **Kiy Dund (Al-Hayy)** : Dundam amul fu mu tàmbale amul fu mu yem.\n* **Kiy Degg (Al-Samî')** : Dafa degg lépp, lu nu gum-gumi sàx.\n* **Kiy Guiss (Al-Basîr)** : Dafa guiss lépp, sax ci nixi lëndëm.\n* **Kiy Wax (Al-Mutakallim)** : Waxam melokan u mat la.\n\nTe yalla sàllahu wa sallam mat na melokan yi te du am lu koy manke.",
+      },
+      citation: {
+        author: "Serigne Touba",
+        sourceRef: "Tazawwudu-ss-Sighar v. 32-34",
+        arabic: "لَهُ صِفَاتُ ذَاتِهِ الْعَلِيَّةْ ... فَهْوَ الْعَلِيمُ وَالْحَيُw الْسَّمِيعُ الْبَصِيرُ",
+        translations: {
+          fr: "Il possède les attributs de Son Essence Sublime... Il est le Savant, le Vivant, l'Audiant, le Voyant.",
+          wo: "Am na melokani Yëgëm yu kawe... moom mooy kiy xam, kiy dund, kiy degg, kiy guiss.",
+        },
+      },
+      application: {
+        fr: "Prenez conscience que rien de ce que vous faites n'échappe à la science et au regard d'Allah. Agissez avec excellence (Ihsân) comme si vous Le voyiez.",
+        wo: "Xamal ne li nga fene mënul nëbbu ci Boroom bi, jaamul ko worma.",
+      },
+      reminder: {
+        fr: "Connaître les attributs d'Allah est la clé de voûte de la sincérité et de la paix intérieure.",
+        wo: "Xam melokani yalla mooy mayé ngëm bu dëgër ak tàj xol.",
+      },
+      publishStatus: "published",
+      publicAccess: true,
+    },
+    "1.4": {
+      title: {
+        fr: "La connaissance du Prophète ﷺ",
+        wo: "Xam Yonent bi ﷺ",
+      },
+      intention: {
+        fr: "Étudier les qualités morales et spirituelles des messagers d'Allah pour renforcer notre amour et notre imitation du Prophète Muhammad ﷺ.",
+        wo: "Xam melokani Yonent yi ngir gën leen a bëgg ak a roy.",
+      },
+      content: {
+        fr: "Les Envoyés d'Allah sont les modèles par excellence pour l'humanité. Pour parfaire notre foi, nous devons croire en l'authenticité de leur message et connaître les qualités qui leur sont indispensables :\n\n1. **La Sincérité (Al-Sidq)** : Ils ne disent que la vérité.\n2. **La Fidélité (Al-Amana)** : Ils sont préservés des péchés et dignes de confiance.\n3. **La Transmission (Al-Tablîgh)** : Ils transmettent l'intégralité du message sans rien cacher.\n\nÀ l'inverse, le mensonge, la trahison ou la dissimulation leur sont impossibles. Pour prouver leur sincerity, Allah les a soutenus par des miracles évidents. Le Prophète Muhammad ﷺ, le sceau des prophètes, incarne ces qualités à la perfection absolue.",
+        wo: "Yonent yi ñooy royu-way yi ñu yoni ci nite ñi. Ñu war leen a gëm ci ponk yi:\n\n1. **Dëgg (Al-Sidq)** : Dëgg rekk lañuy wax.\n2. **Kollëre (Al-Amana)** : Ñu wóolu leen te yalla dafa leen musal ci bépp bàkkar.\n3. **Jottali (Al-Tablîgh)** : Jottali nañu mboolem téere yi sans nëbbu dara.\n\nNax, fen, ak trahison mënul am ci ñoom. Yonent bi Muhammad ﷺ, sceau bu yonent yi, moo matal melokan yi mboolem.",
+      },
+      citation: {
+        author: "Serigne Touba",
+        sourceRef: "Tazawwudu-ss-Sighar v. 58-59",
+        arabic: "وَفِي حَقِّهِمُ الصِّدْقُ وَالْأَمَانَةُ وَالتَّبْلِيغُ مُعْتَبَرٌ",
+        translations: {
+          fr: "À leur égard, la Sincérité, la Fidélité et la Transmission sont nécessaires.",
+          wo: "Ci ñoom dëgg, kolëre ak jottali ponk yu war lañu.",
+        },
+      },
+      application: {
+        fr: "Faites vivre la Sunna dans votre journée en pratiquant une parole véridique et en honorant vos engagements, à l'image du Prophète ﷺ.",
+        wo: "Royil yonent bi ci say wax ak say jëf, dëggal ak wóoloo.",
+      },
+      reminder: {
+        fr: "Aimer le Prophète ﷺ, c'est croire en son message et s'efforcer d'adopter ses nobles caractères.",
+        wo: "Bëgg yonent bi ﷺ mooy gëm li mu indi te roy melokanam yu rafet.",
+      },
+      publishStatus: "published",
+      publicAccess: true,
+    },
+  };
+
   let lessonsCount = 0;
 
   for (let m = 0; m < TAZAWWUD_SEED.length; m++) {
@@ -1284,24 +1561,32 @@ export async function seedTazawwud(): Promise<{ modules: number; lessons: number
       slug: moduleSeed.slug,
       title: { fr: moduleSeed.titleFr },
       titleArabic: moduleSeed.titleArabic,
-      description: { fr: "" },
+      description: { fr: `Découvrez les enseignements fondamentaux de cette section.` },
       iconKey: moduleSeed.iconKey,
       order: m + 1,
-      publishStatus: "draft",
+      publishStatus: "published",
       sourceWork: "tazawwud",
     });
 
     for (let l = 0; l < moduleSeed.lessons.length; l++) {
       const lessonTitle = moduleSeed.lessons[l];
+      const ref = `${m + 1}.${l + 1}`;
+      const detailedSeed = DETAILED_LESSONS_SEEDS[ref];
+
       await createEducationLesson({
         moduleId,
         slug: `${moduleSeed.slug}-${l + 1}`,
-        reference: `${m + 1}.${l + 1}`,
+        reference: ref,
         order: l + 1,
-        title: { fr: lessonTitle },
-        content: { fr: "" },
-        publishStatus: "draft",
-        publicAccess: false,
+        title: detailedSeed?.title || { fr: lessonTitle },
+        intention: detailedSeed?.intention || { fr: "" },
+        content: detailedSeed?.content || { fr: "" },
+        citation: detailedSeed?.citation || undefined,
+        application: detailedSeed?.application || undefined,
+        reminder: detailedSeed?.reminder || undefined,
+        quiz: detailedSeed?.quiz || undefined,
+        publishStatus: detailedSeed?.publishStatus || "draft",
+        publicAccess: detailedSeed?.publicAccess ?? false,
       });
       lessonsCount++;
     }

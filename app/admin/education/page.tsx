@@ -13,6 +13,7 @@ import {
   listEducationModules,
   listEducationLessons,
   seedTazawwud,
+  fillTazawwudContent,
 } from "@/lib/admin-data";
 import {
   FaGraduationCap,
@@ -50,6 +51,7 @@ export default function AdminEducationOverviewPage() {
   const [lessons, setLessons] = useState<EducationLesson[]>([]);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const [filling, setFilling] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -90,6 +92,33 @@ export default function AdminEducationOverviewPage() {
     }
   }
 
+  async function handleFillContent() {
+    if (!confirm(
+      "Remplir AUTOMATIQUEMENT toutes les 25 leçons du Tazawwud avec le contenu préparé ?\n\n" +
+      "⚠️ Le contenu existant sera ÉCRASÉ. Idéal pour un premier remplissage en masse.\n\n" +
+      "Le contenu doit ensuite être relu/affiné par la Commission Éducation & Culture avant publication.\n\n" +
+      "Continuer ?"
+    )) return;
+    setFilling(true);
+    setError("");
+    setSuccess("");
+    try {
+      const result = await fillTazawwudContent({ overrideExisting: true });
+      let msg = `✓ ${result.filled} leçons remplies avec contenu.`;
+      if (result.skipped > 0) msg += ` ${result.skipped} sautées (déjà remplies).`;
+      if (result.notFound.length > 0) {
+        msg += ` ⚠️ Références non trouvées : ${result.notFound.join(", ")}.`;
+      }
+      setSuccess(msg);
+      await reload();
+      setTimeout(() => setSuccess(""), 10000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors du remplissage");
+    } finally {
+      setFilling(false);
+    }
+  }
+
   const lessonsByModule = modules.map((m) => ({
     module: m,
     lessons: lessons.filter((l) => l.moduleId === m.id),
@@ -122,6 +151,17 @@ export default function AdminEducationOverviewPage() {
           >
             <FaWaveSquare /> Atelier audio TTS
           </Link>
+          {canEdit && modules.length > 0 && (
+            <button
+              type="button"
+              onClick={handleFillContent}
+              disabled={filling}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-4 py-2 rounded-xl shadow-md hover:scale-105 transition text-sm disabled:opacity-50"
+            >
+              <FaWandMagicSparkles />
+              {filling ? "Remplissage…" : "Remplir tout le Tazawwud (FR)"}
+            </button>
+          )}
         </div>
       </header>
 

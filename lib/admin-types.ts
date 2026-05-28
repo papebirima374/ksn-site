@@ -113,6 +113,23 @@ export type EducationLessonAudio = {
   generatedAt: number;
 };
 
+export type QuizOption = {
+  id: string; // Ex: "A", "B", "C", "D"
+  text: Partial<Record<EducationLanguage, string>>;
+};
+
+export type QuizQuestion = {
+  id: string;
+  question: Partial<Record<EducationLanguage, string>>;
+  options: QuizOption[];
+  correctOptionId: string;
+  explanation?: Partial<Record<EducationLanguage, string>>;
+};
+
+export type EducationLessonQuiz = {
+  questions: QuizQuestion[];
+};
+
 /** Leçon individuelle (sous un module). */
 export type EducationLesson = {
   id: string;
@@ -143,6 +160,7 @@ export type EducationLesson = {
   audio?: Partial<Record<EducationLanguage, EducationLessonAudio>>;
   /** Temps de lecture estimé en minutes. */
   readingTimeMin?: number;
+  quiz?: EducationLessonQuiz;
   publishStatus: EducationPublishStatus;
   /** Vue gratuite pour tous (true) ou réservée membres actifs. */
   publicAccess: boolean;

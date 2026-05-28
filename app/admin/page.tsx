@@ -17,6 +17,7 @@ import {
   FaSackDollar,
   FaChartLine,
   FaUserPlus,
+  FaGraduationCap,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
@@ -43,6 +44,7 @@ const SECTIONS = [
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as Permission },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as Permission },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as Permission },
+  { href: "/admin/education", label: "Éducation", Icon: FaGraduationCap, perm: "education.write" as Permission },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as Permission },
 ];
 
