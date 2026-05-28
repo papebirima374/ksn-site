@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import EventCountdown from "@/components/sections/EventCountdown";
+import JourneeLiveAndTickets from "@/components/sections/JourneeLiveAndTickets";
 import JourneeGallery from "@/components/sections/JourneeGallery";
 import { LINKS, SITE } from "@/lib/constants";
 
@@ -224,6 +225,9 @@ export default function JourneeSalaatuPage() {
           </div>
         </div>
       </section>
+
+      {/* DIRECT & BILLETTERIE */}
+      <JourneeLiveAndTickets />
 
       {/* GALERIE EDITIONS PRECEDENTES */}
       <JourneeGallery />
