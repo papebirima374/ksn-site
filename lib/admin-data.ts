@@ -997,6 +997,25 @@ export async function deleteOfficialDocument(item: OfficialDocument): Promise<vo
   await deleteDoc(doc(db, "documents", item.id));
 }
 
+/** Nettoie un objet en supprimant recursivement toutes les valeurs
+ *  undefined avant un updateDoc(). Firestore refuse undefined et
+ *  retourne "Unsupported field value: undefined". */
+function stripUndefined<T>(obj: T): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((v) => stripUndefined(v)) as unknown as T;
+  }
+  if (typeof obj === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+      if (v === undefined) continue;
+      out[k] = stripUndefined(v);
+    }
+    return out as T;
+  }
+  return obj;
+}
+
 // ============ EDUCATION — MODULES ============
 
 export async function listEducationModules(): Promise<EducationModule[]> {
@@ -1030,10 +1049,13 @@ export async function updateEducationModule(
   patch: Partial<Omit<EducationModule, "id" | "createdAt">>
 ): Promise<void> {
   const db = getDb();
-  await updateDoc(doc(db, "education_modules", id), {
-    ...patch,
-    updatedAt: Date.now(),
-  });
+  await updateDoc(
+    doc(db, "education_modules", id),
+    stripUndefined({
+      ...patch,
+      updatedAt: Date.now(),
+    })
+  );
 }
 
 export async function deleteEducationModule(id: string): Promise<void> {
@@ -1088,10 +1110,13 @@ export async function updateEducationLesson(
   patch: Partial<Omit<EducationLesson, "id" | "createdAt">>
 ): Promise<void> {
   const db = getDb();
-  await updateDoc(doc(db, "education_lessons", id), {
-    ...patch,
-    updatedAt: Date.now(),
-  });
+  await updateDoc(
+    doc(db, "education_lessons", id),
+    stripUndefined({
+      ...patch,
+      updatedAt: Date.now(),
+    })
+  );
 }
 
 export async function deleteEducationLesson(id: string): Promise<void> {
