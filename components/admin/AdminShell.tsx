@@ -30,7 +30,6 @@ const NAV = [
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
-  { href: "/admin/menu", label: "Menu", Icon: FaListUl, perm: "menu.write" as const },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];
 
