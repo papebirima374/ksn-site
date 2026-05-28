@@ -13,6 +13,8 @@ import {
   getSalaatuDuJour,
   saveSalaatuDuJour,
   listSalaatuLibrary,
+  getStreamingLink,
+  saveStreamingLink,
 } from "@/lib/admin-data";
 import { pickSalaatuOfTheDay, SALAATU_FALLBACK } from "@/lib/salaatu-seed";
 import { FaWandMagicSparkles, FaPenToSquare, FaCheck } from "react-icons/fa6";
@@ -38,18 +40,25 @@ export default function AdminSalaatuPage() {
   const [error, setError] = useState("");
   const [dbMode, setDbMode] = useState<SalaatuMode>("auto");
 
+  // Streaming config states
+  const [streamingUrl, setStreamingUrl] = useState("");
+  const [savingStream, setSavingStream] = useState(false);
+  const [streamMsg, setStreamMsg] = useState("");
+
   useEffect(() => {
     (async () => {
       try {
-        const [s, lib] = await Promise.all([
+        const [s, lib, sUrl] = await Promise.all([
           getSalaatuDuJour(),
           listSalaatuLibrary().catch(() => [] as SalaatuLibraryItem[]),
+          getStreamingLink().catch(() => ""),
         ]);
         if (s) {
           setData({ ...DEFAULT, ...s });
           setDbMode(s.mode ?? "auto");
         }
         setLibrary(lib.length > 0 ? lib : SALAATU_FALLBACK);
+        setStreamingUrl(sUrl || "https://youtube.com/live/Ea-OwQNhH0I?feature=share");
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erreur de chargement");
       } finally {
@@ -335,6 +344,61 @@ export default function AdminSalaatuPage() {
               )}
             </form>
           )}
+
+          {/* CONFIGURATION DU STREAMING LIVE */}
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (!canEdit) return;
+              setSavingStream(true);
+              setStreamMsg("");
+              try {
+                await saveStreamingLink(streamingUrl);
+                setStreamMsg("Lien de streaming mis à jour avec succès.");
+              } catch (err) {
+                console.error("Save stream url failed:", err);
+              } finally {
+                setSavingStream(false);
+              }
+            }}
+            className="bg-white rounded-3xl shadow-md p-6 sm:p-8 space-y-4 mt-6"
+          >
+            <h3 className="font-display text-lg font-bold text-[#0F7C55] mb-2">
+              Configuration de la Journée — Direct YouTube
+            </h3>
+            <p className="text-xs text-gray-500">
+              Spécifiez le lien YouTube de la retransmission en direct pour la Journée Salaatu &apos;Alaa Nabii.
+            </p>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-2">
+                URL du Live YouTube
+              </label>
+              <input
+                type="text"
+                disabled={!canEdit}
+                value={streamingUrl}
+                onChange={(e) => setStreamingUrl(e.target.value)}
+                placeholder="ex: https://youtube.com/live/Ea-OwQNhH0I?feature=share"
+                className={inputClass}
+              />
+            </div>
+
+            {streamMsg && (
+              <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+                {streamMsg}
+              </p>
+            )}
+
+            {canEdit && (
+              <button
+                type="submit"
+                disabled={savingStream}
+                className="w-full bg-[#0F7C55] hover:bg-[#0A3D24] text-white py-3.5 rounded-2xl font-bold disabled:opacity-50 transition"
+              >
+                {savingStream ? "Enregistrement…" : "Mettre à jour le lien de streaming"}
+              </button>
+            )}
+          </form>
 
           {/* PREVIEW */}
           <div className="mt-8">

@@ -3,7 +3,31 @@
 import { useState, useEffect, FormEvent } from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
+import { getStreamingLink } from "@/lib/admin-data";
 import { FaYoutube, FaTicket, FaCheck, FaLocationDot, FaUsers, FaArrowRight, FaVideo } from "react-icons/fa6";
+
+function getEmbedUrl(url: string): string {
+  const defaultEmbed = "https://www.youtube.com/embed/Ea-OwQNhH0I";
+  if (!url) return defaultEmbed;
+  const clean = url.trim();
+
+  // Match youtube.com/live/ID
+  const liveMatch = clean.match(/(?:youtube\.com\/live\/)([a-zA-Z0-9_-]+)/);
+  if (liveMatch && liveMatch[1]) return `https://www.youtube.com/embed/${liveMatch[1]}`;
+
+  // Match youtu.be/ID
+  const shortMatch = clean.match(/(?:youtu\.be\/)([a-zA-Z0-9_-]+)/);
+  if (shortMatch && shortMatch[1]) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+
+  // Match embed/ID
+  if (clean.includes("youtube.com/embed/")) return clean;
+
+  // Match watch?v=ID or features like ?feature=share
+  const watchMatch = clean.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if (watchMatch && watchMatch[1]) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+
+  return clean;
+}
 
 const CHAT_MESSAGES = [
   { user: "Serigne Modou", text: "MachaAllah, que la paix soit sur le Prophète ﷺ !" },
@@ -17,6 +41,25 @@ export default function JourneeLiveAndTickets() {
   // Chat simulation
   const [chatList, setChatList] = useState<{ user: string; text: string }[]>(CHAT_MESSAGES.slice(0, 3));
   
+  // Streaming URL state
+  const [embedSrc, setEmbedSrc] = useState("https://www.youtube.com/embed/Ea-OwQNhH0I");
+
+  // Load streaming URL on mount
+  useEffect(() => {
+    getStreamingLink()
+      .then((url) => {
+        if (url) {
+          setEmbedSrc(getEmbedUrl(url));
+        } else {
+          setEmbedSrc("https://www.youtube.com/embed/Ea-OwQNhH0I");
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load streaming link, using fallback", err);
+        setEmbedSrc("https://www.youtube.com/embed/Ea-OwQNhH0I");
+      });
+  }, []);
+
   // Form states
   const [prenom, setPrenom] = useState("");
   const [nom, setNom] = useState("");
@@ -96,7 +139,7 @@ export default function JourneeLiveAndTickets() {
           <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/10 shadow-inner">
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src={embedSrc}
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen

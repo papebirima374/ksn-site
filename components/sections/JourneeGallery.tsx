@@ -76,15 +76,14 @@ export default function JourneeGallery() {
 
   const closeLightbox = () => setOpenIdx(null);
 
-  const displayItems = [
-    ...ITEMS,
-    ...dbItems.map((d) => ({
-      src: d.src,
-      caption: d.alt || "Souvenir KSN",
-      year: d.year || "2025",
-      bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
-    }))
-  ];
+  const displayItems = dbItems.length > 0
+    ? dbItems.map((d) => ({
+        src: d.src,
+        caption: d.alt || "Souvenir KSN",
+        year: d.year || "2025",
+        bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
+      }))
+    : ITEMS;
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">

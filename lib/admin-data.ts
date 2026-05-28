@@ -747,3 +747,24 @@ export async function checkDuplicateEmailOrPhone(
   
   return { emailDuplicate, phoneDuplicate };
 }
+
+export async function getStreamingLink(): Promise<string> {
+  const db = getDb();
+  try {
+    const snap = await getDoc(doc(db, "config", "streaming"));
+    if (snap.exists()) {
+      return snap.data().url || "";
+    }
+  } catch (err) {
+    console.error("Error reading streaming link:", err);
+  }
+  return "";
+}
+
+export async function saveStreamingLink(url: string): Promise<void> {
+  const db = getDb();
+  await setDoc(doc(db, "config", "streaming"), {
+    url,
+    updatedAt: Date.now(),
+  });
+}
