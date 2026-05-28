@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   FaMagnifyingGlass,
   FaXmark,
@@ -39,14 +40,23 @@ const CATEGORY_COLORS: Record<SearchCategory, string> = {
   Légal: "text-gray-400",
 };
 
-/** Bouton de recherche dans le navbar + overlay plein écran. */
+/** Bouton de recherche dans le navbar + overlay plein écran.
+ *  L'overlay est rendu via createPortal vers document.body pour
+ *  echapper au containing-block du navbar (qui a backdrop-blur
+ *  → contraint position: fixed des enfants). */
 export default function SearchBar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchEntry[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // createPortal n'est dispo que cote client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Raccourci clavier : Cmd/Ctrl + K pour ouvrir, ESC pour fermer
   useEffect(() => {
@@ -136,10 +146,12 @@ export default function SearchBar() {
         <FaMagnifyingGlass className="text-sm" />
       </button>
 
-      {/* OVERLAY DE RECHERCHE */}
-      {open && (
+      {/* OVERLAY DE RECHERCHE — rendu via Portal pour echapper au
+          containing-block du navbar (backdrop-blur-2xl) */}
+      {open && mounted && createPortal(
         <div
-          className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-8"
+          className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-8"
+          style={{ zIndex: 9999 }}
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
@@ -247,7 +259,8 @@ export default function SearchBar() {
               </span>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
