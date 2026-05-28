@@ -39,6 +39,18 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = localStorage.getItem("admin-theme") === "dark";
+    setDarkMode(isDark);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    localStorage.setItem("admin-theme", next ? "dark" : "light");
+  };
 
   useEffect(() => {
     if (!configured) return;
@@ -67,7 +79,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8F5EF] text-[#1A1A1A] flex">
+    <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#082F22] text-white dark" : "bg-[#F8F5EF] text-[#1A1A1A]"}`}>
       {/* SIDEBAR */}
       <aside
         className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#082F22] text-white transform transition-transform lg:translate-x-0 ${
@@ -132,20 +144,30 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       {/* MAIN */}
-      <div className="flex-1 lg:pl-72">
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 py-4 flex items-center justify-between lg:hidden">
+      <div className="flex-1 lg:pl-72 flex flex-col">
+        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              className="text-[#0F7C55] text-xl lg:hidden"
+              aria-label="Menu"
+            >
+              {open ? <FaXmark /> : <FaBars />}
+            </button>
+            <p className="font-display text-lg font-bold text-[#0F7C55]">
+              KSN Admin
+            </p>
+          </div>
+          
           <button
             type="button"
-            onClick={() => setOpen(!open)}
-            className="text-[#0F7C55] text-xl"
-            aria-label="Menu"
+            onClick={toggleDarkMode}
+            className="px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-700 dark:text-[#D4AF37] transition hover:scale-105"
+            title="Basculer le thème"
           >
-            {open ? <FaXmark /> : <FaBars />}
+            {darkMode ? "☀️ Mode Clair" : "🌙 Mode Sombre"}
           </button>
-          <p className="font-display text-lg font-bold text-[#0F7C55]">
-            KSN Admin
-          </p>
-          <div className="w-6" />
         </header>
 
         <main className="px-4 sm:px-8 py-8 sm:py-12 max-w-6xl mx-auto">

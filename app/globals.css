@@ -190,3 +190,80 @@ body {
   }
 }
 
+/* ==========================================
+   DARK MODE OVERRIDES FOR ADMIN DASHBOARD
+   ========================================== */
+.dark {
+  background-color: #082F22 !important;
+  color: #ffffff !important;
+}
+
+.dark input, 
+.dark select, 
+.dark textarea {
+  background-color: #0A3D24 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.dark .bg-white,
+.dark .bg-\[\#F8F5EF\] {
+  background-color: #0A3D24 !important;
+  color: #ffffff !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark .text-\[\#0F7C55\] {
+  color: #D4AF37 !important;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #ffffff !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-100,
+.dark .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark table th {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark table td {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .shadow-md,
+.dark .shadow-lg,
+.dark .shadow-xl {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+
