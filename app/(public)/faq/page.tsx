@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FaWhatsapp, FaCircleQuestion } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import FaqAccordion from "@/components/sections/FaqAccordion";
+import ShareButton from "@/components/ui/ShareButton";
 import { LINKS, SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -226,6 +227,15 @@ export default function FAQPage() {
             >
               Formulaire de contact →
             </Link>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <ShareButton
+              title="FAQ — Dahira KSN"
+              text="Trouvez les réponses à toutes vos questions sur le Dahira Kippangog Salaatu ʿAlaa Nabii."
+              variant="ghost"
+              label="Partager cette FAQ"
+            />
           </div>
 
           <p className="mt-6 text-xs text-gray-500">

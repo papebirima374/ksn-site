@@ -13,6 +13,7 @@ import PageHero from "@/components/layout/PageHero";
 import EventCountdown from "@/components/sections/EventCountdown";
 import JourneeLiveAndTickets from "@/components/sections/JourneeLiveAndTickets";
 import JourneeGallery from "@/components/sections/JourneeGallery";
+import ShareButton from "@/components/ui/ShareButton";
 import { LINKS, SITE } from "@/lib/constants";
 
 // Prochaine edition de la Journee Salaatu 'Alaa Nabii : 26 decembre 2026, Touba.
@@ -308,7 +309,7 @@ export default function JourneeSalaatuPage() {
           </div>
 
           {/* CTAs FINAUX */}
-          <div className="mt-10 sm:mt-14 grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
+          <div className="mt-10 sm:mt-14 grid sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
             <Link
               href="/inscription"
               className="inline-flex items-center justify-center bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
@@ -321,8 +322,15 @@ export default function JourneeSalaatuPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#0F7C55] hover:bg-[#0A3D24] text-white px-6 py-4 rounded-2xl font-bold shadow-xl transition text-sm sm:text-base"
             >
-              <FaWhatsapp /> Recevoir les détails
+              <FaWhatsapp /> Détails WhatsApp
             </a>
+            <ShareButton
+              title="Journée Salaatu ʿAlaa Nabii — 26 décembre 2026"
+              text={`Rejoignez-nous à Touba le 26 décembre 2026 pour la Journée Salaatu ʿAlaa Nabii — une journée entière dédiée à la prière sur le Prophète Muhammad ﷺ.`}
+              variant="primary"
+              label="Partager l'événement"
+              className="!px-6 !py-4 !rounded-2xl"
+            />
           </div>
         </div>
       </section>

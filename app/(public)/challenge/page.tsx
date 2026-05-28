@@ -5,6 +5,7 @@ import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import ChallengeProgression from "@/components/sections/ChallengeProgression";
 import TableauHonneur from "@/components/sections/TableauHonneur";
+import ShareButton from "@/components/ui/ShareButton";
 import { LINKS } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -255,7 +256,7 @@ export default function ChallengePage() {
           </p>
           <p className="mt-3 text-sm text-gray-500">— Le Prophète Muhammad ﷺ (rapporté par Muslim)</p>
 
-          <div className="mt-10 grid sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="mt-10 grid sm:grid-cols-3 gap-3 sm:gap-4">
             <Link
               href="/inscription"
               className="inline-flex items-center justify-center bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
@@ -268,8 +269,15 @@ export default function ChallengePage() {
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#0F7C55] hover:bg-[#0A3D24] text-white px-6 py-4 rounded-2xl font-bold shadow-xl transition text-sm sm:text-base"
             >
-              <FaWhatsapp /> Inviter mes proches
+              <FaWhatsapp /> Inviter via WhatsApp
             </a>
+            <ShareButton
+              title="Challenge 1 Milliard de Salaatu — KSN"
+              text="Rejoignez le défi spirituel mondial : 1 milliard de prières sur le Prophète ﷺ. Voyez le compteur en direct."
+              variant="primary"
+              label="Partager le défi"
+              className="!px-6 !py-4 !rounded-2xl"
+            />
           </div>
         </div>
       </section>

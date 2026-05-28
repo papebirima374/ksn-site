@@ -11,6 +11,7 @@ import {
   FaHandHoldingHeart,
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
+import ShareButton from "@/components/ui/ShareButton";
 import { LINKS, SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -324,6 +325,15 @@ export default function NotreHistoirePage() {
             >
               <FaWhatsapp /> Nous contacter
             </a>
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            <ShareButton
+              title="L'histoire du Dahira KSN depuis 2021"
+              text="Comment un cercle de fidèles à Touba est devenu un Dahira international au service du Salaatu sur le Prophète ﷺ."
+              variant="ghost"
+              label="Partager notre histoire"
+            />
           </div>
         </div>
       </section>
