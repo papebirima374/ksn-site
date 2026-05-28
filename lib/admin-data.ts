@@ -768,3 +768,35 @@ export async function saveStreamingLink(url: string): Promise<void> {
     updatedAt: Date.now(),
   });
 }
+
+export type YoutubeLink = {
+  id: string;
+  url: string;
+  title: string;
+  year?: string;
+  createdAt: number;
+};
+
+export async function listYoutubeLinks(): Promise<YoutubeLink[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "youtube_links"), orderBy("createdAt", "desc"))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<YoutubeLink, "id">) }));
+}
+
+export async function addYoutubeLink(url: string, title: string, year?: string): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "youtube_links"), {
+    url,
+    title,
+    year: year || null,
+    createdAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function deleteYoutubeLink(id: string): Promise<void> {
+  const db = getDb();
+  await deleteDoc(doc(db, "youtube_links", id));
+}
