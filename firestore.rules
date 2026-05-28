@@ -11,6 +11,10 @@ rules_version = '2';
 //     (tout ce qui est destiné à être affiché sur le site public)
 //   - write admin : restreint aux utilisateurs avec la permission
 //     correspondante dans users/<uid>.permissions[]
+//
+// IMPORTANT : un admin (users/<uid>.role == "admin") bypass TOUS les
+// checks de permission. Ses droits ne dépendent pas de son tableau
+// permissions[].
 // =========================================================================
 
 service cloud.firestore {
@@ -25,14 +29,18 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
-    function hasPerm(perm) {
-      return isSignedIn()
-          && userDoc().permissions != null
-          && perm in userDoc().permissions;
-    }
-
     function isAdmin() {
       return isSignedIn() && userDoc().role == "admin";
+    }
+
+    // hasPerm renvoie true si :
+    //   - l'utilisateur est admin (bypass complet), OU
+    //   - la permission est dans son tableau users/<uid>.permissions[]
+    function hasPerm(perm) {
+      return isSignedIn() && (
+        userDoc().role == "admin"
+        || (userDoc().permissions != null && perm in userDoc().permissions)
+      );
     }
 
     // ─── Users (profils Auth + permissions) ─────────────────────────────
@@ -57,19 +65,19 @@ service cloud.firestore {
       allow delete: if hasPerm("members.write");
     }
 
-    // ─── Galerie photos (NOUVEAU : ajoutee category "journee" + "assemblee") ─
+    // ─── Galerie photos ─────────────────────────────────────────────────
     match /gallery/{id} {
       allow read: if true;  // tout le monde voit les photos
       allow write: if hasPerm("gallery.write");
     }
 
-    // ─── Vidéos YouTube archivees (NOUVEAU - CORRIGE LE BUG ACTUEL) ─────
+    // ─── Vidéos YouTube archivées ───────────────────────────────────────
     match /youtube_links/{id} {
       allow read: if true;
       allow write: if hasPerm("gallery.write");
     }
 
-    // ─── Newsletter (NOUVEAU) ───────────────────────────────────────────
+    // ─── Newsletter ─────────────────────────────────────────────────────
     match /newsletter/{id} {
       allow create: if true;          // n'importe qui peut s'inscrire
       allow read, update, delete: if hasPerm("members.write");
@@ -119,7 +127,7 @@ service cloud.firestore {
       allow read, write: if hasPerm("finances.write");
     }
 
-    // ─── Settings divers (live stream, etc.) ────────────────────────────
+    // ─── Settings divers (live stream, theme, etc.) ─────────────────────
     match /settings/{id} {
       allow read: if true;
       allow write: if isAdmin();
