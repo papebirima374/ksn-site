@@ -1,0 +1,136 @@
+rules_version = '2';
+
+// =========================================================================
+// Firestore Security Rules — Site KSN
+//
+// À copier-coller dans Firebase Console → Firestore Database → Rules.
+// Ne pas oublier de cliquer sur "Publier" après modification.
+//
+// Modèle de permissions :
+//   - read public : galerie photos, vidéos archives, articles, biblio
+//     (tout ce qui est destiné à être affiché sur le site public)
+//   - write admin : restreint aux utilisateurs avec la permission
+//     correspondante dans users/<uid>.permissions[]
+//
+// IMPORTANT : un admin (users/<uid>.role == "admin") bypass TOUS les
+// checks de permission. Ses droits ne dépendent pas de son tableau
+// permissions[].
+// =========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helpers ────────────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDoc().role == "admin";
+    }
+
+    // hasPerm renvoie true si :
+    //   - l'utilisateur est admin (bypass complet), OU
+    //   - la permission est dans son tableau users/<uid>.permissions[]
+    function hasPerm(perm) {
+      return isSignedIn() && (
+        userDoc().role == "admin"
+        || (userDoc().permissions != null && perm in userDoc().permissions)
+      );
+    }
+
+    // ─── Users (profils Auth + permissions) ─────────────────────────────
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == uid;
+      allow update: if isSignedIn() && (request.auth.uid == uid || hasPerm("users.write"));
+      allow delete: if hasPerm("users.write");
+    }
+
+    // ─── Membres du Dahira ──────────────────────────────────────────────
+    match /members/{id} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();  // visiteur peut creer sa propre fiche
+      allow update: if isSignedIn() && (
+        // self-update : statut en_attente → actif (apres paiement Wave)
+        (resource.data.userId == request.auth.uid
+          && resource.data.statut == "en_attente"
+          && request.resource.data.statut == "actif")
+        || hasPerm("members.write")
+      );
+      allow delete: if hasPerm("members.write");
+    }
+
+    // ─── Galerie photos ─────────────────────────────────────────────────
+    match /gallery/{id} {
+      allow read: if true;  // tout le monde voit les photos
+      allow write: if hasPerm("gallery.write");
+    }
+
+    // ─── Vidéos YouTube archivées ───────────────────────────────────────
+    match /youtube_links/{id} {
+      allow read: if true;
+      allow write: if hasPerm("gallery.write");
+    }
+
+    // ─── Newsletter ─────────────────────────────────────────────────────
+    match /newsletter/{id} {
+      allow create: if true;          // n'importe qui peut s'inscrire
+      allow read, update, delete: if hasPerm("members.write");
+    }
+
+    // ─── Articles du blog ───────────────────────────────────────────────
+    match /articles/{id} {
+      allow read: if true;
+      allow write: if hasPerm("articles.write");
+    }
+
+    // ─── Bibliothèque Salaatu ───────────────────────────────────────────
+    match /salaatuLibrary/{id} {
+      allow read: if true;
+      allow write: if hasPerm("library.write");
+    }
+
+    // ─── Compteur Salaatu (auto/manuel + valeur) ────────────────────────
+    match /salaatu/{id} {
+      allow read: if true;
+      allow write: if hasPerm("salaatu.write");
+    }
+
+    // ─── Menu navigation (custom) ───────────────────────────────────────
+    match /menu/{id} {
+      allow read: if true;
+      allow write: if hasPerm("menu.write");
+    }
+
+    // ─── Boutique : produits ────────────────────────────────────────────
+    match /products/{id} {
+      allow read: if true;
+      allow write: if hasPerm("boutique.write");
+    }
+
+    // ─── Boutique : commandes ───────────────────────────────────────────
+    match /orders/{id} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid || hasPerm("boutique.write")
+      );
+      allow create: if isSignedIn();
+      allow update, delete: if hasPerm("boutique.write");
+    }
+
+    // ─── Finances ───────────────────────────────────────────────────────
+    match /finances/{id} {
+      allow read, write: if hasPerm("finances.write");
+    }
+
+    // ─── Settings divers (live stream, theme, etc.) ─────────────────────
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
