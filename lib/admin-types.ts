@@ -32,6 +32,8 @@ export const COMMISSIONS_LIST = [
   "Organisation",
   "Communication",
   "Relations Extérieures",
+  "Administratif",
+  "Secrétariat",
 ] as const;
 
 export type CommissionName = (typeof COMMISSIONS_LIST)[number];

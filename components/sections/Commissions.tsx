@@ -29,6 +29,16 @@ const COMMISSIONS = [
     title: "Relations Extérieures",
     text: "Développement des partenariats, représentation institutionnelle et ouverture internationale du Dahira.",
   },
+  {
+    icon: "📋",
+    title: "Administratif",
+    text: "Gestion administrative générale, démarches institutionnelles, suivi des dossiers et conformité du Dahira.",
+  },
+  {
+    icon: "📝",
+    title: "Secrétariat",
+    text: "Tenue des comptes-rendus, organisation des réunions, archivage des documents et correspondance officielle.",
+  },
 ];
 
 export default function Commissions() {
