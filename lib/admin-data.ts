@@ -23,6 +23,7 @@ import {
   GalleryItem,
   Member,
   MenuItem,
+  OfficialDocument,
   Order,
   OrderStatus,
   Permission,
@@ -918,4 +919,76 @@ export async function updateTestimonial(
 export async function deleteTestimonial(id: string): Promise<void> {
   const db = getDb();
   await deleteDoc(doc(db, "testimonials", id));
+}
+
+// ============ DOCUMENTS OFFICIELS ============
+
+/** Liste tous les documents officiels, tries par order. */
+export async function listOfficialDocuments(): Promise<OfficialDocument[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "documents"), orderBy("order", "asc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<OfficialDocument, "id">),
+  }));
+}
+
+/** Upload un PDF dans Firebase Storage + cree le doc Firestore.
+ *  Path Storage : documents/{timestamp}-{filename-sanitized} */
+export async function uploadOfficialDocument(
+  file: File,
+  meta: {
+    title: string;
+    description: string;
+    order: number;
+    createdBy: string;
+  }
+): Promise<OfficialDocument> {
+  const bucket = getBucket();
+  const safeName = file.name.replace(/\s+/g, "-").replace(/[^\w.-]/g, "_");
+  const path = `documents/${Date.now()}-${safeName}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  const db = getDb();
+  const data = {
+    title: meta.title,
+    description: meta.description,
+    url,
+    storagePath: path,
+    filename: file.name,
+    sizeBytes: file.size,
+    mimeType: file.type || "application/octet-stream",
+    order: meta.order,
+    visible: true,
+    createdAt: Date.now(),
+    createdBy: meta.createdBy,
+  };
+  const docRef = await addDoc(collection(db, "documents"), data);
+  return { id: docRef.id, ...data };
+}
+
+export async function updateOfficialDocument(
+  id: string,
+  patch: Partial<Pick<OfficialDocument, "title" | "description" | "order" | "visible">>
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, "documents", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
+}
+
+export async function deleteOfficialDocument(item: OfficialDocument): Promise<void> {
+  const db = getDb();
+  if (item.storagePath) {
+    try {
+      await deleteObject(ref(getBucket(), item.storagePath));
+    } catch {
+      // ignore — fichier deja supprime
+    }
+  }
+  await deleteDoc(doc(db, "documents", item.id));
 }

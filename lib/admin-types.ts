@@ -64,6 +64,29 @@ export type AppUser = {
   phone?: string;
 };
 
+/** Document officiel téléchargeable (PDF, DOC, etc.).
+ *  Affiché dans la section "Documents Officiels KSN" du site public. */
+export type OfficialDocument = {
+  id: string;
+  title: string;
+  description: string;
+  /** URL publique de téléchargement (Firebase Storage). */
+  url: string;
+  /** Path du fichier dans Firebase Storage (pour suppression). */
+  storagePath: string;
+  /** Nom de fichier original (affiché à l'utilisateur). */
+  filename: string;
+  /** Taille en octets (servira à afficher "2.0 Mo"). */
+  sizeBytes: number;
+  /** MIME type (ex: "application/pdf"). */
+  mimeType: string;
+  order: number;
+  visible: boolean;
+  createdAt: number;
+  updatedAt?: number;
+  createdBy: string;
+};
+
 /** Témoignage de membre affiché dans la section publique de l'accueil. */
 export type Testimonial = {
   id: string;

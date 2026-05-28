@@ -95,6 +95,12 @@ service cloud.firestore {
       allow write: if hasPerm("articles.write");
     }
 
+    // ─── Documents officiels (PDF règlement, plans d'actions...) ────────
+    match /documents/{id} {
+      allow read: if true;
+      allow write: if hasPerm("articles.write");
+    }
+
     // ─── Bibliothèque Salaatu ───────────────────────────────────────────
     match /salaatuLibrary/{id} {
       allow read: if true;
