@@ -20,7 +20,13 @@ import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import SearchBar from "@/components/layout/SearchBar";
 
 type NavLink = { kind: "link"; label: string; href: string };
-type NavChild = { label: string; href: string; description?: string };
+type NavChild = {
+  label: string;
+  href: string;
+  description?: string;
+  /** Petit badge optionnel affiché à droite (ex : "À venir", "Nouveau"). */
+  badge?: string;
+};
 type NavGroup = { kind: "group"; label: string; children: NavChild[] };
 type NavEntry = NavLink | NavGroup;
 
@@ -75,7 +81,24 @@ export default function Navbar() {
         },
       ],
     },
-    { kind: "link", label: t("nav.spiritualite"), href: "/spiritualite" },
+    {
+      kind: "group",
+      label: t("nav.spiritualite"),
+      children: [
+        {
+          label: t("nav.spiritualite"),
+          href: "/spiritualite",
+          description: "Salaatu du jour, bibliothèque, dhikrs et invocations",
+        },
+        {
+          label: "Éducation Islamique",
+          href: "/education",
+          description:
+            "Tazawwud-ss-Sighar de Cheikh Ahmadou Bamba — académie spirituelle",
+          badge: "À venir",
+        },
+      ],
+    },
     { kind: "link", label: t("nav.media"), href: "/media" },
     { kind: "link", label: "Challenge", href: "/challenge" },
     { kind: "link", label: "Journée", href: "/journee-salaatu" },
@@ -245,9 +268,18 @@ export default function Navbar() {
                         key={c.href}
                         href={c.href}
                         onClick={() => setOpen(false)}
-                        className="block py-3 px-6 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
+                        className="flex items-center justify-between gap-2 py-3 px-6 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
                       >
-                        {c.label}
+                        <span>{c.label}</span>
+                        {c.badge && (
+                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
+                            <span className="relative flex w-1.5 h-1.5">
+                              <span className="absolute inline-flex w-full h-full rounded-full bg-[#D4AF37] opacity-75 animate-ping" />
+                              <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                            </span>
+                            {c.badge}
+                          </span>
+                        )}
                       </Link>
                     ))}
                   </div>
@@ -373,8 +405,19 @@ function NavDropdown({ group }: { group: NavGroup }) {
                 onClick={() => setOpen(false)}
                 className="block p-3 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] transition group"
               >
-                <span className="font-semibold text-sm group-hover:text-[#D4AF37]">
-                  {c.label}
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold text-sm group-hover:text-[#D4AF37]">
+                    {c.label}
+                  </span>
+                  {c.badge && (
+                    <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest font-bold px-1.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/40">
+                      <span className="relative flex w-1.5 h-1.5">
+                        <span className="absolute inline-flex w-full h-full rounded-full bg-[#D4AF37] opacity-75 animate-ping" />
+                        <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+                      </span>
+                      {c.badge}
+                    </span>
+                  )}
                 </span>
                 {c.description && (
                   <span className="block mt-0.5 text-[11px] text-white/60 leading-snug">

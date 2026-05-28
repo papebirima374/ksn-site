@@ -168,6 +168,47 @@ export type EducationLesson = {
   updatedAt?: number;
 };
 
+// ════════════════════════════════════════════════════════════════════
+//   CERTIFICATION TAZAWWUD — validation orale obligatoire par la
+//   Commission Éducation avant délivrance du certificat PDF.
+// ════════════════════════════════════════════════════════════════════
+
+export type EducationCertificationStatus =
+  | "pending_review" // Demande déposée, en attente de l'entretien oral
+  | "scheduled"      // Entretien planifié
+  | "oral_passed"    // Validé — certificat téléchargeable
+  | "rejected";      // Refusé après entretien (à reprendre)
+
+/** Demande de certification après complétion intégrale du Tazawwud.
+ *  Stockée dans la collection Firestore "educationCertifications". */
+export type EducationCertification = {
+  id: string;
+  /** Identité de l'apprenant — saisie au moment de la demande. */
+  fullName: string;
+  phone: string;
+  email?: string;
+  city?: string;
+  country?: string;
+  /** Disponibilités pour l'entretien (texte libre). */
+  availability?: string;
+  /** Statut courant de la demande. */
+  status: EducationCertificationStatus;
+  /** Examinateur (membre de la Commission Éducation). */
+  examinerName?: string;
+  examinerUid?: string;
+  /** Date de l'entretien (ISO YYYY-MM-DD) une fois passé. */
+  oralExamDate?: string;
+  /** Notes de la Commission après entretien. */
+  examinerNotes?: string;
+  /** Numéro de certificat — généré à la validation. */
+  certificateNumber?: string;
+  /** Référence locale anonyme côté apprenant (localStorage). */
+  applicantLocalRef?: string;
+  createdAt: number;
+  updatedAt?: number;
+  validatedAt?: number;
+};
+
 /** Document officiel téléchargeable (PDF, DOC, etc.).
  *  Affiché dans la section "Documents Officiels KSN" du site public. */
 export type OfficialDocument = {

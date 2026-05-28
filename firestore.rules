@@ -115,6 +115,14 @@ service cloud.firestore {
       allow create, update, delete: if hasPerm("education.write");
     }
 
+    // ─── Éducation & Culture — Certifications (validation orale) ───────
+    // Toute personne peut déposer une demande de certificat après avoir
+    // complété le Tazawwud. Seule la Commission Éducation lit/met à jour.
+    match /educationCertifications/{id} {
+      allow create: if true;
+      allow read, update, delete: if hasPerm("education.write");
+    }
+
     // ─── Bibliothèque Salaatu ───────────────────────────────────────────
     match /salaatuLibrary/{id} {
       allow read: if true;

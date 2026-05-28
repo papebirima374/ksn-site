@@ -180,6 +180,12 @@ export default function AdminEducationOverviewPage() {
           >
             <FaWaveSquare /> Atelier audio TTS
           </Link>
+          <Link
+            href="/admin/education/certifications"
+            className="inline-flex items-center gap-2 bg-white border border-[#D4AF37]/40 text-[#0F7C55] font-bold px-4 py-2 rounded-xl shadow-sm hover:scale-105 transition text-sm"
+          >
+            🎓 Certifications (entretiens oraux)
+          </Link>
           {canEdit && modules.length > 0 && (
             <>
               <button

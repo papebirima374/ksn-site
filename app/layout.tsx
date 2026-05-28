@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter, Amiri } from "next/font/google";
+import { Playfair_Display, Inter, Amiri, Crimson_Pro } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
@@ -21,6 +21,13 @@ const amiri = Amiri({
   subsets: ["arabic"],
   variable: "--font-amiri",
   weight: ["400", "700"],
+});
+
+const crimson = Crimson_Pro({
+  subsets: ["latin"],
+  variable: "--font-crimson",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -107,7 +114,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${playfair.variable} ${inter.variable} ${amiri.variable} h-full antialiased`}
+      className={`${playfair.variable} ${inter.variable} ${amiri.variable} ${crimson.variable} h-full antialiased`}
     >
       <head>
         <OrganizationSchema />

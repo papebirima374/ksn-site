@@ -24,6 +24,8 @@ import {
   EducationLessonAudio,
   EducationModule,
   EducationLanguage,
+  EducationCertification,
+  EducationCertificationStatus,
   FinanceEntry,
   GalleryItem,
   Member,
@@ -1304,6 +1306,123 @@ export async function publishAllTazawwud(): Promise<{
     }
   }
   return { modules: modulesUpdated, lessons: lessonsUpdated };
+}
+
+// ============ EDUCATION — CERTIFICATIONS (validation orale) ============
+
+/** Crée une demande de certification après que l'apprenant ait
+ *  validé toutes les leçons du Tazawwud. Statut initial =
+ *  "pending_review" — un membre de la Commission Éducation devra
+ *  réaliser un entretien (physique ou téléphonique) avant de
+ *  délivrer le certificat PDF. */
+export async function createCertificationRequest(
+  data: Omit<
+    EducationCertification,
+    "id" | "createdAt" | "updatedAt" | "status" | "validatedAt" | "certificateNumber"
+  >
+): Promise<string> {
+  const db = getDb();
+  const ref = await addDoc(collection(db, "educationCertifications"), {
+    ...data,
+    status: "pending_review" as EducationCertificationStatus,
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+export async function listCertifications(
+  filterStatus?: EducationCertificationStatus
+): Promise<EducationCertification[]> {
+  const db = getDb();
+  const snap = await getDocs(collection(db, "educationCertifications"));
+  const items = snap.docs.map(
+    (d) =>
+      ({
+        id: d.id,
+        ...(d.data() as Omit<EducationCertification, "id">),
+      } as EducationCertification)
+  );
+  const filtered = filterStatus
+    ? items.filter((c) => c.status === filterStatus)
+    : items;
+  filtered.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return filtered;
+}
+
+export async function getCertification(
+  id: string
+): Promise<EducationCertification | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "educationCertifications", id));
+  if (!snap.exists()) return null;
+  return {
+    id: snap.id,
+    ...(snap.data() as Omit<EducationCertification, "id">),
+  };
+}
+
+/** Marque une demande comme validée après entretien oral.
+ *  Génère un numéro de certificat KSN-TZW-{YYYY}-{rand}. */
+export async function approveCertification(
+  id: string,
+  examiner: { uid: string; name: string },
+  oralExamDate: string,
+  notes?: string
+): Promise<string> {
+  const certNumber = `KSN-TZW-${new Date().getFullYear()}-${Math.random()
+    .toString(36)
+    .slice(2, 8)
+    .toUpperCase()}`;
+  const db = getDb();
+  await updateDoc(
+    doc(db, "educationCertifications", id),
+    stripUndefinedDeep({
+      status: "oral_passed" as EducationCertificationStatus,
+      examinerUid: examiner.uid,
+      examinerName: examiner.name,
+      oralExamDate,
+      examinerNotes: notes,
+      certificateNumber: certNumber,
+      validatedAt: Date.now(),
+      updatedAt: Date.now(),
+    })
+  );
+  return certNumber;
+}
+
+export async function rejectCertification(
+  id: string,
+  examiner: { uid: string; name: string },
+  notes: string
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(
+    doc(db, "educationCertifications", id),
+    stripUndefinedDeep({
+      status: "rejected" as EducationCertificationStatus,
+      examinerUid: examiner.uid,
+      examinerName: examiner.name,
+      examinerNotes: notes,
+      updatedAt: Date.now(),
+    })
+  );
+}
+
+export async function scheduleCertificationExam(
+  id: string,
+  oralExamDate: string,
+  notes?: string
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(
+    doc(db, "educationCertifications", id),
+    stripUndefinedDeep({
+      status: "scheduled" as EducationCertificationStatus,
+      oralExamDate,
+      examinerNotes: notes,
+      updatedAt: Date.now(),
+    })
+  );
 }
 
 // ============ EDUCATION — SEED TAZAWWUD ============
