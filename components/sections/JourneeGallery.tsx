@@ -22,37 +22,37 @@ type GalleryItem = {
 
 const ITEMS: GalleryItem[] = [
   {
-    src: null,
+    src: "/images/journee/recital_coran.png",
     caption: "Récital du Saint Coran à l'ouverture",
     year: "2025",
     bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]",
   },
   {
-    src: null,
+    src: "/images/journee/rajass_collectif.png",
     caption: "Rajass collectif — Muqàddamatul Xidma",
     year: "2025",
     bgClass: "bg-gradient-to-br from-[#B8860B] to-[#D4AF37]",
   },
   {
-    src: null,
+    src: "/images/journee/conference_badiane.png",
     caption: "Conférence de Serigne Moustapha Badiane",
     year: "2025",
     bgClass: "bg-gradient-to-br from-[#0A3D24] to-[#082F22]",
   },
   {
-    src: null,
+    src: "/images/journee/declamation_khassida.png",
     caption: "Déclamation des Khassida — Kourel Hizbut Tarqiya",
     year: "2024",
     bgClass: "bg-gradient-to-br from-[#D4AF37] to-[#B8860B]",
   },
   {
-    src: null,
+    src: "/images/journee/mosquee_touba.png",
     caption: "La oumma réunie devant la grande mosquée",
     year: "2024",
     bgClass: "bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22]",
   },
   {
-    src: null,
+    src: "/images/journee/discours_bassirou.png",
     caption: "Mot de la Fin par Serigne Bassirou Toure",
     year: "2024",
     bgClass: "bg-gradient-to-br from-[#F5D76E] via-[#D4AF37] to-[#B8860B]",
@@ -76,14 +76,15 @@ export default function JourneeGallery() {
 
   const closeLightbox = () => setOpenIdx(null);
 
-  const displayItems = dbItems.length > 0
-    ? dbItems.map((d) => ({
-        src: d.src,
-        caption: d.alt || "Souvenir KSN",
-        year: d.year || "2025",
-        bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
-      }))
-    : ITEMS;
+  const displayItems = [
+    ...ITEMS,
+    ...dbItems.map((d) => ({
+      src: d.src,
+      caption: d.alt || "Souvenir KSN",
+      year: d.year || "2025",
+      bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
+    }))
+  ];
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -168,7 +169,7 @@ export default function JourneeGallery() {
       </div>
 
       {/* LIGHTBOX */}
-      {openIdx !== null && ITEMS[openIdx].src && (
+      {openIdx !== null && displayItems[openIdx].src && (
         <div
           className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
           onClick={closeLightbox}
@@ -188,8 +189,8 @@ export default function JourneeGallery() {
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={ITEMS[openIdx].src as string}
-              alt={ITEMS[openIdx].caption}
+              src={displayItems[openIdx].src as string}
+              alt={displayItems[openIdx].caption}
               fill
               sizes="100vw"
               className="object-contain"
@@ -197,10 +198,10 @@ export default function JourneeGallery() {
             />
             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 to-transparent p-5 sm:p-7 text-center">
               <p className="text-white text-base sm:text-lg font-bold">
-                {ITEMS[openIdx].caption}
+                {displayItems[openIdx].caption}
               </p>
               <p className="text-[#D4AF37] text-sm mt-1 font-semibold">
-                Édition {ITEMS[openIdx].year}
+                Édition {displayItems[openIdx].year}
               </p>
             </div>
           </div>
