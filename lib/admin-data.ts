@@ -1214,6 +1214,115 @@ export async function deleteLessonAudio(
   });
 }
 
+// ============ EDUCATION — ILLUSTRATIONS (images pédagogiques) ============
+
+type LessonIllustration = NonNullable<
+  EducationLesson["illustrations"]
+>[number];
+
+/** Upload une image illustrative dans Storage + push dans le tableau
+ *  lesson.illustrations. */
+export async function attachLessonIllustration(
+  lessonId: string,
+  file: File,
+  meta?: { caption?: string; alt?: string }
+): Promise<LessonIllustration> {
+  const bucket = getBucket();
+  const safeName = file.name
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]/g, "-")
+    .slice(0, 60);
+  const path = `education_illustrations/${lessonId}/${Date.now()}-${safeName}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file, { contentType: file.type || "image/jpeg" });
+  const url = await getDownloadURL(r);
+
+  const lesson = await getEducationLesson(lessonId);
+  const existing = lesson?.illustrations || [];
+  const newIllustration: LessonIllustration = {
+    url,
+    storagePath: path,
+    caption: meta?.caption,
+    alt: meta?.alt,
+    order: existing.length,
+  };
+
+  const db = getDb();
+  await updateDoc(
+    doc(db, "education_lessons", lessonId),
+    stripUndefinedDeep({
+      illustrations: [...existing, newIllustration],
+      updatedAt: Date.now(),
+    })
+  );
+
+  return newIllustration;
+}
+
+/** Supprime une illustration (Storage + tableau Firestore). */
+export async function deleteLessonIllustration(
+  lessonId: string,
+  storagePath: string
+): Promise<void> {
+  const lesson = await getEducationLesson(lessonId);
+  if (!lesson?.illustrations) return;
+
+  const bucket = getBucket();
+  await deleteObject(ref(bucket, storagePath)).catch(() => undefined);
+
+  const remaining = lesson.illustrations.filter(
+    (i) => i.storagePath !== storagePath
+  );
+  const db = getDb();
+  await updateDoc(doc(db, "education_lessons", lessonId), {
+    illustrations: remaining.map((i, idx) => ({ ...i, order: idx })),
+    updatedAt: Date.now(),
+  });
+}
+
+/** Met à jour la légende et/ou alt d'une illustration. */
+export async function updateLessonIllustration(
+  lessonId: string,
+  storagePath: string,
+  patch: { caption?: string; alt?: string }
+): Promise<void> {
+  const lesson = await getEducationLesson(lessonId);
+  if (!lesson?.illustrations) return;
+  const updated = lesson.illustrations.map((i) =>
+    i.storagePath === storagePath ? { ...i, ...patch } : i
+  );
+  const db = getDb();
+  await updateDoc(
+    doc(db, "education_lessons", lessonId),
+    stripUndefinedDeep({
+      illustrations: updated,
+      updatedAt: Date.now(),
+    })
+  );
+}
+
+/** Réorganise (move up/down) les illustrations. */
+export async function reorderLessonIllustration(
+  lessonId: string,
+  storagePath: string,
+  direction: "up" | "down"
+): Promise<void> {
+  const lesson = await getEducationLesson(lessonId);
+  if (!lesson?.illustrations) return;
+  const arr = [...lesson.illustrations];
+  const idx = arr.findIndex((i) => i.storagePath === storagePath);
+  if (idx < 0) return;
+  const swapWith = direction === "up" ? idx - 1 : idx + 1;
+  if (swapWith < 0 || swapWith >= arr.length) return;
+  [arr[idx], arr[swapWith]] = [arr[swapWith], arr[idx]];
+  const reindexed = arr.map((i, n) => ({ ...i, order: n }));
+  const db = getDb();
+  await updateDoc(doc(db, "education_lessons", lessonId), {
+    illustrations: reindexed,
+    updatedAt: Date.now(),
+  });
+}
+
 // ============ EDUCATION — FILL TAZAWWUD CONTENT ============
 
 /** Remplit toutes les lecons du Tazawwud avec le contenu prepare
@@ -1511,7 +1620,7 @@ export async function seedTazawwud(): Promise<{ modules: number; lessons: number
     },
   ];
 
-  const DETAILED_LESSONS_SEEDS: Record<string, any> = {
+  const DETAILED_LESSONS_SEEDS: Record<string, Partial<EducationLesson>> = {
     "1.1": {
       title: {
         fr: "Les piliers de l'Islam",

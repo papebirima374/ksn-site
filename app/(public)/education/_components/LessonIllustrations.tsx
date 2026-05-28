@@ -10,6 +10,14 @@
  */
 import type { EducationLesson } from "@/lib/admin-types";
 import WuduStepsDiagram from "./WuduStepsDiagram";
+import {
+  PiliersIslamDiagram,
+  PiliersImanDiagram,
+  GhuslStepsDiagram,
+  TayammumStepsDiagram,
+  CinqPrieresDiagram,
+  HajjDiagram,
+} from "./LessonDiagrams";
 
 type Props = {
   lesson: EducationLesson;
@@ -21,9 +29,20 @@ export default function LessonIllustrations({ lesson }: Props) {
   // 1. Diagramme pré-construit selon la référence
   const BuiltIn = (() => {
     switch (ref) {
+      case "1.1":
+        return PiliersIslamDiagram;
+      case "1.2":
+        return PiliersImanDiagram;
       case "2.2":
         return WuduStepsDiagram;
-      // futures additions : 2.3 Tayammum, 2.4 Ghusl, 3.1 Salaat postures…
+      case "2.3":
+        return GhuslStepsDiagram;
+      case "2.4":
+        return TayammumStepsDiagram;
+      case "3.1":
+        return CinqPrieresDiagram;
+      case "4.4":
+        return HajjDiagram;
       default:
         return null;
     }

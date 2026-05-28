@@ -18,6 +18,10 @@ import {
   attachLessonAudio,
   deleteLessonAudio,
   computeContentHash,
+  attachLessonIllustration,
+  deleteLessonIllustration,
+  updateLessonIllustration,
+  reorderLessonIllustration,
 } from "@/lib/admin-data";
 import {
   FaArrowLeft,
@@ -30,9 +34,12 @@ import {
   FaPause,
   FaRotate,
   FaPlus,
+  FaChevronUp,
+  FaChevronDown,
+  FaImage,
 } from "react-icons/fa6";
 
-const TABS = ["Texte", "Audio", "Quiz", "Métadonnées"] as const;
+const TABS = ["Texte", "Audio", "Illustrations", "Quiz", "Métadonnées"] as const;
 type Tab = (typeof TABS)[number];
 
 const PUBLISH_OPTIONS: EducationLesson["publishStatus"][] = ["draft", "preview", "published"];
@@ -220,6 +227,83 @@ export default function AdminEducationLessonEditPage() {
       setError(err instanceof Error ? err.message : "Erreur de suppression");
     } finally {
       setUploadingWo(false);
+    }
+  }
+
+  // ════════ Illustrations (images pédagogiques) ════════
+  const [uploadingIllu, setUploadingIllu] = useState(false);
+
+  async function handleUploadIllustration(
+    e: React.ChangeEvent<HTMLInputElement>
+  ) {
+    if (!lesson) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingIllu(true);
+    setError("");
+    try {
+      const updates: NonNullable<EducationLesson["illustrations"]> = [
+        ...(lesson.illustrations || []),
+      ];
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        if (!f.type.startsWith("image/")) continue;
+        const ill = await attachLessonIllustration(lesson.id, f);
+        updates.push(ill);
+      }
+      setLesson({ ...lesson, illustrations: updates });
+      e.target.value = "";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur d'upload");
+    } finally {
+      setUploadingIllu(false);
+    }
+  }
+
+  async function handleDeleteIllustration(storagePath: string) {
+    if (!lesson || !lesson.illustrations) return;
+    if (!confirm("Supprimer cette illustration ?")) return;
+    setError("");
+    try {
+      await deleteLessonIllustration(lesson.id, storagePath);
+      setLesson({
+        ...lesson,
+        illustrations: lesson.illustrations.filter(
+          (i) => i.storagePath !== storagePath
+        ),
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur de suppression");
+    }
+  }
+
+  async function handleUpdateCaption(storagePath: string, caption: string) {
+    if (!lesson || !lesson.illustrations) return;
+    try {
+      await updateLessonIllustration(lesson.id, storagePath, { caption });
+      setLesson({
+        ...lesson,
+        illustrations: lesson.illustrations.map((i) =>
+          i.storagePath === storagePath ? { ...i, caption } : i
+        ),
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur");
+    }
+  }
+
+  async function handleMoveIllustration(
+    storagePath: string,
+    direction: "up" | "down"
+  ) {
+    if (!lesson || !lesson.illustrations) return;
+    try {
+      await reorderLessonIllustration(lesson.id, storagePath, direction);
+      const fresh = await getEducationLesson(lesson.id);
+      if (fresh) setLesson(fresh);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur de réorganisation");
     }
   }
 
@@ -687,13 +771,148 @@ export default function AdminEducationLessonEditPage() {
         </div>
       )}
 
+      {/* TAB ILLUSTRATIONS */}
+      {tab === "Illustrations" && (
+        <div className="bg-white rounded-3xl shadow-md p-6 space-y-6">
+          <div className="pb-4 border-b border-gray-100">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-2xl bg-[#0F7C55]/10 text-[#0F7C55] flex items-center justify-center">
+                <FaImage />
+              </div>
+              <div>
+                <h2 className="font-display text-xl font-bold text-[#0F7C55]">
+                  Illustrations pédagogiques
+                </h2>
+                <p className="text-xs text-gray-500">
+                  Images uploadées qui s&apos;ajoutent aux diagrammes SVG
+                  automatiques. Idéal pour des photos, schémas spécifiques,
+                  scans d&apos;ouvrages.
+                </p>
+              </div>
+            </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 mt-3 text-xs text-blue-900 flex gap-2">
+              <FaCircleInfo className="flex-shrink-0 mt-0.5" />
+              <span>
+                Les diagrammes SVG automatiques (5 piliers, Wudu, etc.)
+                s&apos;affichent <strong>en plus</strong> selon la référence
+                de la leçon ({lesson.reference}). Ces uploads sont rendus en
+                galerie ensuite.
+              </span>
+            </div>
+          </div>
+
+          {/* Upload */}
+          {canEdit && (
+            <div>
+              <label className="block">
+                <div className="border-2 border-dashed border-[#D4AF37]/40 rounded-2xl p-6 text-center cursor-pointer hover:border-[#D4AF37] hover:bg-[#D4AF37]/5 transition">
+                  <FaCloudArrowUp className="text-3xl text-[#B8860B] mx-auto mb-2" />
+                  <p className="font-bold text-[#0F7C55] text-sm">
+                    {uploadingIllu
+                      ? "Upload en cours…"
+                      : "Cliquer pour ajouter une ou plusieurs images"}
+                  </p>
+                  <p className="text-[11px] text-gray-500 mt-1">
+                    JPG, PNG, WebP ou SVG · max ~5 Mo par image
+                  </p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    disabled={uploadingIllu}
+                    onChange={handleUploadIllustration}
+                    className="hidden"
+                  />
+                </div>
+              </label>
+            </div>
+          )}
+
+          {/* Liste des illustrations actuelles */}
+          {(lesson.illustrations || []).length === 0 ? (
+            <p className="text-sm text-gray-500 italic text-center py-6">
+              Aucune image uploadée pour cette leçon.
+            </p>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {(lesson.illustrations || []).map((ill, idx) => (
+                <div
+                  key={ill.storagePath}
+                  className="border border-gray-200 rounded-2xl overflow-hidden bg-gray-50"
+                >
+                  <div className="aspect-video bg-white relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={ill.url}
+                      alt={ill.alt || ill.caption || `Illustration ${idx + 1}`}
+                      className="w-full h-full object-contain"
+                    />
+                    <span className="absolute top-2 left-2 bg-[#0F7C55] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      #{idx + 1}
+                    </span>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    <input
+                      type="text"
+                      defaultValue={ill.caption || ""}
+                      onBlur={(e) =>
+                        handleUpdateCaption(ill.storagePath, e.target.value)
+                      }
+                      placeholder="Légende affichée sous l'image"
+                      className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-1.5"
+                    />
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleMoveIllustration(ill.storagePath, "up")
+                          }
+                          disabled={idx === 0}
+                          className="p-1.5 text-gray-600 hover:text-[#0F7C55] disabled:opacity-30 disabled:cursor-not-allowed"
+                          aria-label="Monter"
+                        >
+                          <FaChevronUp />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleMoveIllustration(ill.storagePath, "down")
+                          }
+                          disabled={
+                            idx === (lesson.illustrations || []).length - 1
+                          }
+                          className="p-1.5 text-gray-600 hover:text-[#0F7C55] disabled:opacity-30 disabled:cursor-not-allowed"
+                          aria-label="Descendre"
+                        >
+                          <FaChevronDown />
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDeleteIllustration(ill.storagePath)
+                        }
+                        className="inline-flex items-center gap-1 bg-red-50 text-red-700 border border-red-200 text-xs font-bold px-2.5 py-1 rounded-lg hover:bg-red-100 transition"
+                      >
+                        <FaTrash className="text-[10px]" /> Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* TAB QUIZ */}
       {tab === "Quiz" && (
         <div className="bg-white rounded-3xl shadow-md p-6 space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-gray-100">
             <div>
               <h3 className="font-display text-lg font-bold text-[#0F7C55]">
-                Quiz d'évaluation de la leçon
+                Quiz d&apos;évaluation de la leçon
               </h3>
               <p className="text-xs text-gray-500">
                 Ajoutez des questions à choix multiples (QCM) pour tester les connaissances des apprenants.
@@ -738,7 +957,7 @@ export default function AdminEducationLessonEditPage() {
 
           {(!lesson.quiz || !lesson.quiz.questions || lesson.quiz.questions.length === 0) ? (
             <div className="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-              <p className="text-sm text-gray-500 mb-4">Aucune question n'a été configurée pour le moment.</p>
+              <p className="text-sm text-gray-500 mb-4">Aucune question n&apos;a été configurée pour le moment.</p>
               {canEdit && (
                 <button
                   type="button"

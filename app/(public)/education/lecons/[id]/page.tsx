@@ -11,6 +11,7 @@ import {
   FaLightbulb,
   FaXmark,
   FaPlay,
+  FaAward,
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { EducationLesson, EducationModule } from "@/lib/admin-types";
@@ -39,6 +40,8 @@ export default function PublicLessonDetailPage() {
 
   const [lesson, setLesson] = useState<EducationLesson | null>(null);
   const [moduleParent, setModuleParent] = useState<EducationModule | null>(null);
+  const [nextModule, setNextModule] = useState<EducationModule | null>(null);
+  const [nextModuleLessonsCount, setNextModuleLessonsCount] = useState(0);
   const [prevLesson, setPrevLesson] = useState<EducationLesson | null>(null);
   const [nextLesson, setNextLesson] = useState<EducationLesson | null>(null);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
@@ -120,8 +123,24 @@ export default function PublicLessonDetailPage() {
         const m = await getEducationModule(l.moduleId);
         setModuleParent(m);
 
+        const nextL = helperGetNextLesson(l.id, visibleModules, allLessons);
         setPrevLesson(helperGetPrevLesson(l.id, visibleModules, allLessons));
-        setNextLesson(helperGetNextLesson(l.id, visibleModules, allLessons));
+        setNextLesson(nextL);
+
+        // Détection : la leçon suivante est-elle dans un AUTRE module ?
+        // Si oui, on est sur la dernière leçon du module courant et on
+        // proposera une carte de transition vers le module N+1.
+        if (nextL && nextL.moduleId !== l.moduleId) {
+          const nextMod =
+            visibleModules.find((mm) => mm.id === nextL.moduleId) || null;
+          setNextModule(nextMod);
+          setNextModuleLessonsCount(
+            allLessons.filter((x) => x.moduleId === nextL.moduleId).length
+          );
+        } else {
+          setNextModule(null);
+          setNextModuleLessonsCount(0);
+        }
 
         setLoading(false);
       })
@@ -415,7 +434,81 @@ export default function PublicLessonDetailPage() {
                     J&apos;ai compris — Valider la leçon
                   </button>
                 </div>
-              ) : (
+              ) : nextModule && nextLesson ? (
+                // ─── TRANSITION DE MODULE (dernière leçon du module courant) ──
+                <div className="space-y-5">
+                  <div className="bg-[#064E3B]/8 border border-[#064E3B]/25 rounded-3xl p-6 text-center">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-[#C9A961] to-[#E0C97D] text-[#064E3B] flex items-center justify-center mb-3 shadow-lg">
+                      <FaAward className="text-2xl" />
+                    </div>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-[#C9A961] font-black mb-1">
+                      Module terminé
+                    </p>
+                    <h3 className="edu-title text-xl sm:text-2xl font-black">
+                      Macha&apos;Allah !
+                    </h3>
+                    {moduleParent && (
+                      <p className="edu-prose text-sm sm:text-base mt-2 mb-0">
+                        Tu as parcouru entièrement le module{" "}
+                        <strong>« {moduleParent.title?.fr} »</strong>. Une
+                        belle étape franchie sur le chemin du savoir.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Carte du module suivant — appel à continuer */}
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#064E3B] to-[#2D5547] text-[#FAF7F0] p-6 sm:p-8">
+                    <IslamicPattern
+                      variant="star8"
+                      opacity={0.08}
+                      color="#E0C97D"
+                    />
+                    <div className="relative text-center">
+                      <p className="text-[10px] uppercase tracking-[0.3em] text-[#E0C97D] font-bold mb-2">
+                        Module suivant à découvrir
+                      </p>
+                      <h4 className="edu-title text-xl sm:text-2xl font-black mt-1 !text-[#FAF7F0]">
+                        Module {nextModule.order} ·{" "}
+                        {nextModule.title?.fr}
+                      </h4>
+                      {nextModule.titleArabic && (
+                        <p
+                          className="font-arabic mt-2 text-xl text-[#E0C97D]"
+                          dir="rtl"
+                        >
+                          {nextModule.titleArabic}
+                        </p>
+                      )}
+                      {nextModule.description?.fr && (
+                        <p className="text-sm text-[#FAF7F0]/90 mt-3 max-w-xl mx-auto leading-6">
+                          {nextModule.description.fr}
+                        </p>
+                      )}
+                      <p className="text-[11px] text-[#E0C97D] mt-3 uppercase tracking-widest font-bold">
+                        {nextModuleLessonsCount} leçon
+                        {nextModuleLessonsCount > 1 ? "s" : ""} à parcourir
+                      </p>
+
+                      <div className="mt-5 flex flex-col sm:flex-row gap-3 justify-center">
+                        <Link
+                          href={`/education/modules/${nextModule.id}`}
+                          className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-[#E0C97D]/40 text-[#E0C97D] font-bold px-5 py-3 rounded-xl transition text-sm"
+                        >
+                          Voir le module
+                        </Link>
+                        <Link
+                          href={`/education/lecons/${nextLesson.id}`}
+                          className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C9A961] to-[#E0C97D] text-[#064E3B] font-bold px-5 py-3 rounded-xl shadow-lg hover:scale-[1.03] transition text-sm"
+                        >
+                          Commencer le module {nextModule.order}{" "}
+                          <FaChevronRight className="text-xs" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : nextLesson ? (
+                // ─── Leçon suivante normale (même module) ──────────────────
                 <div className="bg-[#064E3B]/8 border border-[#064E3B]/25 rounded-3xl p-6 text-center">
                   <div className="w-12 h-12 mx-auto rounded-full bg-[#064E3B] text-[#E0C97D] flex items-center justify-center mb-3">
                     <FaCheck className="text-xl" />
@@ -423,28 +516,37 @@ export default function PublicLessonDetailPage() {
                   <p className="edu-title text-lg font-bold">
                     Alhamdoulillah, leçon validée
                   </p>
-                  {nextLesson ? (
-                    <Link
-                      href={`/education/lecons/${nextLesson.id}`}
-                      className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-[#C9A961] to-[#E0C97D] text-[#064E3B] font-bold px-6 py-3 rounded-xl shadow-md hover:scale-[1.03] transition text-sm"
-                    >
-                      Continuer vers la leçon suivante{" "}
-                      <FaChevronRight className="text-xs" />
-                    </Link>
-                  ) : (
-                    <div className="mt-4 space-y-3">
-                      <p className="edu-prose italic text-[#064E3B]">
-                        Tu as terminé toutes les leçons du Tazawwud.
-                        Macha&apos;Allah !
-                      </p>
-                      <Link
-                        href="/education/certificat"
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C9A961] to-[#E0C97D] text-[#064E3B] font-bold px-6 py-3 rounded-xl shadow-md hover:scale-[1.03] transition text-sm"
-                      >
-                        Demander mon certificat
-                      </Link>
-                    </div>
-                  )}
+                  <Link
+                    href={`/education/lecons/${nextLesson.id}`}
+                    className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-[#C9A961] to-[#E0C97D] text-[#064E3B] font-bold px-6 py-3 rounded-xl shadow-md hover:scale-[1.03] transition text-sm"
+                  >
+                    Continuer vers la leçon suivante{" "}
+                    <FaChevronRight className="text-xs" />
+                  </Link>
+                </div>
+              ) : (
+                // ─── Fin totale du Tazawwud ─────────────────────────────────
+                <div className="bg-gradient-to-br from-[#C9A961] to-[#E0C97D] text-[#064E3B] rounded-3xl p-8 text-center">
+                  <div className="w-16 h-16 mx-auto rounded-full bg-[#064E3B] text-[#E0C97D] flex items-center justify-center mb-3 shadow-lg">
+                    <FaAward className="text-3xl" />
+                  </div>
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-[#6B2E2E] font-black mb-1">
+                    Tazawwud Terminé
+                  </p>
+                  <h3 className="edu-title text-2xl font-black !text-[#064E3B]">
+                    Macha&apos;Allah, parcours achevé !
+                  </h3>
+                  <p className="text-sm sm:text-base mt-3 max-w-md mx-auto">
+                    Tu as parcouru les six modules du Tazawwudu-ss-Sighar. Il
+                    te reste une dernière étape : l&apos;entretien oral avec
+                    la Commission Éducation.
+                  </p>
+                  <Link
+                    href="/education/certificat"
+                    className="inline-flex items-center gap-2 mt-5 bg-[#064E3B] text-[#E0C97D] font-bold px-6 py-3 rounded-xl shadow-md hover:scale-[1.03] transition text-sm"
+                  >
+                    <FaAward /> Demander mon certificat
+                  </Link>
                 </div>
               )}
             </div>
