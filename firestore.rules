@@ -89,6 +89,12 @@ service cloud.firestore {
       allow write: if hasPerm("articles.write");
     }
 
+    // ─── Témoignages de membres (NOUVEAU - section "Ils témoignent") ────
+    match /testimonials/{id} {
+      allow read: if true;
+      allow write: if hasPerm("articles.write");
+    }
+
     // ─── Bibliothèque Salaatu ───────────────────────────────────────────
     match /salaatuLibrary/{id} {
       allow read: if true;

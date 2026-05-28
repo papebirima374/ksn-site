@@ -64,6 +64,25 @@ export type AppUser = {
   phone?: string;
 };
 
+/** Témoignage de membre affiché dans la section publique de l'accueil. */
+export type Testimonial = {
+  id: string;
+  name: string;
+  role?: string;
+  location: string;
+  flag: string;
+  since?: string;
+  quote: string;
+  /** Couleur d'accent de l'avatar (gradient). */
+  accent: "green" | "gold" | "sand";
+  /** Ordre d'affichage (les + petits en premier). 0 = nouveau. */
+  order: number;
+  /** Si false, le témoignage est masqué publiquement. */
+  visible: boolean;
+  createdAt: number;
+  updatedAt?: number;
+};
+
 export type ArticleStatus = "draft" | "published";
 
 export type Article = {

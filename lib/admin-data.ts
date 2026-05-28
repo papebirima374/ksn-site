@@ -29,6 +29,7 @@ import {
   Product,
   SalaatuDuJour,
   SalaatuLibraryItem,
+  Testimonial,
   UserRole,
 } from "./admin-types";
 import { SALAATU_FULL_SEED } from "./salaatu-full-seed";
@@ -875,4 +876,46 @@ export async function saveJourneeSettings(settings: JourneeSettings): Promise<vo
     ...settings,
     updatedAt: Date.now(),
   });
+}
+
+// ============ TEMOIGNAGES ============
+
+/** Liste tous les temoignages, tries par order croissant.
+ *  Le public Temoignages.tsx filtre les non-visibles cote client. */
+export async function listTestimonials(): Promise<Testimonial[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "testimonials"), orderBy("order", "asc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<Testimonial, "id">),
+  }));
+}
+
+export async function createTestimonial(
+  data: Omit<Testimonial, "id" | "createdAt" | "updatedAt">
+): Promise<string> {
+  const db = getDb();
+  const docRef = await addDoc(collection(db, "testimonials"), {
+    ...data,
+    createdAt: Date.now(),
+  });
+  return docRef.id;
+}
+
+export async function updateTestimonial(
+  id: string,
+  patch: Partial<Omit<Testimonial, "id" | "createdAt">>
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, "testimonials", id), {
+    ...patch,
+    updatedAt: Date.now(),
+  });
+}
+
+export async function deleteTestimonial(id: string): Promise<void> {
+  const db = getDb();
+  await deleteDoc(doc(db, "testimonials", id));
 }

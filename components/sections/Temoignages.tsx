@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FaQuoteLeft, FaStar, FaLocationDot, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { listTestimonials } from "@/lib/admin-data";
 
 type Temoignage = {
   name: string;
@@ -19,10 +20,10 @@ type Temoignage = {
   accent: "green" | "gold" | "sand";
 };
 
-// Témoignages PLACEHOLDER. À remplacer plus tard par des vrais membres
-// (soit en éditant ce tableau, soit via une future page admin qui
-// stockerait les témoignages en Firestore).
-const TEMOIGNAGES: Temoignage[] = [
+// Témoignages PLACEHOLDER affichés si Firestore est vide. Si l'admin
+// ajoute des témoignages réels via /admin/temoignages, ils remplacent
+// automatiquement ces placeholders.
+const TEMOIGNAGES_PLACEHOLDER: Temoignage[] = [
   {
     name: "Aïcha Diop",
     role: "Membre depuis l'origine",
@@ -103,6 +104,41 @@ function getInitials(name: string): string {
 export default function Temoignages() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [items, setItems] = useState<Temoignage[]>(TEMOIGNAGES_PLACEHOLDER);
+  const [usingPlaceholders, setUsingPlaceholders] = useState(true);
+
+  // Fetch Firestore au mount. Si > 0 entrées visibles, on les utilise.
+  // Sinon on garde les placeholders.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const remote = await listTestimonials();
+        if (cancelled) return;
+        const visible = remote
+          .filter((t) => t.visible)
+          .sort((a, b) => a.order - b.order)
+          .map((t) => ({
+            name: t.name,
+            role: t.role,
+            location: t.location,
+            flag: t.flag,
+            since: t.since,
+            quote: t.quote,
+            accent: t.accent,
+          }));
+        if (visible.length > 0) {
+          setItems(visible);
+          setUsingPlaceholders(false);
+        }
+      } catch {
+        // Garde silencieusement les placeholders en cas d'erreur Firestore
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Détecte mobile pour basculer en mode carousel sur petit écran
   useEffect(() => {
@@ -112,8 +148,8 @@ export default function Temoignages() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const next = () => setActiveIdx((i) => (i + 1) % TEMOIGNAGES.length);
-  const prev = () => setActiveIdx((i) => (i - 1 + TEMOIGNAGES.length) % TEMOIGNAGES.length);
+  const next = () => setActiveIdx((i) => (i + 1) % items.length);
+  const prev = () => setActiveIdx((i) => (i - 1 + items.length) % items.length);
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -133,7 +169,7 @@ export default function Temoignages() {
 
       {/* DESKTOP / TABLET : grille 3 colonnes */}
       <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-        {TEMOIGNAGES.map((t, i) => (
+        {items.map((t, i) => (
           <TemoignageCard key={i} t={t} />
         ))}
       </div>
@@ -141,7 +177,7 @@ export default function Temoignages() {
       {/* MOBILE : carousel 1 par 1 */}
       {isMobile && (
         <div>
-          <TemoignageCard t={TEMOIGNAGES[activeIdx]} />
+          <TemoignageCard t={items[activeIdx]} />
           <div className="flex items-center justify-between mt-5">
             <button
               type="button"
@@ -152,7 +188,7 @@ export default function Temoignages() {
               <FaChevronLeft />
             </button>
             <div className="flex gap-1.5">
-              {TEMOIGNAGES.map((_, i) => (
+              {items.map((_, i) => (
                 <button
                   key={i}
                   type="button"
@@ -178,12 +214,14 @@ export default function Temoignages() {
         </div>
       )}
 
-      {/* Note transparente */}
-      <p className="mt-10 text-center text-xs text-white/50 italic max-w-2xl mx-auto">
-        Témoignages représentatifs de l&apos;esprit du Dahira KSN. Les vrais
-        membres peuvent partager leur expérience via WhatsApp pour
-        apparaître dans cette section.
-      </p>
+      {/* Note transparente — affichée uniquement quand on est sur les placeholders */}
+      {usingPlaceholders && (
+        <p className="mt-10 text-center text-xs text-white/50 italic max-w-2xl mx-auto">
+          Témoignages représentatifs de l&apos;esprit du Dahira KSN. Les vrais
+          membres peuvent partager leur expérience via WhatsApp pour
+          apparaître dans cette section.
+        </p>
+      )}
     </section>
   );
 }

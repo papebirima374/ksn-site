@@ -18,6 +18,7 @@ import {
   FaCoins,
   FaBagShopping,
   FaCalendarDays,
+  FaCommentDots,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -31,6 +32,7 @@ const NAV = [
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
+  { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" as const },
   { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];
