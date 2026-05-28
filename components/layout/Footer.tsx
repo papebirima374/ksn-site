@@ -68,6 +68,7 @@ export default function Footer() {
     { label: t("nav.media"), href: "/media" },
     { label: t("nav.boutique"), href: "/boutique" },
     { label: t("nav.blog"), href: "/blog" },
+    { label: "FAQ", href: "/faq" },
     { label: t("nav.contact"), href: "/contact" },
   ];
 
