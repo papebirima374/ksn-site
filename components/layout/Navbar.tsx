@@ -17,6 +17,7 @@ import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 import { useAuth } from "@/lib/auth-context";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import SearchBar from "@/components/layout/SearchBar";
 
 type NavLink = { kind: "link"; label: string; href: string };
 type NavChild = { label: string; href: string; description?: string };
@@ -130,6 +131,7 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <SearchBar />
             <LanguageSwitcher />
 
             {user ? (
