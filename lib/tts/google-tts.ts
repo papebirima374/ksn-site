@@ -95,7 +95,10 @@ export const GOOGLE_TTS_VOICES: Record<string, GoogleTTSVoice & { label: string;
 };
 
 export const DEFAULT_VOICE_BY_LANG: Record<string, string> = {
-  fr: "fr-FR-Neural2-B",
+  // FR : Marc (Neural2-C) — masculine chaleureuse, narrative.
+  // Validé par Pape Birima comme la voix officielle de la
+  // Commission Éducation & Culture pour les enseignements.
+  fr: "fr-FR-Neural2-C",
   en: "en-US-Neural2-J",
   ar: "ar-XA-Wavenet-B",
   it: "it-IT-Neural2-A",

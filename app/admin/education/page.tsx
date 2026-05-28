@@ -47,7 +47,7 @@ export default function AdminEducationPage() {
   const [text, setText] = useState(SAMPLE_TEXTS.fr);
   const [language, setLanguage] = useState<"fr" | "en" | "ar" | "it" | "es">("fr");
   const [provider, setProvider] = useState<"auto" | "google" | "edge">("auto");
-  const [voiceId, setVoiceId] = useState<string>("fr-FR-Neural2-B");
+  const [voiceId, setVoiceId] = useState<string>("fr-FR-Neural2-C");
   const [rate, setRate] = useState(0.92);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
