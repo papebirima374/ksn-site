@@ -50,3 +50,24 @@ export function getBucket(): FirebaseStorage {
   if (!_storage) _storage = getStorage(getFirebaseApp());
   return _storage;
 }
+
+/** Cree (ou recupere) une instance Firebase SECONDAIRE.
+ *  Utilisee pour creer un compte Auth depuis l'admin sans deconnecter
+ *  l'admin courant (createUserWithEmailAndPassword sur l'instance
+ *  principale logge automatiquement le nouveau user). */
+let _secondaryApp: FirebaseApp | null = null;
+let _secondaryAuth: Auth | null = null;
+
+export function getSecondaryAuth(): Auth {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase n'est pas configuré.");
+  }
+  if (!_secondaryApp) {
+    const existing = getApps().find((a) => a.name === "Secondary");
+    _secondaryApp = existing ?? initializeApp(firebaseConfig, "Secondary");
+  }
+  if (!_secondaryAuth) {
+    _secondaryAuth = getAuth(_secondaryApp);
+  }
+  return _secondaryAuth;
+}

@@ -14,7 +14,8 @@ import {
   where,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { getDb, getBucket } from "./firebase";
+import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getDb, getBucket, getSecondaryAuth } from "./firebase";
 import {
   Article,
   AppUser,
@@ -231,6 +232,40 @@ export async function createUserDoc(
 export async function deleteUserDoc(uid: string) {
   const db = getDb();
   await deleteDoc(doc(db, "users", uid));
+}
+
+/** Cree un compte Firebase Auth + le doc Firestore en une seule operation,
+ *  SANS deconnecter l'admin courant (utilise une instance Firebase secondaire).
+ *  Retourne l'UID du nouveau user.
+ *  Erreurs typiques :
+ *    - "auth/email-already-in-use" : email deja pris
+ *    - "auth/weak-password" : moins de 6 caracteres
+ *    - "auth/invalid-email" : format invalide */
+export async function createUserAccount(
+  email: string,
+  password: string,
+  profile: {
+    displayName?: string;
+    role: UserRole;
+    commission?: string;
+    permissions: Permission[];
+  }
+): Promise<string> {
+  const secondaryAuth = getSecondaryAuth();
+  // 1) Cree le compte Auth via l'instance secondaire (n'affecte pas la session admin)
+  const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+  const uid = cred.user.uid;
+  // 2) Cree le profil Firestore
+  await createUserDoc(uid, {
+    email,
+    displayName: profile.displayName,
+    role: profile.role,
+    commission: profile.commission,
+    permissions: profile.permissions,
+  });
+  // 3) Sign-out de l'instance secondaire (l'instance principale reste connectee)
+  await signOut(secondaryAuth);
+  return uid;
 }
 
 // ============ MEMBERS ============

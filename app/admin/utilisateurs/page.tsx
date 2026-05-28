@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -10,8 +10,13 @@ import {
   Permission,
   UserRole,
 } from "@/lib/admin-types";
-import { listUsers, updateUserPermissions, deleteUserDoc } from "@/lib/admin-data";
-import { FaTrash, FaUserShield, FaUserGear } from "react-icons/fa6";
+import {
+  listUsers,
+  updateUserPermissions,
+  deleteUserDoc,
+  createUserAccount,
+} from "@/lib/admin-data";
+import { FaTrash, FaUserShield, FaUserGear, FaUserPlus } from "react-icons/fa6";
 
 export default function AdminUsersPage() {
   const { user, refresh } = useAuth();
@@ -20,6 +25,16 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Formulaire creation de compte
+  const [showCreate, setShowCreate] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newRole, setNewRole] = useState<UserRole>("commission");
+  const [newCommission, setNewCommission] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState("");
 
   async function reload() {
     setLoading(true);
@@ -64,6 +79,51 @@ export default function AdminUsersPage() {
     await updateUser(u, { displayName });
   }
 
+  async function handleCreate(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (creating) return;
+    setError("");
+    setCreateSuccess("");
+    if (newPassword.length < 6) {
+      setError("Le mot de passe doit faire au moins 6 caractères.");
+      return;
+    }
+    setCreating(true);
+    try {
+      await createUserAccount(newEmail.trim(), newPassword, {
+        displayName: newName.trim() || undefined,
+        role: newRole,
+        commission: newRole === "commission" ? newCommission.trim() || undefined : undefined,
+        permissions: [], // l'admin attribuera ensuite via "Modifier"
+      });
+      setCreateSuccess(
+        `Compte ${newEmail} créé. Cliquez « Modifier » sur sa ligne pour attribuer les permissions.`
+      );
+      setNewEmail("");
+      setNewPassword("");
+      setNewName("");
+      setNewCommission("");
+      setNewRole("commission");
+      await reload();
+      // Toast disparait apres 5s
+      setTimeout(() => setCreateSuccess(""), 5000);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      // Traduction des erreurs Firebase Auth en francais
+      if (msg.includes("email-already-in-use")) {
+        setError("Cet email a déjà un compte. Choisissez-en un autre ou supprimez l'ancien.");
+      } else if (msg.includes("weak-password")) {
+        setError("Mot de passe trop faible (minimum 6 caractères).");
+      } else if (msg.includes("invalid-email")) {
+        setError("Format d'email invalide.");
+      } else {
+        setError(msg);
+      }
+    } finally {
+      setCreating(false);
+    }
+  }
+
   async function handleDelete(u: AppUser) {
     if (u.uid === user?.uid) {
       alert("Vous ne pouvez pas supprimer votre propre compte.");
@@ -102,20 +162,131 @@ export default function AdminUsersPage() {
           Utilisateurs & permissions
         </h1>
         <p className="mt-2 text-gray-600 text-sm max-w-2xl">
-          Gérez les comptes des responsables de commission. Pour <strong>créer un
-          nouveau compte</strong>, allez sur la console Firebase →{" "}
-          <em>Authentication</em> → <em>Add user</em>, puis revenez ici pour lui
+          Gérez les comptes des responsables de commission. Créez un nouveau
+          compte ci-dessous, puis cliquez « Modifier » sur sa ligne pour
           attribuer ses permissions.
         </p>
-        <a
-          href={`https://console.firebase.google.com/project/_/authentication/users`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex mt-3 text-sm text-[#B8860B] hover:text-[#D4AF37] underline font-semibold"
+        <button
+          type="button"
+          onClick={() => {
+            setShowCreate((v) => !v);
+            setError("");
+            setCreateSuccess("");
+          }}
+          className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-4 py-2.5 rounded-xl shadow-md hover:scale-105 transition text-sm"
         >
-          Ouvrir la console Firebase →
-        </a>
+          <FaUserPlus />
+          {showCreate ? "Fermer le formulaire" : "Créer un nouveau compte"}
+        </button>
       </header>
+
+      {createSuccess && (
+        <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200 mb-4">
+          ✓ {createSuccess}
+        </p>
+      )}
+
+      {showCreate && (
+        <form
+          onSubmit={handleCreate}
+          className="bg-white rounded-3xl shadow-md p-6 sm:p-8 mb-8 space-y-4"
+        >
+          <h2 className="font-display text-xl font-bold text-[#0F7C55] flex items-center gap-2">
+            <FaUserPlus /> Nouveau compte
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                required
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="prenom.nom@example.com"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+                autoComplete="off"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Mot de passe initial <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                minLength={6}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Minimum 6 caractères"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white font-mono"
+                autoComplete="new-password"
+              />
+              <p className="mt-1 text-[10px] text-gray-500">
+                Communiquez-le à la personne — elle pourra le changer ensuite via Mot de passe oublié.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Nom affiché
+              </label>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Ex: Pape Diop"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                Rôle
+              </label>
+              <select
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value as UserRole)}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+              >
+                <option value="commission">Commission</option>
+                <option value="admin">Administrateur</option>
+              </select>
+            </div>
+            {newRole === "commission" && (
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                  Nom de la commission
+                </label>
+                <input
+                  type="text"
+                  value={newCommission}
+                  onChange={(e) => setNewCommission(e.target.value)}
+                  placeholder="Ex: Communication"
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-3 items-center pt-2">
+            <button
+              type="submit"
+              disabled={creating || !newEmail || !newPassword}
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#0F7C55] to-[#0A3D24] text-white font-bold px-5 py-2.5 rounded-xl shadow-md hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100 text-sm"
+            >
+              <FaUserPlus /> {creating ? "Création…" : "Créer le compte"}
+            </button>
+            <p className="text-xs text-gray-500">
+              {newRole === "admin"
+                ? "L'admin aura accès à toutes les sections."
+                : "Les permissions s'attribuent ensuite via le bouton « Modifier »."}
+            </p>
+          </div>
+        </form>
+      )}
 
       {error && (
         <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
@@ -266,34 +437,24 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      <div className="mt-8 bg-[#0F7C55] rounded-3xl p-6 sm:p-8 text-white">
-        <h3 className="font-display text-lg sm:text-xl font-bold">
-          Comment créer un nouveau compte de commission ?
+      <div className="mt-8 bg-[#F8F5EF] border border-[#D4AF37]/30 rounded-3xl p-6 sm:p-7 text-[#0F7C55]">
+        <h3 className="font-display text-lg font-bold mb-2">
+          💡 Note pour la suppression
         </h3>
-        <ol className="mt-4 space-y-2 text-sm text-white/80 list-decimal list-inside">
-          <li>
-            Ouvrez la{" "}
-            <a
-              href="https://console.firebase.google.com/project/_/authentication/users"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#D4AF37] underline"
-            >
-              console Firebase Auth
-            </a>
-          </li>
-          <li>Cliquez sur « Add user » puis saisissez email + mot de passe</li>
-          <li>
-            La personne se connecte une fois sur{" "}
-            <code className="bg-white/10 px-1.5 py-0.5 rounded">/admin/login</code>{" "}
-            (son profil est créé automatiquement avec le rôle commission sans
-            permissions)
-          </li>
-          <li>
-            Revenez ici, cliquez « Modifier » sur sa ligne et attribuez ses
-            permissions
-          </li>
-        </ol>
+        <p className="text-sm text-gray-700 leading-6">
+          Cliquer « Suppr. » retire les permissions Firestore mais ne supprime
+          pas le compte Firebase Auth lui-même. Pour révoquer totalement
+          l&apos;accès, allez aussi sur{" "}
+          <a
+            href="https://console.firebase.google.com/project/_/authentication/users"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#B8860B] hover:text-[#D4AF37] underline font-semibold"
+          >
+            Firebase Console → Authentication
+          </a>{" "}
+          et supprimez le compte là-bas.
+        </p>
       </div>
     </AdminShell>
   );
