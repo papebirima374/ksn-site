@@ -67,6 +67,11 @@ export default function Navbar() {
           href: "/notre-histoire",
           description: "Fondation 2021, jalons clés, valeurs",
         },
+        {
+          label: "Événements & Calendrier",
+          href: "/evenements",
+          description: "Dates de l'Hégire, fêtes, Magal",
+        },
       ],
     },
     { kind: "link", label: t("nav.spiritualite"), href: "/spiritualite" },

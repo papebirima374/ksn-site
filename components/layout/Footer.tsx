@@ -32,6 +32,7 @@ export default function Footer() {
     { label: t("nav.spiritualite"), href: "/spiritualite" },
     { label: "Challenge 1 Milliard", href: "/challenge" },
     { label: "Journée Salaatu", href: "/journee-salaatu" },
+    { label: "Événements", href: "/evenements" },
     { label: t("nav.media"), href: "/media" },
     { label: t("nav.boutique"), href: "/boutique" },
     { label: t("nav.blog"), href: "/blog" },
