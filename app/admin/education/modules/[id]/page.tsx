@@ -49,14 +49,27 @@ export default function AdminEducationModuleEditPage() {
 
   async function reload() {
     setLoading(true);
+    setError("");
     try {
-      const [m, lsns] = await Promise.all([
-        getEducationModule(moduleId),
-        listEducationLessons(moduleId),
-      ]);
+      // On charge le module en premier — c'est lui qui détermine
+      // l'existence. Si le get fail, on n'essaie meme pas les lecons.
+      const m = await getEducationModule(moduleId);
       setModule(m);
-      setLessons(lsns);
-      setError("");
+      if (m) {
+        try {
+          const lsns = await listEducationLessons(moduleId);
+          setLessons(lsns);
+        } catch (e2) {
+          // Si la liste des lecons fail (composite index, perms),
+          // on garde le module visible et on affiche l'erreur listing.
+          setError(
+            e2 instanceof Error
+              ? `Module chargé, mais erreur sur les leçons : ${e2.message}`
+              : "Erreur de chargement des leçons"
+          );
+          setLessons([]);
+        }
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de chargement");
     } finally {

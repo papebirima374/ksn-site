@@ -1050,15 +1050,19 @@ export async function deleteEducationModule(id: string): Promise<void> {
 
 export async function listEducationLessons(moduleId?: string): Promise<EducationLesson[]> {
   const db = getDb();
+  // NB : on n'utilise pas orderBy dans la query Firestore lorsqu'il y a
+  // un where(), car cela necessite un composite index. On trie cote
+  // client, c'est largement assez rapide pour ~25 lecons.
   const baseQuery = moduleId
-    ? query(
-        collection(db, "education_lessons"),
-        where("moduleId", "==", moduleId),
-        orderBy("order", "asc")
-      )
-    : query(collection(db, "education_lessons"), orderBy("order", "asc"));
+    ? query(collection(db, "education_lessons"), where("moduleId", "==", moduleId))
+    : query(collection(db, "education_lessons"));
   const snap = await getDocs(baseQuery);
-  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<EducationLesson, "id">) }));
+  const items = snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<EducationLesson, "id">),
+  }));
+  items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return items;
 }
 
 export async function getEducationLesson(id: string): Promise<EducationLesson | null> {
