@@ -4,6 +4,9 @@ import Commissions from "@/components/sections/Commissions";
 import LeDahira from "@/components/sections/LeDahira";
 import Presidence from "@/components/sections/Presidence";
 import Stats from "@/components/sections/Stats";
+import MotDuPresident from "@/components/sections/MotDuPresident";
+import OrganigrammeBureau from "@/components/sections/OrganigrammeBureau";
+import DocumentsTelechargement from "@/components/sections/DocumentsTelechargement";
 
 export const metadata: Metadata = {
   title: "Le Dahira",
@@ -22,8 +25,11 @@ export default function DahiraPage() {
       />
 
       <Presidence />
+      <MotDuPresident />
       <LeDahira />
+      <OrganigrammeBureau />
       <Commissions />
+      <DocumentsTelechargement />
       <Stats />
     </>
   );

@@ -178,8 +178,21 @@ export default function MemberCard({ member, size = "preview" }: Props) {
             <Field label="Domicile" value={domicile} />
           </div>
 
-          <div className="relative z-10">
+          <div className="relative z-10 flex items-end justify-between mt-1">
             <Field label="Matricule" value={member.matricule} isMatricule />
+            {member.matricule && (
+              <div 
+                className="relative bg-white p-1 rounded-md border border-[#0f5132]/20 shadow-sm flex items-center justify-center pointer-events-auto"
+                style={{ width: "46px", height: "46px" }}
+              >
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(`https://salaatualaanabii.com/verifier-carte/${member.matricule}`)}`}
+                  alt="QR Code de validation"
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

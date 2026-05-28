@@ -276,6 +276,16 @@ export async function getMember(id: string): Promise<Member | null> {
   return { id: snap.id, ...(snap.data() as Omit<Member, "id">) };
 }
 
+export async function getMemberByMatricule(matricule: string): Promise<Member | null> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "members"), where("matricule", "==", matricule.trim()), limit(1))
+  );
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  return { id: d.id, ...(d.data() as Omit<Member, "id">) };
+}
+
 function normalizePhone(p?: string): string {
   return (p ?? "").replace(/\D+/g, "");
 }
