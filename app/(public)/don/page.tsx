@@ -5,6 +5,7 @@ import { LINKS, PAYMENT, DON_AMOUNTS, buildWhatsAppLink } from "@/lib/constants"
 import WaveLogo from "@/components/ui/WaveLogo";
 import OrangeMoneyLogo from "@/components/ui/OrangeMoneyLogo";
 import UBALogo from "@/components/ui/UBALogo";
+import InternationalDonation from "@/components/sections/InternationalDonation";
 
 export const metadata: Metadata = {
   title: "Faire un Don",
@@ -105,6 +106,9 @@ export default function DonPage() {
           </a>
         </div>
       </section>
+
+      {/* STRIPE + PAYPAL INTERNATIONAL */}
+      <InternationalDonation />
 
       {/* ORANGE MONEY + UBA */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16">
