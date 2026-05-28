@@ -6,8 +6,6 @@ import { FaPlus, FaTrash, FaPenToSquare, FaYoutube, FaVideo } from "react-icons/
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, GalleryItem } from "@/lib/admin-types";
-import { addDoc, collection } from "firebase/firestore";
-import { getDb } from "@/lib/firebase";
 import {
   listGallery,
   uploadGalleryImage,
@@ -18,45 +16,6 @@ import {
   deleteYoutubeLink,
   YoutubeLink,
 } from "@/lib/admin-data";
-
-const DEFAULT_G_ITEMS = [
-  {
-    src: "/images/journee/recital_coran.png",
-    alt: "Récital du Saint Coran à l'ouverture",
-    category: "journee" as const,
-    year: "2025"
-  },
-  {
-    src: "/images/journee/rajass_collectif.png",
-    alt: "Rajass collectif — Muqàddamatul Xidma",
-    category: "journee" as const,
-    year: "2025"
-  },
-  {
-    src: "/images/journee/conference_badiane.png",
-    alt: "Conférence de Serigne Moustapha Badiane",
-    category: "journee" as const,
-    year: "2025"
-  },
-  {
-    src: "/images/journee/declamation_khassida.png",
-    alt: "Déclamation des Khassida — Kourel Hizbut Tarqiya",
-    category: "journee" as const,
-    year: "2024"
-  },
-  {
-    src: "/images/journee/mosquee_touba.png",
-    alt: "La oumma réunie devant la grande mosquée",
-    category: "journee" as const,
-    year: "2024"
-  },
-  {
-    src: "/images/journee/discours_bassirou.png",
-    alt: "Mot de la Fin par Serigne Bassirou Toure",
-    category: "journee" as const,
-    year: "2024"
-  }
-];
 
 const CATEGORIES: { id: GalleryItem["category"]; label: string }[] = [
   { id: "evenements", label: "Événements" },
@@ -110,39 +69,11 @@ export default function AdminGaleriePage() {
   async function reload() {
     setLoading(true);
     try {
-      const db = getDb();
-      
-      // Auto-seeding using localStorage check (bypassing Firestore "config" permission error)
-      const seedKey = "gallery_default_seeded_v3";
-      const isSeededLocal = typeof window !== "undefined" && window.localStorage.getItem(seedKey);
-      if (!isSeededLocal) {
-        try {
-          const existingGallery = await listGallery();
-          if (existingGallery.length === 0) {
-            for (const d of DEFAULT_G_ITEMS) {
-              await addDoc(collection(db, "gallery"), {
-                src: d.src,
-                alt: d.alt,
-                category: d.category,
-                year: d.year,
-                createdAt: Date.now(),
-                createdBy: "system",
-              });
-            }
-          }
-          if (typeof window !== "undefined") {
-            window.localStorage.setItem(seedKey, "true");
-          }
-        } catch (seedErr) {
-          console.error("Failed to seed default gallery items:", seedErr);
-        }
-      }
-
       setItems(await listGallery());
       setYtLinks(await listYoutubeLinks());
       setError("");
     } catch (e) {
-      console.error("Gallery reload/seed error:", e);
+      console.error("Gallery reload error:", e);
       setError(e instanceof Error ? e.message : "Erreur de chargement");
     } finally {
       setLoading(false);

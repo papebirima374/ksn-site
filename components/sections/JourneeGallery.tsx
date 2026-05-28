@@ -6,52 +6,6 @@ import { FaCamera, FaXmark, FaImage, FaYoutube, FaVideo } from "react-icons/fa6"
 import { listGallery, listYoutubeLinks, YoutubeLink } from "@/lib/admin-data";
 import { GalleryItem as DBGalleryItem } from "@/lib/admin-types";
 
-type GalleryItem = {
-  src: string | null;
-  caption: string;
-  year: string;
-  bgClass: string;
-};
-
-const ITEMS: GalleryItem[] = [
-  {
-    src: "/images/journee/recital_coran.png",
-    caption: "Récital du Saint Coran à l'ouverture",
-    year: "2025",
-    bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]",
-  },
-  {
-    src: "/images/journee/rajass_collectif.png",
-    caption: "Rajass collectif — Muqàddamatul Xidma",
-    year: "2025",
-    bgClass: "bg-gradient-to-br from-[#B8860B] to-[#D4AF37]",
-  },
-  {
-    src: "/images/journee/conference_badiane.png",
-    caption: "Conférence de Serigne Moustapha Badiane",
-    year: "2025",
-    bgClass: "bg-gradient-to-br from-[#0A3D24] to-[#082F22]",
-  },
-  {
-    src: "/images/journee/declamation_khassida.png",
-    caption: "Déclamation des Khassida — Kourel Hizbut Tarqiya",
-    year: "2024",
-    bgClass: "bg-gradient-to-br from-[#D4AF37] to-[#B8860B]",
-  },
-  {
-    src: "/images/journee/mosquee_touba.png",
-    caption: "La oumma réunie devant la grande mosquée",
-    year: "2024",
-    bgClass: "bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22]",
-  },
-  {
-    src: "/images/journee/discours_bassirou.png",
-    caption: "Mot de la Fin par Serigne Bassirou Toure",
-    year: "2024",
-    bgClass: "bg-gradient-to-br from-[#F5D76E] via-[#D4AF37] to-[#B8860B]",
-  },
-];
-
 function getYoutubeVideoId(url: string): string | null {
   if (!url) return null;
   const clean = url.trim();
@@ -90,14 +44,12 @@ export default function JourneeGallery() {
 
   const closeLightbox = () => setOpenIdx(null);
 
-  const displayItems = dbItems.length > 0
-    ? dbItems.map((d) => ({
-        src: d.src,
-        caption: d.alt || "Souvenir KSN",
-        year: d.year || "2025",
-        bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
-      }))
-    : ITEMS;
+  const displayItems = dbItems.map((d) => ({
+    src: d.src,
+    caption: d.alt || "Souvenir KSN",
+    year: d.year || "2025",
+    bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
+  }));
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -145,6 +97,11 @@ export default function JourneeGallery() {
           {loading ? (
             <div className="col-span-full py-12 text-center text-white/50">
               Chargement des photos...
+            </div>
+          ) : displayItems.length === 0 ? (
+            <div className="col-span-full py-16 text-center text-white/50 bg-white/5 rounded-3xl border border-white/10">
+              <FaImage className="mx-auto text-5xl text-white/30 mb-3" />
+              <p className="text-sm">Aucune photo souvenir disponible pour le moment.</p>
             </div>
           ) : (
             displayItems.map((item, i) => (
