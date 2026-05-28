@@ -158,6 +158,14 @@ export type EducationLesson = {
   reminder?: Partial<Record<EducationLanguage, string>>;
   /** Audio par langue. */
   audio?: Partial<Record<EducationLanguage, EducationLessonAudio>>;
+  /** Illustrations uploadées (images pédagogiques). */
+  illustrations?: Array<{
+    url: string;
+    storagePath: string;
+    caption?: string;
+    alt?: string;
+    order?: number;
+  }>;
   /** Temps de lecture estimé en minutes. */
   readingTimeMin?: number;
   quiz?: EducationLessonQuiz;

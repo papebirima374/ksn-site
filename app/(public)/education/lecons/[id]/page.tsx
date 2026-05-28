@@ -29,6 +29,8 @@ import {
   getPrevLesson as helperGetPrevLesson,
 } from "@/lib/education/progress";
 import IslamicPattern from "../../_components/IslamicPattern";
+import LessonIllustrations from "../../_components/LessonIllustrations";
+import ScreenshotGuard from "../../_components/ScreenshotGuard";
 
 export default function PublicLessonDetailPage() {
   const params = useParams<{ id: string }>();
@@ -231,6 +233,10 @@ export default function PublicLessonDetailPage() {
             </span>
           )}
         </div>
+      </div>
+
+      <ScreenshotGuard>
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* LECTEUR DE TEXTE BILINGUE */}
         <article className="edu-card rounded-[35px] overflow-hidden edu-book-open">
@@ -360,6 +366,9 @@ export default function PublicLessonDetailPage() {
                 </p>
               )}
             </div>
+
+            {/* ILLUSTRATIONS PEDAGOGIQUES (auto + uploadées) */}
+            <LessonIllustrations lesson={lesson} />
 
             {/* APPLICATION PRATIQUE */}
             {application && (
@@ -788,6 +797,7 @@ export default function PublicLessonDetailPage() {
           </div>
         </div>
       </div>
+      </ScreenshotGuard>
     </main>
   );
 }

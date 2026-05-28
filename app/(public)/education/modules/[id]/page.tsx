@@ -29,6 +29,7 @@ import {
   getCurrentLesson,
 } from "@/lib/education/progress";
 import IslamicPattern from "../../_components/IslamicPattern";
+import ScreenshotGuard from "../../_components/ScreenshotGuard";
 
 const ICON_BY_KEY: Record<string, React.ReactNode> = {
   seedling: <FaSeedling />,
@@ -159,6 +160,7 @@ export default function PublicModuleDetailPage() {
     <main className="edu-surface relative z-10 min-h-screen pt-32 sm:pt-40 pb-20">
       <IslamicPattern variant="arabesque" opacity={0.05} />
 
+      <ScreenshotGuard showBanner={false}>
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6">
         <div className="mb-8 edu-book-open">
           <Link
@@ -340,6 +342,7 @@ export default function PublicModuleDetailPage() {
           )}
         </div>
       </div>
+      </ScreenshotGuard>
     </main>
   );
 }
