@@ -1,5 +1,8 @@
 "use client";
 
+import { useState, FormEvent } from "react";
+import { addDoc, collection } from "firebase/firestore";
+import { getDb } from "@/lib/firebase";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -24,6 +27,35 @@ const SOCIALS = [
 
 export default function Footer() {
   const { t } = useT();
+  
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "success" | "error">("idle");
+  const [newsletterMsg, setNewsletterMsg] = useState("");
+  const [submittingNewsletter, setSubmittingNewsletter] = useState(false);
+
+  const handleSubscribeNewsletter = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setSubmittingNewsletter(true);
+    setNewsletterStatus("idle");
+    setNewsletterMsg("");
+
+    try {
+      const db = getDb();
+      await addDoc(collection(db, "newsletter_subscribers"), {
+        email: newsletterEmail.trim().toLowerCase(),
+        subscribedAt: Date.now(),
+      });
+      setNewsletterStatus("success");
+      setNewsletterEmail("");
+    } catch (err) {
+      console.error("Newsletter subscription error:", err);
+      setNewsletterStatus("error");
+      setNewsletterMsg("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+    } finally {
+      setSubmittingNewsletter(false);
+    }
+  };
 
   const navLinks = [
     { label: t("nav.home"), href: "/" },
@@ -132,7 +164,48 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-10 sm:mt-14 pt-6 sm:pt-8">
+        {/* NEWSLETTER ROW */}
+        <div className="border-t border-white/10 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="max-w-md">
+            <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
+              S&apos;abonner à la Newsletter
+            </h4>
+            <p className="text-white/60 text-xs sm:text-sm mt-1 leading-relaxed">
+              Recevez les actualités de la oumma KSN, les dates des événements et nos rappels spirituels directement dans votre boîte mail.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubscribeNewsletter} className="w-full md:w-auto max-w-md flex flex-col sm:flex-row gap-2">
+            <input
+              type="email"
+              required
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              placeholder="Votre adresse email"
+              className="bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-xs sm:text-sm text-white placeholder-white/40 focus:border-[#D4AF37] outline-none min-w-[240px] flex-1"
+            />
+            <button
+              type="submit"
+              disabled={submittingNewsletter}
+              className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-5 py-3 rounded-xl hover:opacity-95 transition text-xs sm:text-sm whitespace-nowrap disabled:opacity-70"
+            >
+              {submittingNewsletter ? "Envoi..." : "S'abonner"}
+            </button>
+          </form>
+        </div>
+
+        {newsletterStatus === "success" && (
+          <p className="text-emerald-400 text-xs mt-2 font-semibold text-center md:text-right">
+            Inscription réussie ! Merci pour votre confiance.
+          </p>
+        )}
+        {newsletterStatus === "error" && (
+          <p className="text-red-400 text-xs mt-2 font-semibold text-center md:text-right">
+            {newsletterMsg}
+          </p>
+        )}
+
+        <div className="border-t border-white/10 mt-8 pt-6 sm:pt-8">
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-white/60 mb-5">
             <Link href="/mentions-legales" className="hover:text-[#D4AF37] transition">Mentions légales</Link>
             <Link href="/confidentialite" className="hover:text-[#D4AF37] transition">Confidentialité</Link>
