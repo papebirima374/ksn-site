@@ -20,6 +20,7 @@ import {
   FaCalendarDays,
   FaCommentDots,
   FaFilePdf,
+  FaGraduationCap,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -35,6 +36,7 @@ const NAV = [
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
   { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" as const },
   { href: "/admin/documents", label: "Documents PDF", Icon: FaFilePdf, perm: "articles.write" as const },
+  { href: "/admin/education", label: "Éducation (β)", Icon: FaGraduationCap, perm: null, adminOnly: true },
   { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];
