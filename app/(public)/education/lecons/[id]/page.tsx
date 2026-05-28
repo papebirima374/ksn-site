@@ -17,7 +17,15 @@ import {
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { EducationLesson, EducationModule } from "@/lib/admin-types";
-import { getEducationLesson, getEducationModule, listEducationLessons } from "@/lib/admin-data";
+import { getEducationLesson, getEducationModule, listEducationLessons, listEducationModules } from "@/lib/admin-data";
+import {
+  loadCompletedLessonIds,
+  markLessonCompleted,
+  isLessonUnlocked,
+  getCurrentLesson,
+  getNextLesson as helperGetNextLesson,
+  getPrevLesson as helperGetPrevLesson,
+} from "@/lib/education/progress";
 
 export default function PublicLessonDetailPage() {
   const params = useParams<{ id: string }>();
@@ -66,39 +74,50 @@ export default function PublicLessonDetailPage() {
     }
 
     setLoading(true);
-    getEducationLesson(lessonId)
-      .then(async (l) => {
+    // On charge en parallèle : la leçon courante + TOUS les modules + TOUTES les leçons
+    // (nécessaire pour calculer le gating séquentiel global)
+    Promise.all([
+      getEducationLesson(lessonId),
+      listEducationModules(),
+      listEducationLessons(),
+    ])
+      .then(async ([l, allModules, allLessonsRaw]) => {
         if (!l || l.publishStatus === "draft") {
           setError("Cette leçon n'est pas disponible.");
           setLoading(false);
           return;
         }
+
+        // Filtrage : seules les leçons et modules publiés sont accessibles publiquement
+        const allLessons = allLessonsRaw.filter((x) => x.publishStatus !== "draft");
+        const visibleModules = allModules.filter((m) => m.publishStatus !== "draft");
+
+        // Récupérer la progression depuis localStorage
+        const completed = loadCompletedLessonIds();
+        setCompletedLessonIds(completed);
+
+        // ═══ GATING : vérifier si la leçon est débloquée ═══
+        const unlocked = isLessonUnlocked(l.id, visibleModules, allLessons, completed);
+        if (!unlocked) {
+          // Redirection vers la leçon "courante" (la première non complétée débloquée)
+          const current = getCurrentLesson(visibleModules, allLessons, completed);
+          if (current) {
+            router.replace(`/education/lecons/${current.id}`);
+          } else {
+            router.replace("/education");
+          }
+          return;
+        }
+
         setLesson(l);
 
         // Récupérer le module parent
         const m = await getEducationModule(l.moduleId);
         setModuleParent(m);
 
-        if (m) {
-          // Récupérer toutes les leçons du module pour la navigation
-          const allLessons = await listEducationLessons(m.id);
-          const published = allLessons.filter((x) => x.publishStatus !== "draft");
-          const idx = published.findIndex((x) => x.id === l.id);
-          if (idx !== -1) {
-            setPrevLesson(idx > 0 ? published[idx - 1] : null);
-            setNextLesson(idx < published.length - 1 ? published[idx + 1] : null);
-          }
-        }
-
-        // Récupérer la progression
-        const completed = localStorage.getItem("ksn_education_completed_lessons");
-        if (completed) {
-          try {
-            setCompletedLessonIds(JSON.parse(completed));
-          } catch (e) {
-            setCompletedLessonIds([]);
-          }
-        }
+        // Navigation prev/next dans la séquence GLOBALE (pas seulement le module)
+        setPrevLesson(helperGetPrevLesson(l.id, visibleModules, allLessons));
+        setNextLesson(helperGetNextLesson(l.id, visibleModules, allLessons));
 
         setLoading(false);
       })
@@ -109,23 +128,16 @@ export default function PublicLessonDetailPage() {
       });
   }, [lessonId, router]);
 
-  // Handler pour marquer la leçon comme lue/non lue
+  // Handler pour marquer la leçon comme lue (toujours en avant, pas de toggle).
+  // Une fois validée, on ne peut plus annuler — c'est une étape franchie.
   const toggleCompleted = () => {
     if (!lesson) return;
+    if (completedLessonIds.includes(lesson.id)) return; // déjà validée
 
-    let updated = [...completedLessonIds];
-    const isCurrentCompleted = completedLessonIds.includes(lesson.id);
-
-    if (isCurrentCompleted) {
-      updated = updated.filter((id) => id !== lesson.id);
-    } else {
-      updated.push(lesson.id);
-      setShowCompletionAnimation(true);
-      setTimeout(() => setShowCompletionAnimation(false), 2000);
-    }
-
+    const updated = markLessonCompleted(lesson.id);
     setCompletedLessonIds(updated);
-    localStorage.setItem("ksn_education_completed_lessons", JSON.stringify(updated));
+    setShowCompletionAnimation(true);
+    setTimeout(() => setShowCompletionAnimation(false), 2200);
   };
 
   if (loading) {
@@ -189,25 +201,11 @@ export default function PublicLessonDetailPage() {
             </Link>
           )}
 
-          <button
-            type="button"
-            onClick={toggleCompleted}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              isCompleted
-                ? "bg-emerald-500/20 border border-emerald-500/30 text-emerald-400"
-                : "bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            {isCompleted ? (
-              <>
-                <FaCheck /> Validée
-              </>
-            ) : (
-              <>
-                <div className="w-2.5 h-2.5 rounded-full border border-white/40" /> Marquer comme lue
-              </>
-            )}
-          </button>
+          {isCompleted && (
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 border border-emerald-500/30 text-emerald-400">
+              <FaCheck /> Leçon validée
+            </span>
+          )}
         </div>
 
         {/* LECTEUR DE TEXTE BILINGUE */}
@@ -347,6 +345,50 @@ export default function PublicLessonDetailPage() {
                 </p>
               </div>
             )}
+
+            {/* VALIDATION DE LA LECON — debloque la suivante */}
+            <div className="mt-10 pt-8 border-t border-[#0F7C55]/15">
+              {!isCompleted ? (
+                <div className="text-center">
+                  <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-3">
+                    Prêt(e) à valider cette leçon ?
+                  </p>
+                  <p className="text-sm text-gray-600 mb-5 max-w-lg mx-auto leading-6">
+                    En validant, tu confirmes avoir lu et compris l&apos;enseignement.
+                    La leçon suivante sera alors débloquée.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={toggleCompleted}
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0F7C55] to-[#0A3D24] hover:from-[#B8860B] hover:to-[#D4AF37] text-white hover:text-[#0F7C55] font-bold px-8 py-4 rounded-2xl shadow-lg hover:scale-105 transition text-sm sm:text-base"
+                  >
+                    <FaCheck />
+                    J&apos;ai compris — Valider la leçon
+                  </button>
+                </div>
+              ) : (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-center">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500 text-white flex items-center justify-center mb-3">
+                    <FaCheck className="text-xl" />
+                  </div>
+                  <p className="font-display text-lg font-bold text-emerald-800">
+                    Alhamdoulillah, leçon validée
+                  </p>
+                  {nextLesson ? (
+                    <Link
+                      href={`/education/lecons/${nextLesson.id}`}
+                      className="inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-6 py-3 rounded-xl shadow-md hover:scale-105 transition text-sm"
+                    >
+                      Continuer vers la leçon suivante <FaChevronRight className="text-xs" />
+                    </Link>
+                  ) : (
+                    <p className="mt-3 text-sm text-emerald-700 italic">
+                      Tu as terminé toutes les leçons du Tazawwud. Macha&apos;Allah !
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </article>
 

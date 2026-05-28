@@ -16,7 +16,13 @@ import {
   FaStar,
   FaChevronRight,
   FaCircleCheck,
+  FaLock,
 } from "react-icons/fa6";
+import {
+  isModuleUnlocked,
+  getCurrentLesson,
+  getProgressStats,
+} from "@/lib/education/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import PageHero from "@/components/layout/PageHero";
 import { LINKS } from "@/lib/constants";
@@ -391,35 +397,71 @@ export default function EducationPage() {
                       ? ICON_BY_KEY[module.iconKey]
                       : <FaGraduationCap />;
 
+                    // GATING : module débloqué si la première leçon est accessible
+                    const moduleOpen = isModuleUnlocked(
+                      module.id,
+                      modules,
+                      lessons,
+                      completedLessonIds
+                    );
+                    const isFullyDone = moduleLessonsCount > 0
+                      && completedInModule === moduleLessonsCount;
+
                     return (
                       <motion.div
                         key={module.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white/5 border border-white/10 rounded-[30px] p-6 flex flex-col justify-between hover:border-[#D4AF37]/30 transition group shadow-md"
+                        className={`bg-white/5 border rounded-[30px] p-6 flex flex-col justify-between transition group shadow-md ${
+                          !moduleOpen
+                            ? "border-white/5 opacity-60"
+                            : isFullyDone
+                            ? "border-emerald-500/40 hover:border-emerald-500/60"
+                            : "border-white/10 hover:border-[#D4AF37]/30"
+                        }`}
                       >
                         <div>
                           <div className="flex items-start justify-between">
-                            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] text-[#D4AF37] flex items-center justify-center text-xl">
-                              {Icon}
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${
+                              !moduleOpen
+                                ? "bg-white/5 text-white/30"
+                                : isFullyDone
+                                ? "bg-emerald-500 text-white"
+                                : "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] text-[#D4AF37]"
+                            }`}>
+                              {!moduleOpen ? <FaLock /> : isFullyDone ? <FaCircleCheck /> : Icon}
                             </div>
-                            <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] bg-[#D4AF37]/10 px-2.5 py-1 rounded-full border border-[#D4AF37]/20">
-                              Module {module.order}
+                            <span className={`text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-full border ${
+                              !moduleOpen
+                                ? "text-white/40 bg-white/5 border-white/10"
+                                : isFullyDone
+                                ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"
+                                : "text-[#D4AF37] bg-[#D4AF37]/10 border-[#D4AF37]/20"
+                            }`}>
+                              {!moduleOpen ? "Verrouillé" : isFullyDone ? "Terminé ✓" : `Module ${module.order}`}
                             </span>
                           </div>
 
-                          <h4 className="font-display text-lg font-bold text-white mt-5 leading-tight group-hover:text-[#D4AF37] transition">
+                          <h4 className={`font-display text-lg font-bold mt-5 leading-tight transition ${
+                            !moduleOpen ? "text-white/50" : "text-white group-hover:text-[#D4AF37]"
+                          }`}>
                             {module.title?.fr || "Sans titre"}
                           </h4>
                           {module.titleArabic && (
-                            <p className="font-arabic mt-1.5 text-base text-[#D4AF37]" dir="rtl">
+                            <p className={`font-arabic mt-1.5 text-base ${
+                              !moduleOpen ? "text-white/30" : "text-[#D4AF37]"
+                            }`} dir="rtl">
                               {module.titleArabic}
                             </p>
                           )}
-                          <p className="mt-3 text-white/60 text-xs sm:text-sm leading-6 line-clamp-2">
-                            {module.description?.fr ||
-                              "Découvrez les enseignements fondamentaux de cette section."}
+                          <p className={`mt-3 text-xs sm:text-sm leading-6 line-clamp-2 ${
+                            !moduleOpen ? "text-white/30" : "text-white/60"
+                          }`}>
+                            {!moduleOpen
+                              ? "Validez les leçons du module précédent pour débloquer celui-ci."
+                              : module.description?.fr ||
+                                "Découvrez les enseignements fondamentaux de cette section."}
                           </p>
                         </div>
 
@@ -428,23 +470,40 @@ export default function EducationPage() {
                             <span>
                               {moduleLessonsCount} leçon{moduleLessonsCount > 1 ? "s" : ""}
                             </span>
-                            <span className="font-bold text-[#D4AF37]">
+                            <span className={`font-bold ${
+                              isFullyDone ? "text-emerald-300" : "text-[#D4AF37]"
+                            }`}>
                               {completedInModule}/{moduleLessonsCount} validées
                             </span>
                           </div>
                           <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-5">
                             <div
-                              className="h-full bg-[#D4AF37] rounded-full transition-all duration-300"
+                              className={`h-full rounded-full transition-all duration-300 ${
+                                isFullyDone
+                                  ? "bg-emerald-500"
+                                  : "bg-[#D4AF37]"
+                              }`}
                               style={{ width: `${modulePct}%` }}
                             />
                           </div>
 
-                          <Link
-                            href={`/education/modules/${module.id}`}
-                            className="inline-flex w-full items-center justify-center gap-2 bg-white/10 hover:bg-gradient-to-r hover:from-[#B8860B] hover:to-[#D4AF37] text-white hover:text-[#0F7C55] py-3 rounded-2xl text-xs font-bold transition duration-300"
-                          >
-                            Ouvrir le module <FaChevronRight className="text-[10px]" />
-                          </Link>
+                          {moduleOpen ? (
+                            <Link
+                              href={`/education/modules/${module.id}`}
+                              className={`inline-flex w-full items-center justify-center gap-2 py-3 rounded-2xl text-xs font-bold transition duration-300 ${
+                                isFullyDone
+                                  ? "bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/40"
+                                  : "bg-white/10 hover:bg-gradient-to-r hover:from-[#B8860B] hover:to-[#D4AF37] text-white hover:text-[#0F7C55]"
+                              }`}
+                            >
+                              {isFullyDone ? "Revoir le module" : "Continuer le module"}{" "}
+                              <FaChevronRight className="text-[10px]" />
+                            </Link>
+                          ) : (
+                            <div className="inline-flex w-full items-center justify-center gap-2 bg-white/5 text-white/40 py-3 rounded-2xl text-xs font-bold cursor-not-allowed">
+                              <FaLock className="text-[10px]" /> Verrouillé
+                            </div>
+                          )}
                         </div>
                       </motion.div>
                     );

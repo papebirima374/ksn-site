@@ -17,8 +17,19 @@ import {
   FaStar,
 } from "react-icons/fa6";
 import { motion } from "framer-motion";
+import { FaLock } from "react-icons/fa6";
 import { EducationModule, EducationLesson } from "@/lib/admin-types";
-import { getEducationModule, listEducationLessons } from "@/lib/admin-data";
+import {
+  getEducationModule,
+  listEducationLessons,
+  listEducationModules,
+} from "@/lib/admin-data";
+import {
+  loadCompletedLessonIds,
+  getUnlockedLessonIds,
+  isModuleUnlocked,
+  getCurrentLesson,
+} from "@/lib/education/progress";
 
 const ICON_BY_KEY: Record<string, React.ReactNode> = {
   seedling: <FaSeedling />,
@@ -36,6 +47,8 @@ export default function PublicModuleDetailPage() {
 
   const [module, setModule] = useState<EducationModule | null>(null);
   const [lessons, setLessons] = useState<EducationLesson[]>([]);
+  const [allModules, setAllModules] = useState<EducationModule[]>([]);
+  const [allLessons, setAllLessons] = useState<EducationLesson[]>([]);
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,25 +65,43 @@ export default function PublicModuleDetailPage() {
       return;
     }
 
-    Promise.all([getEducationModule(moduleId), listEducationLessons(moduleId)])
-      .then(([mod, lsns]) => {
+    Promise.all([
+      getEducationModule(moduleId),
+      listEducationLessons(moduleId),
+      listEducationModules(),
+      listEducationLessons(),
+    ])
+      .then(([mod, lsns, mods, allLsns]) => {
         if (!mod || mod.publishStatus === "draft") {
           setError("Ce module n'est pas disponible.");
           return;
         }
-        setModule(mod);
-        // Filtrer les leçons publiées
-        setLessons(lsns.filter((l) => l.publishStatus !== "draft"));
 
-        // Récupérer la progression
-        const completed = localStorage.getItem("ksn_education_completed_lessons");
-        if (completed) {
-          try {
-            setCompletedLessonIds(JSON.parse(completed));
-          } catch (e) {
-            setCompletedLessonIds([]);
+        // Progression depuis localStorage
+        const completed = loadCompletedLessonIds();
+        setCompletedLessonIds(completed);
+
+        // Toutes les leçons et modules publiés (pour calculer le gating global)
+        const visibleAllLessons = allLsns.filter((l) => l.publishStatus !== "draft");
+        const visibleAllModules = mods.filter((m) => m.publishStatus !== "draft");
+        setAllModules(visibleAllModules);
+        setAllLessons(visibleAllLessons);
+
+        // ═══ GATING : vérifier si le module est débloqué ═══
+        const moduleOpen = isModuleUnlocked(mod.id, visibleAllModules, visibleAllLessons, completed);
+        if (!moduleOpen) {
+          // Module verrouillé → redirection vers la leçon courante (ou /education)
+          const current = getCurrentLesson(visibleAllModules, visibleAllLessons, completed);
+          if (current) {
+            router.replace(`/education/lecons/${current.id}`);
+          } else {
+            router.replace("/education");
           }
+          return;
         }
+
+        setModule(mod);
+        setLessons(lsns.filter((l) => l.publishStatus !== "draft"));
       })
       .catch((err) => {
         console.error("Erreur de chargement", err);
@@ -180,70 +211,119 @@ export default function PublicModuleDetailPage() {
               {/* Ligne verticale de la timeline */}
               <div className="absolute left-3.5 sm:left-4.5 top-2.5 bottom-2.5 w-[2px] bg-gradient-to-b from-[#0F7C55] via-[#D4AF37] to-[#0A3D24]" />
 
-              {lessons.map((lesson, idx) => {
-                const isCompleted = completedLessonIds.includes(lesson.id);
-
-                return (
-                  <motion.div
-                    key={lesson.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="relative group flex items-start gap-4 sm:gap-6"
-                  >
-                    {/* Indicateur de statut (Puce sur la timeline) */}
-                    <div className="absolute -left-6 sm:-left-8 top-1.5 flex items-center justify-center">
-                      {isCompleted ? (
-                        <div className="w-5 h-5 rounded-full bg-[#D4AF37] border-4 border-[#082F22] flex items-center justify-center text-[10px] text-[#0F7C55] shadow-md shadow-[#D4AF37]/20">
-                          <FaCircleCheck className="text-white font-bold" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-full bg-white/20 border-4 border-[#082F22] flex items-center justify-center transition group-hover:bg-[#D4AF37]/50" />
-                      )}
-                    </div>
-
-                    {/* Bloc carte de la leçon */}
-                    <Link
-                      href={`/education/lecons/${lesson.id}`}
-                      className="flex-1 bg-white/5 border border-white/5 rounded-2xl p-5 hover:bg-white/10 hover:border-[#D4AF37]/20 transition flex items-center justify-between gap-4"
-                    >
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-[#D4AF37] tracking-wider font-bold">
-                            Leçon {lesson.reference}
-                          </span>
-                          {lesson.publicAccess && (
-                            <span className="text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
-                              Gratuit
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-display font-bold text-white text-base mt-1.5 group-hover:text-[#D4AF37] transition truncate">
-                          {lesson.title?.fr || "Sans titre"}
-                        </h3>
-                        {lesson.titleArabic && (
-                          <p className="font-arabic mt-1 text-sm text-[#D4AF37]/80" dir="rtl">
-                            {lesson.titleArabic}
-                          </p>
-                        )}
-                        <p className="mt-2 text-white/50 text-[11px] flex items-center gap-2">
-                          <span>Étude de texte</span>
-                          {lesson.readingTimeMin && (
-                            <>
-                              <span>•</span>
-                              <span>~{lesson.readingTimeMin} min de lecture</span>
-                            </>
-                          )}
-                        </p>
-                      </div>
-
-                      <div className="w-8 h-8 rounded-xl bg-white/5 text-white/70 flex items-center justify-center group-hover:bg-[#D4AF37] group-hover:text-[#0F7C55] transition flex-shrink-0">
-                        <FaChevronRight className="text-xs" />
-                      </div>
-                    </Link>
-                  </motion.div>
+              {(() => {
+                const unlockedSet = getUnlockedLessonIds(
+                  allModules,
+                  allLessons,
+                  completedLessonIds
                 );
-              })}
+                return lessons.map((lesson, idx) => {
+                  const isCompleted = completedLessonIds.includes(lesson.id);
+                  const isUnlocked = unlockedSet.has(lesson.id);
+
+                  return (
+                    <motion.div
+                      key={lesson.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="relative group flex items-start gap-4 sm:gap-6"
+                    >
+                      {/* Indicateur de statut (Puce sur la timeline) */}
+                      <div className="absolute -left-6 sm:-left-8 top-1.5 flex items-center justify-center">
+                        {isCompleted ? (
+                          <div className="w-5 h-5 rounded-full bg-emerald-500 border-4 border-[#082F22] flex items-center justify-center text-[10px] text-white shadow-md">
+                            <FaCircleCheck />
+                          </div>
+                        ) : isUnlocked ? (
+                          <div className="w-5 h-5 rounded-full bg-[#D4AF37] border-4 border-[#082F22] animate-pulse shadow-md shadow-[#D4AF37]/30" />
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-white/10 border-4 border-[#082F22] flex items-center justify-center text-[8px] text-white/40">
+                            <FaLock />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bloc carte de la leçon */}
+                      {isUnlocked ? (
+                        <Link
+                          href={`/education/lecons/${lesson.id}`}
+                          className={`flex-1 border rounded-2xl p-5 transition flex items-center justify-between gap-4 ${
+                            isCompleted
+                              ? "bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40"
+                              : "bg-white/5 border-white/5 hover:bg-white/10 hover:border-[#D4AF37]/30"
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-[10px] font-mono text-[#D4AF37] tracking-wider font-bold">
+                                Leçon {lesson.reference}
+                              </span>
+                              {isCompleted ? (
+                                <span className="text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                                  ✓ Validée
+                                </span>
+                              ) : (
+                                <span className="text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-[#D4AF37]/20 text-[#D4AF37] animate-pulse">
+                                  En cours
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="font-display font-bold text-white text-base mt-1.5 group-hover:text-[#D4AF37] transition truncate">
+                              {lesson.title?.fr || "Sans titre"}
+                            </h3>
+                            {lesson.titleArabic && (
+                              <p className="font-arabic mt-1 text-sm text-[#D4AF37]/80" dir="rtl">
+                                {lesson.titleArabic}
+                              </p>
+                            )}
+                            <p className="mt-2 text-white/50 text-[11px] flex items-center gap-2">
+                              <span>Étude de texte</span>
+                              {lesson.readingTimeMin && (
+                                <>
+                                  <span>•</span>
+                                  <span>~{lesson.readingTimeMin} min de lecture</span>
+                                </>
+                              )}
+                            </p>
+                          </div>
+
+                          <div className="w-8 h-8 rounded-xl bg-white/5 text-white/70 flex items-center justify-center group-hover:bg-[#D4AF37] group-hover:text-[#0F7C55] transition flex-shrink-0">
+                            <FaChevronRight className="text-xs" />
+                          </div>
+                        </Link>
+                      ) : (
+                        <div
+                          className="flex-1 bg-white/[0.02] border border-white/5 rounded-2xl p-5 flex items-center justify-between gap-4 opacity-50 cursor-not-allowed select-none"
+                          aria-disabled
+                          title="Validez d'abord la leçon précédente pour débloquer celle-ci"
+                        >
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-mono text-white/40 tracking-wider font-bold">
+                                Leçon {lesson.reference}
+                              </span>
+                              <span className="text-[8px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-white/5 text-white/40 inline-flex items-center gap-1">
+                                <FaLock className="text-[8px]" /> Verrouillée
+                              </span>
+                            </div>
+                            <h3 className="font-display font-bold text-white/50 text-base mt-1.5 truncate">
+                              {lesson.title?.fr || "Sans titre"}
+                            </h3>
+                            <p className="mt-2 text-white/30 text-[11px]">
+                              Validez la leçon précédente pour la débloquer.
+                            </p>
+                          </div>
+
+                          <div className="w-8 h-8 rounded-xl bg-white/5 text-white/30 flex items-center justify-center flex-shrink-0">
+                            <FaLock className="text-xs" />
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                });
+              })()}
             </div>
           )}
         </div>
