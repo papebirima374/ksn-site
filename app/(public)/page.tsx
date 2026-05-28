@@ -10,6 +10,7 @@ import Presidence from "@/components/sections/Presidence";
 import ReseauxSociaux from "@/components/sections/ReseauxSociaux";
 import Spiritualite from "@/components/sections/Spiritualite";
 import Stats from "@/components/sections/Stats";
+import Temoignages from "@/components/sections/Temoignages";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <Presidence />
       <LeDahira />
       <Commissions />
+      <Temoignages />
       <Media />
       <AppKSN />
       <ReseauxSociaux />
