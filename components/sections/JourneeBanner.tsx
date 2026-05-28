@@ -68,6 +68,7 @@ export default function JourneeBanner() {
           <div className="w-full lg:w-[440px]">
             <EventCountdown
               target={EVENT_DATE_ISO}
+              firestoreOverride
               passedLabel="La Journée a eu lieu — à très bientôt pour la prochaine édition."
             />
             <p className="mt-4 text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#0F7C55]/80 font-bold">

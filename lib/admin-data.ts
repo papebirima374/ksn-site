@@ -835,3 +835,44 @@ export async function deleteYoutubeLink(id: string): Promise<void> {
   const db = getDb();
   await deleteDoc(doc(db, "youtube_links", id));
 }
+
+// ============ PARAMETRES JOURNEE SALAATU ============
+
+export type JourneeSettings = {
+  /** Date ISO complete de l'evenement (ex: "2026-12-26T08:00:00.000Z") */
+  dateIso: string;
+  /** Libelle affichable de la date (ex: "26 décembre 2026") */
+  label: string;
+  /** Lieu (par defaut "Touba, Sénégal") */
+  location?: string;
+  updatedAt?: number;
+};
+
+/** Recupere la date de la prochaine Journee depuis Firestore.
+ *  Retourne null si non defini -> les composants utilisent leur fallback. */
+export async function getJourneeSettings(): Promise<JourneeSettings | null> {
+  const db = getDb();
+  try {
+    const snap = await getDoc(doc(db, "settings", "journee"));
+    if (!snap.exists()) return null;
+    const data = snap.data();
+    if (!data.dateIso || !data.label) return null;
+    return {
+      dateIso: data.dateIso,
+      label: data.label,
+      location: data.location,
+      updatedAt: data.updatedAt,
+    };
+  } catch (err) {
+    console.error("Error reading journee settings:", err);
+    return null;
+  }
+}
+
+export async function saveJourneeSettings(settings: JourneeSettings): Promise<void> {
+  const db = getDb();
+  await setDoc(doc(db, "settings", "journee"), {
+    ...settings,
+    updatedAt: Date.now(),
+  });
+}

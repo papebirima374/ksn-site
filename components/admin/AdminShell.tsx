@@ -17,6 +17,7 @@ import {
   FaBookOpen,
   FaCoins,
   FaBagShopping,
+  FaCalendarDays,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -30,6 +31,7 @@ const NAV = [
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
   { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
+  { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];
 
@@ -73,9 +75,14 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const visibleNav = NAV.filter((item) =>
-    !item.perm ? true : hasPermission(user, item.perm)
-  );
+  const visibleNav = NAV.filter((item) => {
+    // Items reserves a l'administrateur principal
+    if ("adminOnly" in item && item.adminOnly) {
+      return user?.role === "admin";
+    }
+    // Items publics (perm null) ou items necessitant une permission specifique
+    return !item.perm ? true : hasPermission(user, item.perm);
+  });
 
   return (
     <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#082F22] text-white dark" : "bg-[#F8F5EF] text-[#1A1A1A]"}`}>

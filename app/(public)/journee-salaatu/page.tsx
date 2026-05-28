@@ -107,7 +107,7 @@ export default function JourneeSalaatuPage() {
 
       {/* COMPTE A REBOURS */}
       <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
-        <EventCountdown target={EVENT_DATE_ISO} />
+        <EventCountdown target={EVENT_DATE_ISO} firestoreOverride />
         <p className="text-center mt-4 text-white/60 text-xs sm:text-sm">
           Prochaine édition :{" "}
           <span className="text-[#D4AF37] font-semibold">

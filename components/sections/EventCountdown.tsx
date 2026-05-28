@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
+import { getJourneeSettings } from "@/lib/admin-data";
 
 type EventCountdownProps = {
-  /** Date cible ISO (ex. "2027-01-02T08:00:00+00:00") */
+  /** Date cible ISO (ex. "2027-01-02T08:00:00+00:00").
+   *  Sert de fallback si firestoreOverride est activee et Firestore vide. */
   target: string;
   /** Libelle court de l'evenement (affiche en cas de delta negatif) */
   passedLabel?: string;
+  /** Si true, fetch la date depuis settings/journee dans Firestore.
+   *  Permet a l'admin de modifier la date sans toucher au code. */
+  firestoreOverride?: boolean;
 };
 
 type Remaining = {
@@ -38,17 +43,44 @@ function compute(target: number, now: number): Remaining {
 export default function EventCountdown({
   target,
   passedLabel = "L'événement a eu lieu — à très bientôt pour la prochaine édition.",
+  firestoreOverride = false,
 }: EventCountdownProps) {
-  const targetMs = new Date(target).getTime();
+  const [effectiveTargetMs, setEffectiveTargetMs] = useState<number>(
+    new Date(target).getTime()
+  );
   const [mounted, setMounted] = useState(false);
-  const [r, setR] = useState<Remaining>(() => compute(targetMs, Date.now()));
+  const [r, setR] = useState<Remaining>(() => compute(effectiveTargetMs, Date.now()));
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Fetch Firestore une seule fois au mount si demande
+  useEffect(() => {
+    if (!firestoreOverride) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const settings = await getJourneeSettings();
+        if (cancelled) return;
+        if (settings?.dateIso) {
+          const ms = new Date(settings.dateIso).getTime();
+          if (!isNaN(ms)) {
+            setEffectiveTargetMs(ms);
+            setR(compute(ms, Date.now()));
+          }
+        }
+      } catch {
+        // Silencieux : si Firestore plante on garde le fallback target
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [firestoreOverride]);
+
   // Tick chaque seconde mais SEULEMENT quand l'onglet est visible
-  useVisibleInterval(() => setR(compute(targetMs, Date.now())), 1000);
+  useVisibleInterval(() => setR(compute(effectiveTargetMs, Date.now())), 1000);
 
   if (!mounted) {
     // Placeholder cote serveur pour eviter mismatch
