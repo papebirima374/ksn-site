@@ -115,6 +115,20 @@ service cloud.firestore {
       allow create, update, delete: if hasPerm("education.write");
     }
 
+    // ─── Premium — Achats validés manuellement par admin ──────────────
+    // Toute personne connectée peut créer sa propre demande de
+    // déblocage premium (paiement Wave hors-bande, validation par
+    // admin via /admin/premium/paiements).
+    match /premium_purchases/{id} {
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      // Le user voit ses propres commandes pour suivre l'avancement
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid || hasPerm("users.write")
+      );
+      // Seul un admin avec users.write peut approuver / refuser
+      allow update, delete: if hasPerm("users.write");
+    }
+
     // ─── Éducation & Culture — Certifications (validation orale) ───────
     // Toute personne peut déposer une demande de certificat après avoir
     // complété le Tazawwud. Seule la Commission Éducation lit/met à jour.

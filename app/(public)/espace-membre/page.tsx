@@ -14,7 +14,10 @@ function ContentInner() {
   const search = useSearchParams();
   const returnTo = search?.get("next") || "/espace-membre/profil";
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
+  // Mode initial : "signup" si ?mode=signup dans l'URL (depuis /inscription)
+  const initialMode =
+    search?.get("mode") === "signup" ? "signup" : "login";
+  const [mode, setMode] = useState<"login" | "signup">(initialMode);
   const [idType, setIdType] = useState<"email" | "phone">("email");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");

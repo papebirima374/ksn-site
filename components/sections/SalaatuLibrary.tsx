@@ -2,14 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FaLock, FaCrown, FaShieldHalved, FaClock } from "react-icons/fa6";
+import { FaLock, FaCrown, FaShieldHalved } from "react-icons/fa6";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { listSalaatuLibrary } from "@/lib/admin-data";
 import { SALAATU_FALLBACK, pickSalaatuOfTheDay } from "@/lib/salaatu-seed";
-import { SalaatuLibraryItem, SALAATU_CATEGORIES } from "@/lib/admin-types";
+import {
+  SalaatuLibraryItem,
+  SALAATU_CATEGORIES,
+  hasPremium,
+} from "@/lib/admin-types";
 import { useAuth } from "@/lib/auth-context";
 import { useProtectionShield } from "@/lib/protection";
-import { PAYMENT } from "@/lib/constants";
 
 const FREE_PREVIEW_COUNT = 2;
 
@@ -21,11 +24,13 @@ export default function SalaatuLibrary() {
   const [open, setOpen] = useState<string | null>(null);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
-  const status = user?.memberStatus ?? "inactif";
-  const isActive = status === "actif";
-  // Protection only applies for active members (they see the full content).
-  // Visitors see the public preview without the aggressive blur.
-  const shield = useProtectionShield(isActive);
+  // ─── GATING : par achat premium "salaatuLibrary", indépendant du
+  // statut de membre KSN officiel. ──────────────────────────────────
+  const isPremium = hasPremium(user, "salaatuLibrary");
+  // Protection only applies once content is unlocked.
+  const shield = useProtectionShield(isPremium);
+  // Conserve un badge informatif pour les membres KSN officiels.
+  const isOfficialMember = user?.memberStatus === "actif";
 
   useEffect(() => {
     if (!isFirebaseConfigured()) return;
@@ -67,29 +72,27 @@ export default function SalaatuLibrary() {
   return (
     <section
       id="bibliotheque"
-      className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 ${isActive ? "protected-content" : ""}`}
-      onCopy={isActive ? (e) => e.preventDefault() : undefined}
-      onContextMenu={isActive ? (e) => e.preventDefault() : undefined}
+      className={`relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 ${isPremium ? "protected-content" : ""}`}
+      onCopy={isPremium ? (e) => e.preventDefault() : undefined}
+      onContextMenu={isPremium ? (e) => e.preventDefault() : undefined}
     >
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16 relative">
-        {isActive && shield.hidden && <ShieldOverlay reason={shield.reason} />}
+        {isPremium && shield.hidden && <ShieldOverlay reason={shield.reason} />}
 
         <div className="text-center">
-          {isActive ? (
+          {isPremium ? (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F7C55]/10 text-[#0F7C55] text-xs font-semibold mb-3">
-              <FaShieldHalved className="text-[#D4AF37]" /> Contenu protégé · Membre Actif
-            </div>
-          ) : !user ? (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
-              <FaLock /> Aperçu visiteur · 2 Salaats sur {items.length} accessibles
-            </div>
-          ) : status === "en_attente" ? (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
-              <FaClock /> En attente de validation · Réglez 1 000 FCFA pour débloquer
+              <FaShieldHalved className="text-[#D4AF37]" />
+              Accès premium débloqué
+              {isOfficialMember && (
+                <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#B8860B] text-[10px] uppercase tracking-widest font-black">
+                  <FaCrown className="text-[9px]" /> Membre KSN
+                </span>
+              )}
             </div>
           ) : (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
-              <FaLock /> Aperçu visiteur · Devenez membre actif pour tout débloquer
+              <FaLock /> Aperçu · {FREE_PREVIEW_COUNT} Salaats sur {items.length} accessibles
             </div>
           )}
           <span className="block uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
@@ -100,9 +103,10 @@ export default function SalaatuLibrary() {
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
             {items.length} Salaat{items.length > 1 ? "s" : ""} avec arabe,
-            translittération, traduction, bienfaits et secrets d&apos;utilisation.
-            Le Salaatu du jour est en accès libre — la bibliothèque complète est
-            réservée aux membres actifs.
+            translittération, traduction, bienfaits et secrets
+            d&apos;utilisation. Le Salaatu du jour reste en accès libre — la
+            bibliothèque complète s&apos;ouvre à vie avec un paiement unique
+            de 1 000 FCFA.
           </p>
           {user && (
             <p className="mt-3 text-xs text-gray-400">
@@ -168,7 +172,7 @@ export default function SalaatuLibrary() {
             <p className="text-center py-12 text-gray-500">Aucun Salaat ne correspond à ces critères.</p>
           ) : (
             filtered.map((s, idx) => {
-              const locked = !isActive && idx >= FREE_PREVIEW_COUNT;
+              const locked = !isPremium && idx >= FREE_PREVIEW_COUNT;
               return (
                 <SalaatuCard
                   key={s.id}
@@ -189,26 +193,36 @@ export default function SalaatuLibrary() {
           )}
         </div>
 
-        {!isActive && (
-          <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F7C55] text-center">
+        {!isPremium && (
+          <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F7C55] text-center shadow-lg">
             <FaCrown className="inline text-2xl mb-2" />
             <h3 className="font-display text-xl sm:text-2xl font-bold">
-              Débloquer la bibliothèque complète
+              Ouvrir la bibliothèque sacrée
             </h3>
             <p className="mt-2 text-sm leading-6 max-w-xl mx-auto">
-              {items.length - FREE_PREVIEW_COUNT} Salaats supplémentaires + leurs secrets sont réservés aux membres actifs.
+              {items.length - FREE_PREVIEW_COUNT} Salaats supplémentaires
+              avec leurs translittérations, traductions et secrets — accès
+              permanent à vie pour <strong>1 000 FCFA</strong>.
             </p>
             <Link
-              href="/espace-membre/profil"
+              href="/premium/bibliotheque"
               className="inline-flex items-center mt-5 bg-[#0F7C55] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
             >
-              Devenir Membre Actif →
+              Débloquer pour 1 000 FCFA →
             </Link>
+            <p className="text-[11px] text-[#0F7C55]/70 mt-3 italic">
+              Paiement unique via Wave · validation sous 24h ouvrées
+            </p>
           </div>
         )}
       </div>
 
-      {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} status={status} loggedIn={!!user} />}
+      {upgradeOpen && (
+        <UpgradeModal
+          onClose={() => setUpgradeOpen(false)}
+          loggedIn={!!user}
+        />
+      )}
     </section>
   );
 }
@@ -312,11 +326,9 @@ function SalaatuCard({
 
 function UpgradeModal({
   onClose,
-  status,
   loggedIn,
 }: {
   onClose: () => void;
-  status: "actif" | "en_attente" | "inactif";
   loggedIn: boolean;
 }) {
   return (
@@ -329,39 +341,36 @@ function UpgradeModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-2xl">
-          {status === "en_attente" ? <FaClock /> : <FaCrown />}
+          <FaCrown />
         </div>
         <h2 className="font-display mt-4 text-2xl font-bold text-[#0F7C55]">
-          {status === "en_attente" ? "Validation en cours" : "Adhésion membre actif"}
+          Salaat verrouillé
         </h2>
         <p className="mt-3 text-gray-600 text-sm leading-7">
-          {status === "en_attente"
-            ? "Votre demande est en attente. Réglez la cotisation de 1 000 FCFA via Wave — votre statut passera automatiquement à Actif et la bibliothèque complète sera débloquée."
-            : "L'accès complet à la bibliothèque des Salaats (texte arabe, translittération, traduction, bienfaits et secrets d'utilisation) est réservé aux membres actifs. La cotisation est de 1 000 FCFA."}
+          Ce contenu sacré fait partie du <strong>premium</strong>.
+          Débloquez l&apos;intégralité de la bibliothèque (texte arabe,
+          translittération, traduction, bienfaits et secrets) pour un
+          paiement unique de <strong>1 000 FCFA</strong> via Wave.
+        </p>
+        <p className="text-[11px] text-gray-500 mt-2 italic">
+          Accès à vie sur tous vos appareils.
         </p>
 
         <div className="mt-5 space-y-2">
-          {status === "en_attente" ? (
-            <a
-              href={PAYMENT.membershipWave}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full bg-[#1DCEDB] hover:bg-[#16b8c4] text-white py-3 rounded-xl font-bold"
-            >
-              Payer 1 000 FCFA via Wave
-            </a>
-          ) : (
-            <Link
-              href={loggedIn ? "/espace-membre/profil" : "/espace-membre?next=/espace-membre/profil"}
-              className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 rounded-xl font-bold"
-            >
-              {loggedIn ? "Compléter mon profil →" : "Créer un compte →"}
-            </Link>
-          )}
+          <Link
+            href={
+              loggedIn
+                ? "/premium/bibliotheque"
+                : "/espace-membre?next=/premium/bibliotheque"
+            }
+            className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 rounded-xl font-bold hover:scale-[1.02] transition"
+          >
+            {loggedIn ? "Débloquer maintenant →" : "Créer un compte pour débloquer →"}
+          </Link>
           <button
             type="button"
             onClick={onClose}
-            className="block w-full bg-gray-100 text-[#0F7C55] py-3 rounded-xl font-semibold text-sm"
+            className="block w-full bg-gray-100 text-[#0F7C55] py-3 rounded-xl font-semibold text-sm hover:bg-gray-200 transition"
           >
             Plus tard
           </button>

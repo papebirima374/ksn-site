@@ -191,6 +191,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       memberId,
       memberStatus,
       memberMatricule,
+      photoURL: data.photoURL ?? fbUser.photoURL ?? undefined,
+      photoStoragePath: data.photoStoragePath,
+      premiumAccess: data.premiumAccess,
     };
   }, []);
 

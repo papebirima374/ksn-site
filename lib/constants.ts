@@ -42,6 +42,9 @@ export const PAYMENT = {
   membershipAmount: 1000,
   orangeMoneyNumber: "221780178444",
   ubaAccount: "307500053070",
+  /** Liens Wave pour les achats premium du site (1000 FCFA = 1010 avec frais). */
+  premiumSalaatuLibraryWave:
+    "https://pay.wave.com/m/M_sn_bbehrkdtxa8W/c/sn/?amount=1010",
 };
 
 export const DON_AMOUNTS = [

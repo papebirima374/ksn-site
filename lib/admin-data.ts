@@ -26,6 +26,10 @@ import {
   EducationLanguage,
   EducationCertification,
   EducationCertificationStatus,
+  PremiumPurchase,
+  PremiumPurchaseStatus,
+  PremiumProductKey,
+  PremiumUnlock,
   FinanceEntry,
   GalleryItem,
   Member,
@@ -461,6 +465,53 @@ export async function uploadMemberPhoto(file: File): Promise<{
   await uploadBytes(r, file);
   const url = await getDownloadURL(r);
   return { url, path };
+}
+
+/** Upload photo de profil pour un compte SITE (≠ photo carte membre).
+ *  Stocke dans users/{uid}.photoURL — totalement optionnel. */
+export async function uploadUserProfilePhoto(
+  userId: string,
+  file: File
+): Promise<{ url: string; storagePath: string }> {
+  const bucket = getBucket();
+  const safe = file.name.toLowerCase().replace(/[^a-z0-9.-]/g, "-").slice(0, 50);
+  const path = `users_profile/${userId}/${Date.now()}-${safe}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file, { contentType: file.type || "image/jpeg" });
+  const url = await getDownloadURL(r);
+
+  // Récupère l'éventuelle ancienne photo pour la supprimer du Storage.
+  const db = getDb();
+  const snap = await getDoc(doc(db, "users", userId));
+  if (snap.exists()) {
+    const old = (snap.data() as { photoStoragePath?: string }).photoStoragePath;
+    if (old && old !== path) {
+      await deleteObject(ref(bucket, old)).catch(() => undefined);
+    }
+  }
+  await updateDoc(doc(db, "users", userId), {
+    photoURL: url,
+    photoStoragePath: path,
+    updatedAt: Date.now(),
+  });
+  return { url, storagePath: path };
+}
+
+/** Supprime la photo de profil d'un compte site. */
+export async function removeUserProfilePhoto(userId: string): Promise<void> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "users", userId));
+  if (!snap.exists()) return;
+  const old = (snap.data() as { photoStoragePath?: string }).photoStoragePath;
+  if (old) {
+    const bucket = getBucket();
+    await deleteObject(ref(bucket, old)).catch(() => undefined);
+  }
+  await updateDoc(doc(db, "users", userId), {
+    photoURL: deleteField(),
+    photoStoragePath: deleteField(),
+    updatedAt: Date.now(),
+  });
 }
 
 export type ImportMember = {
@@ -1415,6 +1466,137 @@ export async function publishAllTazawwud(): Promise<{
     }
   }
   return { modules: modulesUpdated, lessons: lessonsUpdated };
+}
+
+// ============ PREMIUM — Achats avec validation manuelle ============
+//
+// Architecture :
+//  1. L'utilisateur (connecté) clique "Débloquer" sur la page premium
+//  2. Il paye 1000 FCFA via Wave (lien externe)
+//  3. Il revient sur le site et soumet une preuve (ID transaction)
+//     → createPremiumPurchase() crée un doc status="pending_review"
+//  4. Un admin avec permission "users.write" voit la demande dans
+//     /admin/premium/paiements et clique Valider/Refuser
+//  5. approvePremiumPurchase() écrit users/{uid}.premiumAccess.<key>
+//     → l'utilisateur a accès à vie sur tous ses appareils
+// ─────────────────────────────────────────────────────────────────────
+
+const PREMIUM_COLLECTION = "premium_purchases";
+
+export async function createPremiumPurchase(data: {
+  userId: string;
+  userEmail?: string;
+  userPhone?: string;
+  userDisplayName?: string;
+  productKey: PremiumProductKey;
+  amount: number;
+  method: "wave" | "orange-money" | "manual";
+  applicantTransactionRef?: string;
+  applicantNote?: string;
+}): Promise<string> {
+  const db = getDb();
+  const ref = await addDoc(collection(db, PREMIUM_COLLECTION), {
+    ...data,
+    status: "pending_review" as PremiumPurchaseStatus,
+    createdAt: Date.now(),
+  });
+  return ref.id;
+}
+
+/** Liste TOUTES les commandes (filtre côté client par défaut, ou via status). */
+export async function listPremiumPurchases(
+  status?: PremiumPurchaseStatus
+): Promise<PremiumPurchase[]> {
+  const db = getDb();
+  const snap = await getDocs(collection(db, PREMIUM_COLLECTION));
+  const items = snap.docs.map(
+    (d) =>
+      ({ id: d.id, ...(d.data() as Omit<PremiumPurchase, "id">) } as PremiumPurchase)
+  );
+  const filtered = status ? items.filter((p) => p.status === status) : items;
+  filtered.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return filtered;
+}
+
+export async function listUserPremiumPurchases(
+  userId: string
+): Promise<PremiumPurchase[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, PREMIUM_COLLECTION), where("userId", "==", userId))
+  );
+  const items = snap.docs.map(
+    (d) => ({ id: d.id, ...(d.data() as Omit<PremiumPurchase, "id">) } as PremiumPurchase)
+  );
+  items.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return items;
+}
+
+export async function getPremiumPurchase(
+  id: string
+): Promise<PremiumPurchase | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, PREMIUM_COLLECTION, id));
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...(snap.data() as Omit<PremiumPurchase, "id">) };
+}
+
+/** Valide la commande + débloque la section premium chez l'utilisateur.
+ *  Opération en deux écritures (Firestore n'a pas de transaction
+ *  multi-document sans `runTransaction` ici — c'est acceptable au
+ *  volume du KSN). */
+export async function approvePremiumPurchase(
+  purchaseId: string,
+  reviewer: { uid: string; name: string },
+  confirmedTransactionId: string,
+  notes?: string
+): Promise<void> {
+  const purchase = await getPremiumPurchase(purchaseId);
+  if (!purchase) throw new Error("Commande introuvable");
+  if (purchase.status === "completed") return; // idempotent
+
+  const db = getDb();
+  const unlock: PremiumUnlock = {
+    unlockedAt: Date.now(),
+    purchaseId,
+    amount: purchase.amount,
+    transactionId: confirmedTransactionId,
+  };
+  // 1. Écriture sur users/{uid}.premiumAccess.<key>
+  await updateDoc(doc(db, "users", purchase.userId), {
+    [`premiumAccess.${purchase.productKey}`]: unlock,
+    updatedAt: Date.now(),
+  });
+  // 2. Mise à jour du doc purchase
+  await updateDoc(
+    doc(db, PREMIUM_COLLECTION, purchaseId),
+    stripUndefinedDeep({
+      status: "completed" as PremiumPurchaseStatus,
+      reviewerUid: reviewer.uid,
+      reviewerName: reviewer.name,
+      reviewerNotes: notes,
+      confirmedTransactionId,
+      reviewedAt: Date.now(),
+    })
+  );
+}
+
+export async function rejectPremiumPurchase(
+  purchaseId: string,
+  reviewer: { uid: string; name: string },
+  notes: string
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(
+    doc(db, PREMIUM_COLLECTION, purchaseId),
+    stripUndefinedDeep({
+      status: "rejected" as PremiumPurchaseStatus,
+      reviewerUid: reviewer.uid,
+      reviewerName: reviewer.name,
+      reviewerNotes: notes,
+      reviewedAt: Date.now(),
+    })
+  );
 }
 
 // ============ EDUCATION — CERTIFICATIONS (validation orale) ============

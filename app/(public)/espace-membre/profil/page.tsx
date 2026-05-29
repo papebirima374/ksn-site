@@ -24,6 +24,8 @@ import { Member } from "@/lib/admin-types";
 import { PAYMENT } from "@/lib/constants";
 import MemberCard from "@/components/admin/MemberCard";
 import WaveLogo from "@/components/ui/WaveLogo";
+import ProfilePhotoUploader from "@/components/profile/ProfilePhotoUploader";
+import PremiumStatusCard from "@/components/profile/PremiumStatusCard";
 
 export default function ProfilPage() {
   const { user, loading, signOut, refresh, configured } = useAuth();
@@ -64,17 +66,34 @@ export default function ProfilPage() {
       <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0F7C55] to-[#082F22] flex items-center justify-center text-white font-display font-bold text-lg">
-              {(user.displayName ?? user.email)[0]?.toUpperCase()}
-            </div>
+            {user.photoURL ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.photoURL}
+                alt={user.displayName || "Profil"}
+                className="w-12 h-12 rounded-full object-cover border-2 border-[#D4AF37]"
+                draggable={false}
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0F7C55] to-[#082F22] flex items-center justify-center text-white font-display font-bold text-lg">
+                {(user.displayName ?? user.email)[0]?.toUpperCase()}
+              </div>
+            )}
             <div>
               <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
-                Mon Espace Membre
+                Mon Espace
               </p>
               <h1 className="font-display text-xl sm:text-2xl font-bold text-[#0F7C55]">
                 {user.displayName || user.email}
               </h1>
-              <StatusBadge status={status} />
+              <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                {status === "actif" && (
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-[#B8860B] bg-gradient-to-r from-[#D4AF37]/15 to-[#B8860B]/10 border border-[#D4AF37]/40 px-2 py-0.5 rounded-full">
+                    <FaCrown className="text-[9px]" /> Membre KSN officiel
+                  </span>
+                )}
+                <StatusBadge status={status} />
+              </div>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -98,6 +117,12 @@ export default function ProfilPage() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* PHOTO PROFIL OPT + PREMIUM (toujours visibles, indépendants du statut membre) */}
+      <div className="grid sm:grid-cols-2 gap-4 mb-6">
+        <ProfilePhotoUploader />
+        <PremiumStatusCard />
       </div>
 
       {/* DASHBOARD */}

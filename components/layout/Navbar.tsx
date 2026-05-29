@@ -163,9 +163,19 @@ export default function Navbar() {
                 className="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
                 title={user.email}
               >
-                <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-[10px] font-black">
-                  {memberInitials}
-                </span>
+                {user.photoURL ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.photoURL}
+                    alt=""
+                    className="w-6 h-6 rounded-full object-cover border border-[#D4AF37]"
+                    draggable={false}
+                  />
+                ) : (
+                  <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-[10px] font-black">
+                    {memberInitials}
+                  </span>
+                )}
                 <span className="hidden xl:inline">{memberLabel}</span>
               </Link>
             ) : (

@@ -61,10 +61,89 @@ export type AppUser = {
   commission?: string;
   permissions: Permission[];
   createdAt?: number;
+  /** Statut membre KSN officiel — détecté via lookup members/* par email/tél.
+   *  PURE INFORMATION : ne déverrouille rien sur le site. Affichage badge. */
   memberStatus?: MemberStatus;
   memberId?: string;
   memberMatricule?: string;
   phone?: string;
+  /** Photo de profil (URL Firebase Storage). Entièrement OPTIONNELLE. */
+  photoURL?: string;
+  photoStoragePath?: string;
+  /** Achats premium — chacun débloque une section payante du site.
+   *  Indépendant du statut membre KSN (chacun paie sa biblio). */
+  premiumAccess?: {
+    salaatuLibrary?: PremiumUnlock;
+    // futures sections premium à ajouter ici :
+    // tazawwudAudio?: PremiumUnlock;
+    // ...
+  };
+};
+
+/** Une déblocage premium individuel attaché à un user. */
+export type PremiumUnlock = {
+  /** Quand l'accès a été validé par l'admin. */
+  unlockedAt: number;
+  /** Référence de la commande premium qui a débloqué. */
+  purchaseId: string;
+  /** Montant payé en FCFA (snapshot). */
+  amount: number;
+  /** Identifiant de transaction Wave (saisi par l'admin lors de la validation). */
+  transactionId?: string;
+};
+
+/** Identifiants des produits premium du site.
+ *  Chaque clé débloque une section payante indépendante. */
+export type PremiumProductKey = "salaatuLibrary";
+
+export const PREMIUM_PRODUCTS: Record<
+  PremiumProductKey,
+  { label: string; amount: number; description: string; perks: string[] }
+> = {
+  salaatuLibrary: {
+    label: "Bibliothèque des Salaatu",
+    amount: 1000, // FCFA
+    description:
+      "Accès permanent et illimité à toute la bibliothèque des Salaatu sacrés.",
+    perks: [
+      "Lecture intégrale de tous les Salaats",
+      "Salaatu du jour rotatif",
+      "Catégorisation, recherche et favoris",
+      "Accès à vie, partout, sur tous tes appareils",
+    ],
+  },
+};
+
+/** Demande d'achat premium déposée par un utilisateur après paiement Wave.
+ *  Stockée dans la collection `premium_purchases`. */
+export type PremiumPurchaseStatus =
+  | "pending_review" // soumis, en attente de validation admin
+  | "completed" // admin a confirmé → user débloqué
+  | "rejected"; // admin a refusé (notes obligatoires)
+
+export type PremiumPurchase = {
+  id: string;
+  userId: string;
+  userEmail?: string;
+  userPhone?: string;
+  userDisplayName?: string;
+  productKey: PremiumProductKey;
+  amount: number; // FCFA
+  method: "wave" | "orange-money" | "manual";
+  /** ID/référence transaction Wave fourni par l'utilisateur. */
+  applicantTransactionRef?: string;
+  /** Note libre de l'utilisateur (capture d'écran via URL, message…). */
+  applicantNote?: string;
+  status: PremiumPurchaseStatus;
+  /** Admin qui a validé/refusé. */
+  reviewerUid?: string;
+  reviewerName?: string;
+  /** Notes admin (raison du refus, vérification, etc.). */
+  reviewerNotes?: string;
+  /** Transaction Wave confirmée par l'admin. */
+  confirmedTransactionId?: string;
+  createdAt: number;
+  reviewedAt?: number;
 };
 
 // ════════════════════════════════════════════════════════════════════
@@ -336,6 +415,17 @@ export type Member = {
   // duplicates during the cross-project migration.
   sourceUid?: string;
 };
+
+/** Vérifie si l'utilisateur a débloqué une section premium spécifique. */
+export function hasPremium(
+  user: AppUser | null,
+  productKey: PremiumProductKey
+): boolean {
+  if (!user) return false;
+  // Les admins ont accès à tout le premium (pour modération / preview)
+  if (user.role === "admin") return true;
+  return Boolean(user.premiumAccess?.[productKey]?.unlockedAt);
+}
 
 export function hasPermission(user: AppUser | null, p: Permission): boolean {
   if (!user) return false;
