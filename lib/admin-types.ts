@@ -78,6 +78,8 @@ export type AppUser = {
     // tazawwudAudio?: PremiumUnlock;
     // ...
   };
+  /** Préférences de notifications (canaux + catégories). */
+  notificationPreferences?: NotificationPreferences;
 };
 
 /** Une déblocage premium individuel attaché à un user. */
@@ -315,6 +317,47 @@ export type NotificationType =
   | "info"
   | "success"
   | "warning";
+
+/** Canaux de notification disponibles côté user. */
+export type NotificationChannel =
+  | "inApp"      // cloche + toast (toujours actif)
+  | "browser"    // notification système navigateur (nécessite permission)
+  | "whatsapp"   // message WhatsApp automatique
+  | "email";     // futur — nécessite SMTP
+
+/** Catégories d'événements regroupés pour les préférences. */
+export type NotificationCategory =
+  | "premium"        // demandes/validations premium
+  | "education"      // certifications Tazawwud
+  | "admin_alerts"   // alertes admin (broadcast)
+  | "system";        // info/success/warning
+
+/** Préférences de notification d'un utilisateur. Tout ce qui n'est
+ *  pas explicitement à false est ON par défaut. */
+export type NotificationPreferences = {
+  /** Canaux activés. Le canal inApp est toujours actif et ne peut
+   *  pas être désactivé — c'est notre garantie de fond. */
+  channels?: Partial<Record<NotificationChannel, boolean>>;
+  /** Catégories désactivées. Si une catégorie est ici à false,
+   *  aucune notification de ce type ne sera produite pour cet user. */
+  categories?: Partial<Record<NotificationCategory, boolean>>;
+};
+
+/** Mapping NotificationType → NotificationCategory pour les filtres. */
+export const NOTIFICATION_TYPE_CATEGORY: Record<
+  NotificationType,
+  NotificationCategory
+> = {
+  premium_request_new: "admin_alerts",
+  premium_request_approved: "premium",
+  premium_request_rejected: "premium",
+  certification_request_new: "admin_alerts",
+  certification_approved: "education",
+  certification_rejected: "education",
+  info: "system",
+  success: "system",
+  warning: "system",
+};
 
 /** Une notification ciblée vers UN utilisateur précis (recipientUid).
  *  Pour les broadcasts (ex. : tous les admins), on insère 1 doc par

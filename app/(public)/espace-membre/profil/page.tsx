@@ -26,6 +26,7 @@ import MemberCard from "@/components/admin/MemberCard";
 import WaveLogo from "@/components/ui/WaveLogo";
 import ProfilePhotoUploader from "@/components/profile/ProfilePhotoUploader";
 import PremiumStatusCard from "@/components/profile/PremiumStatusCard";
+import NotificationPreferences from "@/components/profile/NotificationPreferences";
 
 export default function ProfilPage() {
   const { user, loading, signOut, refresh, configured } = useAuth();
@@ -120,9 +121,14 @@ export default function ProfilPage() {
       </div>
 
       {/* PHOTO PROFIL OPT + PREMIUM (toujours visibles, indépendants du statut membre) */}
-      <div className="grid sm:grid-cols-2 gap-4 mb-6">
+      <div className="grid sm:grid-cols-2 gap-4 mb-4">
         <ProfilePhotoUploader />
         <PremiumStatusCard />
+      </div>
+
+      {/* PRÉFÉRENCES DE NOTIFICATION */}
+      <div className="mb-6">
+        <NotificationPreferences />
       </div>
 
       {/* DASHBOARD */}

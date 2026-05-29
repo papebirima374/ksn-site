@@ -5,6 +5,7 @@ import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
 import CookieBanner from "@/components/layout/CookieBanner";
 import CartDrawer from "@/components/boutique/CartDrawer";
 import CartBadge from "@/components/boutique/CartBadge";
+import NotificationToast from "@/components/layout/NotificationToast";
 import { I18nProvider } from "@/lib/i18n/context";
 import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
@@ -27,6 +28,7 @@ export default function PublicLayout({
             <CartBadge />
             <CartDrawer />
             <CookieBanner />
+            <NotificationToast />
           </main>
         </CartProvider>
       </AuthProvider>

@@ -32,6 +32,9 @@ import {
   PremiumUnlock,
   AppNotification,
   NotificationType,
+  NotificationPreferences,
+  NotificationChannel,
+  NOTIFICATION_TYPE_CATEGORY,
   PREMIUM_PRODUCTS,
   FinanceEntry,
   GalleryItem,
@@ -1483,7 +1486,53 @@ export async function publishAllTazawwud(): Promise<{
 
 const NOTIF_COLLECTION = "notifications";
 
-/** Insère une notification simple pour UN utilisateur. */
+/** Récupère les préférences notifications d'un user (best-effort).
+ *  Si non disponibles (règles, doc absent…), renvoie un objet vide
+ *  ce qui équivaut à "tout activé" par défaut. */
+async function getRecipientPreferences(
+  uid: string
+): Promise<NotificationPreferences> {
+  try {
+    const db = getDb();
+    const snap = await getDoc(doc(db, "users", uid));
+    if (!snap.exists()) return {};
+    const data = snap.data() as { notificationPreferences?: NotificationPreferences };
+    return data.notificationPreferences || {};
+  } catch {
+    return {};
+  }
+}
+
+/** Vrai si l'user accepte de recevoir ce type de notif sur ce canal.
+ *  La règle est OPT-OUT : tout est activé sauf désactivation explicite. */
+function shouldNotify(
+  prefs: NotificationPreferences,
+  type: NotificationType,
+  channel: NotificationChannel
+): boolean {
+  // Canal explicitement désactivé ?
+  if (prefs.channels?.[channel] === false) return false;
+  // Catégorie explicitement désactivée ?
+  const category = NOTIFICATION_TYPE_CATEGORY[type];
+  if (category && prefs.categories?.[category] === false) return false;
+  return true;
+}
+
+/** Met à jour les préférences notif du user courant. */
+export async function updateNotificationPreferences(
+  uid: string,
+  prefs: NotificationPreferences
+): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, "users", uid), {
+    notificationPreferences: prefs,
+    updatedAt: Date.now(),
+  });
+}
+
+/** Insère une notification simple pour UN utilisateur — en respectant
+ *  ses préférences. Si l'user a désactivé "inApp" pour cette catégorie,
+ *  la notification N'EST PAS CRÉÉE. */
 export async function createNotification(data: {
   recipientUid: string;
   type: NotificationType;
@@ -1491,7 +1540,12 @@ export async function createNotification(data: {
   body: string;
   link?: string;
   meta?: Record<string, string | number | boolean>;
-}): Promise<string> {
+}): Promise<string | null> {
+  // Vérifie les préférences in-app du destinataire
+  const prefs = await getRecipientPreferences(data.recipientUid);
+  if (!shouldNotify(prefs, data.type, "inApp")) {
+    return null;
+  }
   const db = getDb();
   const ref = await addDoc(
     collection(db, NOTIF_COLLECTION),

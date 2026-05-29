@@ -241,6 +241,25 @@ export default function NotificationBell() {
               </ul>
             )}
           </div>
+
+          {/* Footer : lien vers la page dédiée + préférences */}
+          <div className="border-t border-white/10 bg-white/5 flex">
+            <Link
+              href="/notifications"
+              onClick={() => setOpen(false)}
+              className="flex-1 px-4 py-2.5 text-center text-xs font-bold text-[#D4AF37] hover:text-white transition border-r border-white/10"
+            >
+              Voir tout →
+            </Link>
+            <Link
+              href="/espace-membre/profil#notifications"
+              onClick={() => setOpen(false)}
+              className="px-4 py-2.5 text-center text-xs font-semibold text-white/60 hover:text-white transition"
+              title="Préférences"
+            >
+              ⚙
+            </Link>
+          </div>
         </div>
       )}
     </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth-context";
+import NotificationToast from "@/components/layout/NotificationToast";
 
 export const metadata: Metadata = {
   title: "Administration",
@@ -11,5 +12,10 @@ export default function AdminRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      {children}
+      <NotificationToast />
+    </AuthProvider>
+  );
 }
