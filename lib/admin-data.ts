@@ -1495,11 +1495,16 @@ export async function createPremiumPurchase(data: {
   applicantNote?: string;
 }): Promise<string> {
   const db = getDb();
-  const ref = await addDoc(collection(db, PREMIUM_COLLECTION), {
-    ...data,
-    status: "pending_review" as PremiumPurchaseStatus,
-    createdAt: Date.now(),
-  });
+  // IMPORTANT : Firestore refuse les champs undefined. On strip avant addDoc
+  // pour éviter les "Function addDoc() called with invalid data".
+  const ref = await addDoc(
+    collection(db, PREMIUM_COLLECTION),
+    stripUndefinedDeep({
+      ...data,
+      status: "pending_review" as PremiumPurchaseStatus,
+      createdAt: Date.now(),
+    })
+  );
   return ref.id;
 }
 

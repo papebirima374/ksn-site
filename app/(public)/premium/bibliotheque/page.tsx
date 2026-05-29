@@ -84,9 +84,25 @@ export default function PremiumBibliothequePage() {
       setNote("");
     } catch (err) {
       console.error(err);
-      setError(
-        "Impossible d'envoyer la demande. Vérifiez votre connexion et réessayez."
-      );
+      const msg = err instanceof Error ? err.message : String(err);
+      // Cas Firestore permission-denied → diagnostic ciblé pour l'utilisateur
+      if (msg.includes("permission-denied")) {
+        setError(
+          "Permission refusée par le serveur. Reconnectez-vous puis réessayez. Si le problème persiste, contactez-nous sur WhatsApp."
+        );
+      } else if (msg.includes("invalid-argument") || msg.includes("invalid data")) {
+        setError(
+          "Données invalides. Vérifiez votre référence Wave puis réessayez."
+        );
+      } else if (msg.includes("network") || msg.includes("unavailable")) {
+        setError(
+          "Problème de réseau. Vérifiez votre connexion et réessayez."
+        );
+      } else {
+        setError(
+          `Impossible d'envoyer la demande : ${msg}. Réessayez ou contactez-nous sur WhatsApp.`
+        );
+      }
     } finally {
       setSubmitting(false);
     }
