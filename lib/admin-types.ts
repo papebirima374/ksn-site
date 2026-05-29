@@ -296,6 +296,45 @@ export type EducationCertification = {
   validatedAt?: number;
 };
 
+// ════════════════════════════════════════════════════════════════════
+//   NOTIFICATIONS — Centre in-app temps réel
+// ════════════════════════════════════════════════════════════════════
+
+/** Types des événements de notification. Sert au routing UI
+ *  (icône, couleur d'accent) et au filtrage. */
+export type NotificationType =
+  // Premium
+  | "premium_request_new"      // user → admins : nouvelle demande déposée
+  | "premium_request_approved" // admin → user : demande validée
+  | "premium_request_rejected" // admin → user : demande refusée
+  // Certification Tazawwud
+  | "certification_request_new"
+  | "certification_approved"
+  | "certification_rejected"
+  // Générique
+  | "info"
+  | "success"
+  | "warning";
+
+/** Une notification ciblée vers UN utilisateur précis (recipientUid).
+ *  Pour les broadcasts (ex. : tous les admins), on insère 1 doc par
+ *  destinataire — c'est moins coûteux en règles de sécurité et plus
+ *  simple à indexer (queries `where("recipientUid", "==", uid)`). */
+export type AppNotification = {
+  id: string;
+  recipientUid: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  /** URL interne où mène le clic (ex: "/admin/premium/paiements"). */
+  link?: string;
+  /** Métadonnées libres (ex: { purchaseId, certId }). */
+  meta?: Record<string, string | number | boolean>;
+  read: boolean;
+  readAt?: number;
+  createdAt: number;
+};
+
 /** Document officiel téléchargeable (PDF, DOC, etc.).
  *  Affiché dans la section "Documents Officiels KSN" du site public. */
 export type OfficialDocument = {

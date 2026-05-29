@@ -115,6 +115,22 @@ service cloud.firestore {
       allow create, update, delete: if hasPerm("education.write");
     }
 
+    // ─── Notifications in-app (centre temps réel) ─────────────────────
+    // Lecture : seulement les notifications destinées à l'utilisateur courant
+    // Création : tout user connecté peut créer (création de demande premium
+    //   par exemple — le user doit pouvoir notifier les admins). Cela
+    //   reste safe car le doc créé est marqué `recipientUid` et n'a
+    //   pas de "pouvoir" intrinsèque.
+    // Update : seul le destinataire peut marquer comme lu
+    match /notifications/{id} {
+      allow create: if isSignedIn();
+      allow read, update: if isSignedIn()
+                          && resource.data.recipientUid == request.auth.uid;
+      allow delete: if isSignedIn()
+                    && (resource.data.recipientUid == request.auth.uid
+                        || isAdmin());
+    }
+
     // ─── Premium — Achats validés manuellement par admin ──────────────
     // Toute personne connectée peut créer sa propre demande de
     // déblocage premium (paiement Wave hors-bande, validation par

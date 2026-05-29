@@ -18,6 +18,7 @@ import { useT } from "@/lib/i18n/context";
 import { useAuth } from "@/lib/auth-context";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import SearchBar from "@/components/layout/SearchBar";
+import NotificationBell from "@/components/layout/NotificationBell";
 
 type NavLink = { kind: "link"; label: string; href: string };
 type NavChild = {
@@ -155,6 +156,7 @@ export default function Navbar() {
 
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             <SearchBar />
+            <NotificationBell />
             <LanguageSwitcher />
 
             {user ? (

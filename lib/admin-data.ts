@@ -30,6 +30,9 @@ import {
   PremiumPurchaseStatus,
   PremiumProductKey,
   PremiumUnlock,
+  AppNotification,
+  NotificationType,
+  PREMIUM_PRODUCTS,
   FinanceEntry,
   GalleryItem,
   Member,
@@ -1468,6 +1471,120 @@ export async function publishAllTazawwud(): Promise<{
   return { modules: modulesUpdated, lessons: lessonsUpdated };
 }
 
+// ============ NOTIFICATIONS — Centre in-app temps réel ============
+//
+// Architecture :
+//  - 1 document = 1 destinataire (recipientUid)
+//  - Pour un broadcast (ex: notifier tous les admins), on fan-out :
+//    on liste les UIDs cibles et on crée N documents
+//  - Le UI utilise onSnapshot sur where("recipientUid","==", myUid)
+//    pour le temps réel (badge cloche, dropdown notifs)
+// ─────────────────────────────────────────────────────────────────────
+
+const NOTIF_COLLECTION = "notifications";
+
+/** Insère une notification simple pour UN utilisateur. */
+export async function createNotification(data: {
+  recipientUid: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  link?: string;
+  meta?: Record<string, string | number | boolean>;
+}): Promise<string> {
+  const db = getDb();
+  const ref = await addDoc(
+    collection(db, NOTIF_COLLECTION),
+    stripUndefinedDeep({
+      ...data,
+      read: false,
+      createdAt: Date.now(),
+    })
+  );
+  return ref.id;
+}
+
+/** Fan-out d'une notification vers tous les utilisateurs ayant une
+ *  permission donnée (ex: notifier tous les "users.write" qu'une
+ *  nouvelle demande premium est arrivée).
+ *
+ *  Best-effort : si l'utilisateur courant n'a pas le droit de lister
+ *  les users (cas où c'est un user lambda qui poste une demande
+ *  premium), on swallow l'erreur silencieusement — l'admin pourra
+ *  toujours voir la demande dans son tableau de bord. La notif
+ *  est une feature pour rendre le workflow plus rapide, pas une
+ *  source de vérité. */
+export async function broadcastNotificationToPerm(
+  permission: string,
+  data: Omit<Parameters<typeof createNotification>[0], "recipientUid">
+): Promise<number> {
+  try {
+    const users = await listUsers();
+    const recipients = users.filter(
+      (u) =>
+        u.role === "admin" ||
+        (u.permissions && u.permissions.includes(permission as never))
+    );
+    await Promise.all(
+      recipients.map((u) =>
+        createNotification({ ...data, recipientUid: u.uid })
+      )
+    );
+    return recipients.length;
+  } catch {
+    // Les règles peuvent refuser à un user lambda de lire users/*
+    // → la notif admin ne sera pas fan-outée, c'est OK
+    return 0;
+  }
+}
+
+/** Liste les notifications du user (les + récentes en premier). */
+export async function listMyNotifications(
+  recipientUid: string,
+  max = 30
+): Promise<AppNotification[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(
+      collection(db, NOTIF_COLLECTION),
+      where("recipientUid", "==", recipientUid)
+    )
+  );
+  const items = snap.docs.map(
+    (d) =>
+      ({ id: d.id, ...(d.data() as Omit<AppNotification, "id">) } as AppNotification)
+  );
+  items.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  return items.slice(0, max);
+}
+
+export async function markNotificationRead(id: string): Promise<void> {
+  const db = getDb();
+  await updateDoc(doc(db, NOTIF_COLLECTION, id), {
+    read: true,
+    readAt: Date.now(),
+  });
+}
+
+export async function markAllNotificationsRead(
+  recipientUid: string
+): Promise<number> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(
+      collection(db, NOTIF_COLLECTION),
+      where("recipientUid", "==", recipientUid),
+      where("read", "==", false)
+    )
+  );
+  await Promise.all(
+    snap.docs.map((d) =>
+      updateDoc(d.ref, { read: true, readAt: Date.now() })
+    )
+  );
+  return snap.size;
+}
+
 // ============ PREMIUM — Achats avec validation manuelle ============
 //
 // Architecture :
@@ -1505,6 +1622,33 @@ export async function createPremiumPurchase(data: {
       createdAt: Date.now(),
     })
   );
+
+  // ─── Notifications ─────────────────────────────────────────────────
+  const productLabel =
+    PREMIUM_PRODUCTS[data.productKey]?.label || "Premium";
+  const userName =
+    data.userDisplayName || data.userEmail || data.userPhone || "Un utilisateur";
+
+  // 1. Confirmation pour le user (le rassure que sa demande est bien partie)
+  await createNotification({
+    recipientUid: data.userId,
+    type: "info",
+    title: "Demande premium reçue",
+    body: `Votre demande pour ${productLabel} est en attente de validation par la Commission KSN (sous 24h).`,
+    link: "/premium/bibliotheque",
+    meta: { purchaseId: ref.id, productKey: data.productKey },
+  }).catch((e) => console.warn("notify user create-purchase failed", e));
+
+  // 2. Broadcast aux admins (best-effort : si user lambda ne peut pas
+  //    lister les users, on swallow)
+  await broadcastNotificationToPerm("users.write", {
+    type: "premium_request_new",
+    title: "Nouveau paiement premium à valider",
+    body: `${userName} a soumis une demande pour ${productLabel} (${data.amount.toLocaleString("fr-FR")} FCFA).`,
+    link: "/admin/premium/paiements",
+    meta: { purchaseId: ref.id, productKey: data.productKey },
+  }).catch((e) => console.warn("notify admins create-purchase failed", e));
+
   return ref.id;
 }
 
@@ -1584,6 +1728,21 @@ export async function approvePremiumPurchase(
       reviewedAt: Date.now(),
     })
   );
+
+  // 3. Notification au user
+  const productLabel =
+    PREMIUM_PRODUCTS[purchase.productKey]?.label || "Premium";
+  await createNotification({
+    recipientUid: purchase.userId,
+    type: "premium_request_approved",
+    title: `Macha'Allah, ${productLabel} débloqué !`,
+    body: `Votre paiement a été validé par la Commission KSN. L'accès est ouvert à vie sur tous vos appareils.`,
+    link:
+      purchase.productKey === "salaatuLibrary"
+        ? "/spiritualite#bibliotheque"
+        : "/premium/bibliotheque",
+    meta: { purchaseId, productKey: purchase.productKey },
+  }).catch((e) => console.warn("notify approve failed", e));
 }
 
 export async function rejectPremiumPurchase(
@@ -1591,6 +1750,9 @@ export async function rejectPremiumPurchase(
   reviewer: { uid: string; name: string },
   notes: string
 ): Promise<void> {
+  const purchase = await getPremiumPurchase(purchaseId);
+  if (!purchase) throw new Error("Commande introuvable");
+
   const db = getDb();
   await updateDoc(
     doc(db, PREMIUM_COLLECTION, purchaseId),
@@ -1602,6 +1764,18 @@ export async function rejectPremiumPurchase(
       reviewedAt: Date.now(),
     })
   );
+
+  // Notification au user
+  const productLabel =
+    PREMIUM_PRODUCTS[purchase.productKey]?.label || "Premium";
+  await createNotification({
+    recipientUid: purchase.userId,
+    type: "premium_request_rejected",
+    title: `Demande ${productLabel} à revoir`,
+    body: `Votre paiement n'a pas pu être validé. Note de la Commission : « ${notes} ». Vous pouvez reprendre.`,
+    link: "/premium/bibliotheque",
+    meta: { purchaseId, productKey: purchase.productKey },
+  }).catch((e) => console.warn("notify reject failed", e));
 }
 
 // ============ EDUCATION — CERTIFICATIONS (validation orale) ============
@@ -1618,11 +1792,22 @@ export async function createCertificationRequest(
   >
 ): Promise<string> {
   const db = getDb();
-  const ref = await addDoc(collection(db, "educationCertifications"), {
-    ...data,
-    status: "pending_review" as EducationCertificationStatus,
-    createdAt: Date.now(),
-  });
+  const ref = await addDoc(
+    collection(db, "educationCertifications"),
+    stripUndefinedDeep({
+      ...data,
+      status: "pending_review" as EducationCertificationStatus,
+      createdAt: Date.now(),
+    })
+  );
+  // Broadcast aux membres de la Commission Education
+  await broadcastNotificationToPerm("education.write", {
+    type: "certification_request_new",
+    title: "Nouvelle demande de certificat Tazawwud",
+    body: `${data.fullName} a complété le Tazawwud et demande un entretien oral.`,
+    link: "/admin/education/certifications",
+    meta: { certId: ref.id },
+  }).catch((e) => console.warn("notify cert request failed", e));
   return ref.id;
 }
 
