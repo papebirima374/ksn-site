@@ -18,6 +18,7 @@ import {
   FaChartLine,
   FaUserPlus,
   FaGraduationCap,
+  FaCrown,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
@@ -33,13 +34,16 @@ import {
   listMembers,
   listFinanceEntries,
   listUsers,
+  listPremiumPurchases,
 } from "@/lib/admin-data";
+import type { PremiumPurchase } from "@/lib/admin-types";
 
 // Sections rapides en bas (raccourcis)
 const SECTIONS = [
   { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" as Permission },
   { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" as Permission },
   { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write" as Permission },
+  { href: "/admin/premium/paiements", label: "Premium · Paiements", Icon: FaCrown, perm: "users.write" as Permission },
   { href: "/admin/bibliotheque", label: "Bibliothèque", Icon: FaBookOpen, perm: "library.write" as Permission },
   { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as Permission },
   { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as Permission },
@@ -83,6 +87,7 @@ export default function AdminDashboard() {
   const [members, setMembers] = useState<Member[]>([]);
   const [finances, setFinances] = useState<FinanceEntry[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
+  const [pendingPremium, setPendingPremium] = useState<PremiumPurchase[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [loadingFinances, setLoadingFinances] = useState(true);
 
@@ -99,6 +104,12 @@ export default function AdminDashboard() {
     listUsers()
       .then(setUsers)
       .catch(() => setUsers([]));
+    // Paiements premium en attente — uniquement pour les users avec
+    // permission users.write (sinon listPremiumPurchases sera refusée
+    // par les règles Firestore, on swallow l'erreur silencieusement)
+    listPremiumPurchases("pending_review")
+      .then(setPendingPremium)
+      .catch(() => setPendingPremium([]));
   }, []);
 
   // ═══ KPIs ═══════════════════════════════════════════════════════
@@ -163,6 +174,35 @@ export default function AdminDashboard() {
           })}
         </p>
       </div>
+
+      {/* BANDEAU ALERTE — paiements premium à valider */}
+      {pendingPremium.length > 0 && (
+        <Link
+          href="/admin/premium/paiements"
+          className="block mb-5 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] hover:from-[#9c7008] hover:to-[#c79b2c] text-[#0F7C55] rounded-2xl p-4 sm:p-5 shadow-lg transition group"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-[#0F7C55] text-[#D4AF37] flex items-center justify-center text-lg flex-shrink-0">
+                <FaCrown />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest font-black">
+                  Action requise
+                </p>
+                <p className="font-display text-base sm:text-lg font-black leading-tight">
+                  {pendingPremium.length} paiement
+                  {pendingPremium.length > 1 ? "s" : ""} premium à valider
+                </p>
+                <p className="text-xs opacity-80 mt-0.5">
+                  Vérifie les références Wave et débloque les accès.
+                </p>
+              </div>
+            </div>
+            <FaArrowRight className="group-hover:translate-x-1 transition" />
+          </div>
+        </Link>
+      )}
 
       {/* KPI CARDS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 mb-8">
