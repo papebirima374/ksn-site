@@ -100,6 +100,7 @@ export default function AdminPremiumPaiementsPage() {
       setError("L'ID de transaction Wave est obligatoire pour valider.");
       return;
     }
+    const purchase = items.find((p) => p.id === activeId);
     setActing(true);
     setError("");
     try {
@@ -109,12 +110,37 @@ export default function AdminPremiumPaiementsPage() {
         confirmedTransactionId.trim(),
         notes.trim() || undefined
       );
+
+      // ─── Notification WhatsApp pré-remplie au user ─────────────────
+      // Ouvre automatiquement WhatsApp avec un message officiel KSN.
+      // L'admin n'a plus qu'à cliquer "Envoyer".
+      if (purchase?.userPhone) {
+        const productLabel =
+          PREMIUM_PRODUCTS[purchase.productKey]?.label || "Premium";
+        const greeting = purchase.userDisplayName
+          ? `Asalâmou aleykoum ${purchase.userDisplayName},`
+          : "Asalâmou aleykoum,";
+        const msg = encodeURIComponent(
+          `${greeting}\n\n` +
+            `Macha'Allah, votre paiement pour *${productLabel}* a été validé par la Commission KSN ✅\n\n` +
+            `Votre accès est désormais débloqué *à vie* sur votre compte. Rendez-vous dans la section concernée et profitez du contenu sacré.\n\n` +
+            `Référence : ${confirmedTransactionId.trim()}\n\n` +
+            `Que Allah accepte. Jaaza-Allahou Khayran.\n— Commission KSN`
+        );
+        const phoneDigits = purchase.userPhone.replace(/\D/g, "");
+        const waUrl = `https://wa.me/${phoneDigits}?text=${msg}`;
+        // Ouvre dans un nouvel onglet
+        window.open(waUrl, "_blank", "noopener,noreferrer");
+      }
+
       setSuccess(
-        "✓ Paiement validé — l'utilisateur a maintenant accès premium."
+        purchase?.userPhone
+          ? "✓ Paiement validé · WhatsApp ouvert pour notifier l'utilisateur. Cliquez 'Envoyer' dans WhatsApp."
+          : "✓ Paiement validé · l'utilisateur n'a pas de téléphone, pensez à le notifier par email."
       );
       closeDialog();
       await reload();
-      setTimeout(() => setSuccess(""), 7000);
+      setTimeout(() => setSuccess(""), 10000);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de validation");
     } finally {

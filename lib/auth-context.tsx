@@ -27,6 +27,7 @@ import {
   where,
   limit,
   getDocs,
+  onSnapshot,
 } from "firebase/firestore";
 import { getFirebaseAuth, getDb, isFirebaseConfigured } from "./firebase";
 import { AppUser, ALL_PERMISSIONS, UserRole, MemberStatus } from "./admin-types";
@@ -203,12 +204,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     const auth = getFirebaseAuth();
-    const unsub = onAuthStateChanged(auth, async (fbUser) => {
+    // Listener sur les changements du doc users/{uid} — permet de
+    // détecter en temps réel les mises à jour faites par l'admin
+    // (par exemple : déblocage premiumAccess après validation
+    // d'un paiement). L'utilisateur voit son statut basculer
+    // sans avoir à recharger la page.
+    let unsubUserDoc: (() => void) | null = null;
+
+    const unsubAuth = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
+      // Détache l'ancien listener (utilisateur précédent)
+      if (unsubUserDoc) {
+        unsubUserDoc();
+        unsubUserDoc = null;
+      }
       if (fbUser) {
         try {
           const u = await loadUserDoc(fbUser);
           setUser(u);
+          // Attache un listener temps réel sur le doc Firestore
+          const db = getDb();
+          unsubUserDoc = onSnapshot(
+            doc(db, "users", fbUser.uid),
+            async () => {
+              // À chaque mise à jour serveur, on rejoue loadUserDoc()
+              // (qui ré-enrichit aussi avec members/* et autres).
+              try {
+                const fresh = await loadUserDoc(fbUser);
+                setUser(fresh);
+              } catch (e) {
+                console.error("Failed to refresh user from snapshot", e);
+              }
+            },
+            (err) => {
+              // L'erreur "permission-denied" peut survenir si l'user
+              // se déconnecte juste avant le snapshot ; non-fatal.
+              console.warn("User doc snapshot error", err);
+            }
+          );
         } catch (e) {
           console.error("Failed to load user doc", e);
           setUser(null);
@@ -218,7 +251,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false);
     });
-    return unsub;
+    return () => {
+      unsubAuth();
+      if (unsubUserDoc) unsubUserDoc();
+    };
   }, [configured, loadUserDoc]);
 
   async function signIn(identifier: string, password: string) {

@@ -109,9 +109,20 @@ export default function PremiumBibliothequePage() {
   }
 
   // ─── ÉTAT : utilisateur déjà premium ────────────────────────────────
+  // Note : si l'utilisateur était sur cette page en état "pending" et
+  // que l'admin vient de valider sa demande, ce bloc apparaît
+  // automatiquement grâce au listener onSnapshot dans auth-context.
   if (!authLoading && isAlreadyPremium) {
+    const justUnlocked = pending != null;
     return (
       <main className="relative z-10 min-h-screen pt-32 sm:pt-40 pb-20 max-w-2xl mx-auto px-4 sm:px-6">
+        {justUnlocked && (
+          <div className="mb-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-2xl p-4 text-center shadow-lg animate-pulse">
+            <p className="font-bold text-sm sm:text-base">
+              🎉 Votre demande vient d&apos;être validée par la Commission KSN !
+            </p>
+          </div>
+        )}
         <div className="bg-white rounded-[30px] shadow-xl p-8 sm:p-10 text-center">
           <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] text-[#0F7C55] flex items-center justify-center text-3xl shadow-md mb-4">
             <FaCrown />
