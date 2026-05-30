@@ -44,6 +44,12 @@ export default function Navbar() {
   const { t } = useT();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
+
+  // Bloque le scroll du body quand le menu mobile est ouvert
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
   const memberLabel =
     user?.memberStatus === "actif"
       ? "Mon Profil"
@@ -224,7 +230,7 @@ export default function Navbar() {
         </div>
 
         {open && (
-          <nav className="lg:hidden mt-3 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 shadow-2xl">
+          <nav className="lg:hidden mt-3 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 shadow-2xl overflow-y-auto max-h-[calc(100dvh-90px)]">
             {/* PROFIL / CONNEXION en tete du drawer */}
             {user ? (
               <Link
