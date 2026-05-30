@@ -32,6 +32,7 @@ const crimson = Crimson_Pro({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
+  alternates: { canonical: SITE.url },
   title: {
     default: `${SITE.name} — ${SITE.fullName}`,
     template: `%s | ${SITE.name}`,
