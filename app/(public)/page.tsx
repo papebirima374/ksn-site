@@ -2,15 +2,29 @@ import type { Metadata } from "next";
 import AppKSN from "@/components/sections/AppKSN";
 
 export const metadata: Metadata = {
-  title: "KSN — Kippangog Salaatu 'Alaa Nabii",
+  title: "KSN — Kippangog Salaatu 'Alaa Nabii | Salaatou Alan Nabi | Dahira Touba",
   description:
-    "Rejoignez le Dahira KSN, communauté spirituelle internationale dédiée au Salaatu sur le Prophète Muhammad ﷺ. Fondé à Touba en 2021, dans la tradition mouride.",
+    "Kippangog Salaatu Alaa Nabii (KSN) — Dahira mouride international fondé à Touba en 2021. Salaatou Alan Nabi, Salaat Ala Nabi, spiritualité islamique, événements et ressources pour la communauté.",
+  keywords: [
+    "Salaatu Alaa Nabii",
+    "Salaatou Alan Nabi",
+    "Salaat Alan Nabi",
+    "Salaatoul Alan Nabi",
+    "salaatualaanabii",
+    "salatoualanabi",
+    "Kippangog Salaatu",
+    "KSN Dahira",
+    "Dahira Touba",
+    "mouride",
+    "Cheikh Ahmadou Bamba",
+    "spiritualité islamique Sénégal",
+  ],
   openGraph: {
-    title: "KSN — Kippangog Salaatu 'Alaa Nabii",
+    title: "KSN — Kippangog Salaatu 'Alaa Nabii | Dahira Touba",
     description:
-      "Communauté spirituelle internationale au service du Salaatu sur le Prophète ﷺ. Événements, ressources islamiques, challenge quotidien.",
+      "Communauté spirituelle mouride internationale — Salaatou Alan Nabi, Salaat Ala Nabi. Événements, challenge quotidien, ressources islamiques. Fondé à Touba en 2021.",
     url: "https://salaatualaanabii.com",
-    images: [{ url: "/logo/ksn-logo.png", width: 800, height: 800, alt: "Logo KSN" }],
+    images: [{ url: "/logo/ksn-logo.png", width: 800, height: 800, alt: "Logo KSN — Kippangog Salaatu Alaa Nabii" }],
   },
   alternates: { canonical: "https://salaatualaanabii.com" },
 };
