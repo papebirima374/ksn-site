@@ -107,7 +107,11 @@ export const metadata: Metadata = {
     images: ["/logo/ksn-logo.png"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.png", sizes: "540x540", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/icon.png",
     apple: [
       { url: "/logo/ksn-logo.png", sizes: "180x180", type: "image/png" },
     ],
