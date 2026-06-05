@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
+import { authHeader } from "@/lib/client-auth-header";
 import {
   FaWandMagicSparkles,
   FaCircleInfo,
@@ -125,7 +126,7 @@ export default function AdminEducationPage() {
       const startTs = Date.now();
       const res = await fetch("/api/education/generate-audio", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await authHeader()) },
         body: JSON.stringify({ text, language, voiceId, provider, rate }),
       });
 

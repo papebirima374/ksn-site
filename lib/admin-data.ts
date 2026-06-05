@@ -39,6 +39,7 @@ import {
   FinanceEntry,
   GalleryItem,
   Member,
+  MemberStatus,
   MenuItem,
   OfficialDocument,
   Order,
@@ -340,6 +341,65 @@ export async function getMemberByMatricule(matricule: string): Promise<Member | 
   return { id: d.id, ...(d.data() as Omit<Member, "id">) };
 }
 
+// ─── Cartes publiques (vérification QR) ────────────────────────────────────
+// Collection publique exposant UNIQUEMENT les champs nécessaires à la
+// vérification d'une carte de membre : aucun email, téléphone, adresse, etc.
+// Permet de verrouiller la collection `members` (données privées) tout en
+// gardant la vérification publique fonctionnelle.
+export type PublicCard = {
+  matricule: string;
+  prenom: string;
+  nom: string;
+  status: MemberStatus;
+  photo?: string;
+  region?: string;
+  ville?: string;
+  createdAt: number;
+};
+
+/** Écrit/maj la carte publique d'un membre actif (clé = matricule).
+ *  Ne fait rien pour les membres "en_attente"/sans matricule réel. */
+export async function syncPublicCard(member: Partial<Member>): Promise<void> {
+  const matricule = member.matricule?.trim();
+  if (!matricule || matricule === "PENDING" || member.status !== "actif") return;
+  const db = getDb();
+  const card = stripUndefined({
+    matricule,
+    prenom: member.prenom ?? "",
+    nom: member.nom ?? "",
+    status: member.status,
+    photo: member.photo,
+    region: member.region,
+    ville: member.ville,
+    createdAt: member.createdAt ?? Date.now(),
+  });
+  await setDoc(doc(db, "publicCards", matricule), card, { merge: true });
+}
+
+/** Lecture publique d'une carte par matricule (utilisée par /verifier-carte). */
+export async function getPublicCardByMatricule(
+  matricule: string
+): Promise<PublicCard | null> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "publicCards", matricule.trim()));
+  if (!snap.exists()) return null;
+  return snap.data() as PublicCard;
+}
+
+/** Backfill : génère les cartes publiques manquantes pour tous les membres
+ *  actifs. À appeler depuis l'espace admin (lecture members = admin). */
+export async function backfillPublicCards(): Promise<number> {
+  const members = await listMembers();
+  let count = 0;
+  for (const m of members) {
+    if (m.status === "actif" && m.matricule && m.matricule !== "PENDING") {
+      await syncPublicCard(m);
+      count++;
+    }
+  }
+  return count;
+}
+
 function normalizePhone(p?: string): string {
   return (p ?? "").replace(/\D+/g, "");
 }
@@ -396,7 +456,9 @@ export async function createMember(
     status: data.status ?? ("actif" as const),
   });
   const docRef = await addDoc(collection(db, "members"), payload);
-  return { id: docRef.id, ...(payload as Omit<Member, "id">) };
+  const created = { id: docRef.id, ...(payload as Omit<Member, "id">) };
+  try { await syncPublicCard(created); } catch { /* non bloquant */ }
+  return created;
 }
 
 /** Promotes an en_attente member to actif and assigns a real matricule. */
@@ -408,6 +470,10 @@ export async function validateMember(id: string): Promise<string> {
     matricule,
     validatedAt: Date.now(),
   });
+  try {
+    const snap = await getDoc(doc(db, "members", id));
+    if (snap.exists()) await syncPublicCard({ id, ...(snap.data() as Omit<Member, "id">) });
+  } catch { /* non bloquant */ }
   return matricule;
 }
 
@@ -427,6 +493,10 @@ export async function selfActivateMember(id: string): Promise<string> {
     selfActivatedAt: Date.now(),
     paymentClaimed: true,
   });
+  try {
+    const snap = await getDoc(doc(db, "members", id));
+    if (snap.exists()) await syncPublicCard({ id, ...(snap.data() as Omit<Member, "id">) });
+  } catch { /* non bloquant */ }
   return matricule;
 }
 
@@ -447,6 +517,11 @@ export async function updateMember(id: string, patch: Partial<Member>) {
     finalPatch.emailLower = patch.email?.trim().toLowerCase();
   }
   await updateDoc(doc(db, "members", id), finalPatch);
+  // Resync la carte publique (nom, photo, statut, région... peuvent changer)
+  try {
+    const snap = await getDoc(doc(db, "members", id));
+    if (snap.exists()) await syncPublicCard({ id, ...(snap.data() as Omit<Member, "id">) });
+  } catch { /* non bloquant */ }
 }
 
 export async function deleteMember(member: Member) {
@@ -459,6 +534,10 @@ export async function deleteMember(member: Member) {
     }
   }
   await deleteDoc(doc(db, "members", member.id));
+  // Supprime aussi la carte publique associée
+  if (member.matricule && member.matricule !== "PENDING") {
+    try { await deleteDoc(doc(db, "publicCards", member.matricule)); } catch { /* ignore */ }
+  }
 }
 
 export async function uploadMemberPhoto(file: File): Promise<{

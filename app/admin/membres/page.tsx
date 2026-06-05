@@ -21,6 +21,7 @@ import {
   updateMember,
   validateMember,
   importMembersFromJson,
+  backfillPublicCards,
   ImportMember,
   ImportReport,
 } from "@/lib/admin-data";
@@ -55,6 +56,17 @@ export default function AdminMembresPage() {
       reload();
     }, 0);
   }, []);
+
+  // Backfill : génère les cartes publiques manquantes (vérification QR) une
+  // fois par session admin. Silencieux et non bloquant.
+  useEffect(() => {
+    if (!canEdit) return;
+    const KEY = "ksn_publiccards_backfilled";
+    if (sessionStorage.getItem(KEY)) return;
+    backfillPublicCards()
+      .then(() => sessionStorage.setItem(KEY, "1"))
+      .catch(() => { /* non bloquant */ });
+  }, [canEdit]);
 
   const regions = useMemo(
     () => Array.from(new Set(members.map((m) => m.region).filter(Boolean) as string[])).sort(),

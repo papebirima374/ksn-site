@@ -1,12 +1,66 @@
 import { NextResponse } from "next/server";
 
+// ── Anti-abus : limite de débit en mémoire (par IP) ──────────────────────
+// Empêche qu'un robot utilise cette route comme relais d'envoi d'emails.
+const RATE_LIMIT = 5; // max 5 emails
+const RATE_WINDOW_MS = 60_000; // par minute et par IP
+const hits = new Map<string, { count: number; resetAt: number }>();
+
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = hits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  return entry.count > RATE_LIMIT;
+}
+
+// Origines autorisées : notre site officiel + previews Vercel du projet.
+function isAllowedOrigin(req: Request): boolean {
+  const origin = req.headers.get("origin") || req.headers.get("referer") || "";
+  if (!origin) return false;
+  try {
+    const host = new URL(origin).host;
+    return (
+      host === "salaatualaanabii.com" ||
+      host === "www.salaatualaanabii.com" ||
+      host.endsWith(".vercel.app") ||
+      host.startsWith("localhost")
+    );
+  } catch {
+    return false;
+  }
+}
+
+const ALLOWED_TYPES = ["donation", "membership", "order"];
+
 export async function POST(req: Request) {
   try {
+    // Sécurité : bloque les appels hors de notre site (relais d'email)
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json({ error: "Origine non autorisée." }, { status: 403 });
+    }
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+    if (rateLimited(ip)) {
+      return NextResponse.json(
+        { error: "Trop de requêtes. Réessayez dans une minute." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { type, email, name, amount, currency, receiptNumber, matricule, orderNumber, total, items } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Missing email address" }, { status: 400 });
+    if (!email || typeof email !== "string" || email.length > 200) {
+      return NextResponse.json({ error: "Adresse email invalide" }, { status: 400 });
+    }
+    if (!ALLOWED_TYPES.includes(type)) {
+      return NextResponse.json({ error: "Type de message non autorisé" }, { status: 400 });
     }
 
     const apiKey = process.env.RESEND_API_KEY || "mock-key";

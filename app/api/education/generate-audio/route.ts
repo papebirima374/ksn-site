@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { generateAudio, type TTSLanguage, type TTSProvider } from "@/lib/tts";
+import { verifyAdmin } from "@/lib/server/verify-auth";
 
 export const runtime = "nodejs"; // edge-tts utilise des modules Node
 export const maxDuration = 60;
@@ -19,6 +20,15 @@ const MAX_TEXT_LENGTH = 8000; // ~ 8 minutes d'audio max par génération
 
 export async function POST(req: NextRequest) {
   try {
+    // Sécurité : génération TTS facturée → réservée aux admins/Commission Éducation.
+    const admin = await verifyAdmin(req, "education.write");
+    if (!admin) {
+      return NextResponse.json(
+        { error: "Accès refusé : authentification administrateur requise." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const text = String(body.text ?? "").trim();
     const language = String(body.language ?? "fr") as TTSLanguage;

@@ -51,9 +51,13 @@ service cloud.firestore {
       allow delete: if hasPerm("users.write");
     }
 
-    // ─── Membres du Dahira ──────────────────────────────────────────────
+    // ─── Membres du Dahira (DONNÉES PRIVÉES) ────────────────────────────
+    // Lecture restreinte : le membre voit SA fiche, les admins voient tout.
+    // La vérification publique de carte passe par /publicCards (champs sûrs).
     match /members/{id} {
-      allow read: if isSignedIn();
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid || hasPerm("members.write")
+      );
       allow create: if isSignedIn();  // visiteur peut creer sa propre fiche
       allow update: if isSignedIn() && (
         // self-update : statut en_attente → actif (apres paiement Wave)
@@ -63,6 +67,21 @@ service cloud.firestore {
         || hasPerm("members.write")
       );
       allow delete: if hasPerm("members.write");
+    }
+
+    // ─── Cartes publiques (vérification QR) ─────────────────────────────
+    // Expose UNIQUEMENT les champs nécessaires à la vérification d'une carte
+    // (nom, matricule, statut, photo, région). Aucune donnée privée.
+    match /publicCards/{matricule} {
+      allow read: if true;
+      allow write: if hasPerm("members.write");
+    }
+
+    // ─── Dons ───────────────────────────────────────────────────────────
+    // N'importe qui peut enregistrer son don ; seules les finances le lisent.
+    match /donations/{id} {
+      allow create: if true;
+      allow read, update, delete: if hasPerm("finances.write");
     }
 
     // ─── Galerie photos ─────────────────────────────────────────────────
@@ -182,7 +201,9 @@ service cloud.firestore {
       allow read: if isSignedIn() && (
         resource.data.userId == request.auth.uid || hasPerm("boutique.write")
       );
-      allow create: if isSignedIn();
+      // Achat invité autorisé (le panier ne requiert pas de connexion).
+      // L'intégrité (prix, statut) est contrôlée côté admin à la validation.
+      allow create: if true;
       allow update, delete: if hasPerm("boutique.write");
     }
 

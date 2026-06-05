@@ -2,6 +2,8 @@ import Background from "@/components/layout/Background";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/layout/WhatsAppFloat";
+import ScrollToTop from "@/components/layout/ScrollToTop";
+import PullToRefresh from "@/components/layout/PullToRefresh";
 import CookieBanner from "@/components/layout/CookieBanner";
 import CartDrawer from "@/components/boutique/CartDrawer";
 import CartBadge from "@/components/boutique/CartBadge";
@@ -20,11 +22,13 @@ export default function PublicLayout({
       <AuthProvider>
         <CartProvider>
           <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
+            <PullToRefresh />
             <Background />
             <Navbar />
             {children}
             <Footer />
             <WhatsAppFloat />
+            <ScrollToTop />
             <CartBadge />
             <CartDrawer />
             <CookieBanner />

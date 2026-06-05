@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
+import { authHeader } from "@/lib/client-auth-header";
 import {
   hasPermission,
   EducationLesson,
@@ -132,7 +133,7 @@ export default function AdminEducationLessonEditPage() {
 
       const res = await fetch("/api/education/generate-audio", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await authHeader()) },
         body: JSON.stringify({
           text: fullText,
           language: "fr",

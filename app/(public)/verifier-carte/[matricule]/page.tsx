@@ -6,14 +6,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaCircleCheck, FaCircleXmark, FaUser, FaClock, FaArrowLeft } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
-import { getMemberByMatricule } from "@/lib/admin-data";
-import { Member } from "@/lib/admin-types";
+import { getPublicCardByMatricule, type PublicCard } from "@/lib/admin-data";
 
 export default function VerifierCartePage() {
   const params = useParams<{ matricule: string }>();
   const matricule = params?.matricule ? decodeURIComponent(params.matricule) : "";
-  
-  const [member, setMember] = useState<Member | null>(null);
+
+  const [member, setMember] = useState<PublicCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -25,7 +24,7 @@ export default function VerifierCartePage() {
         return;
       }
 
-      getMemberByMatricule(matricule)
+      getPublicCardByMatricule(matricule)
         .then((m) => {
           if (!m) {
             setError("Cette carte ne correspond à aucun membre officiel enregistré.");
@@ -169,15 +168,6 @@ export default function VerifierCartePage() {
                       </span>
                       <span className="block font-semibold text-[#0F7C55] mt-1 truncate">
                         {[member.ville, member.region].filter(Boolean).join(", ") || "—"}
-                      </span>
-                    </div>
-
-                    <div>
-                      <span className="block text-[10px] uppercase font-bold tracking-widest text-gray-400 leading-none">
-                        Téléphone
-                      </span>
-                      <span className="block font-semibold text-[#0F7C55] mt-1">
-                        {member.telephone || "—"}
                       </span>
                     </div>
 
