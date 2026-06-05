@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/constants";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import PWAInstaller from "@/components/layout/PWAInstaller";
+import ZoomLock from "@/components/layout/ZoomLock";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -137,7 +138,8 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 5,
+  maximumScale: 1,
+  userScalable: false,
   viewportFit: "cover",
 };
 
@@ -157,6 +159,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <PWAInstaller />
+        <ZoomLock />
       </body>
     </html>
   );
