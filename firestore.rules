@@ -51,13 +51,14 @@ service cloud.firestore {
       allow delete: if hasPerm("users.write");
     }
 
-    // ─── Membres du Dahira (DONNÉES PRIVÉES) ────────────────────────────
-    // Lecture restreinte : le membre voit SA fiche, les admins voient tout.
-    // La vérification publique de carte passe par /publicCards (champs sûrs).
+    // ─── Membres du Dahira ──────────────────────────────────────────────
+    // Lecture : réservée aux utilisateurs CONNECTÉS (pas le public anonyme).
+    // Le lien membre↔compte se fait par email/téléphone, donc on ne peut pas
+    // restreindre à "sa propre fiche" sans casser "Mon Espace" (la détection
+    // du statut interroge members par email/téléphone). Le public anonyme,
+    // lui, passe par /publicCards qui n'expose AUCUNE donnée privée.
     match /members/{id} {
-      allow read: if isSignedIn() && (
-        resource.data.userId == request.auth.uid || hasPerm("members.write")
-      );
+      allow read: if isSignedIn();
       allow create: if isSignedIn();  // visiteur peut creer sa propre fiche
       allow update: if isSignedIn() && (
         // self-update : statut en_attente → actif (apres paiement Wave)
