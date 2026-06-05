@@ -100,7 +100,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="px-6 py-6 border-b border-white/10">
+        <div className="px-6 pb-6 border-b border-white/10" style={{ paddingTop: "calc(env(safe-area-inset-top) + 1.5rem)" }}>
           <p className="font-display text-2xl font-bold">KSN Admin</p>
           <p className="text-xs text-white/60 mt-1 truncate">{user.email}</p>
           <p className="text-xs text-[#D4AF37] mt-1 uppercase tracking-widest">
@@ -130,7 +130,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 space-y-2">
+        <div className="absolute bottom-0 left-0 right-0 px-4 pt-4 border-t border-white/10 space-y-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}>
           <Link
             href="/"
             className="block w-full text-center text-xs text-white/70 hover:text-white transition"
@@ -158,13 +158,16 @@ export default function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       {/* MAIN */}
-      <div className="flex-1 lg:pl-72 flex flex-col">
-        <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div className="flex-1 lg:pl-72 flex flex-col min-w-0">
+        <header
+          className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 pb-4 flex items-center justify-between"
+          style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
+        >
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setOpen(!open)}
-              className="text-[#0F7C55] text-xl lg:hidden"
+              className="lg:hidden -ml-2 inline-flex items-center justify-center w-11 h-11 rounded-lg text-[#0F7C55] text-2xl active:bg-black/10 transition"
               aria-label="Menu"
             >
               {open ? <FaXmark /> : <FaBars />}
@@ -184,7 +187,10 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           </button>
         </header>
 
-        <main className="px-4 sm:px-8 py-8 sm:py-12 max-w-6xl mx-auto">
+        <main
+          className="px-4 sm:px-8 pt-8 sm:pt-12 max-w-6xl w-full mx-auto"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 2.5rem)" }}
+        >
           {children}
         </main>
       </div>

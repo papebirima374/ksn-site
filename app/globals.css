@@ -166,6 +166,24 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
+/* ==========================================
+   COMPORTEMENT « APPLICATION » SUR MOBILE
+   - empêche tout débordement / décalage horizontal (la page ne « bouge »
+     plus latéralement, plus de bande sombre sur le côté)
+   - respecte l'encoche / la barre d'état iOS (PWA installée) via safe-area
+   ========================================== */
+html, body {
+  overflow-x: clip;            /* coupe le débordement horizontal SANS casser position:sticky */
+}
+
+/* Utilitaires safe-area réutilisables (encoche, barre d'état, indicateur d'accueil) */
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 /* Subtle breathing glow used on the hero arabic calligraphy */
 @keyframes calligraphy-breathe {
   0%, 100% {

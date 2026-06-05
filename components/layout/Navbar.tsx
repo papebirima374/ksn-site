@@ -116,7 +116,10 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+      <div
+        className="max-w-7xl mx-auto px-4 sm:px-6"
+        style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
+      >
         <div className="bg-white/[0.06] backdrop-blur-2xl border border-white/10 rounded-[24px] sm:rounded-[30px] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-[0_10px_50px_rgba(0,0,0,0.35)]">
 
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group flex-shrink-0">
