@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   FaSeedling,
-  FaBookOpen,
-  FaMobileScreen,
-  FaGlobe,
   FaPeopleGroup,
   FaWhatsapp,
   FaStar,
@@ -25,7 +23,16 @@ export const metadata: Metadata = {
   },
 };
 
-const MILESTONES = [
+type Milestone = {
+  year: string;
+  date: string;
+  icon: ReactNode;
+  title: string;
+  text: string;
+  isFuture?: boolean;
+};
+
+const MILESTONES: Milestone[] = [
   {
     year: "2021",
     date: "02 janvier",
@@ -35,39 +42,45 @@ const MILESTONES = [
   },
   {
     year: "2021",
-    date: "Premiers mois",
-    icon: <FaBookOpen />,
-    title: "Structuration du culte collectif",
-    text: "Mise en place des Rajass hebdomadaires, des Khassida et de la pédagogie spirituelle. Constitution des premières commissions (Coran, Khassida, Communication, Trésorerie) qui structurent encore aujourd'hui le Dahira.",
+    date: "Chaque semaine",
+    icon: <FaHandHoldingHeart />,
+    title: "Des millions de Salaatu ʿAlaa Nabii",
+    text: "Dès la première année, la communauté se réunit régulièrement pour réciter ensemble des millions de Salaatu sur le Prophète Muhammad ﷺ. Cette pratique collective devient le cœur battant et l'identité du Dahira.",
   },
   {
     year: "2022",
-    date: "Année charnière",
+    date: "Anniversaire",
     icon: <FaPeopleGroup />,
-    title: "Première Journée Salaatu ʿAlaa Nabii",
-    text: "Organisation du premier grand rassemblement annuel à Touba : récitals du Coran, conférences d'érudits, déclamation des Khassida, dhikr collectif. Le format de la Journée devient la pierre angulaire de la vie du Dahira.",
+    title: "Visite à Serigne Ahmadou Mbacké — Daroul Mouhty",
+    text: "Pour l'anniversaire du Dahira, une délégation rend visite à Serigne Ahmadou Mbacké à Daroul Mouhty, pour une interview sur les immenses bienfaits du Salaatu ʿAlaa Nabii.",
+  },
+  {
+    year: "2023",
+    date: "Anniversaire",
+    icon: <FaPeopleGroup />,
+    title: "Causerie auprès de Serigne Khalil Mbacké",
+    text: "À l'occasion de l'anniversaire, la communauté est reçue par Serigne Khalil Mbacké pour une causerie spirituelle dédiée aux bienfaits et aux mérites du Salaatu sur le Prophète Muhammad ﷺ.",
+  },
+  {
+    year: "2023",
+    date: "30 décembre",
+    icon: <FaStar />,
+    title: "1ʳᵉ Journée Salaatu ʿAlaa Nabii",
+    text: "Organisation du tout premier grand rassemblement annuel à Touba : récitals du Coran, conférences d'érudits, déclamation des Khassida et dhikr collectif. La Journée devient la pierre angulaire de la vie du Dahira.",
   },
   {
     year: "2024",
-    date: "Janvier",
-    icon: <FaMobileScreen />,
-    title: "Lancement de l'application mobile Kippaangog",
-    text: "Publication de l'application KSN sur iOS et Android : compteur personnel de Salaatu, bibliothèque spirituelle, synchronisation du compteur communautaire. Démocratisation de la pratique du Salaatu à distance, partout dans le monde.",
-  },
-  {
-    year: "2026",
-    date: "Mai",
-    icon: <FaGlobe />,
-    title: "Site officiel international salaatualaanabii.com",
-    text: "Lancement du site web officiel : espace membre avec carte CR-80 imprimable, Challenge 1 Milliard de Salaatu en direct, multilingue FR/EN/AR/IT/ES, boutique, blog spirituel. Le Dahira devient pleinement présent dans l'écosystème numérique mondial.",
-  },
-  {
-    year: "2026",
-    date: "26 décembre",
+    date: "14 décembre",
     icon: <FaStar />,
-    title: "Prochaine Journée Salaatu ʿAlaa Nabii",
-    text: "L'édition de fin d'année à Touba — rassemblement de la oumma internationale, mobilisation pour faire bondir le Challenge 1 Milliard, transmission spirituelle aux nouvelles générations.",
-    isFuture: true,
+    title: "2ᵉ édition de la Journée Salaatu",
+    text: "La deuxième édition confirme l'ancrage de l'événement : une affluence grandissante et une mobilisation internationale autour du Salaatu sur le Prophète ﷺ.",
+  },
+  {
+    year: "2025",
+    date: "13 décembre",
+    icon: <FaStar />,
+    title: "3ᵉ édition de la Journée Salaatu",
+    text: "La troisième édition rassemble une oumma toujours plus large, unie par la prière collective sur le Prophète Muhammad ﷺ, à Touba et à travers le monde.",
   },
 ];
 
@@ -164,7 +177,7 @@ export default function NotreHistoirePage() {
             Les grandes étapes
           </span>
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            Cinq années, six jalons
+            Les jalons de notre histoire
           </h2>
           <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
             Une trajectoire qui passe du local au global, du papier au
