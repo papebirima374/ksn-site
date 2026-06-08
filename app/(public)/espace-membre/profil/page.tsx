@@ -21,7 +21,7 @@ import {
   selfActivateMember,
 } from "@/lib/admin-data";
 import { Member } from "@/lib/admin-types";
-import { PAYMENT } from "@/lib/constants";
+import { PAYMENT, JOIN_WHATSAPP_LINK } from "@/lib/constants";
 import MemberCard from "@/components/admin/MemberCard";
 import WaveLogo from "@/components/ui/WaveLogo";
 import ProfilePhotoUploader from "@/components/profile/ProfilePhotoUploader";
@@ -625,13 +625,14 @@ function VisitorDashboard({
           <li>✦ Communauté internationale + événements</li>
         </ul>
         {step === "intro" && (
-          <button
-            type="button"
-            onClick={() => setStep("form")}
-            className="inline-flex items-center mt-6 bg-[#0F7C55] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
+          <a
+            href={JOIN_WHATSAPP_LINK}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-6 bg-[#0F7C55] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
           >
-            Démarrer mon adhésion
-          </button>
+            <FaWhatsapp /> Adhérer via WhatsApp
+          </a>
         )}
       </div>
 

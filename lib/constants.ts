@@ -16,6 +16,12 @@ export function buildWhatsAppLink(prefilled: string): string {
   return `https://wa.me/${WHATSAPP_PHONE}?text=${text}`;
 }
 
+/** Lien unique « Rejoindre le Dahira » — toute adhésion/inscription passe
+ *  désormais par WhatsApp avec un message pré-rempli. */
+export const JOIN_WHATSAPP_LINK = buildWhatsAppLink(
+  "Assalamou alaykoum 🌙\nJe souhaite rejoindre le Dahira Kippangog Salaatu ʿAlaa Nabii. Pouvez-vous m'indiquer les démarches ?"
+);
+
 export const LINKS = {
   whatsapp: "https://wa.me/message/2RQFZOER66SOC1",
   facebook: "https://www.facebook.com/salaatualaanabii/",

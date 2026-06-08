@@ -12,10 +12,8 @@ import {
   FaWhatsapp,
   FaChevronDown,
 } from "react-icons/fa6";
-import { FaUser, FaRightToBracket } from "react-icons/fa6";
-import { LINKS, SITE } from "@/lib/constants";
+import { LINKS, SITE, JOIN_WHATSAPP_LINK } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
-import { useAuth } from "@/lib/auth-context";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import SearchBar from "@/components/layout/SearchBar";
 import NotificationBell from "@/components/layout/NotificationBell";
@@ -42,7 +40,6 @@ const SOCIALS = [
 
 export default function Navbar() {
   const { t } = useT();
-  const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
   // Bloque le scroll du body quand le menu mobile est ouvert
@@ -50,20 +47,6 @@ export default function Navbar() {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
-  const memberLabel =
-    user?.memberStatus === "actif"
-      ? "Mon Profil"
-      : user
-      ? "Mon Espace"
-      : "Connexion";
-  const memberInitials = user
-    ? (user.displayName || user.email || "M")
-        .split(" ")
-        .map((s) => s[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : null;
 
   const navItems: NavEntry[] = [
     { kind: "link", label: t("nav.home"), href: "/" },
@@ -168,36 +151,16 @@ export default function Navbar() {
             <NotificationBell />
             <LanguageSwitcher />
 
-            {user ? (
-              <Link
-                href="/espace-membre/profil"
-                className="hidden sm:inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
-                title={user.email}
-              >
-                {user.photoURL ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={user.photoURL}
-                    alt=""
-                    className="w-6 h-6 rounded-full object-cover border border-[#D4AF37]"
-                    draggable={false}
-                  />
-                ) : (
-                  <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-[10px] font-black">
-                    {memberInitials}
-                  </span>
-                )}
-                <span className="hidden xl:inline">{memberLabel}</span>
-              </Link>
-            ) : (
-              <Link
-                href="/espace-membre"
-                className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
-              >
-                <FaRightToBracket className="text-[11px]" />
-                <span className="hidden xl:inline">Connexion</span>
-              </Link>
-            )}
+            <a
+              href={JOIN_WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
+              title="Rejoindre le Dahira sur WhatsApp"
+            >
+              <FaWhatsapp className="text-[13px] text-[#25D366]" />
+              <span className="hidden xl:inline">Rejoindre</span>
+            </a>
 
             <Link
               href="/don"
@@ -234,39 +197,16 @@ export default function Navbar() {
 
         {open && (
           <nav className="lg:hidden mt-3 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 shadow-2xl overflow-y-auto max-h-[calc(100dvh-90px)]">
-            {/* PROFIL / CONNEXION en tete du drawer */}
-            {user ? (
-              <Link
-                href="/espace-membre/profil"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-gradient-to-r from-[#0F7C55]/30 to-[#0F7C55]/10 border border-[#D4AF37]/30"
-              >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-sm font-black flex-shrink-0">
-                  {memberInitials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-white font-semibold text-sm truncate">
-                    {user.displayName || user.email}
-                  </p>
-                  <p className="text-[#D4AF37] text-[10px] uppercase tracking-widest">
-                    {user.memberStatus === "actif"
-                      ? "✓ Membre Actif"
-                      : user.memberStatus === "en_attente"
-                      ? "⏳ En attente"
-                      : "Visiteur"}{" "}
-                    · Voir mon profil →
-                  </p>
-                </div>
-              </Link>
-            ) : (
-              <Link
-                href="/espace-membre"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 mb-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white font-semibold text-sm transition"
-              >
-                <FaRightToBracket /> Connexion / Inscription
-              </Link>
-            )}
+            {/* REJOINDRE via WhatsApp en tete du drawer */}
+            <a
+              href={JOIN_WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center gap-2 mb-4 py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-white font-semibold text-sm transition"
+            >
+              <FaWhatsapp className="text-[#25D366] text-lg" /> Rejoindre le Dahira
+            </a>
 
             <div className="space-y-1">
               {navItems.map((item) =>
@@ -307,16 +247,6 @@ export default function Navbar() {
                 )
               )}
 
-              {user && (
-                <Link
-                  href="/espace-membre/profil"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 py-3 px-4 rounded-xl text-white hover:bg-white/10 hover:text-[#D4AF37] font-medium transition"
-                >
-                  <FaUser className="text-[#D4AF37]" />
-                  Mon Profil
-                </Link>
-              )}
             </div>
 
             <div className="border-t border-white/10 mt-4 pt-4">
@@ -345,13 +275,15 @@ export default function Navbar() {
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <Link
-                href="/inscription"
+              <a
+                href={JOIN_WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="block py-3 text-center font-semibold text-[#D4AF37] border border-[#D4AF37]/40 rounded-xl"
+                className="flex items-center justify-center gap-2 py-3 text-center font-semibold text-[#25D366] border border-[#25D366]/40 rounded-xl"
               >
-                {t("cta.member")}
-              </Link>
+                <FaWhatsapp /> Rejoindre
+              </a>
               <Link
                 href="/don"
                 onClick={() => setOpen(false)}

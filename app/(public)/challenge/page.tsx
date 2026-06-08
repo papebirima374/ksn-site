@@ -6,7 +6,7 @@ import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import ChallengeProgression from "@/components/sections/ChallengeProgression";
 import TableauHonneur from "@/components/sections/TableauHonneur";
 import ShareButton from "@/components/ui/ShareButton";
-import { LINKS } from "@/lib/constants";
+import { LINKS, JOIN_WHATSAPP_LINK } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "Challenge 1 Milliard de Salaatu — Compteur Live KSN",
@@ -257,12 +257,14 @@ export default function ChallengePage() {
           <p className="mt-3 text-sm text-gray-500">— Le Prophète Muhammad ﷺ (rapporté par Muslim)</p>
 
           <div className="mt-10 grid sm:grid-cols-3 gap-3 sm:gap-4">
-            <Link
-              href="/inscription"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
+            <a
+              href={JOIN_WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
-              Rejoindre le Dahira →
-            </Link>
+              <FaWhatsapp /> Rejoindre le Dahira
+            </a>
             <a
               href={LINKS.whatsapp}
               target="_blank"
