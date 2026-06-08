@@ -7,6 +7,8 @@ import PageHero from "@/components/layout/PageHero";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { listArticles } from "@/lib/admin-data";
 import { Article } from "@/lib/admin-types";
+import { SITE } from "@/lib/constants";
+import ShareButton from "@/components/ui/ShareButton";
 
 export default function BlogPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -44,28 +46,29 @@ export default function BlogPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
               {articles.map((article) => (
-                <Link
+                <div
                   key={article.id}
-                  href={`/blog/${article.slug}`}
-                  className="group bg-[#F8F5EF] rounded-2xl sm:rounded-3xl overflow-hidden shadow-md hover:-translate-y-1 transition"
+                  className="group bg-[#F8F5EF] rounded-2xl sm:rounded-3xl overflow-hidden shadow-md hover:-translate-y-1 transition flex flex-col"
                 >
-                  {article.coverImage ? (
-                    <div className="relative aspect-video">
-                      <Image
-                        src={article.coverImage}
-                        alt={article.title}
-                        fill
-                        sizes="(max-width: 640px) 100vw, 33vw"
-                        className="object-cover"
-                        unoptimized={article.coverImage.startsWith("http")}
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-video bg-gradient-to-br from-[#0F7C55] to-[#B8860B] flex items-center justify-center text-5xl">
-                      📰
-                    </div>
-                  )}
-                  <div className="p-5 sm:p-6">
+                  <Link href={`/blog/${article.slug}`} className="block">
+                    {article.coverImage ? (
+                      <div className="relative aspect-video">
+                        <Image
+                          src={article.coverImage}
+                          alt={article.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 33vw"
+                          className="object-cover"
+                          unoptimized={article.coverImage.startsWith("http")}
+                        />
+                      </div>
+                    ) : (
+                      <div className="aspect-video bg-gradient-to-br from-[#0F7C55] to-[#B8860B] flex items-center justify-center text-5xl">
+                        📰
+                      </div>
+                    )}
+                  </Link>
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
                     <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold">
                       {article.publishedAt
                         ? new Date(article.publishedAt).toLocaleDateString(
@@ -74,17 +77,32 @@ export default function BlogPage() {
                           )
                         : "Récent"}
                     </p>
-                    <h3 className="font-display mt-2 text-lg sm:text-xl font-bold text-[#0F7C55] line-clamp-2 group-hover:text-[#B8860B] transition">
-                      {article.title}
-                    </h3>
+                    <Link href={`/blog/${article.slug}`} className="block">
+                      <h3 className="font-display mt-2 text-lg sm:text-xl font-bold text-[#0F7C55] line-clamp-2 group-hover:text-[#B8860B] transition">
+                        {article.title}
+                      </h3>
+                    </Link>
                     <p className="mt-2 text-gray-600 text-sm leading-6 line-clamp-3">
                       {article.excerpt}
                     </p>
-                    <p className="mt-3 text-[#B8860B] text-xs font-semibold">
-                      Lire l&apos;article →
-                    </p>
+                    <div className="mt-4 pt-3 border-t border-black/5 flex items-center justify-between gap-2">
+                      <Link
+                        href={`/blog/${article.slug}`}
+                        className="text-[#B8860B] text-xs font-semibold hover:text-[#0F7C55] transition"
+                      >
+                        Lire l&apos;article →
+                      </Link>
+                      <ShareButton
+                        title={article.title}
+                        text={article.excerpt || article.title}
+                        url={`${SITE.url}/blog/${article.slug}`}
+                        variant="compact"
+                        label="Partager"
+                        className="!px-3 !py-2 !text-[11px]"
+                      />
+                    </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

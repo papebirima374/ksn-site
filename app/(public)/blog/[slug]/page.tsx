@@ -7,6 +7,7 @@ import Image from "next/image";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { listArticles } from "@/lib/admin-data";
 import { Article } from "@/lib/admin-types";
+import ShareButton from "@/components/ui/ShareButton";
 
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
@@ -62,12 +63,20 @@ export default function ArticlePage() {
 
   return (
     <article className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 lg:pt-48 pb-20 sm:pb-28">
-      <Link
-        href="/blog"
-        className="inline-flex text-[#D4AF37] hover:text-white text-sm font-semibold mb-6 transition"
-      >
-        ← Tous les articles
-      </Link>
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <Link
+          href="/blog"
+          className="inline-flex text-[#D4AF37] hover:text-white text-sm font-semibold transition"
+        >
+          ← Tous les articles
+        </Link>
+        <ShareButton
+          title={article.title}
+          text={article.excerpt || article.title}
+          variant="ghost"
+          label="Partager"
+        />
+      </div>
 
       {article.coverImage && (
         <div className="relative aspect-video rounded-2xl sm:rounded-3xl overflow-hidden mb-8 shadow-2xl">
@@ -106,6 +115,19 @@ export default function ArticlePage() {
 
         <div className="prose prose-lg max-w-none text-gray-700 leading-8 whitespace-pre-wrap">
           {article.content}
+        </div>
+
+        {/* Partage en bas d'article */}
+        <div className="mt-10 pt-8 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-sm text-gray-500 font-medium">
+            Cet article vous a inspiré ? Partagez-le 🤲
+          </p>
+          <ShareButton
+            title={article.title}
+            text={article.excerpt || article.title}
+            variant="primary"
+            label="Partager l'article"
+          />
         </div>
       </div>
     </article>
