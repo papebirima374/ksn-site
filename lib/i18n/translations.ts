@@ -167,6 +167,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "motpresident.p3":
       "« Que la bénédiction d'Allah se répande sur chacun d'entre vous, sur vos familles et sur toute la communauté KSN. Que la prière sur le Prophète ﷺ illumine vos cœurs et purifie vos âmes. »",
     "motpresident.signature_role": "Président d'Honneur du Dahira KSN",
+    "dahirapage.hero_overline": "Organisation Spirituelle",
+    "dahirapage.hero_title": "Le Dahira KSN",
+    "dahirapage.hero_desc":
+      "Découvrez la présidence, les commissions officielles, le règlement intérieur et toute l'organisation du Dahira Kippangog Salaatu 'Alaa Nabii.",
 
     // Compteur Salaatu
     "compteur.badge": "Challenge 1 Milliard",
@@ -870,6 +874,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "motpresident.p3":
       "« May Allah's blessing spread upon each one of you, upon your families and upon the entire KSN community. May the prayer upon the Prophet ﷺ illuminate your hearts and purify your souls. »",
     "motpresident.signature_role": "Honorary President of the KSN Dahira",
+    "dahirapage.hero_overline": "Spiritual Organization",
+    "dahirapage.hero_title": "The KSN Dahira",
+    "dahirapage.hero_desc":
+      "Discover the presidency, the official commissions, the internal rules and the entire organization of the Dahira Kippangog Salaatu 'Alaa Nabii.",
 
     // Compteur Salaatu
     "compteur.badge": "1 Billion Challenge",
@@ -1369,6 +1377,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "motpresident.p3":
       "« Che la benedizione di Allah si diffonda su ciascuno di voi, sulle vostre famiglie e su tutta la comunità KSN. Che la preghiera sul Profeta ﷺ illumini i vostri cuori e purifichi le vostre anime. »",
     "motpresident.signature_role": "Presidente Onorario della Dahira KSN",
+    "dahirapage.hero_overline": "Organizzazione Spirituale",
+    "dahirapage.hero_title": "La Dahira KSN",
+    "dahirapage.hero_desc":
+      "Scopri la presidenza, le commissioni ufficiali, il regolamento interno e tutta l'organizzazione della Dahira Kippangog Salaatu 'Alaa Nabii.",
 
     // Compteur Salaatu
     "compteur.badge": "Sfida 1 Miliardo",
@@ -1591,6 +1603,134 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "inscription.b3": "Accesso al gruppo WhatsApp della Dahira",
     "inscription.b4": "Guida spirituale tutto l'anno",
     "inscription.b5": "Impegno nella comunità internazionale",
+
+    // Mois
+    "month.jan": "Gen", "month.feb": "Feb", "month.mar": "Mar", "month.apr": "Apr",
+    "month.may": "Mag", "month.jun": "Giu", "month.jul": "Lug", "month.aug": "Ago",
+    "month.sep": "Set", "month.oct": "Ott", "month.nov": "Nov", "month.dec": "Dic",
+    "month.january": "Gennaio", "month.february": "Febbraio", "month.march": "Marzo",
+    "month.april": "Aprile", "month.may_full": "Maggio", "month.june": "Giugno",
+    "month.july": "Luglio", "month.august": "Agosto", "month.september": "Settembre",
+    "month.october": "Ottobre", "month.november": "Novembre", "month.december": "Dicembre",
+
+    // Challenge — tendances & tableau d'honneur
+    "challenge.trend_overline": "Tendenze e Previsioni 2026",
+    "challenge.trend_title": "Progressione Mensile",
+    "challenge.trend_desc":
+      "Monitoraggio della progressione cumulata verso l'obiettivo spirituale del miliardo. La linea tratteggiata rappresenta le proiezioni basate sul ritmo attuale.",
+    "challenge.realized": "Realizzato",
+    "challenge.projected": "Previsto",
+    "challenge.select_month": "Seleziona un mese",
+    "challenge.hover_details": "Passa il mouse sui punti per vedere i dettagli",
+    "challenge.progression_label": "Progressione",
+    "challenge.status_label": "Stato",
+    "challenge.leaderboard_overline": "Albo d'Onore",
+    "challenge.leaderboard_title": "Le sezioni leader",
+    "challenge.leaderboard_desc":
+      "Congratulazioni e preghiere per le nostre sezioni locali in tutto il mondo. Ecco la classifica delle sezioni più attive nella Sfida del Miliardo.",
+    "challenge.leader": "Leader",
+    "challenge.contributors": "{count} contributori",
+
+    // Dons
+    "don.intl_badge": "Diaspora e Internazionale",
+    "don.intl_title": "Donazioni Sicure (Stripe + PayPal)",
+    "don.intl_desc":
+      "Sostieni la Dahira KSN dall'estero con Carta di Credito o PayPal. Ricevuta elettronica generata automaticamente.",
+    "don.step_currency": "1. Valuta",
+    "don.step_amount": "2. Importo della donazione",
+    "don.step_details": "3. I tuoi dati",
+    "don.other_amount": "Altro importo:",
+    "don.placeholder_custom": "Inserisci un importo...",
+    "don.payment_method": "Metodo di Pagamento",
+    "don.stripe_badge": "Stripe / Carta",
+    "don.paypal_badge": "PayPal",
+    "don.stripe_title": "Inserimento sicuro Stripe",
+    "don.card_number": "Numero della carta (4444 ...)",
+    "don.paypal_title": "PayPal Express Checkout",
+    "don.paypal_btn": "Paga con PayPal",
+    "don.paypal_desc":
+      "Apre una finestra pop-up sicura PayPal per completare la tua donazione in modo riservato.",
+    "don.total": "Totale Donazione:",
+    "don.secured_ssl": "Dati crittografati SSL 256-bit.",
+    "don.validation_error": "Inserisci un importo valido.",
+    "don.details_error": "Inserisci il tuo nome e il tuo indirizzo email.",
+    "don.btn_processing": "Elaborazione sicura...",
+    "don.btn_submit": "Conferma la mia donazione",
+    "don.processing_error":
+      "Si è verificato un errore durante l'elaborazione della donazione. Riprova.",
+    "don.success_thanks": "Grazie infinite!",
+    "don.success_desc": "La tua donazione di {amount} è stata confermata con successo.",
+    "don.receipt_title": "Ricevuta di Donazione Elettronica",
+    "don.receipt_donor": "Benefattore:",
+    "don.receipt_email": "Email:",
+    "don.receipt_tx": "Transazione N°:",
+    "don.receipt_status": "Stato:",
+    "don.receipt_success": "Successo ✓",
+    "don.receipt_email_sent":
+      "Un'email di conferma con la tua ricevuta in formato PDF è stata inviata all'indirizzo {email}.",
+    "don.new_donation": "Fai una nuova donazione",
+
+    // FAQ
+    "faq.cat1_title": "La Dahira KSN",
+    "faq.q1_1": "Cos'è la Dahira Kippangog Salaatu ʿAlaa Nabii?",
+    "faq.a1_1":
+      "La Dahira KSN è un'organizzazione religiosa senza scopo di lucro fondata il 2 gennaio 2021 a Touba, in Senegal. La sua missione è promuovere la preghiera sul Profeta Muhammad ﷺ (Salaatu) attraverso una comunità internazionale strutturata, attività spirituali regolari e un impegno collettivo quotidiano.",
+    "faq.q1_2": "Chi può unirsi alla Dahira KSN?",
+    "faq.a1_2":
+      "Chiunque ami il Profeta Muhammad ﷺ può unirsi, indipendentemente dal paese, dalla lingua o dall'origine. L'adesione è aperta ai musulmani di tutto il mondo che desiderano moltiplicare i Salaatu individuali e partecipare alla dinamica comunitaria della Dahira.",
+    "faq.q1_3": "La Dahira è legata a una confraternita o a uno Cheikh particolare?",
+    "faq.a1_3":
+      "La Dahira KSN è radicata nella tradizione spirituale di Touba (via muride) e riconosce l'eredità dello Cheikh Ahmadou Bamba (che Allah sia soddisfatto di lui). Il nostro oggetto è esclusivamente il Salaatu ʿAlaa Nabii — la preghiera sul Profeta ﷺ — comune a tutti i musulmani.",
+    "faq.cat2_title": "Adesione e Spazio membri",
+    "faq.q2_1": "Come diventare membro ufficiale della Dahira?",
+    "faq.a2_1":
+      "Tre passaggi: (1) compilare il modulo di iscrizione sulla pagina /inscription, (2) pagare la quota annuale di 1.000 FCFA tramite Wave, Orange Money o UBA, (3) accedere al proprio spazio membri con la tessera CR-80 stampabile e la matricola ufficiale.",
+    "faq.q2_2": "Qual è l'importo della quota annuale?",
+    "faq.a2_2":
+      "1.000 FCFA all'anno (circa 1,50 €). Questo modesto contributo finanzia le attività della Dahira (organizzazione della Giornata Salaatu, spese di ospitalità degli invitati, comunicazione, ecc.). Donazioni aggiuntive sono sempre benvenute per sostenere i nostri progetti.",
+    "faq.q2_3": "Come ricevere la mia tessera di membro?",
+    "faq.a2_3":
+      "Una volta convalidato il pagamento, la tua tessera di membro KSN in formato CR-80 (dimensioni di una carta di credito) appare automaticamente nel tuo spazio membri. Puoi stamparla direttamente dal tuo profilo o salvarla sul telefono per mostrarla durante gli eventi.",
+    "faq.q2_4": "Ho già pagato ma la mia pagina rimane su \"In attesa\". Cosa devo fare?",
+    "faq.a2_4":
+      "Una volta effettuato il pagamento Wave, clicca sul pulsante verde « Ho pagato — Attiva il mio account » nel tuo spazio membri. Se il pulsante non si attiva, contattaci su WhatsApp con la ricevuta di pagamento, convalideremo manualmente.",
+    "faq.cat3_title": "Sfida 1 Miliardo di Salaatu",
+    "faq.q3_1": "Cos'è la Sfida 1 Miliardo?",
+    "faq.a3_1":
+      "È la nostra sfida spirituale collettiva: offrire 1 miliardo di Salaatu al Profeta Muhammad ﷺ grazie allo sforzo cumulato di tutti i membri KSN. Il contatore in diretta su /challenge mostra la progressione mondiale in tempo reale.",
+    "faq.q3_2": "Come contribuire alla Sfida?",
+    "faq.a3_2":
+      "Scarica l'app mobile KSN sull'App Store o su Google Play. Ogni Salaatu che reciti e conti nell'app si aggiunge automaticamente al totale mondiale. Più la comunità cresce, più velocemente raggiungiamo il miliardo.",
+    "faq.q3_3": "C'è una scadenza per raggiungere il miliardo?",
+    "faq.a3_3":
+      "No, la Sfida è uno sforzo continuo senza scadenza. Il nostro ritmo attuale è di circa 7 milioni di Salaatu a settimana. A questo ritmo, progrediamo verso il miliardo in modo costante. Più membri = raggiungimento più rapido.",
+    "faq.cat4_title": "Giornata Salaatu ʿAlaa Nabii",
+    "faq.q4_1": "Quando si terrà la prossima Giornata Salaatu?",
+    "faq.a4_1":
+      "La prossima edizione si terrà il 26 dicembre 2026 a Touba. Il programma completo è pubblicato su /journee-salaatu con conto alla rovescia, orari dettagliati e opzioni di partecipazione (presenza fisica, a distanza, sostegno).",
+    "faq.q4_2": "Bisogna essere membri per partecipare alla Giornata?",
+    "faq.a4_2":
+      "No, la Giornata Salaatu è aperta a tutti — membri KSN, simpatizzanti, ospiti stranieri e oumma locale di Touba. Tuttavia, l'adesione alla Dahira è consigliata per beneficiare dell'accompagnamento spirituale tutto l'anno.",
+    "faq.q4_3": "Come raggiungere Touba dall'estero?",
+    "faq.a4_3":
+      "L'aeroporto internazionale di Dakar (AIBD) è a circa 2 ore di strada da Touba. Per l'alloggio, il trasporto da Dakar e i dettagli logistici, contatta il team su WhatsApp — accompagniamo i visitatori internazionali.",
+    "faq.cat5_title": "App mobile KSN",
+    "faq.q5_1": "Qual è la differenza tra l'app mobile e questo sito?",
+    "faq.a5_1":
+      "L'app mobile (Kippaangog) è dedicata al conteggio quotidiano dei Salaatu e si sincronizza con il contatore mondiale. Il sito (Sito KSN) è lo spazio istituzionale: adesione, tessera di membro, biblioteca, eventi, negozio, donazioni. I due sono complementari.",
+    "faq.q5_2": "L'app mobile è gratuita?",
+    "faq.a5_2":
+      "Sì, l'app Kippaangog Salaatu ʿAlaa Nabii è completamente gratuita sull'App Store (iOS) e su Google Play (Android). Nessun abbonamento, nessun acquisto in-app obbligatorio.",
+    "faq.cat6_title": "Donazioni e pagamenti",
+    "faq.q6_1": "Quali metodi di pagamento accettate?",
+    "faq.a6_1":
+      "Per gli utenti in Senegal: Wave, Orange Money, UBA. Per gli utenti internazionali: carta di credito (Stripe) e PayPal sono disponibili sulla pagina /don. Tutti i pagamenti sono sicuri.",
+    "faq.q6_2": "La mia donazione è deducibile dalle tasse?",
+    "faq.a6_2":
+      "Dipende dal tuo paese di residenza. In Senegal, la Dahira è un'organizzazione religiosa senza scopo di lucro e le donazioni possono beneficiare di vantaggi fiscali secondo la legislazione vigente. Per i dettagli nel tuo paese, consulta il tuo consulente fiscale.",
+    "faq.q6_3": "Come sapere come viene utilizzata la mia donazione?",
+    "faq.a6_3":
+      "La Commissione Finanze pubblica un rapporto annuale di trasparenza accessibile su richiesta a tutti i membri attivi. Le principali voci di spesa: organizzazione della Giornata annuale, ospitalità degli invitati, comunicazione, sostegno sociale ai membri in difficoltà.",
   },
 
   es: {
@@ -1747,6 +1887,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "motpresident.p3":
       "« Que la bendición de Allah se extienda sobre cada uno de ustedes, sobre sus familias y sobre toda la comunidad KSN. Que la oración sobre el Profeta ﷺ ilumine sus corazones y purifique sus almas. »",
     "motpresident.signature_role": "Presidente de Honor de la Dahira KSN",
+    "dahirapage.hero_overline": "Organización Espiritual",
+    "dahirapage.hero_title": "La Dahira KSN",
+    "dahirapage.hero_desc":
+      "Descubre la presidencia, las comisiones oficiales, el reglamento interno y toda la organización de la Dahira Kippangog Salaatu 'Alaa Nabii.",
 
     // Compteur Salaatu
     "compteur.badge": "Reto 1 Mil Millones",
@@ -1969,6 +2113,134 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "inscription.b3": "Acceso al grupo de WhatsApp de la Dahira",
     "inscription.b4": "Acompañamiento espiritual todo el año",
     "inscription.b5": "Compromiso con la comunidad internacional",
+
+    // Mois
+    "month.jan": "Ene", "month.feb": "Feb", "month.mar": "Mar", "month.apr": "Abr",
+    "month.may": "May", "month.jun": "Jun", "month.jul": "Jul", "month.aug": "Ago",
+    "month.sep": "Sep", "month.oct": "Oct", "month.nov": "Nov", "month.dec": "Dic",
+    "month.january": "Enero", "month.february": "Febrero", "month.march": "Marzo",
+    "month.april": "Abril", "month.may_full": "Mayo", "month.june": "Junio",
+    "month.july": "Julio", "month.august": "Agosto", "month.september": "Septiembre",
+    "month.october": "Octubre", "month.november": "Noviembre", "month.december": "Diciembre",
+
+    // Challenge — tendances & tableau d'honneur
+    "challenge.trend_overline": "Tendencias y Previsiones 2026",
+    "challenge.trend_title": "Progresión Mensual",
+    "challenge.trend_desc":
+      "Seguimiento de la progresión acumulada hacia el objetivo espiritual del millardo. La línea punteada representa las proyecciones basadas en el ritmo actual.",
+    "challenge.realized": "Realizado",
+    "challenge.projected": "Proyectado",
+    "challenge.select_month": "Seleccionar un mes",
+    "challenge.hover_details": "Pasa el cursor sobre los puntos para ver los detalles",
+    "challenge.progression_label": "Progresión",
+    "challenge.status_label": "Estado",
+    "challenge.leaderboard_overline": "Cuadro de Honor",
+    "challenge.leaderboard_title": "Las secciones líderes",
+    "challenge.leaderboard_desc":
+      "Felicitaciones y oraciones para nuestras secciones locales en todo el mundo. Aquí está la clasificación de las secciones más activas del Reto 1 Millardo.",
+    "challenge.leader": "Líder",
+    "challenge.contributors": "{count} contribuyentes",
+
+    // Dons
+    "don.intl_badge": "Diáspora e Internacional",
+    "don.intl_title": "Donaciones Seguras (Stripe + PayPal)",
+    "don.intl_desc":
+      "Apoya a la Dahira KSN desde el extranjero con Tarjeta Bancaria o PayPal. Recibo electrónico generado automáticamente.",
+    "don.step_currency": "1. Moneda",
+    "don.step_amount": "2. Importe de la donación",
+    "don.step_details": "3. Tus datos",
+    "don.other_amount": "Otro importe:",
+    "don.placeholder_custom": "Introduce un importe...",
+    "don.payment_method": "Método de Pago",
+    "don.stripe_badge": "Stripe / Tarjeta",
+    "don.paypal_badge": "PayPal",
+    "don.stripe_title": "Entrada segura Stripe",
+    "don.card_number": "Número de tarjeta (4444 ...)",
+    "don.paypal_title": "PayPal Express Checkout",
+    "don.paypal_btn": "Pagar con PayPal",
+    "don.paypal_desc":
+      "Abre una ventana emergente segura de PayPal para finalizar tu donación de forma confidencial.",
+    "don.total": "Total Donación:",
+    "don.secured_ssl": "Datos cifrados SSL 256 bits.",
+    "don.validation_error": "Por favor, indica un importe válido.",
+    "don.details_error": "Por favor, introduce tu nombre y tu dirección de correo electrónico.",
+    "don.btn_processing": "Procesamiento seguro...",
+    "don.btn_submit": "Validar mi donación",
+    "don.processing_error":
+      "Se ha producido un error al procesar la donación. Por favor, inténtalo de nuevo.",
+    "don.success_thanks": "¡Muchísimas gracias!",
+    "don.success_desc": "Tu donación de {amount} ha sido validada con éxito.",
+    "don.receipt_title": "Recibo de Donación Electrónico",
+    "don.receipt_donor": "Benefactor:",
+    "don.receipt_email": "Email:",
+    "don.receipt_tx": "Transacción N°:",
+    "don.receipt_status": "Estado:",
+    "don.receipt_success": "Éxito ✓",
+    "don.receipt_email_sent":
+      "Se ha enviado un correo de confirmación con tu recibo en formato PDF a la dirección {email}.",
+    "don.new_donation": "Hacer una nueva donación",
+
+    // FAQ
+    "faq.cat1_title": "El Dahira KSN",
+    "faq.q1_1": "¿Qué es el Dahira Kippangog Salaatu ʿAlaa Nabii?",
+    "faq.a1_1":
+      "El Dahira KSN es una organización religiosa sin ánimo de lucro fundada el 2 de enero de 2021 en Tuba, Senegal. Su misión es promover la oración sobre el Profeta Muhammad ﷺ (Salaatu) a través de una comunidad internacional estructurada, actividades espirituales regulares y un compromiso colectivo diario.",
+    "faq.q1_2": "¿Quién puede unirse al Dahira KSN?",
+    "faq.a1_2":
+      "Toda persona que ame al Profeta Muhammad ﷺ puede unirse, sea cual sea su país, su lengua o su origen. La adhesión está abierta a los musulmanes de todo el mundo que deseen multiplicar los Salaatu individuales y participar en la dinámica comunitaria del Dahira.",
+    "faq.q1_3": "¿Está el Dahira vinculado a una cofradía o a un Cheikh en particular?",
+    "faq.a1_3":
+      "El Dahira KSN está arraigado en la tradición espiritual de Tuba (vía muride) y reconoce el legado del Cheikh Ahmadou Bamba (que Allah esté complacido con él). Nuestro objeto es exclusivamente el Salaatu ʿAlaa Nabii — la oración sobre el Profeta ﷺ — común a todos los musulmanes.",
+    "faq.cat2_title": "Adhesión y Espacio de miembro",
+    "faq.q2_1": "¿Cómo convertirse en miembro oficial del Dahira?",
+    "faq.a2_1":
+      "Tres pasos: (1) rellenar el formulario de inscripción en la página /inscription, (2) pagar la cuota anual de 1.000 FCFA mediante Wave, Orange Money o UBA, (3) acceder a tu espacio de miembro con tu tarjeta CR-80 imprimible y tu matrícula oficial.",
+    "faq.q2_2": "¿Cuál es el importe de la cuota anual?",
+    "faq.a2_2":
+      "1.000 FCFA al año (aproximadamente 1,50 €). Esta modesta contribución financia las actividades del Dahira (organización de la Jornada Salaatu, gastos de alojamiento de los invitados, comunicación, etc.). Las donaciones adicionales siempre son bienvenidas para apoyar nuestros proyectos.",
+    "faq.q2_3": "¿Cómo recibir mi tarjeta de miembro?",
+    "faq.a2_3":
+      "Una vez validado tu pago, tu tarjeta de miembro KSN en formato CR-80 (tamaño de tarjeta bancaria) aparece automáticamente en tu espacio de miembro. Puedes imprimirla directamente desde tu perfil o guardarla en tu teléfono para presentarla en los eventos.",
+    "faq.q2_4": "Ya he pagado pero mi página sigue en \"En espera\". ¿Qué debo hacer?",
+    "faq.a2_4":
+      "Una vez efectuado el pago Wave, haz clic en el botón verde « He pagado — Activar mi cuenta » en tu espacio de miembro. Si el botón no se activa, contáctanos por WhatsApp con tu recibo de pago, validaremos manualmente.",
+    "faq.cat3_title": "Reto 1 Millardo de Salaatu",
+    "faq.q3_1": "¿Qué es el Reto 1 Millardo?",
+    "faq.a3_1":
+      "Es nuestro reto espiritual colectivo: ofrecer 1 millardo de Salaatu al Profeta Muhammad ﷺ mediante el esfuerzo acumulado de todos los miembros KSN. El contador en directo en /challenge muestra la progresión mundial en tiempo real.",
+    "faq.q3_2": "¿Cómo contribuir al Reto?",
+    "faq.a3_2":
+      "Descarga la app móvil KSN en la App Store o Google Play. Cada Salaatu que recitas y cuentas en la app se añade automáticamente al total mundial. Cuanto más crece la comunidad, más rápido alcanzamos el millardo.",
+    "faq.q3_3": "¿Hay una fecha límite para alcanzar el millardo?",
+    "faq.a3_3":
+      "No, el Reto es un esfuerzo continuo sin fecha límite. Nuestro ritmo actual es de unos 7 millones de Salaatu por semana. A este ritmo, progresamos hacia el millardo de forma constante. Más miembros = logro más rápido.",
+    "faq.cat4_title": "Jornada Salaatu ʿAlaa Nabii",
+    "faq.q4_1": "¿Cuándo tendrá lugar la próxima Jornada Salaatu?",
+    "faq.a4_1":
+      "La próxima edición tendrá lugar el 26 de diciembre de 2026 en Tuba. El programa completo está publicado en /journee-salaatu con cuenta atrás, horarios detallados y opciones de participación (presencia física, a distancia, apoyo).",
+    "faq.q4_2": "¿Hay que ser miembro para participar en la Jornada?",
+    "faq.a4_2":
+      "No, la Jornada Salaatu está abierta a todos — miembros KSN, simpatizantes, invitados extranjeros y oumma local de Tuba. Sin embargo, se recomienda la adhesión al Dahira para beneficiarse del acompañamiento espiritual todo el año.",
+    "faq.q4_3": "¿Cómo llegar a Tuba desde el extranjero?",
+    "faq.a4_3":
+      "El aeropuerto internacional de Dakar (AIBD) está a unas 2 horas por carretera de Tuba. Para el alojamiento, el transporte desde Dakar y los detalles logísticos, contacta con el equipo por WhatsApp — acompañamos a los visitantes internacionales.",
+    "faq.cat5_title": "App móvil KSN",
+    "faq.q5_1": "¿Cuál es la diferencia entre la app móvil y este sitio?",
+    "faq.a5_1":
+      "La app móvil (Kippaangog) está dedicada al conteo diario de los Salaatu y se sincroniza con el contador mundial. El sitio (Sitio KSN) es el espacio institucional: adhesión, tarjeta de miembro, biblioteca, eventos, tienda, donaciones. Ambos son complementarios.",
+    "faq.q5_2": "¿La app móvil es gratuita?",
+    "faq.a5_2":
+      "Sí, la app Kippaangog Salaatu ʿAlaa Nabii es totalmente gratuita en la App Store (iOS) y Google Play (Android). Sin suscripción, sin compras dentro de la app obligatorias.",
+    "faq.cat6_title": "Donaciones y pagos",
+    "faq.q6_1": "¿Qué métodos de pago aceptáis?",
+    "faq.a6_1":
+      "Para los usuarios en Senegal: Wave, Orange Money, UBA. Para los usuarios internacionales: tarjeta bancaria (Stripe) y PayPal están disponibles en la página /don. Todos los pagos son seguros.",
+    "faq.q6_2": "¿Mi donación es deducible de impuestos?",
+    "faq.a6_2":
+      "Depende de tu país de residencia. En Senegal, el Dahira es una organización religiosa sin ánimo de lucro y las donaciones pueden beneficiarse de ventajas fiscales según la legislación vigente. Para los detalles en tu país, consulta a tu asesor fiscal.",
+    "faq.q6_3": "¿Cómo saber cómo se utiliza mi donación?",
+    "faq.a6_3":
+      "La Comisión de Finanzas publica un informe anual de transparencia accesible a petición a todos los miembros activos. Las principales partidas de gasto: organización de la Jornada anual, alojamiento de los invitados, comunicación, apoyo social a los miembros en dificultad.",
   },
 
   ar: {
@@ -2125,6 +2397,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "motpresident.p3":
       "«أن تَعمّ بركة الله كلَّ واحد منكم وأسركم وكامل مجتمع KSN. وأن تنوّر الصلاة على النبي ﷺ قلوبكم وتطهّر نفوسكم.»",
     "motpresident.signature_role": "الرئيس الفخري لداهيرا KSN",
+    "dahirapage.hero_overline": "منظمة روحية",
+    "dahirapage.hero_title": "داهيرا KSN",
+    "dahirapage.hero_desc":
+      "اكتشف الرئاسة واللجان الرسمية والنظام الداخلي وكامل تنظيم داهيرا كيبانغوغ صلاة على النبي.",
 
     // Compteur Salaatu
     "compteur.badge": "تحدي المليار",
