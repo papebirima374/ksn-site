@@ -16,7 +16,7 @@ export const LOCALES: LocaleInfo[] = [
   { code: "ar", label: "العربية", short: "AR", flag: "🇸🇦", rtl: true },
   { code: "it", label: "Italiano", short: "IT", flag: "🇮🇹", rtl: false },
   { code: "es", label: "Español", short: "ES", flag: "🇪🇸", rtl: false },
-  { code: "wo", label: "Wolof", short: "WO", flag: "🇸🇳", rtl: false, disabled: true, comingSoon: true },
+  { code: "wo", label: "Wolof", short: "WO", flag: "🇸🇳", rtl: false },
 ];
 
 export const ACTIVE_LOCALES = LOCALES.filter((l) => !l.disabled);
