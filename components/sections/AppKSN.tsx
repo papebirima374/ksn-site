@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { FaApple, FaGooglePlay } from "react-icons/fa6";
 import { LINKS } from "@/lib/constants";
 
 const FEATURES = [
@@ -47,18 +48,28 @@ export default function AppKSN() {
                 href={LINKS.appStore}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-[#0F7C55] px-8 py-5 rounded-[25px] font-bold hover:scale-105 transition shadow-xl"
+                aria-label="Télécharger sur l'App Store"
+                className="inline-flex items-center gap-3 bg-black text-white px-6 py-3.5 rounded-2xl hover:scale-105 transition shadow-xl border border-white/15"
               >
-                🍎 Télécharger sur iPhone
+                <FaApple className="text-3xl" />
+                <span className="text-left leading-tight">
+                  <span className="block text-[10px] font-medium opacity-80">Télécharger sur</span>
+                  <span className="block text-lg font-bold -mt-0.5">App Store</span>
+                </span>
               </a>
 
               <a
                 href={LINKS.playStore}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-8 py-5 rounded-[25px] font-bold hover:scale-105 transition shadow-xl"
+                aria-label="Disponible sur Google Play"
+                className="inline-flex items-center gap-3 bg-black text-white px-6 py-3.5 rounded-2xl hover:scale-105 transition shadow-xl border border-white/15"
               >
-                🤖 Télécharger Android
+                <FaGooglePlay className="text-2xl text-[#D4AF37]" />
+                <span className="text-left leading-tight">
+                  <span className="block text-[10px] font-medium opacity-80">Disponible sur</span>
+                  <span className="block text-lg font-bold -mt-0.5">Google Play</span>
+                </span>
               </a>
             </div>
           </div>
