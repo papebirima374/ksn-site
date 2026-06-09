@@ -4,6 +4,7 @@ import "./globals.css";
 import { SITE } from "@/lib/constants";
 import OrganizationSchema from "@/components/seo/OrganizationSchema";
 import PWAInstaller from "@/components/layout/PWAInstaller";
+import { Analytics } from "@vercel/analytics/next";
 import ZoomLock from "@/components/layout/ZoomLock";
 
 const playfair = Playfair_Display({
@@ -160,6 +161,7 @@ export default function RootLayout({
         {children}
         <PWAInstaller />
         <ZoomLock />
+        <Analytics />
       </body>
     </html>
   );
