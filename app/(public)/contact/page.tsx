@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageHero from "@/components/layout/PageHero";
+import ContactHero from "./ContactHero";
 import Contact from "@/components/sections/Contact";
 
 export const metadata: Metadata = {
@@ -11,12 +11,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <PageHero
-        overline="Contact Officiel"
-        title="Entrer en Contact"
-        description="Une question, une adhésion, une collaboration ou une demande d'information ? Notre équipe est disponible pour vous accompagner."
-      />
-
+      <ContactHero />
       <Contact />
     </>
   );

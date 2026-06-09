@@ -283,6 +283,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "Comment un cercle de fidèles à Touba est devenu un Dahira international au service de la Prière sur le Prophète ﷺ.",
     "histoire.share_label": "Partager notre histoire",
+    "contactpage.hero_desc":
+      "Une question, une adhésion, une collaboration ou une demande d'information ? Notre équipe est disponible pour vous accompagner.",
 
     // Compteur Salaatu
     "compteur.badge": "Challenge 1 Milliard",
@@ -972,6 +974,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "Naka la benn mbooloo mu ngëm ci Touba nekk benn Dahira bu àddunaay ci jëfu salaatu ci Yonent bi ﷺ.",
     "histoire.share_label": "Séddale sunu taariix",
+    "contactpage.hero_desc":
+      "Benn laaj, benn bokk, benn liggéeyandoo walla benn ñaan ci xibaar? Sunu ekib mi am na ngir dimbali la.",
   },
 
   en: {
@@ -1244,6 +1248,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "How a circle of believers in Touba became an international Dahira serving Prayer upon the Prophet ﷺ.",
     "histoire.share_label": "Share our story",
+    "contactpage.hero_desc":
+      "A question, a membership, a collaboration or an information request? Our team is available to assist you.",
 
     // Compteur Salaatu
     "compteur.badge": "1 Billion Challenge",
@@ -1859,6 +1865,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "Come un circolo di fedeli a Touba è diventato una Dahira internazionale al servizio della Preghiera sul Profeta ﷺ.",
     "histoire.share_label": "Condividi la nostra storia",
+    "contactpage.hero_desc":
+      "Una domanda, un'adesione, una collaborazione o una richiesta di informazioni? Il nostro team è a tua disposizione.",
 
     // Compteur Salaatu
     "compteur.badge": "Sfida 1 Miliardo",
@@ -2481,6 +2489,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "Cómo un círculo de fieles en Tuba se convirtió en una Dahira internacional al servicio de la Oración sobre el Profeta ﷺ.",
     "histoire.share_label": "Compartir nuestra historia",
+    "contactpage.hero_desc":
+      "¿Una pregunta, una adhesión, una colaboración o una solicitud de información? Nuestro equipo está disponible para ayudarte.",
 
     // Compteur Salaatu
     "compteur.badge": "Reto 1 Mil Millones",
@@ -3103,6 +3113,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "histoire.share_text":
       "كيف أصبحت حلقة من المؤمنين في طوبى داهيرا دولية في خدمة الصلاة على النبي ﷺ.",
     "histoire.share_label": "شارك قصتنا",
+    "contactpage.hero_desc":
+      "سؤال، أو انضمام، أو تعاون، أو طلب معلومات؟ فريقنا متاح لمرافقتك.",
 
     // Compteur Salaatu
     "compteur.badge": "تحدي المليار",
