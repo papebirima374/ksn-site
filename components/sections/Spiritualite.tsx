@@ -1,32 +1,38 @@
-const CARDS = [
-  {
-    icon: "📿",
-    title: "Salaatou du Jour",
-    text: "Texte arabe, translittération, traduction et bienfaits du Salaatu recommandé du jour.",
-  },
-  {
-    icon: "📖",
-    title: "Khassidas",
-    text: "Accédez à une bibliothèque de Khassidas, textes religieux et contenus spirituels.",
-  },
-  {
-    icon: "🤲",
-    title: "Azkâr & Invocations",
-    text: "Invocations quotidiennes, zikr, douas et pratiques spirituelles recommandées.",
-  },
-  {
-    icon: "🎧",
-    title: "Audios Spirituels",
-    text: "Écoutez les récitations, conférences, Salaatou et rappels audio.",
-  },
-  {
-    icon: "🎥",
-    title: "Vidéos & Enseignements",
-    text: "Conférences, enseignements, rappels spirituels et vidéos officielles du Dahira.",
-  },
-];
+"use client";
+
+import { useT } from "@/lib/i18n/context";
 
 export default function Spiritualite() {
+  const { t } = useT();
+
+  const CARDS = [
+    {
+      icon: "📿",
+      title: t("spiritualite.card1_title"),
+      text: t("spiritualite.card1_desc"),
+    },
+    {
+      icon: "📖",
+      title: t("spiritualite.card2_title"),
+      text: t("spiritualite.card2_desc"),
+    },
+    {
+      icon: "🤲",
+      title: t("spiritualite.card3_title"),
+      text: t("spiritualite.card3_desc"),
+    },
+    {
+      icon: "🎧",
+      title: t("spiritualite.card4_title"),
+      text: t("spiritualite.card4_desc"),
+    },
+    {
+      icon: "🎥",
+      title: t("spiritualite.card5_title"),
+      text: t("spiritualite.card5_desc"),
+    },
+  ];
+
   return (
     <section
       id="spiritualite"
@@ -36,19 +42,15 @@ export default function Spiritualite() {
         <div className="p-6 sm:p-12 md:p-16">
           <div className="text-center">
             <span className="text-[#D4AF37] uppercase tracking-[0.25em] font-semibold">
-              Spiritualité KSN
+              {t("section.spiritualite_ksn")}
             </span>
 
             <h2 className="mt-4 text-4xl md:text-5xl font-bold text-white">
-              Nourrir le Cœur
-              <br />
-              par le Salaatu ﷺ
+              {t("section.spiritualite_title")}
             </h2>
 
             <p className="mt-6 text-white/70 text-lg max-w-3xl mx-auto leading-8">
-              Découvrez les Salaatou, Khassidas, invocations, enseignements et
-              ressources spirituelles du Dahira Kippangog Salaatu &apos;Alaa
-              Nabii.
+              {t("spiritualite.desc")}
             </p>
           </div>
 
@@ -70,19 +72,18 @@ export default function Spiritualite() {
               <div className="text-5xl">✨</div>
 
               <h3 className="mt-5 text-2xl font-bold">
-                Explorer la Spiritualité
+                {t("spiritualite.explore_title")}
               </h3>
 
               <p className="mt-4 leading-7">
-                Découvrez l&apos;univers spirituel complet de KSN et renforcez
-                votre lien avec le Prophète ﷺ.
+                {t("spiritualite.explore_desc")}
               </p>
 
               <button
                 type="button"
                 className="mt-8 bg-[#0F7C55] text-white px-6 py-4 rounded-2xl font-semibold hover:opacity-90 transition"
               >
-                Explorer
+                {t("spiritualite.explore_btn")}
               </button>
             </div>
           </div>

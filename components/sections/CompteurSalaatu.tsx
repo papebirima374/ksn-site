@@ -11,6 +11,7 @@ import {
   type ChallengeStats,
 } from "@/lib/challenge";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
+import { useT } from "@/lib/i18n/context";
 
 const STORAGE_KEY = "ksn-salaatu-count";
 const DATE_KEY = "ksn-salaatu-date";
@@ -23,6 +24,8 @@ function todayKey() {
  *  Partage la meme source de donnees que /challenge (lib/challenge.ts)
  *  pour eviter toute incoherence de chiffres entre pages. */
 export default function CompteurSalaatu() {
+  const { t } = useT();
+
   // IMPORTANT : on initialise a null pour eviter une hydration mismatch.
   // estimatedChallengeStats() depend de Date.now() qui differe entre le
   // rendu serveur (SSR) et l'hydratation client. On remplit en useEffect.
@@ -89,7 +92,7 @@ export default function CompteurSalaatu() {
   };
 
   const reset = () => {
-    if (confirm("Réinitialiser votre compteur du jour ?")) {
+    if (confirm(t("compteur.reset_confirm"))) {
       setPersonal(0);
       localStorage.setItem(STORAGE_KEY, "0");
     }
@@ -116,14 +119,12 @@ export default function CompteurSalaatu() {
                 <span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-500" />
               </span>
               <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-[10px] sm:text-xs font-bold">
-                Challenge 1 Milliard
+                {t("compteur.badge")}
               </span>
             </div>
 
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-              Salaatu offerts par
-              <br />
-              la communauté KSN
+              {t("compteur.title")}
             </h2>
 
             <div className="font-display mt-6 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white tabular-nums tracking-tight">
@@ -131,11 +132,11 @@ export default function CompteurSalaatu() {
             </div>
 
             <p className="mt-3 text-sm sm:text-base text-white/70">
-              sur{" "}
+              {t("compteur.target").split("{target}")[0]}
               <span className="text-[#D4AF37] font-semibold">
                 {fmtNumber(CHALLENGE_TARGET)}
-              </span>{" "}
-              — Challenge du milliard
+              </span>
+              {t("compteur.target").split("{target}")[1]}
             </p>
 
             <div className="mt-6 sm:mt-8 max-w-md mx-auto lg:mx-0">
@@ -155,18 +156,18 @@ export default function CompteurSalaatu() {
               href="/challenge"
               className="inline-flex items-center gap-2 mt-7 sm:mt-9 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
-              Voir le Challenge complet
+              {t("compteur.cta")}
               <FaArrowRight className="text-sm" />
             </Link>
           </div>
 
-          {/* COLONNE DROITE — COMPTEUR PERSO */}
+          {/* COLONNE DROITE — COMPTE UR PERSO */}
           <div className="relative">
             <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-center">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
                 <FaBolt className="text-[#D4AF37] text-xs" />
                 <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-[10px] sm:text-xs font-bold">
-                  Mon Compteur du Jour
+                  {t("compteur.perso_title")}
                 </span>
               </div>
 
@@ -179,7 +180,7 @@ export default function CompteurSalaatu() {
               </div>
 
               <p className="mt-3 text-white/60 text-xs sm:text-sm">
-                Salaatu compté(s) aujourd&apos;hui
+                {t("compteur.perso_desc")}
               </p>
 
               <button
@@ -187,7 +188,7 @@ export default function CompteurSalaatu() {
                 onClick={increment}
                 className="mt-6 sm:mt-8 w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:scale-105 active:scale-95 transition"
               >
-                + 1 Salaatu
+                {t("compteur.perso_btn")}
               </button>
 
               <button
@@ -195,12 +196,11 @@ export default function CompteurSalaatu() {
                 onClick={reset}
                 className="mt-3 text-xs sm:text-sm text-white/50 hover:text-white/80 transition underline"
               >
-                Réinitialiser
+                {t("compteur.reset")}
               </button>
 
               <p className="mt-5 sm:mt-6 text-xs text-white/50 italic">
-                « Allah prie 10 fois sur celui qui prie une fois sur le Prophète
-                ﷺ »
+                {t("compteur.hadith")}
               </p>
             </div>
           </div>

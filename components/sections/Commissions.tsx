@@ -1,47 +1,20 @@
+"use client";
+
+import { useT } from "@/lib/i18n/context";
+
 const COMMISSIONS = [
-  {
-    icon: "📚",
-    title: "Éducation & Culture",
-    text: "Renforcer le lien spirituel des membres à travers le Coran, les Khassidas, le Salaatu quotidien, les conférences et l'éducation islamique.",
-  },
-  {
-    icon: "💰",
-    title: "Finances",
-    text: "Gestion transparente des cotisations, des dons, de la comptabilité et du financement des activités du Dahira.",
-  },
-  {
-    icon: "🤝",
-    title: "Sociale & Développement",
-    text: "Solidarité communautaire, assistance aux membres, projets sociaux et actions de développement.",
-  },
-  {
-    icon: "🏛️",
-    title: "Organisation",
-    text: "Coordination des événements, logistique, journées spirituelles, rencontres et activités du Dahira.",
-  },
-  {
-    icon: "📢",
-    title: "Communication",
-    text: "Gestion des annonces officielles, réseaux sociaux, médias, publications et rayonnement numérique.",
-  },
-  {
-    icon: "🌍",
-    title: "Relations Extérieures",
-    text: "Développement des partenariats, représentation institutionnelle et ouverture internationale du Dahira.",
-  },
-  {
-    icon: "📋",
-    title: "Administratif",
-    text: "Gestion administrative générale, démarches institutionnelles, suivi des dossiers et conformité du Dahira.",
-  },
-  {
-    icon: "📝",
-    title: "Secrétariat",
-    text: "Tenue des comptes-rendus, organisation des réunions, archivage des documents et correspondance officielle.",
-  },
+  { icon: "📚", t: "commissions.c1_title", d: "commissions.c1_text" },
+  { icon: "💰", t: "commissions.c2_title", d: "commissions.c2_text" },
+  { icon: "🤝", t: "commissions.c3_title", d: "commissions.c3_text" },
+  { icon: "🏛️", t: "commissions.c4_title", d: "commissions.c4_text" },
+  { icon: "📢", t: "commissions.c5_title", d: "commissions.c5_text" },
+  { icon: "🌍", t: "commissions.c6_title", d: "commissions.c6_text" },
+  { icon: "📋", t: "commissions.c7_title", d: "commissions.c7_text" },
+  { icon: "📝", t: "commissions.c8_title", d: "commissions.c8_text" },
 ];
 
 export default function Commissions() {
+  const { t } = useT();
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="bg-[#0F7C55] rounded-[28px] sm:rounded-[45px] overflow-hidden p-6 sm:p-12 md:p-16 text-white relative">
@@ -51,31 +24,29 @@ export default function Commissions() {
         <div className="relative z-10">
           <div className="text-center">
             <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold">
-              Organisation KSN
+              {t("section.organisation_ksn")}
             </span>
 
             <h2 className="mt-4 text-4xl md:text-5xl font-bold">
-              Commissions Officielles
+              {t("section.commissions_title")}
             </h2>
 
             <p className="mt-6 text-white/70 max-w-3xl mx-auto leading-8">
-              Les commissions du Dahira Kippangog Salaatu &apos;Alaa Nabii
-              assurent l&apos;organisation, l&apos;éducation, la solidarité, la
-              communication et le développement spirituel de la communauté.
+              {t("commissions.intro")}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-7 mt-16">
             {COMMISSIONS.map((c) => (
               <div
-                key={c.title}
+                key={c.t}
                 className="bg-white/10 backdrop-blur-md rounded-[30px] p-8 border border-white/10 hover:scale-[1.02] transition"
               >
                 <div className="text-5xl">{c.icon}</div>
                 <h3 className="mt-5 text-2xl font-bold text-[#D4AF37]">
-                  {c.title}
+                  {t(c.t)}
                 </h3>
-                <p className="mt-4 text-white/70 leading-7">{c.text}</p>
+                <p className="mt-4 text-white/70 leading-7">{t(c.d)}</p>
               </div>
             ))}
           </div>

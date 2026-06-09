@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fmtNumber } from "@/lib/challenge";
+import { useT } from "@/lib/i18n/context";
 
 type DataPoint = {
   month: string;
@@ -10,21 +11,37 @@ type DataPoint = {
 };
 
 const DATA: DataPoint[] = [
-  { month: "Jan", value: 250 },
-  { month: "Fév", value: 278 },
-  { month: "Mar", value: 306 },
-  { month: "Avr", value: 334 },
-  { month: "Mai", value: 362 },
-  { month: "Jui", value: 390, isProjected: true },
-  { month: "Jul", value: 418, isProjected: true },
-  { month: "Aoû", value: 446, isProjected: true },
-  { month: "Sep", value: 474, isProjected: true },
-  { month: "Oct", value: 502, isProjected: true },
-  { month: "Nov", value: 530, isProjected: true },
-  { month: "Déc", value: 558, isProjected: true },
+  { month: "jan", value: 250 },
+  { month: "feb", value: 278 },
+  { month: "mar", value: 306 },
+  { month: "apr", value: 334 },
+  { month: "may", value: 362 },
+  { month: "jun", value: 390, isProjected: true },
+  { month: "jul", value: 418, isProjected: true },
+  { month: "aug", value: 446, isProjected: true },
+  { month: "sep", value: 474, isProjected: true },
+  { month: "oct", value: 502, isProjected: true },
+  { month: "nov", value: 530, isProjected: true },
+  { month: "dec", value: 558, isProjected: true },
 ];
 
+const FULL_MONTH_KEYS: Record<string, string> = {
+  jan: "month.january",
+  feb: "month.february",
+  mar: "month.march",
+  apr: "month.april",
+  may: "month.may_full",
+  jun: "month.june",
+  jul: "month.july",
+  aug: "month.august",
+  sep: "month.september",
+  oct: "month.october",
+  nov: "month.november",
+  dec: "month.december",
+};
+
 export default function ChallengeProgression() {
+  const { t } = useT();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   // SVG Chart Dimensions
@@ -79,23 +96,23 @@ export default function ChallengeProgression() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
           <div>
             <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-              Tendances & Prévisions 2026
+              {t("challenge.trend_overline")}
             </span>
             <h2 className="font-display mt-3 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
-              Progression Mensuelle
+              {t("challenge.trend_title")}
             </h2>
             <p className="mt-2 text-gray-600 text-sm sm:text-base max-w-xl">
-              Suivi de la progression cumulée vers l&apos;objectif spirituel du milliard. La ligne pointillée représente les projections basées sur le rythme actuel.
+              {t("challenge.trend_desc")}
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex gap-4 text-xs font-semibold">
             <span className="flex items-center gap-1.5 text-emerald-800">
               <span className="w-3.5 h-3.5 rounded-sm bg-gradient-to-r from-[#0F7C55] to-[#B8860B]" />
-              Réalisé
+              {t("challenge.realized")}
             </span>
             <span className="flex items-center gap-1.5 text-gray-500">
               <span className="w-3.5 h-1 border-t-2 border-dashed border-[#B8860B]" />
-              Projeté
+              {t("challenge.projected")}
             </span>
           </div>
         </div>
@@ -162,7 +179,7 @@ export default function ChallengeProgression() {
                       d.isProjected ? "fill-gray-400 font-medium" : "fill-[#0F7C55]"
                     }`}
                   >
-                    {d.month}
+                    {t("month." + d.month)}
                   </text>
                 </g>
               ))}
@@ -256,31 +273,31 @@ export default function ChallengeProgression() {
             <span className="text-2xl sm:text-3xl">📈</span>
             <div>
               <p className="text-xs uppercase tracking-wider text-gray-500 font-bold">
-                {hoveredIdx !== null ? `Mois de ${DATA[hoveredIdx].month === 'Jan' ? 'Janvier' : DATA[hoveredIdx].month === 'Fév' ? 'Février' : DATA[hoveredIdx].month === 'Mar' ? 'Mars' : DATA[hoveredIdx].month === 'Avr' ? 'Avril' : DATA[hoveredIdx].month === 'Mai' ? 'Mai' : DATA[hoveredIdx].month === 'Jui' ? 'Juin' : DATA[hoveredIdx].month === 'Jul' ? 'Juillet' : DATA[hoveredIdx].month === 'Aoû' ? 'Août' : DATA[hoveredIdx].month === 'Sep' ? 'Septembre' : DATA[hoveredIdx].month === 'Oct' ? 'Octobre' : DATA[hoveredIdx].month === 'Nov' ? 'Novembre' : 'Décembre'}` : "Sélectionner un mois"}
+                {hoveredIdx !== null ? `${t("challenge.status_label")} : ${t(FULL_MONTH_KEYS[DATA[hoveredIdx].month])}` : t("challenge.select_month")}
               </p>
               <h4 className="font-display text-lg sm:text-xl font-bold text-[#0F7C55]">
                 {hoveredIdx !== null 
                   ? `${fmtNumber(DATA[hoveredIdx].value * 1_000_000)} Salaatus`
-                  : "Survolez les points pour voir les détails"}
+                  : t("challenge.hover_details")}
               </h4>
             </div>
           </div>
           {hoveredIdx !== null && (
             <div className="flex gap-4">
               <div className="bg-white/80 backdrop-blur-sm border border-[#E9E3D5] px-4 py-2 rounded-xl text-center">
-                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Progression</span>
+                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-semibold">{t("challenge.progression_label")}</span>
                 <span className="font-display text-base font-bold text-[#0F7C55]">
                   {((DATA[hoveredIdx].value * 1_000_000) / 1_000_000_000 * 100).toFixed(1)} %
                 </span>
               </div>
               <div className="bg-white/80 backdrop-blur-sm border border-[#E9E3D5] px-4 py-2 rounded-xl text-center">
-                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Statut</span>
+                <span className="block text-[10px] text-gray-500 uppercase tracking-widest font-semibold">{t("challenge.status_label")}</span>
                 <span className={`font-display text-xs font-bold px-2 py-0.5 rounded-full inline-block mt-0.5 ${
                   DATA[hoveredIdx].isProjected 
                     ? "bg-[#B8860B]/10 text-[#B8860B]" 
                     : "bg-emerald-100 text-emerald-800"
                 }`}>
-                  {DATA[hoveredIdx].isProjected ? "Projeté" : "Réalisé"}
+                  {DATA[hoveredIdx].isProjected ? t("challenge.projected") : t("challenge.realized")}
                 </span>
               </div>
             </div>

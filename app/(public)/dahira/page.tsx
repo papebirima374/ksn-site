@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageHero from "@/components/layout/PageHero";
+import DahiraHero from "@/components/sections/DahiraHero";
 import Commissions from "@/components/sections/Commissions";
 import LeDahira from "@/components/sections/LeDahira";
 import Presidence from "@/components/sections/Presidence";
@@ -17,12 +17,7 @@ export const metadata: Metadata = {
 export default function DahiraPage() {
   return (
     <>
-      <PageHero
-        overline="Organisation Spirituelle"
-        title="Le Dahira KSN"
-        arabic="كيبانغوغ صلاة على النبي"
-        description="Découvrez la présidence, les commissions officielles, le règlement intérieur et toute l'organisation du Dahira Kippangog Salaatu 'Alaa Nabii."
-      />
+      <DahiraHero />
 
       <Presidence />
       <MotDuPresident />

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { FaArrowRight, FaLocationDot, FaCalendarDays } from "react-icons/fa6";
 import EventCountdown from "@/components/sections/EventCountdown";
+import { useT } from "@/lib/i18n/context";
 
 // Date synchronisee avec /journee-salaatu (lib partagee a creer si plusieurs
 // points de presence). Pour l'instant la date vit ici + dans la page dediee :
@@ -11,6 +14,8 @@ const EVENT_DATE_LABEL = "26 décembre 2026";
 /** Banniere de l'accueil annonçant la prochaine Journee Salaatu 'Alaa Nabii.
  *  Reutilise le composant EventCountdown deja construit. */
 export default function JourneeBanner() {
+  const { t } = useT();
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#B8860B] via-[#D4AF37] to-[#B8860B] p-6 sm:p-12 md:p-16 text-[#0F7C55]">
@@ -25,25 +30,22 @@ export default function JourneeBanner() {
               className="font-arabic text-3xl sm:text-4xl text-[#0F7C55] mb-3"
               dir="rtl"
             >
-              يوم الصلاة على النبي ﷺ
+              {t("journee.arabic")}
             </p>
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F7C55] text-[#D4AF37] mb-5">
               <FaCalendarDays className="text-xs" />
               <span className="uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold">
-                Événement annuel
+                {t("journee.badge")}
               </span>
             </div>
 
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
-              Journée Salaatu
-              <br />
-              ʿAlaa Nabii
+              {t("journee.title")}
             </h2>
 
             <p className="mt-4 sm:mt-5 text-sm sm:text-base text-[#0F7C55]/85 leading-7 max-w-xl mx-auto lg:mx-0">
-              La oumma KSN se réunit à Touba pour une journée entière de
-              prières, chants et dhikr collectif autour du Prophète Muhammad ﷺ.
+              {t("journee.desc")}
             </p>
 
             <div className="mt-5 flex flex-wrap justify-center lg:justify-start gap-4 text-xs sm:text-sm font-bold">
@@ -59,7 +61,7 @@ export default function JourneeBanner() {
               href="/journee-salaatu"
               className="inline-flex items-center gap-2 mt-7 sm:mt-9 bg-[#0F7C55] hover:bg-[#0A3D24] text-[#D4AF37] font-bold px-6 sm:px-7 py-3 sm:py-3.5 rounded-2xl shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
-              Découvrir la journée
+              {t("journee.cta")}
               <FaArrowRight className="text-sm" />
             </Link>
           </div>
@@ -69,10 +71,10 @@ export default function JourneeBanner() {
             <EventCountdown
               target={EVENT_DATE_ISO}
               firestoreOverride
-              passedLabel="La Journée a eu lieu — à très bientôt pour la prochaine édition."
+              passedLabel={t("countdown.passed")}
             />
             <p className="mt-4 text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-[#0F7C55]/80 font-bold">
-              Avant le grand rassemblement
+              {t("journee.before")}
             </p>
           </div>
         </div>

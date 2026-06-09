@@ -1,8 +1,11 @@
 "use client";
 
+"use client";
+
 import { useEffect, useState } from "react";
 import { FaQuoteLeft, FaStar, FaLocationDot, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { listTestimonials } from "@/lib/admin-data";
+import { useT } from "@/lib/i18n/context";
 
 type Temoignage = {
   name: string;
@@ -102,6 +105,7 @@ function getInitials(name: string): string {
 }
 
 export default function Temoignages() {
+  const { t } = useT();
   const [activeIdx, setActiveIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [items, setItems] = useState<Temoignage[]>(TEMOIGNAGES_PLACEHOLDER);
@@ -155,15 +159,13 @@ export default function Temoignages() {
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="text-center mb-10 sm:mb-14">
         <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
-          Ils témoignent
+          {t("temoignages.badge")}
         </span>
         <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-          Une oumma, des voix
+          {t("temoignages.title")}
         </h2>
         <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
-          Des membres KSN à travers les cinq continents racontent leur
-          expérience de la communauté, du Challenge 1 Milliard et de la
-          spiritualité partagée.
+          {t("temoignages.desc")}
         </p>
       </div>
 
@@ -182,7 +184,7 @@ export default function Temoignages() {
             <button
               type="button"
               onClick={prev}
-              aria-label="Témoignage précédent"
+              aria-label={t("temoignages.prev")}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#D4AF37] flex items-center justify-center transition"
             >
               <FaChevronLeft />
@@ -193,7 +195,7 @@ export default function Temoignages() {
                   key={i}
                   type="button"
                   onClick={() => setActiveIdx(i)}
-                  aria-label={`Aller au témoignage ${i + 1}`}
+                  aria-label={`Go to testimonial ${i + 1}`}
                   className={`h-1.5 rounded-full transition-all ${
                     i === activeIdx
                       ? "w-6 bg-[#D4AF37]"
@@ -205,7 +207,7 @@ export default function Temoignages() {
             <button
               type="button"
               onClick={next}
-              aria-label="Témoignage suivant"
+              aria-label={t("temoignages.next")}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-[#D4AF37] flex items-center justify-center transition"
             >
               <FaChevronRight />
@@ -217,9 +219,7 @@ export default function Temoignages() {
       {/* Note transparente — affichée uniquement quand on est sur les placeholders */}
       {usingPlaceholders && (
         <p className="mt-10 text-center text-xs text-white/50 italic max-w-2xl mx-auto">
-          Témoignages représentatifs de l&apos;esprit du Dahira KSN. Les vrais
-          membres peuvent partager leur expérience via WhatsApp pour
-          apparaître dans cette section.
+          {t("temoignages.placeholder_note")}
         </p>
       )}
     </section>
@@ -227,6 +227,9 @@ export default function Temoignages() {
 }
 
 function TemoignageCard({ t }: { t: Temoignage }) {
+  const { locale } = useT();
+  const sincePrefix = locale === "en" ? "since" : locale === "it" ? "da" : locale === "es" ? "desde" : locale === "ar" ? "منذ" : "depuis";
+
   return (
     <article className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-7 hover:bg-white/10 hover:border-[#D4AF37]/30 transition group">
       {/* Quote icon en filigrane */}
@@ -264,7 +267,7 @@ function TemoignageCard({ t }: { t: Temoignage }) {
               {t.flag} {t.location}
             </span>
             {t.since && (
-              <span className="ml-1 opacity-60">· depuis {t.since}</span>
+              <span className="ml-1 opacity-60">· {sincePrefix} {t.since}</span>
             )}
           </p>
         </div>

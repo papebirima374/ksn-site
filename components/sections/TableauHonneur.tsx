@@ -2,6 +2,7 @@
 
 import { fmtNumber } from "@/lib/challenge";
 import { FaCrown, FaMedal } from "react-icons/fa6";
+import { useT } from "@/lib/i18n/context";
 
 type DivisionRank = {
   rank: number;
@@ -64,6 +65,7 @@ const LEADERBOARD: DivisionRank[] = [
 ];
 
 export default function TableauHonneur() {
+  const { t } = useT();
   const maxTotal = LEADERBOARD[0].totalSalaatu;
 
   return (
@@ -71,13 +73,13 @@ export default function TableauHonneur() {
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
         <div className="text-center mb-10 sm:mb-14">
           <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            Tableau d&apos;Honneur
+            {t("challenge.leaderboard_overline")}
           </span>
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            Les sections leaders
+            {t("challenge.leaderboard_title")}
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-            Félicitations et prières pour nos sections locales à travers le monde. Voici le classement des sections les plus actives du Challenge 1 Milliard.
+            {t("challenge.leaderboard_desc")}
           </p>
         </div>
 
@@ -102,7 +104,7 @@ export default function TableauHonneur() {
                 {fmtNumber(LEADERBOARD[1].totalSalaatu)}
               </p>
               <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold mt-1">
-                {LEADERBOARD[1].contributors} contributeurs
+                {t("challenge.contributors").replace("{count}", LEADERBOARD[1].contributors.toString())}
               </p>
             </div>
           </div>
@@ -110,7 +112,7 @@ export default function TableauHonneur() {
           {/* First Place */}
           <div className="order-1 md:order-2 bg-[#F8F5EF] border-2 border-[#D4AF37] rounded-[32px] p-8 sm:p-10 flex flex-col justify-between items-center text-center relative overflow-hidden shadow-xl shadow-[#D4AF37]/5 group hover:shadow-2xl hover:shadow-[#D4AF37]/10 transition-all scale-100 md:scale-105">
             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#D4AF37] text-[#0F7C55] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-              <FaCrown /> Leader
+              <FaCrown /> {t("challenge.leader")}
             </div>
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
             <div>
@@ -129,7 +131,7 @@ export default function TableauHonneur() {
                 {fmtNumber(LEADERBOARD[0].totalSalaatu)}
               </p>
               <p className="text-[10px] uppercase tracking-wider text-[#B8860B] font-bold mt-1">
-                {LEADERBOARD[0].contributors} contributeurs
+                {t("challenge.contributors").replace("{count}", LEADERBOARD[0].contributors.toString())}
               </p>
             </div>
           </div>
@@ -153,7 +155,7 @@ export default function TableauHonneur() {
                 {fmtNumber(LEADERBOARD[2].totalSalaatu)}
               </p>
               <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold mt-1">
-                {LEADERBOARD[2].contributors} contributeurs
+                {t("challenge.contributors").replace("{count}", LEADERBOARD[2].contributors.toString())}
               </p>
             </div>
           </div>
@@ -195,7 +197,7 @@ export default function TableauHonneur() {
                       {fmtNumber(item.totalSalaatu)} Salaatu
                     </span>
                     <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">
-                      {item.contributors} contributeurs
+                      {t("challenge.contributors").replace("{count}", item.contributors.toString())}
                     </span>
                   </div>
                 </div>

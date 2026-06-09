@@ -1,15 +1,20 @@
+"use client";
+
 import Image from "next/image";
 import { FaApple, FaGooglePlay } from "react-icons/fa6";
 import { LINKS } from "@/lib/constants";
-
-const FEATURES = [
-  "Salaatou & suivi quotidien",
-  "Communauté KSN",
-  "Contenus spirituels & rappels",
-  "Suivi des activités du Dahira",
-];
+import { useT } from "@/lib/i18n/context";
 
 export default function AppKSN() {
+  const { t } = useT();
+
+  const FEATURES = [
+    t("appksn.f1"),
+    t("appksn.f2"),
+    t("appksn.f3"),
+    t("appksn.f4"),
+  ];
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F7C55] to-[#063822] p-6 sm:p-12 md:p-16 text-white">
@@ -19,19 +24,15 @@ export default function AppKSN() {
         <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
           <div>
             <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold">
-              Application Mobile KSN
+              {t("appksn.badge")}
             </span>
 
             <h2 className="mt-5 text-4xl md:text-5xl font-bold leading-tight">
-              Emportez KSN
-              <br />
-              Partout Avec Vous 📱
+              {t("appksn.title")}
             </h2>
 
             <p className="mt-6 text-white/75 text-lg leading-8">
-              Accédez au comptage des Salaatou, aux activités du Dahira, aux
-              contenus spirituels et à toute la communauté KSN directement
-              depuis votre téléphone.
+              {t("appksn.desc")}
             </p>
 
             <div className="mt-8 space-y-4">
@@ -48,12 +49,12 @@ export default function AppKSN() {
                 href={LINKS.appStore}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Télécharger sur l'App Store"
+                aria-label={t("appksn.download_apple") + " App Store"}
                 className="inline-flex items-center gap-3 bg-black text-white px-6 py-3.5 rounded-2xl hover:scale-105 transition shadow-xl border border-white/15"
               >
                 <FaApple className="text-3xl" />
                 <span className="text-left leading-tight">
-                  <span className="block text-[10px] font-medium opacity-80">Télécharger sur</span>
+                  <span className="block text-[10px] font-medium opacity-80">{t("appksn.download_apple")}</span>
                   <span className="block text-lg font-bold -mt-0.5">App Store</span>
                 </span>
               </a>
@@ -62,12 +63,12 @@ export default function AppKSN() {
                 href={LINKS.playStore}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Disponible sur Google Play"
+                aria-label={t("appksn.download_google") + " Google Play"}
                 className="inline-flex items-center gap-3 bg-black text-white px-6 py-3.5 rounded-2xl hover:scale-105 transition shadow-xl border border-white/15"
               >
                 <FaGooglePlay className="text-2xl text-[#D4AF37]" />
                 <span className="text-left leading-tight">
-                  <span className="block text-[10px] font-medium opacity-80">Disponible sur</span>
+                  <span className="block text-[10px] font-medium opacity-80">{t("appksn.download_google")}</span>
                   <span className="block text-lg font-bold -mt-0.5">Google Play</span>
                 </span>
               </a>
@@ -81,7 +82,7 @@ export default function AppKSN() {
               <div className="relative h-full w-full bg-black">
                 <Image
                   src="/images/appksn.jpeg"
-                  alt="Application mobile KSN — capture d'écran"
+                  alt={t("appksn.badge")}
                   fill
                   sizes="320px"
                   className="object-cover"

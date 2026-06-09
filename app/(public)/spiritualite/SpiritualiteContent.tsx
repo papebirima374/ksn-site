@@ -4,18 +4,21 @@ import PageHero from "@/components/layout/PageHero";
 import SalaatouDuJour from "@/components/sections/SalaatouDuJour";
 import SalaatuLibrary from "@/components/sections/SalaatuLibrary";
 import Spiritualite from "@/components/sections/Spiritualite";
+import { useT } from "@/lib/i18n/context";
 
 // Spiritualité is a public page. Visitors browse freely; the SalaatuLibrary
 // component handles partial access on its own (2 first Salaats unlocked,
 // the rest locked with the "Devenir membre actif" modal).
 export default function SpiritualiteContent() {
+  const { t } = useT();
+
   return (
     <>
       <PageHero
-        overline="Spiritualité KSN"
-        title="Nourrir le Cœur par le Salaatu ﷺ"
+        overline={t("spiritualite.page_overline")}
+        title={t("spiritualite.page_title")}
         arabic="صلى الله عليه وسلم"
-        description="Salaatou du jour, bibliothèque sacrée des Salaats, Khassidas, invocations et enseignements pour vivre pleinement votre lien avec le Prophète Muhammad ﷺ."
+        description={t("spiritualite.page_desc")}
       />
 
       <SalaatouDuJour />

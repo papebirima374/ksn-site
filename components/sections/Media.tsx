@@ -1,35 +1,41 @@
-const MEDIA_CARDS = [
-  {
-    icon: "📸",
-    title: "Galerie Photos",
-    text: "Photos officielles des événements, rencontres spirituelles, conférences, Gamou et activités du Dahira.",
-    cta: "Explorer",
-    gradient: "from-[#B8860B] to-[#D4AF37]",
-  },
-  {
-    icon: "🎥",
-    title: "Vidéos & Conférences",
-    text: "Visionnez conférences, zikr, Salaatou, rappels, lives et enseignements spirituels.",
-    cta: "Regarder",
-    gradient: "from-[#0F7C55] to-[#1F7A53]",
-  },
-  {
-    icon: "🕌",
-    title: "Événements KSN",
-    text: "Gamou, journées Salaatu, rencontres spirituelles, programmes religieux et événements officiels.",
-    cta: "Voir Agenda",
-    gradient: "from-[#D4AF37] to-[#F5D76E]",
-  },
-];
+"use client";
 
-const MEDIA_STATS = [
-  { value: "2021", label: "Création KSN" },
-  { value: "Touba", label: "Siège Spirituel" },
-  { value: "6", label: "Commissions" },
-  { value: "🌍", label: "Rayonnement International" },
-];
+import { useT } from "@/lib/i18n/context";
 
 export default function Media() {
+  const { t } = useT();
+
+  const MEDIA_CARDS = [
+    {
+      icon: "📸",
+      title: t("media.photos_title"),
+      text: t("media.photos_desc"),
+      cta: t("media.photos_cta"),
+      gradient: "from-[#B8860B] to-[#D4AF37]",
+    },
+    {
+      icon: "🎥",
+      title: t("media.videos_title"),
+      text: t("media.videos_desc"),
+      cta: t("media.videos_cta"),
+      gradient: "from-[#0F7C55] to-[#1F7A53]",
+    },
+    {
+      icon: "🕌",
+      title: t("media.events_title"),
+      text: t("media.events_desc"),
+      cta: t("media.events_cta"),
+      gradient: "from-[#D4AF37] to-[#F5D76E]",
+    },
+  ];
+
+  const MEDIA_STATS = [
+    { value: "2021", label: t("stats.creation") },
+    { value: "Touba", label: t("site.location") },
+    { value: "6", label: t("hero.card_commissions") },
+    { value: "🌍", label: t("stats.international") },
+  ];
+
   return (
     <section
       id="media"
@@ -39,19 +45,15 @@ export default function Media() {
         <div className="p-6 sm:p-12 md:p-16">
           <div className="text-center">
             <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold">
-              Média KSN
+              {t("section.media_ksn")}
             </span>
 
             <h2 className="mt-4 text-4xl md:text-5xl font-bold text-[#0F7C55]">
-              Activités du Dahira
-              <br />
-              & Vie Communautaire
+              {t("section.media_title")}
             </h2>
 
             <p className="mt-6 text-gray-600 max-w-3xl mx-auto leading-8">
-              Découvrez les activités spirituelles, événements, conférences,
-              rassemblements, vidéos, galeries photos et moments forts de
-              Kippangog Salaatu &apos;Alaa Nabii.
+              {t("media.desc")}
             </p>
           </div>
 

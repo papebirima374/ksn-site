@@ -13,10 +13,12 @@ import {
 } from "@/lib/admin-types";
 import { useAuth } from "@/lib/auth-context";
 import { useProtectionShield } from "@/lib/protection";
+import { useT } from "@/lib/i18n/context";
 
 const FREE_PREVIEW_COUNT = 2;
 
 export default function SalaatuLibrary() {
+  const { t, locale } = useT();
   const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState<SalaatuLibraryItem[]>(SALAATU_FALLBACK);
   const [category, setCategory] = useState<string>("Toutes");
@@ -69,6 +71,8 @@ export default function SalaatuLibrary() {
     );
   }
 
+  const dateStr = new Date().toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
+
   return (
     <section
       id="bibliotheque"
@@ -83,34 +87,30 @@ export default function SalaatuLibrary() {
           {isPremium ? (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F7C55]/10 text-[#0F7C55] text-xs font-semibold mb-3">
               <FaShieldHalved className="text-[#D4AF37]" />
-              Accès premium débloqué
+              {t("library.unlocked_badge")}
               {isOfficialMember && (
                 <span className="ml-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#B8860B] text-[10px] uppercase tracking-widest font-black">
-                  <FaCrown className="text-[9px]" /> Membre KSN
+                  <FaCrown className="text-[9px]" /> {t("library.official_member")}
                 </span>
               )}
             </div>
           ) : (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold mb-3">
-              <FaLock /> Aperçu · {FREE_PREVIEW_COUNT} Salaats sur {items.length} accessibles
+              <FaLock /> {t("library.locked_badge").replace("{freeCount}", String(FREE_PREVIEW_COUNT)).replace("{totalCount}", String(items.length))}
             </div>
           )}
           <span className="block uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            Bibliothèque Sacrée
+            {t("library.sacred_overline")}
           </span>
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            Bibliothèque des Salaats
+            {t("library.title")}
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-            {items.length} Salaat{items.length > 1 ? "s" : ""} avec arabe,
-            translittération, traduction, bienfaits et secrets
-            d&apos;utilisation. Le Salaatu du jour reste en accès libre — la
-            bibliothèque complète s&apos;ouvre à vie avec un paiement unique
-            de 1 000 FCFA.
+            {t("library.desc").replace("Salaats", `${items.length} Salaat${items.length > 1 ? "s" : ""}`)}
           </p>
           {user && (
             <p className="mt-3 text-xs text-gray-400">
-              Connecté en tant que <span className="font-semibold text-[#0F7C55]">{user.displayName || user.email}</span>
+              {t("library.connected_as")} <span className="font-semibold text-[#0F7C55]">{user.displayName || user.email}</span>
             </p>
           )}
         </div>
@@ -119,8 +119,8 @@ export default function SalaatuLibrary() {
         {today && (
           <div className="mt-10 sm:mt-12 bg-gradient-to-br from-[#0F7C55] to-[#082F22] rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-white">
             <p className="uppercase tracking-[0.2em] text-[#D4AF37] text-xs sm:text-sm font-bold mb-2">
-              Salaatu du jour — {new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })}
-              <span className="ml-2 inline-block bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded-full text-[10px]">Accès libre</span>
+              {t("library.daily_title") + dateStr}
+              <span className="ml-2 inline-block bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded-full text-[10px]">{t("library.free_access")}</span>
             </p>
             <h3 className="font-display text-2xl sm:text-3xl font-bold">
               {today.title}
@@ -153,13 +153,13 @@ export default function SalaatuLibrary() {
                   c === category ? "bg-[#0F7C55] text-white" : "bg-[#F8F5EF] text-[#0F7C55] hover:bg-[#E8E6E1]"
                 }`}
               >
-                {c}
+                {c === "Toutes" ? (locale === "en" ? "All" : locale === "it" ? "Tutte" : locale === "es" ? "Todas" : locale === "ar" ? "الكل" : "Toutes") : c}
               </button>
             ))}
           </div>
           <input
             type="search"
-            placeholder="Rechercher..."
+            placeholder={t("library.search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="rounded-full border border-gray-200 px-4 py-2 text-sm text-[#0F7C55] bg-white outline-none focus:border-[#0F7C55] min-w-[180px]"
@@ -169,7 +169,7 @@ export default function SalaatuLibrary() {
         {/* LIST */}
         <div className="mt-8 space-y-4">
           {filtered.length === 0 ? (
-            <p className="text-center py-12 text-gray-500">Aucun Salaat ne correspond à ces critères.</p>
+            <p className="text-center py-12 text-gray-500">{t("library.no_results")}</p>
           ) : (
             filtered.map((s, idx) => {
               const locked = !isPremium && idx >= FREE_PREVIEW_COUNT;
@@ -197,21 +197,19 @@ export default function SalaatuLibrary() {
           <div className="mt-12 bg-gradient-to-br from-[#B8860B] to-[#D4AF37] rounded-3xl p-6 sm:p-8 text-[#0F7C55] text-center shadow-lg">
             <FaCrown className="inline text-2xl mb-2" />
             <h3 className="font-display text-xl sm:text-2xl font-bold">
-              Ouvrir la bibliothèque sacrée
+              {t("library.unlock_title")}
             </h3>
             <p className="mt-2 text-sm leading-6 max-w-xl mx-auto">
-              {items.length - FREE_PREVIEW_COUNT} Salaats supplémentaires
-              avec leurs translittérations, traductions et secrets — accès
-              permanent à vie pour <strong>1 000 FCFA</strong>.
+              {t("library.unlock_desc").replace("Salaats", `${items.length - FREE_PREVIEW_COUNT} Salaats`)}
             </p>
             <Link
               href="/premium/bibliotheque"
               className="inline-flex items-center mt-5 bg-[#0F7C55] text-white px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#0A3D24] transition"
             >
-              Débloquer pour 1 000 FCFA →
+              {t("library.unlock_btn")}
             </Link>
             <p className="text-[11px] text-[#0F7C55]/70 mt-3 italic">
-              Paiement unique via Wave · validation sous 24h ouvrées
+              {t("library.unlock_note")}
             </p>
           </div>
         )}
@@ -240,6 +238,8 @@ function SalaatuCard({
   onToggle: () => void;
   watermark: string;
 }) {
+  const { t } = useT();
+
   return (
     <div className={`rounded-2xl sm:rounded-3xl overflow-hidden border relative transition ${
       locked ? "bg-gray-50 border-gray-200" : "bg-[#F8F5EF] border-[#0F7C55]/10"
@@ -258,7 +258,7 @@ function SalaatuCard({
             </p>
             {locked && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-                <FaLock className="w-2.5 h-2.5" /> Réservé Membres
+                <FaLock className="w-2.5 h-2.5" /> {t("library.reserved")}
               </span>
             )}
           </div>
@@ -284,19 +284,19 @@ function SalaatuCard({
           </p>
           {item.transliteration && (
             <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">Prononciation</p>
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">{t("library.pronunciation")}</p>
               <p className="italic text-sm sm:text-base text-[#0F7C55] leading-7">« {item.transliteration} »</p>
             </div>
           )}
           {item.translation && (
             <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">Traduction</p>
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-1">{t("library.translation")}</p>
               <p className="text-sm sm:text-base text-gray-700 leading-7">{item.translation}</p>
             </div>
           )}
           {item.benefits && item.benefits.length > 0 && (
             <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Bienfaits</p>
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">{t("library.benefits")}</p>
               <ul className="space-y-1.5">
                 {item.benefits.map((b, i) => (
                   <li key={i} className="text-sm sm:text-base text-[#0F7C55] flex gap-2">
@@ -308,7 +308,7 @@ function SalaatuCard({
           )}
           {item.usageNotes && item.usageNotes.length > 0 && (
             <div className="mt-5 relative">
-              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">Secrets & Pratique</p>
+              <p className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">{t("library.usage")}</p>
               <ul className="space-y-2">
                 {item.usageNotes.map((n, i) => (
                   <li key={i} className="text-sm sm:text-base text-gray-700 leading-7 bg-white rounded-xl p-3 border border-[#0F7C55]/10">
@@ -331,6 +331,8 @@ function UpgradeModal({
   onClose: () => void;
   loggedIn: boolean;
 }) {
+  const { t } = useT();
+
   return (
     <div
       className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
@@ -344,16 +346,13 @@ function UpgradeModal({
           <FaCrown />
         </div>
         <h2 className="font-display mt-4 text-2xl font-bold text-[#0F7C55]">
-          Salaat verrouillé
+          {t("modal.title")}
         </h2>
         <p className="mt-3 text-gray-600 text-sm leading-7">
-          Ce contenu sacré fait partie du <strong>premium</strong>.
-          Débloquez l&apos;intégralité de la bibliothèque (texte arabe,
-          translittération, traduction, bienfaits et secrets) pour un
-          paiement unique de <strong>1 000 FCFA</strong> via Wave.
+          {t("modal.desc")}
         </p>
         <p className="text-[11px] text-gray-500 mt-2 italic">
-          Accès à vie sur tous vos appareils.
+          {t("modal.note")}
         </p>
 
         <div className="mt-5 space-y-2">
@@ -365,14 +364,14 @@ function UpgradeModal({
             }
             className="block w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 rounded-xl font-bold hover:scale-[1.02] transition"
           >
-            {loggedIn ? "Débloquer maintenant →" : "Créer un compte pour débloquer →"}
+            {loggedIn ? t("modal.unlock") : t("modal.register")}
           </Link>
           <button
             type="button"
             onClick={onClose}
             className="block w-full bg-gray-100 text-[#0F7C55] py-3 rounded-xl font-semibold text-sm hover:bg-gray-200 transition"
           >
-            Plus tard
+            {t("modal.later")}
           </button>
         </div>
       </div>
@@ -381,12 +380,14 @@ function UpgradeModal({
 }
 
 function ShieldOverlay({ reason }: { reason: string }) {
+  const { t } = useT();
+
   return (
     <div className="absolute inset-0 z-30 bg-[#082F22]/95 backdrop-blur-xl flex flex-col items-center justify-center text-center p-6 rounded-[28px] sm:rounded-[45px]">
       <div className="w-20 h-20 rounded-full bg-[#D4AF37]/15 flex items-center justify-center">
         <FaShieldHalved className="text-[#D4AF37] text-4xl" />
       </div>
-      <h3 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-white">Contenu protégé</h3>
+      <h3 className="font-display mt-5 text-2xl sm:text-3xl font-bold text-white">{t("shield.title")}</h3>
       <p className="mt-3 text-white/80 max-w-md text-sm sm:text-base">{reason}</p>
     </div>
   );

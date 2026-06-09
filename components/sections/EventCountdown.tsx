@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
 import { getJourneeSettings } from "@/lib/admin-data";
+import { useT } from "@/lib/i18n/context";
 
 type EventCountdownProps = {
   /** Date cible ISO (ex. "2027-01-02T08:00:00+00:00").
@@ -42,9 +43,12 @@ function compute(target: number, now: number): Remaining {
  *  Rendu cote client uniquement (evite hydration mismatch). */
 export default function EventCountdown({
   target,
-  passedLabel = "L'événement a eu lieu — à très bientôt pour la prochaine édition.",
+  passedLabel,
   firestoreOverride = false,
 }: EventCountdownProps) {
+  const { t } = useT();
+  const effectivePassedLabel = passedLabel || t("countdown.passed");
+
   const [effectiveTargetMs, setEffectiveTargetMs] = useState<number>(
     new Date(target).getTime()
   );
@@ -92,22 +96,22 @@ export default function EventCountdown({
   if (r.passed) {
     return (
       <div className="rounded-2xl sm:rounded-3xl bg-white/5 border border-white/10 p-6 sm:p-8 text-center">
-        <p className="text-[#D4AF37] text-sm sm:text-base">{passedLabel}</p>
+        <p className="text-[#D4AF37] text-sm sm:text-base">{effectivePassedLabel}</p>
       </div>
     );
   }
 
   const cells: { value: number; label: string }[] = [
-    { value: r.days, label: "Jours" },
-    { value: r.hours, label: "Heures" },
-    { value: r.minutes, label: "Minutes" },
-    { value: r.seconds, label: "Secondes" },
+    { value: r.days, label: t("countdown.days") },
+    { value: r.hours, label: t("countdown.hours") },
+    { value: r.minutes, label: t("countdown.minutes") },
+    { value: r.seconds, label: t("countdown.seconds") },
   ];
 
   return (
     <div className="rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#0F7C55]/30 to-[#0F7C55]/5 border border-[#D4AF37]/30 backdrop-blur-md p-5 sm:p-8">
       <p className="text-center text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[#D4AF37] font-bold mb-4">
-        Compte à rebours
+        {t("countdown.title")}
       </p>
       <div className="grid grid-cols-4 gap-2 sm:gap-4">
         {cells.map((c) => (

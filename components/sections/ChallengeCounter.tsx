@@ -9,21 +9,24 @@ import {
   type ChallengeStats,
 } from "@/lib/challenge";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
+import { useT } from "@/lib/i18n/context";
 
 type Tab = "thisWeek" | "lastWeek" | "today" | "thisMonth" | "lastMonth";
-
-const TABS: { id: Tab; label: string }[] = [
-  { id: "thisWeek", label: "Cette semaine" },
-  { id: "lastWeek", label: "Semaine passée" },
-  { id: "today", label: "Aujourd'hui" },
-  { id: "thisMonth", label: "Ce mois-ci" },
-  { id: "lastMonth", label: "Le mois passé" },
-];
 
 /** Compteur live du challenge 1 milliard.
  *  Aujourd'hui : estimation animee, basee sur le rythme reel de l'app.
  *  Demain : branche sur Firestore KIPPAANGOG via une 2e Firebase app. */
 export default function ChallengeCounter() {
+  const { t } = useT();
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: "thisWeek", label: t("challenge.thisWeek") },
+    { id: "lastWeek", label: t("challenge.lastWeek") },
+    { id: "today", label: t("challenge.today") },
+    { id: "thisMonth", label: t("challenge.thisMonth") },
+    { id: "lastMonth", label: t("challenge.lastMonth") },
+  ];
+
   // null cote SSR pour eviter hydration mismatch sur Date.now()
   const [stats, setStats] = useState<ChallengeStats | null>(null);
   const [tab, setTab] = useState<Tab>("thisWeek");
@@ -93,28 +96,26 @@ export default function ChallengeCounter() {
             صلى الله على محمد
           </p>
           <p className="uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#D4AF37] text-xs sm:text-sm font-bold">
-            Challenge KSN
+            {t("compteur.badge")}
           </p>
           <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            1 Milliard de Salaatu
-            <br />
-            offerts au Prophète ﷺ
+            {t("challenge.title")}
           </h2>
 
           {/* COMPTEUR PRINCIPAL */}
           <div className="mt-8 sm:mt-12">
             <p className="text-xs sm:text-sm uppercase tracking-widest text-white/60 font-semibold">
-              Total cumulé par la communauté KSN
+              {t("challenge.community_total")}
             </p>
             <div className="font-display mt-3 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-white tabular-nums tracking-tight">
               {fmtNumber(displayTotal)}
             </div>
             <p className="mt-3 text-sm sm:text-base text-white/70">
-              sur{" "}
+              {t("compteur.target").split("{target}")[0]}
               <span className="text-[#D4AF37] font-bold">
                 {fmtNumber(CHALLENGE_TARGET)}
-              </span>{" "}
-              — Challenge du milliard
+              </span>
+              {t("compteur.target").split("{target}")[1]}
             </p>
           </div>
 
@@ -143,14 +144,14 @@ export default function ChallengeCounter() {
                   <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 </span>
                 <span className="text-xs font-bold text-emerald-300">
-                  EN DIRECT — synchronisé avec l&apos;application KSN
+                  {t("challenge.live")}
                 </span>
               </>
             ) : (
               <>
                 <span className="text-[#D4AF37]">📊</span>
                 <span className="text-xs font-medium text-white/70">
-                  Estimation basée sur le rythme de l&apos;application (~7M/semaine)
+                  {t("challenge.estimated")}
                 </span>
               </>
             )}
@@ -182,7 +183,7 @@ export default function ChallengeCounter() {
             <p className="font-display mt-3 text-4xl sm:text-5xl md:text-6xl font-bold text-white tabular-nums">
               {fmtNumber(tabValue)}
             </p>
-            <p className="mt-2 text-sm text-white/60">Salaatu offerts au Prophète ﷺ</p>
+            <p className="mt-2 text-sm text-white/60">{t("challenge.offered")}</p>
           </div>
         </div>
       </div>

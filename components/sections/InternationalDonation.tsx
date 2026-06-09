@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { FaHeart, FaPaypal, FaCreditCard, FaLock, FaCircleCheck } from "react-icons/fa6";
+import { useT } from "@/lib/i18n/context";
 
 const CURRENCIES = [
   { code: "EUR", symbol: "€", label: "Euro (€)" },
@@ -18,6 +19,8 @@ const PRESETS = {
 };
 
 export default function InternationalDonation() {
+  const { t, locale } = useT();
+
   const [currency, setCurrency] = useState<"EUR" | "USD" | "XOF">("EUR");
   const [amount, setAmount] = useState<string>("50");
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -54,11 +57,11 @@ export default function InternationalDonation() {
   const handleSubmitDonation = async (e: FormEvent) => {
     e.preventDefault();
     if (!finalAmount || finalAmount <= 0) {
-      setError("Veuillez indiquer un montant valide.");
+      setError(t("don.validation_error"));
       return;
     }
     if (!name || !email) {
-      setError("Veuillez renseigner votre nom et votre adresse email.");
+      setError(t("don.details_error"));
       return;
     }
 
@@ -103,11 +106,15 @@ export default function InternationalDonation() {
       setSuccess(true);
     } catch (err) {
       console.error("Error processing donation:", err);
-      setError("Une erreur est survenue lors du traitement du don. Veuillez réessayer.");
+      setError(t("don.processing_error"));
     } finally {
       setLoading(false);
     }
   };
+
+  const formattedFinalAmount = finalAmount 
+    ? `${finalAmount.toLocaleString(locale === 'ar' ? 'ar-EG' : locale)} ${CURRENCIES.find((c) => c.code === currency)?.symbol}`
+    : `0 ${CURRENCIES.find((c) => c.code === currency)?.symbol}`;
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-12 sm:pb-16 animate-fadeIn">
@@ -116,13 +123,13 @@ export default function InternationalDonation() {
         
         <div className="text-center mb-8 sm:mb-10">
           <span className="inline-flex items-center gap-2 uppercase tracking-[0.2em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            <FaHeart className="animate-pulse text-red-500" /> Diaspora & International
+            <FaHeart className="animate-pulse text-red-500" /> {t("don.intl_badge")}
           </span>
           <h2 className="font-display mt-2 text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F7C55]">
-            Dons Sécurisés (Stripe + PayPal)
+            {t("don.intl_title")}
           </h2>
           <p className="mt-2 text-gray-600 text-sm sm:text-base max-w-xl mx-auto">
-            Soutenez le Dahira KSN depuis l&apos;étranger par Carte Bancaire ou PayPal. Reçu fiscal électronique généré automatiquement.
+            {t("don.intl_desc")}
           </p>
         </div>
 
@@ -135,7 +142,7 @@ export default function InternationalDonation() {
               {/* Currency selector */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  1. Devise
+                  {t("don.step_currency")}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {CURRENCIES.map((cur) => (
@@ -161,7 +168,7 @@ export default function InternationalDonation() {
               {/* Preset Amounts */}
               <div>
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  2. Montant du don
+                  {t("don.step_amount")}
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {activePresets.map((val) => (
@@ -175,7 +182,7 @@ export default function InternationalDonation() {
                           : "border-gray-200 bg-white text-[#0F7C55] hover:bg-gray-50"
                       }`}
                     >
-                      {val.toLocaleString("fr-FR")} {CURRENCIES.find((c) => c.code === currency)?.symbol}
+                      {val.toLocaleString(locale === 'ar' ? 'ar-EG' : locale)} {CURRENCIES.find((c) => c.code === currency)?.symbol}
                     </button>
                   ))}
                 </div>
@@ -183,14 +190,14 @@ export default function InternationalDonation() {
                 {/* Custom Amount input */}
                 <div className="mt-3 relative rounded-xl border border-gray-200 bg-gray-50 focus-within:border-[#0F7C55] transition">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">
-                    Autre montant :
+                    {t("don.other_amount")}
                   </span>
                   <input
                     type="number"
                     min="1"
                     value={customAmount}
                     onChange={(e) => handleCustomAmountChange(e.target.value)}
-                    placeholder="Saisissez un montant..."
+                    placeholder={t("don.placeholder_custom")}
                     className="w-full pl-32 pr-12 py-3 bg-transparent outline-none text-right text-sm font-bold text-[#0F7C55]"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">
@@ -202,7 +209,7 @@ export default function InternationalDonation() {
               {/* Donor Details */}
               <div className="space-y-3">
                 <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">
-                  3. Vos coordonnées
+                  {t("don.step_details")}
                 </label>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <input
@@ -210,7 +217,7 @@ export default function InternationalDonation() {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Nom complet"
+                    placeholder={t("contact.placeholder_name")}
                     className="w-full rounded-xl border border-gray-200 p-3.5 outline-none focus:border-[#0F7C55] text-xs sm:text-sm text-[#0F7C55] bg-gray-50"
                   />
                   <input
@@ -218,7 +225,7 @@ export default function InternationalDonation() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Adresse email"
+                    placeholder={t("contact.placeholder_email")}
                     className="w-full rounded-xl border border-gray-200 p-3.5 outline-none focus:border-[#0F7C55] text-xs sm:text-sm text-[#0F7C55] bg-gray-50"
                   />
                 </div>
@@ -232,7 +239,7 @@ export default function InternationalDonation() {
               {/* Payment selector */}
               <div>
                 <label className="block text-[10px] uppercase font-bold text-gray-400 mb-2">
-                  Méthode de Paiement
+                  {t("don.payment_method")}
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -245,7 +252,7 @@ export default function InternationalDonation() {
                     }`}
                   >
                     <FaCreditCard className="text-lg" />
-                    <span className="text-[11px] font-bold">Stripe / Carte</span>
+                    <span className="text-[11px] font-bold">{t("don.stripe_badge")}</span>
                   </button>
                   <button
                     type="button"
@@ -257,7 +264,7 @@ export default function InternationalDonation() {
                     }`}
                   >
                     <FaPaypal className="text-lg text-[#003087]" />
-                    <span className="text-[11px] font-bold">PayPal</span>
+                    <span className="text-[11px] font-bold">{t("don.paypal_badge")}</span>
                   </button>
                 </div>
               </div>
@@ -267,7 +274,7 @@ export default function InternationalDonation() {
                 // Card details mockup
                 <div className="space-y-3 bg-white p-4 rounded-2xl border border-gray-200">
                   <p className="text-[10px] uppercase font-black tracking-widest text-[#0F7C55] mb-2">
-                    Saisie sécurisée Stripe
+                    {t("don.stripe_title")}
                   </p>
                   <div>
                     <input
@@ -276,7 +283,7 @@ export default function InternationalDonation() {
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value.replace(/\s+/g, "").replace(/(\d{4})/g, "$1 ").trim())}
                       maxLength={19}
-                      placeholder="Numéro de carte (4444 ...)"
+                      placeholder={t("don.card_number")}
                       className="w-full rounded-lg border border-gray-100 p-2.5 outline-none focus:border-[#0F7C55] text-xs font-semibold bg-gray-50"
                     />
                   </div>
@@ -305,13 +312,13 @@ export default function InternationalDonation() {
                 // PayPal message
                 <div className="bg-white p-4 rounded-2xl border border-[#D4AF37]/30 text-center space-y-3">
                   <p className="text-[10px] uppercase font-black tracking-widest text-[#B8860B]">
-                    PayPal Express Checkout
+                    {t("don.paypal_title")}
                   </p>
                   <div className="w-full bg-[#FFC439] hover:bg-[#F2B21B] py-3 rounded-xl flex items-center justify-center gap-2 cursor-pointer font-bold text-slate-800 text-xs shadow-md transition">
-                    <FaPaypal className="text-sm text-[#003087]" /> Payer avec PayPal
+                    <FaPaypal className="text-sm text-[#003087]" /> {t("don.paypal_btn")}
                   </div>
                   <p className="text-[9px] text-gray-400">
-                    Ouvre une fenêtre pop-up sécurisée PayPal pour finaliser votre don de manière confidentielle.
+                    {t("don.paypal_desc")}
                   </p>
                 </div>
               )}
@@ -319,9 +326,9 @@ export default function InternationalDonation() {
               {/* Total display & Submit */}
               <div className="border-t border-[#E9E3D5] pt-4 space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <span className="text-xs text-gray-500 font-bold">Total Don :</span>
+                  <span className="text-xs text-gray-500 font-bold">{t("don.total")}</span>
                   <span className="text-xl font-black text-[#0F7C55]">
-                    {finalAmount ? finalAmount.toLocaleString("fr-FR") : 0} {CURRENCIES.find((c) => c.code === currency)?.symbol}
+                    {formattedFinalAmount}
                   </span>
                 </div>
 
@@ -336,11 +343,11 @@ export default function InternationalDonation() {
                   disabled={loading}
                   className="w-full bg-[#0F7C55] hover:bg-[#0A3D24] text-white py-3.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xl transition disabled:opacity-70"
                 >
-                  {loading ? "Traitement sécurisé..." : "Valider mon don"}
+                  {loading ? t("don.btn_processing") : t("don.btn_submit")}
                 </button>
 
                 <p className="text-[9px] text-gray-400 text-center flex items-center justify-center gap-1">
-                  <FaLock className="text-emerald-600" /> Données chiffrées SSL 256-bits.
+                  <FaLock className="text-emerald-600" /> {t("don.secured_ssl")}
                 </p>
               </div>
 
@@ -355,46 +362,46 @@ export default function InternationalDonation() {
             </div>
             
             <h3 className="font-display text-2xl font-black text-[#0F7C55]">
-              Merci infiniment !
+              {t("don.success_thanks")}
             </h3>
             
             <p className="text-gray-500 text-sm mt-2">
-              Votre don de <strong className="text-[#0F7C55]">{finalAmount.toLocaleString("fr-FR")} {CURRENCIES.find((c) => c.code === currency)?.symbol}</strong> a été validé avec succès.
+              {t("don.success_desc").replace("{amount}", formattedFinalAmount)}
             </p>
 
             <div className="mt-6 bg-[#F8F5EF] border border-[#E9E3D5] p-5 rounded-2xl text-left space-y-3 shadow-inner">
               <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider text-center border-b border-gray-200 pb-2">
-                Reçu de Don Électronique
+                {t("don.receipt_title")}
               </p>
               <div className="text-xs space-y-2 font-semibold">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Bienfaiteur :</span>
+                  <span className="text-gray-400">{t("don.receipt_donor")}</span>
                   <span className="text-[#0F7C55]">{name}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Email :</span>
+                  <span className="text-gray-400">{t("don.receipt_email")}</span>
                   <span className="text-[#0F7C55]">{email}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Transaction N° :</span>
+                  <span className="text-gray-400">{t("don.receipt_tx")}</span>
                   <span className="text-[#B8860B] select-all">{receiptNumber}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Statut :</span>
-                  <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">Succès ✓</span>
+                  <span className="text-gray-400">{t("don.receipt_status")}</span>
+                  <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full text-[10px]">{t("don.receipt_success")}</span>
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-gray-400 mt-4 px-4 leading-relaxed">
-              Un e-mail de confirmation contenant votre reçu au format PDF a été envoyé à l&apos;adresse <strong>{email}</strong>.
+              {t("don.receipt_email_sent").replace("{email}", email)}
             </p>
 
             <button
               onClick={() => setSuccess(false)}
               className="mt-8 text-xs text-[#0F7C55] font-bold hover:underline"
             >
-              Faire un nouveau don
+              {t("don.new_donation")}
             </button>
           </div>
         )}

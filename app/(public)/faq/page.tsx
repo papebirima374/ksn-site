@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { FaWhatsapp, FaCircleQuestion } from "react-icons/fa6";
-import PageHero from "@/components/layout/PageHero";
-import FaqAccordion from "@/components/sections/FaqAccordion";
-import ShareButton from "@/components/ui/ShareButton";
-import { LINKS, SITE } from "@/lib/constants";
+import FaqContent from "./FaqContent";
 
 export const metadata: Metadata = {
   title: "FAQ — Questions fréquentes sur le Dahira KSN",
@@ -17,7 +12,7 @@ export const metadata: Metadata = {
   },
 };
 
-const FAQ_CATEGORIES = [
+const FAQ_CATEGORIES_SEO = [
   {
     title: "Le Dahira KSN",
     questions: [
@@ -86,7 +81,7 @@ const FAQ_CATEGORIES = [
       },
       {
         q: "Comment se rendre à Touba depuis l'étranger ?",
-        a: `L'aéroport international de Dakar (AIBD) est à environ 2h de route de Touba. Pour l'hébergement, le transport depuis Dakar et les détails logistiques, contactez l'équipe via WhatsApp — nous accompagnons les visiteurs internationaux.`,
+        a: `L'aéroport international de Dakar (AIBD) est à approx. 2h de route de Touba. Pour l'hébergement, le transport depuis Dakar et les détails logistiques, contactez l'équipe via WhatsApp — nous accompagnons les visiteurs internationaux.`,
       },
     ],
   },
@@ -123,8 +118,7 @@ const FAQ_CATEGORIES = [
 ];
 
 export default function FAQPage() {
-  // Flatten pour le JSON-LD FAQPage (SEO)
-  const allQuestions = FAQ_CATEGORIES.flatMap((c) => c.questions);
+  const allQuestions = FAQ_CATEGORIES_SEO.flatMap((c) => c.questions);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -144,105 +138,7 @@ export default function FAQPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-
-      <PageHero
-        overline="Questions fréquentes"
-        title="Tout ce qu'il faut savoir"
-        arabic="الأسئلة المتداولة"
-        description={`Les réponses aux questions les plus fréquemment posées sur le Dahira KSN, l'adhésion, le Challenge 1 Milliard, la Journée Salaatu, l'application mobile et bien plus.`}
-      />
-
-      {/* SOMMAIRE RAPIDE */}
-      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-10">
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-6">
-          <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#D4AF37] font-bold mb-3">
-            Sommaire — {FAQ_CATEGORIES.length} sections, {allQuestions.length} questions
-          </p>
-          <div className="grid sm:grid-cols-2 gap-2">
-            {FAQ_CATEGORIES.map((c) => (
-              <a
-                key={c.title}
-                href={`#${c.title.replace(/\s+/g, "-").toLowerCase()}`}
-                className="text-white/80 hover:text-[#D4AF37] text-sm py-1.5 transition flex items-center gap-2"
-              >
-                <FaCircleQuestion className="text-[#D4AF37]" />
-                {c.title}{" "}
-                <span className="text-[10px] text-white/40">
-                  ({c.questions.length})
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ACCORDÉONS PAR CATÉGORIE */}
-      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20 space-y-12 sm:space-y-16">
-        {FAQ_CATEGORIES.map((cat, ci) => (
-          <div
-            key={cat.title}
-            id={cat.title.replace(/\s+/g, "-").toLowerCase()}
-            className="scroll-mt-32"
-          >
-            <div className="flex items-baseline gap-3 mb-5">
-              <span className="font-display text-3xl sm:text-4xl font-black text-[#D4AF37]/40 tabular-nums leading-none">
-                {String(ci + 1).padStart(2, "0")}
-              </span>
-              <h2 className="font-display text-2xl sm:text-3xl font-bold text-white">
-                {cat.title}
-              </h2>
-            </div>
-            <FaqAccordion items={cat.questions} />
-          </div>
-        ))}
-      </section>
-
-      {/* CTA QUESTION SUPPLEMENTAIRE */}
-      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 text-center">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] flex items-center justify-center text-[#D4AF37] text-2xl mb-5">
-            <FaCircleQuestion />
-          </div>
-          <h2 className="font-display text-2xl sm:text-3xl font-bold text-[#0F7C55]">
-            Votre question n&apos;est pas dans la liste ?
-          </h2>
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
-            Notre équipe WhatsApp répond rapidement à toutes les questions
-            spécifiques. N&apos;hésitez pas, aucune question n&apos;est trop
-            simple ou trop complexe.
-          </p>
-
-          <div className="mt-7 sm:mt-9 grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
-            <a
-              href={LINKS.whatsapp}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-[#0F7C55] hover:bg-[#0A3D24] text-white px-6 py-4 rounded-2xl font-bold shadow-xl transition text-sm sm:text-base"
-            >
-              <FaWhatsapp /> Poser ma question via WhatsApp
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
-            >
-              Formulaire de contact →
-            </Link>
-          </div>
-
-          <div className="mt-6 flex justify-center">
-            <ShareButton
-              title="FAQ — Dahira KSN"
-              text="Trouvez les réponses à toutes vos questions sur le Dahira Kippangog Salaatu ʿAlaa Nabii."
-              variant="ghost"
-              label="Partager cette FAQ"
-            />
-          </div>
-
-          <p className="mt-6 text-xs text-gray-500">
-            Site officiel du Dahira {SITE.fullName} — Touba, Sénégal
-          </p>
-        </div>
-      </section>
+      <FaqContent />
     </>
   );
 }
