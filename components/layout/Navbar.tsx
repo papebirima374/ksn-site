@@ -100,7 +100,7 @@ export default function Navbar() {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       <div
-        className="max-w-7xl mx-auto px-4 sm:px-6"
+        className="max-w-7xl 2xl:max-w-[1560px] mx-auto px-4 sm:px-6"
         style={{ paddingTop: "calc(env(safe-area-inset-top) + 1rem)" }}
       >
         <div className="bg-white/[0.06] backdrop-blur-2xl border border-white/10 rounded-[24px] sm:rounded-[30px] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-[0_10px_50px_rgba(0,0,0,0.35)]">
@@ -130,7 +130,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-2.5 xl:gap-5 text-white font-medium text-[12px] xl:text-[14px]">
+          <nav className="hidden xl:flex items-center gap-3 2xl:gap-5 text-white font-medium text-[13px] 2xl:text-[15px]">
             {navItems.map((item) =>
               item.kind === "link" ? (
                 <Link
@@ -155,16 +155,16 @@ export default function Navbar() {
               href={JOIN_WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 xl:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl transition text-xs whitespace-nowrap"
+              className="hidden xl:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 2xl:px-3.5 py-2.5 rounded-2xl transition text-xs whitespace-nowrap"
               title="Rejoindre le Dahira sur WhatsApp"
             >
-              <FaWhatsapp className="text-[13px] text-[#25D366]" />
-              <span className="hidden xl:inline">Rejoindre</span>
+              <FaWhatsapp className="text-[14px] text-[#25D366]" />
+              <span className="hidden 2xl:inline">Rejoindre</span>
             </a>
 
             <Link
               href="/don"
-              className="hidden sm:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-3 xl:px-5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl shadow-xl hover:scale-105 transition text-xs xl:text-sm whitespace-nowrap"
+              className="hidden xl:inline-flex bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold px-3 2xl:px-5 py-2.5 rounded-2xl shadow-xl hover:scale-105 transition text-xs 2xl:text-sm whitespace-nowrap"
             >
               {t("cta.donate")}
             </Link>
@@ -174,7 +174,7 @@ export default function Navbar() {
               onClick={() => setOpen(!open)}
               aria-label="Menu"
               aria-expanded={open}
-              className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 text-white"
+              className="xl:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 text-white"
             >
               <span
                 className={`block w-6 h-0.5 bg-current transition-transform ${
