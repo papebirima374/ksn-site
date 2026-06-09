@@ -96,11 +96,11 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#082F22] text-white dark" : "bg-[#F8F5EF] text-[#1A1A1A]"}`}>
       {/* SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#082F22] text-white transform transition-transform lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#082F22] text-white transform transition-transform lg:translate-x-0 flex flex-col ${
           open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="px-6 pb-6 border-b border-white/10" style={{ paddingTop: "calc(env(safe-area-inset-top) + 1.5rem)" }}>
+        <div className="px-6 pb-6 border-b border-white/10 flex-shrink-0" style={{ paddingTop: "calc(env(safe-area-inset-top) + 1.5rem)" }}>
           <p className="font-display text-2xl font-bold">KSN Admin</p>
           <p className="text-xs text-white/60 mt-1 truncate">{user.email}</p>
           <p className="text-xs text-[#D4AF37] mt-1 uppercase tracking-widest">
@@ -108,7 +108,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           </p>
         </div>
 
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="px-3 py-4 space-y-1 flex-1 overflow-y-auto">
           {visibleNav.map((item) => {
             const Icon = item.Icon;
             const active = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href));
@@ -130,7 +130,7 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 px-4 pt-4 border-t border-white/10 space-y-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}>
+        <div className="flex-shrink-0 px-4 pt-4 border-t border-white/10 space-y-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}>
           <Link
             href="/"
             className="block w-full text-center text-xs text-white/70 hover:text-white transition"
