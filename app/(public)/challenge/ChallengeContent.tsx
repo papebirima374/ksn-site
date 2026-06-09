@@ -5,7 +5,6 @@ import { FaWhatsapp, FaApple, FaGooglePlay, FaHandshakeAngle } from "react-icons
 import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import ChallengeProgression from "@/components/sections/ChallengeProgression";
-import TableauHonneur from "@/components/sections/TableauHonneur";
 import ShareButton from "@/components/ui/ShareButton";
 import { LINKS, JOIN_WHATSAPP_LINK } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
@@ -48,9 +47,6 @@ export default function ChallengeContent() {
 
       {/* GRAPHIQUE PROGRESSION */}
       <ChallengeProgression />
-
-      {/* TABLEAU D'HONNEUR */}
-      <TableauHonneur />
 
       {/* COMMENT PARTICIPER */}
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
