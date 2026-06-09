@@ -48,7 +48,7 @@ export default function LeDahira() {
 
           <p className="mt-5 sm:mt-6 text-gray-600 max-w-3xl mx-auto leading-7 sm:leading-8 text-sm sm:text-base">
             Fondé le 02 Janvier 2021 à Touba, Kippangog Salaatu &apos;Alaa Nabii
-            œuvre pour la promotion du Salaatu sur le Prophète Muhammad ﷺ, la
+            œuvre pour la promotion de la Prière sur le Prophète Muhammad ﷺ, la
             fraternité spirituelle et le rayonnement du Dahira à travers le
             monde.
           </p>

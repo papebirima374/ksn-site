@@ -796,7 +796,7 @@ Serigne Touba a écrit des poèmes magnifiques sur l'amour filial. Il rappelait 
     reference: "6.1",
     titleArabic: "الأمر الإلهي",
     intention:
-      "Au nom d'Allah le Très-Miséricordieux. Méditons ensemble sur ce verset fondateur du Coran qui établit la Salaatu sur le Prophète Muhammad ﷺ comme un commandement divin direct.",
+      "Au nom d'Allah le Très-Miséricordieux. Méditons ensemble sur ce verset fondateur du Coran qui établit la Prière sur le Prophète Muhammad ﷺ comme un commandement divin direct.",
     content: `Dans la sourate Al-Ahzâb, au verset 56, Allah s'adresse directement aux croyants par une parole d'une portée immense. Il révèle un acte qu'Il accomplit Lui-même, accompagné de Ses anges : la prière sur le Prophète Muhammad ﷺ.
 
 Cette révélation est **unique dans le Coran**. Allah ne se contente pas de recommander la Salaatu : Il commande aux croyants de l'accomplir comme une obligation spirituelle continue.
@@ -823,8 +823,8 @@ Au sein du Dahira KSN (Kippangog Salaatu ʿAlaa Nabii), cette parole guide chacu
     reference: "6.2",
     titleArabic: "فضائل الصلاة على النبي ﷺ",
     intention:
-      "Les vertus de la Salaatu sur le Prophète ﷺ sont innombrables. Découvrons les promesses divines qui l'accompagnent.",
-    content: `Les hadiths authentiques regorgent de promesses pour ceux qui multiplient la Salaatu sur le Prophète Muhammad ﷺ. En voici quelques-unes :
+      "Les vertus de la Prière sur le Prophète ﷺ sont innombrables. Découvrons les promesses divines qui l'accompagnent.",
+    content: `Les hadiths authentiques regorgent de promesses pour ceux qui multiplient la Prière sur le Prophète Muhammad ﷺ. En voici quelques-unes :
 
 **La récompense décuplée** : "Quiconque prie sur moi une fois, Allah prie sur lui dix fois." (Muslim) Cette promesse est extraordinaire : un seul Salaatu te vaut **dix prières divines** en ta faveur.
 
@@ -908,7 +908,7 @@ Serigne Touba enseigne que **la formule courte récitée beaucoup vaut mieux** q
     titleArabic: "الصلاة الجماعية على النبي",
     intention:
       "La Salaatu se renforce dans le groupe. C'est le sens même du Dahira KSN : multiplier l'effort par la baraka collective.",
-    content: `Bien que la Salaatu sur le Prophète ﷺ soit accessible individuellement à tout moment, la **pratique communautaire** lui confère une dimension spirituelle exceptionnelle.
+    content: `Bien que la Prière sur le Prophète ﷺ soit accessible individuellement à tout moment, la **pratique communautaire** lui confère une dimension spirituelle exceptionnelle.
 
 **Pourquoi prier ensemble ?**
 

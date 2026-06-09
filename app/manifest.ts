@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: `Site KSN — ${SITE.fullName}`,
     short_name: "Site KSN",
     description:
-      "Dahira international au service du Salaatu sur le Prophète Muhammad ﷺ. Compteur live du Challenge 1 Milliard, bibliothèque spirituelle, espace membre.",
+      "Dahira international au service de la Prière sur le Prophète Muhammad ﷺ. Compteur live du Challenge 1 Milliard, bibliothèque spirituelle, espace membre.",
     start_url: "/",
     scope: "/",
     display: "standalone",

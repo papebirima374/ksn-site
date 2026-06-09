@@ -15,11 +15,11 @@ import { LINKS, SITE } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "Notre Histoire — Fondation 2021 à Touba",
   description:
-    "L'histoire du Dahira Kippangog Salaatu ʿAlaa Nabii : de la fondation à Touba en janvier 2021 à un mouvement spirituel international rassemblant des milliers de membres autour du Salaatu sur le Prophète Muhammad ﷺ.",
+    "L'histoire du Dahira Kippangog Salaatu ʿAlaa Nabii : de la fondation à Touba en janvier 2021 à un mouvement spirituel international rassemblant des milliers de membres autour de la Prière sur le Prophète Muhammad ﷺ.",
   openGraph: {
     title: "Notre Histoire — Dahira KSN depuis 2021",
     description:
-      "Comment un cercle de fidèles à Touba est devenu un Dahira international au service du Salaatu sur le Prophète Muhammad ﷺ.",
+      "Comment un cercle de fidèles à Touba est devenu un Dahira international au service de la Prière sur le Prophète Muhammad ﷺ.",
   },
 };
 
@@ -45,7 +45,7 @@ const MILESTONES: Milestone[] = [
     date: "Chaque semaine",
     icon: <FaHandHoldingHeart />,
     title: "Des millions de Salaatu ʿAlaa Nabii",
-    text: "Dès la première année, la communauté se réunit régulièrement pour réciter ensemble des millions de Salaatu sur le Prophète Muhammad ﷺ. Cette pratique collective devient le cœur battant et l'identité du Dahira.",
+    text: "Dès la première année, la communauté se réunit régulièrement pour réciter ensemble des millions de Prières sur le Prophète Muhammad ﷺ. Cette pratique collective devient le cœur battant et l'identité du Dahira.",
   },
   {
     year: "2022",
@@ -59,7 +59,7 @@ const MILESTONES: Milestone[] = [
     date: "Anniversaire",
     icon: <FaPeopleGroup />,
     title: "Causerie auprès de Serigne Khalil Mbacké",
-    text: "À l'occasion de l'anniversaire, la communauté est reçue par Serigne Khalil Mbacké pour une causerie spirituelle dédiée aux bienfaits et aux mérites du Salaatu sur le Prophète Muhammad ﷺ.",
+    text: "À l'occasion de l'anniversaire, la communauté est reçue par Serigne Khalil Mbacké pour une causerie spirituelle dédiée aux bienfaits et aux mérites de la Prière sur le Prophète Muhammad ﷺ.",
   },
   {
     year: "2023",
@@ -73,7 +73,7 @@ const MILESTONES: Milestone[] = [
     date: "14 décembre",
     icon: <FaStar />,
     title: "2ᵉ édition de la Journée Salaatu",
-    text: "La deuxième édition confirme l'ancrage de l'événement : une affluence grandissante et une mobilisation internationale autour du Salaatu sur le Prophète ﷺ.",
+    text: "La deuxième édition confirme l'ancrage de l'événement : une affluence grandissante et une mobilisation internationale autour de la Prière sur le Prophète ﷺ.",
   },
   {
     year: "2025",
@@ -343,7 +343,7 @@ export default function NotreHistoirePage() {
           <div className="mt-6 flex justify-center">
             <ShareButton
               title="L'histoire du Dahira KSN depuis 2021"
-              text="Comment un cercle de fidèles à Touba est devenu un Dahira international au service du Salaatu sur le Prophète ﷺ."
+              text="Comment un cercle de fidèles à Touba est devenu un Dahira international au service de la Prière sur le Prophète ﷺ."
               variant="ghost"
               label="Partager notre histoire"
             />

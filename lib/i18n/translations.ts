@@ -36,7 +36,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.title_line3": "au service du",
     "hero.title_line4": "Salaatu ﷺ",
     "hero.subtitle":
-      "Créé le 02 Janvier 2021 à Touba, KSN œuvre pour la promotion du Salaatu sur le Prophète Muhammad ﷺ à travers une organisation structurée, des activités spirituelles et une communauté internationale engagée.",
+      "Créé le 02 Janvier 2021 à Touba, KSN œuvre pour la promotion de la Prière sur le Prophète Muhammad ﷺ à travers une organisation structurée, des activités spirituelles et une communauté internationale engagée.",
     "hero.card_overline": "Vie Institutionnelle KSN",
     "hero.card_title": "Organisation & Fonctionnement",
     "hero.card_reglement": "Règlement Intérieur",
@@ -80,7 +80,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "footer.suivez": "Suivez-nous",
     "footer.mission_title": "Mission Spirituelle",
     "footer.mission_quote":
-      "Œuvrer pour la promotion du Salaatu sur le Prophète Muhammad ﷺ à travers une communauté spirituelle moderne, engagée et internationale.",
+      "Œuvrer pour la promotion de la Prière sur le Prophète Muhammad ﷺ à travers une communauté spirituelle moderne, engagée et internationale.",
     "footer.copyright": "Tous droits réservés.",
 
     // Salaatu du Jour

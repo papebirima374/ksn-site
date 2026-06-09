@@ -2113,7 +2113,7 @@ export async function seedTazawwud(): Promise<{ modules: number; lessons: number
     },
     {
       slug: "salaatu",
-      titleFr: "La Salaatu sur le Prophète ﷺ",
+      titleFr: "La Prière sur le Prophète ﷺ",
       titleArabic: "الصلاة على النبي ﷺ",
       iconKey: "star",
       lessons: [

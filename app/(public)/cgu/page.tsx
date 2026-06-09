@@ -57,7 +57,7 @@ export default function CGU() {
 
       <h2>5. Engagement de respect du contenu sacré</h2>
       <p>
-        Le Salaatu sur le Prophète Muhammad ﷺ et les contenus de la
+        La Prière sur le Prophète Muhammad ﷺ et les contenus de la
         bibliothèque sont des éléments <strong>sacrés</strong>. En accédant à
         la bibliothèque complète, le membre s&apos;engage formellement à :
       </p>

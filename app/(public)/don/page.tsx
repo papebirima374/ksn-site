@@ -215,8 +215,8 @@ export default function DonPage() {
 
           <p className="mt-4 sm:mt-6 text-white/75 leading-7 sm:leading-8 max-w-2xl mx-auto text-sm sm:text-base">
             Chaque don, quelle que soit sa nature, contribue au rayonnement
-            spirituel du Dahira KSN et soutient nos activités au service du
-            Salaatu sur le Prophète Muhammad ﷺ.
+            spirituel du Dahira KSN et soutient nos activités au service de la
+            Prière sur le Prophète Muhammad ﷺ.
           </p>
 
           <p className="mt-8 text-xs sm:text-sm text-white/60 italic max-w-2xl mx-auto">

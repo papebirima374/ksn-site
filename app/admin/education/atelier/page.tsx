@@ -32,7 +32,7 @@ type VoicesData = {
 const SAMPLE_TEXTS: Record<string, string> = {
   fr: `Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux. Cheikh Ahmadou Bamba, dans le Tazawwud, enseigne aux jeunes les fondements de la pratique islamique.
 
-La Salaatu sur le Prophète Muhammad ﷺ est l'un des actes les plus aimés d'Allah. Celui qui prie sur le Prophète une fois, Allah prie sur lui dix fois — telle est la promesse divine rapportée par Muslim.
+La Prière sur le Prophète Muhammad ﷺ est l'un des actes les plus aimés d'Allah. Celui qui prie sur le Prophète une fois, Allah prie sur lui dix fois — telle est la promesse divine rapportée par Muslim.
 
 Multiplie tes Salaatu, mon frère, ma sœur, et tu trouveras dans cet acte une lumière qui guide ton cœur.`,
   en: `In the name of Allah, the Most Merciful, the Most Compassionate. The Prophet Muhammad ﷺ said: "Whoever sends one blessing upon me, Allah will send ten blessings upon him." This is the noble path of the Salaatu.`,
