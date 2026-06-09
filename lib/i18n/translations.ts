@@ -208,6 +208,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com6_title": "Commission Sociale & Solidarité",
     "organigramme.com6_desc": "Assure l'entraide sociale entre les membres, la solidarité communautaire et les actions caritatives.",
 
+    // Page Notre Histoire
+    "histoire.hero_overline": "Notre histoire",
+    "histoire.hero_title": "De Touba au monde, depuis 2021",
+    "histoire.hero_desc":
+      "L'histoire du Dahira Kippangog Salaatu ʿAlaa Nabii : un cercle de fidèles devenu un mouvement spirituel international, animé par une seule intention — multiplier les prières sur le Prophète Muhammad ﷺ à travers le monde.",
+    "histoire.origins_overline": "Les origines",
+    "histoire.origins_title": "Une vision née à Touba",
+    "histoire.origins_p1":
+      "Le 2 janvier 2021, à Touba, capitale spirituelle de la voie mouride et terre du Cheikh Ahmadou Bamba (qu'Allah l'agrée), un cercle de fidèles s'est constitué autour d'une conviction simple : la prière sur le Prophète Muhammad ﷺ ne doit pas rester un acte solitaire — elle doit devenir un mouvement collectif, structuré et international.",
+    "histoire.origins_p2": "De cette intention est né le Dahira",
+    "histoire.origins_p3":
+      "Cinq ans plus tard, le Dahira rassemble des milliers de membres à travers l'Afrique, l'Europe, l'Amérique et l'Asie — tous unis dans un même geste quotidien : la récitation de la Prière sur le Sceau des Prophètes ﷺ.",
+    "histoire.stat1_label": "ans d'existence",
+    "histoire.stat2_label": "membres actifs",
+    "histoire.stat3_label": "continents",
+    "histoire.stat4_label": "Salaatu visés",
+    "histoire.timeline_overline": "Les grandes étapes",
+    "histoire.timeline_title": "Les jalons de notre histoire",
+    "histoire.timeline_desc":
+      "Une trajectoire qui passe du local au global, du papier au numérique, du cercle fondateur à la communauté internationale.",
+    "histoire.m1_date": "02 janvier",
+    "histoire.m1_title": "Fondation du Dahira à Touba",
+    "histoire.m1_text":
+      "Un cercle de fidèles, sous l'impulsion de Serigne Birima Gueye, crée officiellement le Dahira Kippangog Salaatu ʿAlaa Nabii avec une mission claire : faire de la prière sur le Prophète Muhammad ﷺ un acte communautaire quotidien, structuré et rayonnant à l'international.",
+    "histoire.m2_date": "Chaque semaine",
+    "histoire.m2_title": "Des millions de Salaatu ʿAlaa Nabii",
+    "histoire.m2_text":
+      "Dès la première année, la communauté se réunit régulièrement pour réciter ensemble des millions de Prières sur le Prophète Muhammad ﷺ. Cette pratique collective devient le cœur battant et l'identité du Dahira.",
+    "histoire.m3_date": "Anniversaire",
+    "histoire.m3_title": "Visite à Serigne Ahmadou Mbacké — Daroul Mouhty",
+    "histoire.m3_text":
+      "Pour l'anniversaire du Dahira, une délégation rend visite à Serigne Ahmadou Mbacké à Daroul Mouhty, pour une interview sur les immenses bienfaits du Salaatu ʿAlaa Nabii.",
+    "histoire.m4_date": "Anniversaire",
+    "histoire.m4_title": "Causerie auprès de Serigne Khalil Mbacké",
+    "histoire.m4_text":
+      "À l'occasion de l'anniversaire, la communauté est reçue par Serigne Khalil Mbacké pour une causerie spirituelle dédiée aux bienfaits et aux mérites de la Prière sur le Prophète Muhammad ﷺ.",
+    "histoire.m5_date": "30 décembre",
+    "histoire.m5_title": "1ʳᵉ Journée Salaatu ʿAlaa Nabii",
+    "histoire.m5_text":
+      "Organisation du tout premier grand rassemblement annuel à Touba : récitals du Coran, conférences d'érudits, déclamation des Khassida et dhikr collectif. La Journée devient la pierre angulaire de la vie du Dahira.",
+    "histoire.m6_date": "14 décembre",
+    "histoire.m6_title": "2ᵉ édition de la Journée Salaatu",
+    "histoire.m6_text":
+      "La deuxième édition confirme l'ancrage de l'événement : une affluence grandissante et une mobilisation internationale autour de la Prière sur le Prophète ﷺ.",
+    "histoire.m7_date": "13 décembre",
+    "histoire.m7_title": "3ᵉ édition de la Journée Salaatu",
+    "histoire.m7_text":
+      "La troisième édition rassemble une oumma toujours plus large, unie par la prière collective sur le Prophète Muhammad ﷺ, à Touba et à travers le monde.",
+    "histoire.values_overline": "Nos valeurs",
+    "histoire.values_title": "Ce qui nous guide",
+    "histoire.v1_title": "Centralité du Prophète ﷺ",
+    "histoire.v1_text":
+      "Toute notre activité gravite autour de la prière sur le Prophète Muhammad ﷺ. C'est notre boussole et notre identité.",
+    "histoire.v2_title": "Culte collectif",
+    "histoire.v2_text":
+      "L'Islam place le groupe au cœur de la spiritualité. Le Dahira incarne cette dimension : multiplier l'effort individuel par la baraka du groupe.",
+    "histoire.v3_title": "Rayonnement international",
+    "histoire.v3_text":
+      "Depuis Touba, capitale spirituelle, vers les cinq continents. Une oumma sans frontières unie par le Salaatu.",
+    "histoire.v4_title": "Modernité au service du sacré",
+    "histoire.v4_text":
+      "Application mobile, site web, compteurs live — la technologie ne remplace pas la spiritualité, elle la sert et la diffuse.",
+    "histoire.quote_text": "« Celui qui prie sur moi une fois, Allah prie sur lui dix fois. »",
+    "histoire.quote_attr": "— Le Prophète Muhammad ﷺ (rapporté par Muslim)",
+    "histoire.quote_closing":
+      "Voilà la promesse divine qui anime chaque jour le Dahira KSN depuis 2021. Multiplier ces moments, les coordonner à l'échelle de la oumma, les rendre accessibles à tous — voilà notre mission hier, aujourd'hui et demain.",
+    "histoire.cta_title": "Écrire la suite avec nous",
+    "histoire.cta_desc":
+      "L'histoire du Dahira KSN s'écrit chaque jour, avec chaque nouveau membre, chaque nouveau Salaatu. Rejoignez le mouvement.",
+    "histoire.cta_member": "Devenir membre",
+    "histoire.cta_contact": "Nous contacter",
+    "histoire.share_title": "L'histoire du Dahira KSN depuis 2021",
+    "histoire.share_text":
+      "Comment un cercle de fidèles à Touba est devenu un Dahira international au service de la Prière sur le Prophète ﷺ.",
+    "histoire.share_label": "Partager notre histoire",
+
     // Compteur Salaatu
     "compteur.badge": "Challenge 1 Milliard",
     "compteur.title": "Salaatu offerts par la communauté KSN",
@@ -820,6 +896,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com5_desc": "Mu jëf waajalu xew-xew yu mag yi ak topptoo nit ñi.",
     "organigramme.com6_title": "Kër Sosial & Bokk-jëf",
     "organigramme.com6_desc": "Mu wóoral ndimbal ci mbokk yi, bokk-jëf ak jëf yu sàddax.",
+
+    // Page Notre Histoire (WOLOF — jet à relire)
+    "histoire.hero_overline": "Sunu Taariix",
+    "histoire.hero_title": "Dale Touba ba àdduna bi, dale 2021",
+    "histoire.hero_desc":
+      "Taariixu Dahira Kippangog Salaatu ʿAlaa Nabii: benn mbooloo mu ngëm mu nekk benn yëngu-yëngu diiney ci àdduna bi, ku ko jëme benn yéene rekk — yokk salaatu ci Yonent bi Muhammad ﷺ ci àdduna bépp.",
+    "histoire.origins_overline": "Tukkikaay yi",
+    "histoire.origins_title": "Benn gis-gis bu juddoo ci Touba",
+    "histoire.origins_p1":
+      "Ci 2 Sanwiyee 2021, ci Touba, péeyu diiney bu yoonu murit te suufu Cheikh Ahmadou Bamba (yal na ko Yàlla gërëm), benn mbooloo mu ngëm tëral na ci benn ngëm bu yomb: salaatu ci Yonent bi Muhammad ﷺ warul a des benn jëf bu kenn — war na nekk benn yëngu-yëngu mu mboole, mu tëral te mu àddunaay.",
+    "histoire.origins_p2": "Ci yéene boobu la juddoo Dahira",
+    "histoire.origins_p3":
+      "Juróomi at ginaaw, Dahira ji dajale na ay junniy mbokk ci Afrik, Tugal, Amerik ak Asi — ñoom ñépp benoo ci benn jëf bu bés bu nekk: jàng salaatu ci Mujjantalu Yonent yi ﷺ.",
+    "histoire.stat1_label": "at ci dund",
+    "histoire.stat2_label": "mbokk yu jëfandikoo",
+    "histoire.stat3_label": "kontinaŋ",
+    "histoire.stat4_label": "Salaatu yu ñu jublu",
+    "histoire.timeline_overline": "Tolluwaay yu mag yi",
+    "histoire.timeline_title": "Tolluwaayu sunu taariix",
+    "histoire.timeline_desc":
+      "Benn yoon bu jóge ci local ba global, ci kayit ba numerik, ci mbooloo mu sos ba mbooloo mu àddunaay.",
+    "histoire.m1_date": "02 Sanwiyee",
+    "histoire.m1_title": "Sosu Dahira ji ci Touba",
+    "histoire.m1_text":
+      "Benn mbooloo mu ngëm, ci ndigalu Serigne Birima Gueye, sos na ci officiel Dahira Kippangog Salaatu ʿAlaa Nabii ak benn yéene bu leer: def salaatu ci Yonent bi Muhammad ﷺ benn jëf bu mbokk bu bés bu nekk, bu tëral te mu leeral ci àdduna bi.",
+    "histoire.m2_date": "Ayu-bés bu nekk",
+    "histoire.m2_title": "Ay milyoŋ Salaatu ʿAlaa Nabii",
+    "histoire.m2_text":
+      "Dale ci at bu njëkk, mbooloo mi dafa daje ngir jàng ndaw ay milyoŋ Salaatu ci Yonent bi Muhammad ﷺ. Jëf bii bu mboole nekk na xolu Dahira ji ak ay melokaanam.",
+    "histoire.m3_date": "Anniversaire",
+    "histoire.m3_title": "Seetu Serigne Ahmadou Mbacké — Daroul Mouhty",
+    "histoire.m3_text":
+      "Ci anniversaire Dahira ji, benn delegasiyoŋ seetu na Serigne Ahmadou Mbacké ci Daroul Mouhty, ngir benn waxtaan ci njariñ yu mag yu Salaatu ʿAlaa Nabii.",
+    "histoire.m4_date": "Anniversaire",
+    "histoire.m4_title": "Waxtaan ak Serigne Khalil Mbacké",
+    "histoire.m4_text":
+      "Ci anniversaire bi, Serigne Khalil Mbacké teeru na mbooloo mi ngir benn waxtaanu diiney ci njariñ ak teraangay salaatu ci Yonent bi Muhammad ﷺ.",
+    "histoire.m5_date": "30 Desàmbar",
+    "histoire.m5_title": "1er Bisu Salaatu ʿAlaa Nabii",
+    "histoire.m5_text":
+      "Tëralu njëkk daje bu mag bu at mu nekk ci Touba: jàng Alxuraan, ndaje yu boroom xam-xam, jàng Khassida ak dhikr bu mboole. Bis bi nekk na pexem dund Dahira ji.",
+    "histoire.m6_date": "14 Desàmbar",
+    "histoire.m6_title": "2e édition Bisu Salaatu",
+    "histoire.m6_text":
+      "Ñaareelu édition bi dëgëral na tabaxu xew bi: mbooloo mu yokku ak tëgg bu àddunaay ci salaatu ci Yonent bi ﷺ.",
+    "histoire.m7_date": "13 Desàmbar",
+    "histoire.m7_title": "3e édition Bisu Salaatu",
+    "histoire.m7_text":
+      "Ñetteelu édition bi dajale na benn umma bu gën a yaatu, benoo ci salaatu bu mboole ci Yonent bi Muhammad ﷺ, ci Touba ak ci àdduna bi.",
+    "histoire.values_overline": "Sunu jikko",
+    "histoire.values_title": "Li nu jiite",
+    "histoire.v1_title": "Yonent bi ﷺ ci digg bi",
+    "histoire.v1_text":
+      "Sunu jëf yépp wëndéelu na salaatu ci Yonent bi Muhammad ﷺ. Mooy sunu boussole ak sunu melokaan.",
+    "histoire.v2_title": "Jaamu bu mboole",
+    "histoire.v2_text":
+      "Lislaam dafa teg mbooloo ci xolu diiney. Dahira ji feeñal na bii: yokk jëfu nit ku nekk ci barkeb mbooloo.",
+    "histoire.v3_title": "Leeral bu àddunaay",
+    "histoire.v3_text":
+      "Dale Touba, péeyu diiney, ba juróomi kontinaŋ yi. Benn umma bu amul dig bu salaatu benoo.",
+    "histoire.v4_title": "Yeesal ci jaamu bu sell",
+    "histoire.v4_text":
+      "Applikaasion, site web, kontër yu direct — teknoloji du wuutu diiney, day ko jëfandikoo te tas ko.",
+    "histoire.quote_text": "« Ku ma salaat benn yoon, Yàlla salaat na ci moom fukk. »",
+    "histoire.quote_attr": "— Yonent bi Muhammad ﷺ (Muslim a ko wax)",
+    "histoire.quote_closing":
+      "Mooy digeb Yàlla bi di yëngal Dahira KSN bés bu nekk dale 2021. Yokk jamono yooyu, tëral leen ci umma bi, def leen ñu jot ci ñépp — mooy sunu mission démb, tey ak ëllëg.",
+    "histoire.cta_title": "Bind li ci kanam ak nun",
+    "histoire.cta_desc":
+      "Taariixu Dahira KSN day bind bés bu nekk, ak mbokk mu bees mu nekk, salaatu bu bees bu nekk. Bokkal ci yëngu-yëngu bi.",
+    "histoire.cta_member": "Nekk mbokk",
+    "histoire.cta_contact": "Jokkoo ak nun",
+    "histoire.share_title": "Taariixu Dahira KSN dale 2021",
+    "histoire.share_text":
+      "Naka la benn mbooloo mu ngëm ci Touba nekk benn Dahira bu àddunaay ci jëfu salaatu ci Yonent bi ﷺ.",
+    "histoire.share_label": "Séddale sunu taariix",
   },
 
   en: {
@@ -1016,6 +1168,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com5_desc": "Manages the logistical preparation of major events and crowd management.",
     "organigramme.com6_title": "Social & Solidarity Commission",
     "organigramme.com6_desc": "Ensures social mutual aid among members, community solidarity and charitable actions.",
+
+    // Page Notre Histoire
+    "histoire.hero_overline": "Our story",
+    "histoire.hero_title": "From Touba to the world, since 2021",
+    "histoire.hero_desc":
+      "The story of the Dahira Kippangog Salaatu ʿAlaa Nabii: a circle of believers that became an international spiritual movement, driven by a single intention — to multiply prayers upon the Prophet Muhammad ﷺ around the world.",
+    "histoire.origins_overline": "The origins",
+    "histoire.origins_title": "A vision born in Touba",
+    "histoire.origins_p1":
+      "On January 2, 2021, in Touba, spiritual capital of the Mouride path and land of Cheikh Ahmadou Bamba (may Allah be pleased with him), a circle of believers came together around a simple conviction: prayer upon the Prophet Muhammad ﷺ must not remain a solitary act — it must become a collective, structured and international movement.",
+    "histoire.origins_p2": "From this intention was born the Dahira",
+    "histoire.origins_p3":
+      "Five years later, the Dahira brings together thousands of members across Africa, Europe, America and Asia — all united in a single daily gesture: the recitation of the Prayer upon the Seal of the Prophets ﷺ.",
+    "histoire.stat1_label": "years of existence",
+    "histoire.stat2_label": "active members",
+    "histoire.stat3_label": "continents",
+    "histoire.stat4_label": "Salaatu targeted",
+    "histoire.timeline_overline": "Key milestones",
+    "histoire.timeline_title": "The milestones of our story",
+    "histoire.timeline_desc":
+      "A journey from local to global, from paper to digital, from the founding circle to the international community.",
+    "histoire.m1_date": "January 2",
+    "histoire.m1_title": "Founding of the Dahira in Touba",
+    "histoire.m1_text":
+      "A circle of believers, led by Serigne Birima Gueye, officially creates the Dahira Kippangog Salaatu ʿAlaa Nabii with a clear mission: to make prayer upon the Prophet Muhammad ﷺ a daily, structured community act radiating internationally.",
+    "histoire.m2_date": "Every week",
+    "histoire.m2_title": "Millions of Salaatu ʿAlaa Nabii",
+    "histoire.m2_text":
+      "From the very first year, the community gathers regularly to recite together millions of Prayers upon the Prophet Muhammad ﷺ. This collective practice becomes the beating heart and identity of the Dahira.",
+    "histoire.m3_date": "Anniversary",
+    "histoire.m3_title": "Visit to Serigne Ahmadou Mbacké — Daroul Mouhty",
+    "histoire.m3_text":
+      "For the Dahira's anniversary, a delegation visits Serigne Ahmadou Mbacké in Daroul Mouhty for an interview on the immense benefits of the Salaatu ʿAlaa Nabii.",
+    "histoire.m4_date": "Anniversary",
+    "histoire.m4_title": "Talk with Serigne Khalil Mbacké",
+    "histoire.m4_text":
+      "On the occasion of the anniversary, the community is received by Serigne Khalil Mbacké for a spiritual talk dedicated to the benefits and merits of Prayer upon the Prophet Muhammad ﷺ.",
+    "histoire.m5_date": "December 30",
+    "histoire.m5_title": "1st Salaatu ʿAlaa Nabii Day",
+    "histoire.m5_text":
+      "Organization of the very first major annual gathering in Touba: Quran recitals, scholars' conferences, Khassida declamation and collective dhikr. The Day becomes the cornerstone of the Dahira's life.",
+    "histoire.m6_date": "December 14",
+    "histoire.m6_title": "2nd edition of the Salaatu Day",
+    "histoire.m6_text":
+      "The second edition confirms the event's roots: growing attendance and international mobilization around Prayer upon the Prophet ﷺ.",
+    "histoire.m7_date": "December 13",
+    "histoire.m7_title": "3rd edition of the Salaatu Day",
+    "histoire.m7_text":
+      "The third edition gathers an ever-larger oumma, united by collective prayer upon the Prophet Muhammad ﷺ, in Touba and around the world.",
+    "histoire.values_overline": "Our values",
+    "histoire.values_title": "What guides us",
+    "histoire.v1_title": "Centrality of the Prophet ﷺ",
+    "histoire.v1_text":
+      "All our activity revolves around prayer upon the Prophet Muhammad ﷺ. It is our compass and our identity.",
+    "histoire.v2_title": "Collective worship",
+    "histoire.v2_text":
+      "Islam places the group at the heart of spirituality. The Dahira embodies this dimension: multiplying individual effort through the baraka of the group.",
+    "histoire.v3_title": "International outreach",
+    "histoire.v3_text":
+      "From Touba, spiritual capital, to the five continents. A borderless oumma united by the Salaatu.",
+    "histoire.v4_title": "Modernity in service of the sacred",
+    "histoire.v4_text":
+      "Mobile app, website, live counters — technology does not replace spirituality, it serves and spreads it.",
+    "histoire.quote_text": "« Whoever prays upon me once, Allah prays upon him ten times. »",
+    "histoire.quote_attr": "— The Prophet Muhammad ﷺ (reported by Muslim)",
+    "histoire.quote_closing":
+      "This is the divine promise that drives the KSN Dahira every day since 2021. To multiply these moments, coordinate them at the scale of the oumma, make them accessible to all — this is our mission yesterday, today and tomorrow.",
+    "histoire.cta_title": "Write the next chapter with us",
+    "histoire.cta_desc":
+      "The story of the KSN Dahira is written every day, with each new member, each new Salaatu. Join the movement.",
+    "histoire.cta_member": "Become a member",
+    "histoire.cta_contact": "Contact us",
+    "histoire.share_title": "The story of the KSN Dahira since 2021",
+    "histoire.share_text":
+      "How a circle of believers in Touba became an international Dahira serving Prayer upon the Prophet ﷺ.",
+    "histoire.share_label": "Share our story",
 
     // Compteur Salaatu
     "compteur.badge": "1 Billion Challenge",
@@ -1555,6 +1783,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com5_desc": "Gestisce la preparazione logistica dei grandi eventi e la gestione del pubblico.",
     "organigramme.com6_title": "Commissione Sociale e Solidarietà",
     "organigramme.com6_desc": "Garantisce il mutuo aiuto sociale tra i membri, la solidarietà comunitaria e le azioni caritatevoli.",
+
+    // Page Notre Histoire
+    "histoire.hero_overline": "La nostra storia",
+    "histoire.hero_title": "Da Touba al mondo, dal 2021",
+    "histoire.hero_desc":
+      "La storia della Dahira Kippangog Salaatu ʿAlaa Nabii: un circolo di fedeli diventato un movimento spirituale internazionale, animato da una sola intenzione — moltiplicare le preghiere sul Profeta Muhammad ﷺ in tutto il mondo.",
+    "histoire.origins_overline": "Le origini",
+    "histoire.origins_title": "Una visione nata a Touba",
+    "histoire.origins_p1":
+      "Il 2 gennaio 2021, a Touba, capitale spirituale della via muride e terra dello Cheikh Ahmadou Bamba (che Allah sia soddisfatto di lui), un circolo di fedeli si è costituito attorno a una semplice convinzione: la preghiera sul Profeta Muhammad ﷺ non deve restare un atto solitario — deve diventare un movimento collettivo, strutturato e internazionale.",
+    "histoire.origins_p2": "Da questa intenzione è nata la Dahira",
+    "histoire.origins_p3":
+      "Cinque anni dopo, la Dahira riunisce migliaia di membri in Africa, Europa, America e Asia — tutti uniti in un unico gesto quotidiano: la recitazione della Preghiera sul Sigillo dei Profeti ﷺ.",
+    "histoire.stat1_label": "anni di esistenza",
+    "histoire.stat2_label": "membri attivi",
+    "histoire.stat3_label": "continenti",
+    "histoire.stat4_label": "Salaatu mirati",
+    "histoire.timeline_overline": "Le grandi tappe",
+    "histoire.timeline_title": "Le tappe della nostra storia",
+    "histoire.timeline_desc":
+      "Un percorso che va dal locale al globale, dalla carta al digitale, dal circolo fondatore alla comunità internazionale.",
+    "histoire.m1_date": "2 gennaio",
+    "histoire.m1_title": "Fondazione della Dahira a Touba",
+    "histoire.m1_text":
+      "Un circolo di fedeli, guidato da Serigne Birima Gueye, crea ufficialmente la Dahira Kippangog Salaatu ʿAlaa Nabii con una missione chiara: fare della preghiera sul Profeta Muhammad ﷺ un atto comunitario quotidiano, strutturato e di risonanza internazionale.",
+    "histoire.m2_date": "Ogni settimana",
+    "histoire.m2_title": "Milioni di Salaatu ʿAlaa Nabii",
+    "histoire.m2_text":
+      "Fin dal primo anno, la comunità si riunisce regolarmente per recitare insieme milioni di Preghiere sul Profeta Muhammad ﷺ. Questa pratica collettiva diventa il cuore pulsante e l'identità della Dahira.",
+    "histoire.m3_date": "Anniversario",
+    "histoire.m3_title": "Visita a Serigne Ahmadou Mbacké — Daroul Mouhty",
+    "histoire.m3_text":
+      "Per l'anniversario della Dahira, una delegazione fa visita a Serigne Ahmadou Mbacké a Daroul Mouhty, per un'intervista sugli immensi benefici del Salaatu ʿAlaa Nabii.",
+    "histoire.m4_date": "Anniversario",
+    "histoire.m4_title": "Conversazione con Serigne Khalil Mbacké",
+    "histoire.m4_text":
+      "In occasione dell'anniversario, la comunità è ricevuta da Serigne Khalil Mbacké per una conversazione spirituale dedicata ai benefici e ai meriti della Preghiera sul Profeta Muhammad ﷺ.",
+    "histoire.m5_date": "30 dicembre",
+    "histoire.m5_title": "1ª Giornata Salaatu ʿAlaa Nabii",
+    "histoire.m5_text":
+      "Organizzazione del primissimo grande raduno annuale a Touba: recital del Corano, conferenze di studiosi, declamazione delle Khassida e dhikr collettivo. La Giornata diventa la pietra angolare della vita della Dahira.",
+    "histoire.m6_date": "14 dicembre",
+    "histoire.m6_title": "2ª edizione della Giornata Salaatu",
+    "histoire.m6_text":
+      "La seconda edizione conferma il radicamento dell'evento: affluenza crescente e mobilitazione internazionale attorno alla Preghiera sul Profeta ﷺ.",
+    "histoire.m7_date": "13 dicembre",
+    "histoire.m7_title": "3ª edizione della Giornata Salaatu",
+    "histoire.m7_text":
+      "La terza edizione riunisce una oumma sempre più ampia, unita dalla preghiera collettiva sul Profeta Muhammad ﷺ, a Touba e in tutto il mondo.",
+    "histoire.values_overline": "I nostri valori",
+    "histoire.values_title": "Ciò che ci guida",
+    "histoire.v1_title": "Centralità del Profeta ﷺ",
+    "histoire.v1_text":
+      "Tutta la nostra attività ruota attorno alla preghiera sul Profeta Muhammad ﷺ. È la nostra bussola e la nostra identità.",
+    "histoire.v2_title": "Culto collettivo",
+    "histoire.v2_text":
+      "L'Islam pone il gruppo al cuore della spiritualità. La Dahira incarna questa dimensione: moltiplicare lo sforzo individuale attraverso la baraka del gruppo.",
+    "histoire.v3_title": "Diffusione internazionale",
+    "histoire.v3_text":
+      "Da Touba, capitale spirituale, verso i cinque continenti. Una oumma senza frontiere unita dal Salaatu.",
+    "histoire.v4_title": "Modernità al servizio del sacro",
+    "histoire.v4_text":
+      "App mobile, sito web, contatori in diretta — la tecnologia non sostituisce la spiritualità, la serve e la diffonde.",
+    "histoire.quote_text": "« Chi prega su di me una volta, Allah prega su di lui dieci volte. »",
+    "histoire.quote_attr": "— Il Profeta Muhammad ﷺ (riportato da Muslim)",
+    "histoire.quote_closing":
+      "Ecco la promessa divina che anima ogni giorno la Dahira KSN dal 2021. Moltiplicare questi momenti, coordinarli su scala della oumma, renderli accessibili a tutti — ecco la nostra missione ieri, oggi e domani.",
+    "histoire.cta_title": "Scrivere il seguito con noi",
+    "histoire.cta_desc":
+      "La storia della Dahira KSN si scrive ogni giorno, con ogni nuovo membro, ogni nuovo Salaatu. Unisciti al movimento.",
+    "histoire.cta_member": "Diventa membro",
+    "histoire.cta_contact": "Contattaci",
+    "histoire.share_title": "La storia della Dahira KSN dal 2021",
+    "histoire.share_text":
+      "Come un circolo di fedeli a Touba è diventato una Dahira internazionale al servizio della Preghiera sul Profeta ﷺ.",
+    "histoire.share_label": "Condividi la nostra storia",
 
     // Compteur Salaatu
     "compteur.badge": "Sfida 1 Miliardo",
@@ -2102,6 +2406,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com6_title": "Comisión Social y Solidaridad",
     "organigramme.com6_desc": "Garantiza la ayuda mutua social entre los miembros, la solidaridad comunitaria y las acciones caritativas.",
 
+    // Page Notre Histoire
+    "histoire.hero_overline": "Nuestra historia",
+    "histoire.hero_title": "De Tuba al mundo, desde 2021",
+    "histoire.hero_desc":
+      "La historia de la Dahira Kippangog Salaatu ʿAlaa Nabii: un círculo de fieles convertido en un movimiento espiritual internacional, animado por una sola intención — multiplicar las oraciones sobre el Profeta Muhammad ﷺ en todo el mundo.",
+    "histoire.origins_overline": "Los orígenes",
+    "histoire.origins_title": "Una visión nacida en Tuba",
+    "histoire.origins_p1":
+      "El 2 de enero de 2021, en Tuba, capital espiritual de la vía muride y tierra del Cheikh Ahmadou Bamba (que Allah esté complacido con él), un círculo de fieles se constituyó en torno a una simple convicción: la oración sobre el Profeta Muhammad ﷺ no debe quedar como un acto solitario — debe convertirse en un movimiento colectivo, estructurado e internacional.",
+    "histoire.origins_p2": "De esta intención nació la Dahira",
+    "histoire.origins_p3":
+      "Cinco años después, la Dahira reúne a miles de miembros en África, Europa, América y Asia — todos unidos en un mismo gesto diario: la recitación de la Oración sobre el Sello de los Profetas ﷺ.",
+    "histoire.stat1_label": "años de existencia",
+    "histoire.stat2_label": "miembros activos",
+    "histoire.stat3_label": "continentes",
+    "histoire.stat4_label": "Salaatu objetivo",
+    "histoire.timeline_overline": "Las grandes etapas",
+    "histoire.timeline_title": "Los hitos de nuestra historia",
+    "histoire.timeline_desc":
+      "Una trayectoria que va de lo local a lo global, del papel a lo digital, del círculo fundador a la comunidad internacional.",
+    "histoire.m1_date": "2 de enero",
+    "histoire.m1_title": "Fundación de la Dahira en Tuba",
+    "histoire.m1_text":
+      "Un círculo de fieles, bajo el impulso de Serigne Birima Gueye, crea oficialmente la Dahira Kippangog Salaatu ʿAlaa Nabii con una misión clara: hacer de la oración sobre el Profeta Muhammad ﷺ un acto comunitario diario, estructurado y de proyección internacional.",
+    "histoire.m2_date": "Cada semana",
+    "histoire.m2_title": "Millones de Salaatu ʿAlaa Nabii",
+    "histoire.m2_text":
+      "Desde el primer año, la comunidad se reúne con regularidad para recitar juntos millones de Oraciones sobre el Profeta Muhammad ﷺ. Esta práctica colectiva se convierte en el corazón palpitante y la identidad de la Dahira.",
+    "histoire.m3_date": "Aniversario",
+    "histoire.m3_title": "Visita a Serigne Ahmadou Mbacké — Daroul Mouhty",
+    "histoire.m3_text":
+      "Por el aniversario de la Dahira, una delegación visita a Serigne Ahmadou Mbacké en Daroul Mouhty, para una entrevista sobre los inmensos beneficios del Salaatu ʿAlaa Nabii.",
+    "histoire.m4_date": "Aniversario",
+    "histoire.m4_title": "Charla con Serigne Khalil Mbacké",
+    "histoire.m4_text":
+      "Con ocasión del aniversario, la comunidad es recibida por Serigne Khalil Mbacké para una charla espiritual dedicada a los beneficios y méritos de la Oración sobre el Profeta Muhammad ﷺ.",
+    "histoire.m5_date": "30 de diciembre",
+    "histoire.m5_title": "1.ª Jornada Salaatu ʿAlaa Nabii",
+    "histoire.m5_text":
+      "Organización de la primera gran reunión anual en Tuba: recitales del Corán, conferencias de eruditos, declamación de las Khassida y dhikr colectivo. La Jornada se convierte en la piedra angular de la vida de la Dahira.",
+    "histoire.m6_date": "14 de diciembre",
+    "histoire.m6_title": "2.ª edición de la Jornada Salaatu",
+    "histoire.m6_text":
+      "La segunda edición confirma el arraigo del evento: una afluencia creciente y una movilización internacional en torno a la Oración sobre el Profeta ﷺ.",
+    "histoire.m7_date": "13 de diciembre",
+    "histoire.m7_title": "3.ª edición de la Jornada Salaatu",
+    "histoire.m7_text":
+      "La tercera edición reúne a una oumma cada vez más amplia, unida por la oración colectiva sobre el Profeta Muhammad ﷺ, en Tuba y por todo el mundo.",
+    "histoire.values_overline": "Nuestros valores",
+    "histoire.values_title": "Lo que nos guía",
+    "histoire.v1_title": "Centralidad del Profeta ﷺ",
+    "histoire.v1_text":
+      "Toda nuestra actividad gira en torno a la oración sobre el Profeta Muhammad ﷺ. Es nuestra brújula y nuestra identidad.",
+    "histoire.v2_title": "Culto colectivo",
+    "histoire.v2_text":
+      "El Islam pone al grupo en el corazón de la espiritualidad. La Dahira encarna esta dimensión: multiplicar el esfuerzo individual mediante la baraka del grupo.",
+    "histoire.v3_title": "Proyección internacional",
+    "histoire.v3_text":
+      "Desde Tuba, capital espiritual, hacia los cinco continentes. Una oumma sin fronteras unida por el Salaatu.",
+    "histoire.v4_title": "Modernidad al servicio de lo sagrado",
+    "histoire.v4_text":
+      "App móvil, sitio web, contadores en directo — la tecnología no reemplaza la espiritualidad, la sirve y la difunde.",
+    "histoire.quote_text": "« Quien reza sobre mí una vez, Allah reza sobre él diez veces. »",
+    "histoire.quote_attr": "— El Profeta Muhammad ﷺ (relatado por Muslim)",
+    "histoire.quote_closing":
+      "Esta es la promesa divina que anima cada día a la Dahira KSN desde 2021. Multiplicar estos momentos, coordinarlos a escala de la oumma, hacerlos accesibles a todos — esa es nuestra misión ayer, hoy y mañana.",
+    "histoire.cta_title": "Escribir lo que sigue con nosotros",
+    "histoire.cta_desc":
+      "La historia de la Dahira KSN se escribe cada día, con cada nuevo miembro, cada nuevo Salaatu. Únete al movimiento.",
+    "histoire.cta_member": "Hazte miembro",
+    "histoire.cta_contact": "Contáctanos",
+    "histoire.share_title": "La historia de la Dahira KSN desde 2021",
+    "histoire.share_text":
+      "Cómo un círculo de fieles en Tuba se convirtió en una Dahira internacional al servicio de la Oración sobre el Profeta ﷺ.",
+    "histoire.share_label": "Compartir nuestra historia",
+
     // Compteur Salaatu
     "compteur.badge": "Reto 1 Mil Millones",
     "compteur.title": "Salaatu ofrecidos por la comunidad KSN",
@@ -2647,6 +3027,82 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "organigramme.com5_desc": "تدير التحضير اللوجستي للفعاليات الكبرى وتنظيم الجمهور.",
     "organigramme.com6_title": "اللجنة الاجتماعية والتضامن",
     "organigramme.com6_desc": "تضمن التكافل الاجتماعي بين الأعضاء والتضامن المجتمعي والأعمال الخيرية.",
+
+    // Page Notre Histoire
+    "histoire.hero_overline": "تاريخنا",
+    "histoire.hero_title": "من طوبى إلى العالم، منذ 2021",
+    "histoire.hero_desc":
+      "قصة داهيرا كيبانغوغ صلاة على النبي: حلقة من المؤمنين أصبحت حركة روحية دولية، تحرّكها نيّة واحدة — مضاعفة الصلاة على النبي محمد ﷺ في كل أنحاء العالم.",
+    "histoire.origins_overline": "الأصول",
+    "histoire.origins_title": "رؤية وُلدت في طوبى",
+    "histoire.origins_p1":
+      "في 2 يناير 2021، بمدينة طوبى، العاصمة الروحية للطريقة المريدية وأرض الشيخ أحمدو بامبا (رضي الله عنه)، تشكّلت حلقة من المؤمنين حول قناعة بسيطة: الصلاة على النبي محمد ﷺ يجب ألا تبقى عملاً فردياً — بل ينبغي أن تصبح حركة جماعية منظَّمة ودولية.",
+    "histoire.origins_p2": "من هذه النية وُلدت الداهيرا",
+    "histoire.origins_p3":
+      "بعد خمس سنوات، تجمع الداهيرا آلاف الأعضاء عبر إفريقيا وأوروبا وأمريكا وآسيا — كلهم متّحدون في عمل يومي واحد: تلاوة الصلاة على خاتم الأنبياء ﷺ.",
+    "histoire.stat1_label": "سنوات من الوجود",
+    "histoire.stat2_label": "عضو نشط",
+    "histoire.stat3_label": "قارات",
+    "histoire.stat4_label": "صلاة مستهدفة",
+    "histoire.timeline_overline": "المحطات الكبرى",
+    "histoire.timeline_title": "محطات تاريخنا",
+    "histoire.timeline_desc":
+      "مسار ينتقل من المحلي إلى العالمي، ومن الورق إلى الرقمي، ومن الحلقة المؤسِّسة إلى المجتمع الدولي.",
+    "histoire.m1_date": "2 يناير",
+    "histoire.m1_title": "تأسيس الداهيرا في طوبى",
+    "histoire.m1_text":
+      "حلقة من المؤمنين، بمبادرة من سيرين بيريما غاي، تُنشئ رسمياً داهيرا كيبانغوغ صلاة على النبي برسالة واضحة: جعل الصلاة على النبي محمد ﷺ عملاً مجتمعياً يومياً منظَّماً يشعّ على المستوى الدولي.",
+    "histoire.m2_date": "كل أسبوع",
+    "histoire.m2_title": "ملايين الصلوات على النبي",
+    "histoire.m2_text":
+      "منذ السنة الأولى، يجتمع المجتمع بانتظام لتلاوة ملايين الصلوات على النبي محمد ﷺ معاً. تصبح هذه الممارسة الجماعية القلب النابض وهوية الداهيرا.",
+    "histoire.m3_date": "الذكرى السنوية",
+    "histoire.m3_title": "زيارة سيرين أحمدو امباكي — دارو موهتي",
+    "histoire.m3_text":
+      "بمناسبة ذكرى الداهيرا، يزور وفد سيرين أحمدو امباكي في دارو موهتي، لإجراء مقابلة حول الفوائد العظيمة للصلاة على النبي.",
+    "histoire.m4_date": "الذكرى السنوية",
+    "histoire.m4_title": "محاضرة مع سيرين خليل امباكي",
+    "histoire.m4_text":
+      "بمناسبة الذكرى، يستقبل سيرين خليل امباكي المجتمع لمحاضرة روحية مخصّصة لفوائد ومناقب الصلاة على النبي محمد ﷺ.",
+    "histoire.m5_date": "30 ديسمبر",
+    "histoire.m5_title": "اليوم الأول للصلاة على النبي",
+    "histoire.m5_text":
+      "تنظيم أول تجمّع سنوي كبير في طوبى: تلاوات قرآنية، ومحاضرات للعلماء، وإنشاد القصائد، وذكر جماعي. يصبح اليوم حجر الزاوية في حياة الداهيرا.",
+    "histoire.m6_date": "14 ديسمبر",
+    "histoire.m6_title": "النسخة الثانية ليوم الصلاة",
+    "histoire.m6_text":
+      "تؤكّد النسخة الثانية ترسّخ الحدث: إقبال متزايد وتعبئة دولية حول الصلاة على النبي ﷺ.",
+    "histoire.m7_date": "13 ديسمبر",
+    "histoire.m7_title": "النسخة الثالثة ليوم الصلاة",
+    "histoire.m7_text":
+      "تجمع النسخة الثالثة أمّة أوسع باستمرار، متّحدة بالصلاة الجماعية على النبي محمد ﷺ، في طوبى وعبر العالم.",
+    "histoire.values_overline": "قيمنا",
+    "histoire.values_title": "ما يوجّهنا",
+    "histoire.v1_title": "مركزية النبي ﷺ",
+    "histoire.v1_text":
+      "كل نشاطنا يدور حول الصلاة على النبي محمد ﷺ. إنها بوصلتنا وهويتنا.",
+    "histoire.v2_title": "العبادة الجماعية",
+    "histoire.v2_text":
+      "يضع الإسلام الجماعة في صميم الروحانية. تجسّد الداهيرا هذا البعد: مضاعفة الجهد الفردي ببركة الجماعة.",
+    "histoire.v3_title": "الإشعاع الدولي",
+    "histoire.v3_text":
+      "من طوبى، العاصمة الروحية، إلى القارات الخمس. أمّة بلا حدود توحّدها الصلاة على النبي.",
+    "histoire.v4_title": "الحداثة في خدمة المقدّس",
+    "histoire.v4_text":
+      "تطبيق محمول، موقع إلكتروني، عدّادات مباشرة — التكنولوجيا لا تحلّ محلّ الروحانية، بل تخدمها وتنشرها.",
+    "histoire.quote_text": "«من صلّى عليّ مرة، صلّى الله عليه بها عشراً.»",
+    "histoire.quote_attr": "— النبي محمد ﷺ (رواه مسلم)",
+    "histoire.quote_closing":
+      "هذا هو الوعد الإلهي الذي يحرّك داهيرا KSN كل يوم منذ 2021. مضاعفة هذه اللحظات وتنسيقها على مستوى الأمة وجعلها في متناول الجميع — تلك هي رسالتنا بالأمس واليوم وغداً.",
+    "histoire.cta_title": "اكتب التكملة معنا",
+    "histoire.cta_desc":
+      "تُكتب قصة داهيرا KSN كل يوم، مع كل عضو جديد، وكل صلاة جديدة. انضم إلى الحركة.",
+    "histoire.cta_member": "كن عضواً",
+    "histoire.cta_contact": "اتصل بنا",
+    "histoire.share_title": "قصة داهيرا KSN منذ 2021",
+    "histoire.share_text":
+      "كيف أصبحت حلقة من المؤمنين في طوبى داهيرا دولية في خدمة الصلاة على النبي ﷺ.",
+    "histoire.share_label": "شارك قصتنا",
 
     // Compteur Salaatu
     "compteur.badge": "تحدي المليار",
