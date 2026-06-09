@@ -95,6 +95,32 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "salaatu.reward": "Récompense",
     "salaatu.reward_text":
       "Allah prie 10 fois sur celui qui prie une fois sur le Prophète ﷺ.",
+
+    // Section "Le Dahira"
+    "ledahira.overline": "Le Dahira",
+    "ledahira.title_l1": "Une Organisation Spirituelle",
+    "ledahira.title_l2": "Moderne & Structurée",
+    "ledahira.intro":
+      "Fondé le 02 Janvier 2021 à Touba, Kippangog Salaatu 'Alaa Nabii œuvre pour la promotion de la Prière sur le Prophète Muhammad ﷺ, la fraternité spirituelle et le rayonnement du Dahira à travers le monde.",
+    "ledahira.card1_title": "Notre Mission",
+    "ledahira.card1_text":
+      "Promouvoir l'amour du Prophète ﷺ à travers le Salaatu, les Khassidas, les Azkâr et l'éducation spirituelle.",
+    "ledahira.card2_title": "Bureau du Dahira",
+    "ledahira.card2_text":
+      "Une organisation structurée avec Présidence, Secrétariat Général, Finances, Organisation et plusieurs commissions officielles.",
+    "ledahira.card3_title": "Vie du Membre",
+    "ledahira.card3_text":
+      "Participation active au Salaatu, activités spirituelles, événements, application KSN et vie communautaire.",
+    "ledahira.card4_title": "Règlement Intérieur",
+    "ledahira.card4_text":
+      "Discipline, engagement spirituel, organisation et principes officiels du Dahira KSN.",
+    "ledahira.card5_title": "Plan d'Actions",
+    "ledahira.card5_text":
+      "Éducation, Culture, Finances, Sociale, Organisation et développement communautaire.",
+    "ledahira.join_title": "Rejoindre la KSN",
+    "ledahira.join_text":
+      "Devenez membre officiel du Dahira et participez à cette mission spirituelle internationale.",
+    "ledahira.join_cta": "Adhérer Maintenant",
   },
 
   wo: {
@@ -262,6 +288,32 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "salaatu.reward": "Reward",
     "salaatu.reward_text":
       "Allah prays 10 times upon the one who prays once upon the Prophet ﷺ.",
+
+    // Section "Le Dahira"
+    "ledahira.overline": "The Dahira",
+    "ledahira.title_l1": "A Spiritual Organization",
+    "ledahira.title_l2": "Modern & Structured",
+    "ledahira.intro":
+      "Founded on January 2, 2021 in Touba, Kippangog Salaatu 'Alaa Nabii works to promote Prayer upon the Prophet Muhammad ﷺ, spiritual brotherhood and the international outreach of the Dahira.",
+    "ledahira.card1_title": "Our Mission",
+    "ledahira.card1_text":
+      "To promote love of the Prophet ﷺ through Salaatu, Khassidas, Azkâr and spiritual education.",
+    "ledahira.card2_title": "The Dahira Office",
+    "ledahira.card2_text":
+      "A structured organization with a Presidency, General Secretariat, Finance, Organization and several official commissions.",
+    "ledahira.card3_title": "Member Life",
+    "ledahira.card3_text":
+      "Active participation in Salaatu, spiritual activities, events, the KSN app and community life.",
+    "ledahira.card4_title": "Internal Rules",
+    "ledahira.card4_text":
+      "Discipline, spiritual commitment, organization and the official principles of the KSN Dahira.",
+    "ledahira.card5_title": "Action Plan",
+    "ledahira.card5_text":
+      "Education, Culture, Finance, Social affairs, Organization and community development.",
+    "ledahira.join_title": "Join KSN",
+    "ledahira.join_text":
+      "Become an official member of the Dahira and take part in this international spiritual mission.",
+    "ledahira.join_cta": "Join Now",
   },
 
   it: {
@@ -346,6 +398,32 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "salaatu.reward": "Ricompensa",
     "salaatu.reward_text":
       "Allah prega 10 volte su chi prega una volta sul Profeta ﷺ.",
+
+    // Section "Le Dahira"
+    "ledahira.overline": "La Dahira",
+    "ledahira.title_l1": "Un'Organizzazione Spirituale",
+    "ledahira.title_l2": "Moderna e Strutturata",
+    "ledahira.intro":
+      "Fondata il 2 gennaio 2021 a Touba, Kippangog Salaatu 'Alaa Nabii promuove la Preghiera sul Profeta Muhammad ﷺ, la fratellanza spirituale e la diffusione internazionale della Dahira.",
+    "ledahira.card1_title": "La Nostra Missione",
+    "ledahira.card1_text":
+      "Promuovere l'amore per il Profeta ﷺ attraverso il Salaatu, le Khassidas, gli Azkâr e l'educazione spirituale.",
+    "ledahira.card2_title": "Ufficio della Dahira",
+    "ledahira.card2_text":
+      "Un'organizzazione strutturata con Presidenza, Segreteria Generale, Finanze, Organizzazione e diverse commissioni ufficiali.",
+    "ledahira.card3_title": "Vita del Membro",
+    "ledahira.card3_text":
+      "Partecipazione attiva al Salaatu, attività spirituali, eventi, app KSN e vita comunitaria.",
+    "ledahira.card4_title": "Regolamento Interno",
+    "ledahira.card4_text":
+      "Disciplina, impegno spirituale, organizzazione e principi ufficiali della Dahira KSN.",
+    "ledahira.card5_title": "Piano d'Azione",
+    "ledahira.card5_text":
+      "Educazione, Cultura, Finanze, Sociale, Organizzazione e sviluppo comunitario.",
+    "ledahira.join_title": "Unisciti alla KSN",
+    "ledahira.join_text":
+      "Diventa membro ufficiale della Dahira e partecipa a questa missione spirituale internazionale.",
+    "ledahira.join_cta": "Aderisci Ora",
   },
 
   es: {
@@ -430,6 +508,32 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "salaatu.reward": "Recompensa",
     "salaatu.reward_text":
       "Allah reza 10 veces sobre quien reza una vez sobre el Profeta ﷺ.",
+
+    // Section "Le Dahira"
+    "ledahira.overline": "La Dahira",
+    "ledahira.title_l1": "Una Organización Espiritual",
+    "ledahira.title_l2": "Moderna y Estructurada",
+    "ledahira.intro":
+      "Fundada el 2 de enero de 2021 en Tuba, Kippangog Salaatu 'Alaa Nabii promueve la Oración sobre el Profeta Muhammad ﷺ, la fraternidad espiritual y la proyección internacional de la Dahira.",
+    "ledahira.card1_title": "Nuestra Misión",
+    "ledahira.card1_text":
+      "Promover el amor al Profeta ﷺ a través del Salaatu, las Khassidas, los Azkâr y la educación espiritual.",
+    "ledahira.card2_title": "Oficina de la Dahira",
+    "ledahira.card2_text":
+      "Una organización estructurada con Presidencia, Secretaría General, Finanzas, Organización y varias comisiones oficiales.",
+    "ledahira.card3_title": "Vida del Miembro",
+    "ledahira.card3_text":
+      "Participación activa en el Salaatu, actividades espirituales, eventos, la app KSN y la vida comunitaria.",
+    "ledahira.card4_title": "Reglamento Interno",
+    "ledahira.card4_text":
+      "Disciplina, compromiso espiritual, organización y principios oficiales de la Dahira KSN.",
+    "ledahira.card5_title": "Plan de Acción",
+    "ledahira.card5_text":
+      "Educación, Cultura, Finanzas, Social, Organización y desarrollo comunitario.",
+    "ledahira.join_title": "Únete a la KSN",
+    "ledahira.join_text":
+      "Hazte miembro oficial de la Dahira y participa en esta misión espiritual internacional.",
+    "ledahira.join_cta": "Adherirse Ahora",
   },
 
   ar: {
@@ -514,6 +618,32 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "salaatu.reward": "المكافأة",
     "salaatu.reward_text":
       "الله يصلي عشر صلوات على من صلى عليه مرة واحدة.",
+
+    // Section "Le Dahira"
+    "ledahira.overline": "الداهيرا",
+    "ledahira.title_l1": "منظمة روحية",
+    "ledahira.title_l2": "حديثة ومنظَّمة",
+    "ledahira.intro":
+      "تأسست في 2 يناير 2021 بمدينة طوبى، وتعمل كيبانغوغ صلاة على النبي على نشر الصلاة على النبي محمد ﷺ، والأخوّة الروحية، وإشعاع الداهيرا في العالم.",
+    "ledahira.card1_title": "رسالتنا",
+    "ledahira.card1_text":
+      "نشر محبة النبي ﷺ من خلال الصلاة عليه والقصائد والأذكار والتربية الروحية.",
+    "ledahira.card2_title": "مكتب الداهيرا",
+    "ledahira.card2_text":
+      "تنظيم منظَّم يضم الرئاسة والأمانة العامة والمالية والتنظيم وعدة لجان رسمية.",
+    "ledahira.card3_title": "حياة العضو",
+    "ledahira.card3_text":
+      "المشاركة الفعّالة في الصلاة على النبي والأنشطة الروحية والفعاليات وتطبيق KSN والحياة المجتمعية.",
+    "ledahira.card4_title": "النظام الداخلي",
+    "ledahira.card4_text":
+      "الانضباط والالتزام الروحي والتنظيم والمبادئ الرسمية لداهيرا KSN.",
+    "ledahira.card5_title": "خطة العمل",
+    "ledahira.card5_text":
+      "التعليم والثقافة والمالية والشؤون الاجتماعية والتنظيم والتنمية المجتمعية.",
+    "ledahira.join_title": "انضم إلى KSN",
+    "ledahira.join_text":
+      "كن عضوًا رسميًا في الداهيرا وشارك في هذه الرسالة الروحية الدولية.",
+    "ledahira.join_cta": "انضم الآن",
   },
 };
 
