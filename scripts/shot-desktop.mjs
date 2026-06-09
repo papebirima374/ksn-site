@@ -1,0 +1,17 @@
+import puppeteer from "puppeteer-core";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
+const url = process.argv[2] || "https://salaatualaanabii.com/dahira";
+const width = Number(process.argv[3] || 1440);
+const browser = await puppeteer.launch({ executablePath: CHROME, headless: "new", args: ["--no-sandbox", "--hide-scrollbars"] });
+const page = await browser.newPage();
+await page.setViewport({ width, height: 380, deviceScaleFactor: 2 });
+await page.evaluateOnNewDocument(() => { try { localStorage.setItem("ksn-cookie-consent", "all"); localStorage.setItem("ksn-pwa-dismissed", "1"); } catch (e) {} });
+await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+await new Promise((r) => setTimeout(r, 1500));
+const out = join(__dirname, "..", "public", "kit-assets", `header-${width}.png`);
+await page.screenshot({ path: out });
+console.log("OK", out);
+await browser.close();

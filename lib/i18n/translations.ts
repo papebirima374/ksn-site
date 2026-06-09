@@ -718,6 +718,36 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "faq.a6_2": "Cela dépend de votre pays de résidence. Au Sénégal, le Dahira est une organisation religieuse à but non lucratif et les dons peuvent bénéficier d'avantages fiscaux selon la législation en vigueur. Pour les détails dans votre pays, consultez votre conseiller fiscal.",
     "faq.q6_3": "Comment savoir comment mon don est utilisé ?",
     "faq.a6_3": "La Commission Finances publie un rapport annuel de transparence accessible sur demande à tous les membres actifs. Les principaux postes de dépense : organisation de la Journée annuelle, hébergement des invités, communication, soutien social aux membres en difficulté.",
+
+    // ===== WOLOF — PREMIER JET À RELIRE (section Dahira) =====
+    "ledahira.overline": "Dahira ji",
+    "ledahira.title_l1": "Benn mbootaay diiney",
+    "ledahira.title_l2": "bu yees te tëral",
+    "ledahira.intro":
+      "Dahira Kippangog Salaatu 'Alaa Nabii sosu na 02 Sanwiyee 2021 ci Touba, ngir tëralu Salaatu ci Yonent bi Muhammad ﷺ, mbokk ci diiney ak leeralu Dahira ji ci àdduna bi.",
+    "ledahira.card1_title": "Sunu Mission",
+    "ledahira.card1_text":
+      "Tax mbëggeel Yonent bi ﷺ jëm kanam ci Salaatu, Khassida yi, Azkâr yi ak njàngum diiney.",
+    "ledahira.card2_title": "Biro Dahira ji",
+    "ledahira.card2_text":
+      "Mbootaay bu tëral ak Njiit, Sekerteer Bu Mag, Alal, Yax ak ay kër yu officiel.",
+    "ledahira.card3_title": "Dund Mbokk mi",
+    "ledahira.card3_text":
+      "Bokk ci Salaatu, yëngu-yëngu diiney, xew-xew yi, applikaasion KSN ak dund mbokk mi.",
+    "ledahira.card4_title": "Yoon yi",
+    "ledahira.card4_text":
+      "Yoon, jële ci diiney, tëralin ak ay sàrti officiel yu Dahira KSN.",
+    "ledahira.card5_title": "Pexem Liggéey",
+    "ledahira.card5_text":
+      "Njàng, Aada, Alal, Sosial, Yax ak yokkutey mbokk mi.",
+    "ledahira.join_title": "Bokk ci KSN",
+    "ledahira.join_text":
+      "Nekkal mbokk bu officiel ci Dahira ji te bokk ci mission diiney bii ci àdduna bi.",
+    "ledahira.join_cta": "Bokkal Léegi",
+    "dahirapage.hero_overline": "Mbootaay Diiney",
+    "dahirapage.hero_title": "Dahira KSN",
+    "dahirapage.hero_desc":
+      "Xamal njiit gi, ay kër yu officiel yi, yoon yi ak tëralinu Dahira Kippangog Salaatu 'Alaa Nabii.",
   },
 
   en: {
