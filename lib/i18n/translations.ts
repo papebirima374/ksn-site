@@ -171,6 +171,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "Le Dahira KSN",
     "dahirapage.hero_desc":
       "Découvrez la présidence, les commissions officielles, le règlement intérieur et toute l'organisation du Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.overline": "Ressources & Transparence",
+    "documents.title": "Documents Officiels KSN",
+    "documents.intro":
+      "Consultez et téléchargez les documents de référence qui régissent l'organisation et le fonctionnement du Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.download_btn": "Télécharger le document PDF",
 
     // Compteur Salaatu
     "compteur.badge": "Challenge 1 Milliard",
@@ -748,6 +753,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "Dahira KSN",
     "dahirapage.hero_desc":
       "Xamal njiit gi, ay kër yu officiel yi, yoon yi ak tëralinu Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.overline": "Jumtukaay & Leeral",
+    "documents.title": "Ay kayit yu officiel KSN",
+    "documents.intro":
+      "Xoolal te yeb ay kayit yu njëkk yi tax na tëralin ak liggéeyu Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.download_btn": "Yeb kayit PDF bi",
   },
 
   en: {
@@ -908,6 +918,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "The KSN Dahira",
     "dahirapage.hero_desc":
       "Discover the presidency, the official commissions, the internal rules and the entire organization of the Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.overline": "Resources & Transparency",
+    "documents.title": "Official KSN Documents",
+    "documents.intro":
+      "Browse and download the reference documents that govern the organization and operation of the Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.download_btn": "Download the PDF document",
 
     // Compteur Salaatu
     "compteur.badge": "1 Billion Challenge",
@@ -1411,6 +1426,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "La Dahira KSN",
     "dahirapage.hero_desc":
       "Scopri la presidenza, le commissioni ufficiali, il regolamento interno e tutta l'organizzazione della Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.overline": "Risorse e Trasparenza",
+    "documents.title": "Documenti Ufficiali KSN",
+    "documents.intro":
+      "Consulta e scarica i documenti di riferimento che regolano l'organizzazione e il funzionamento della Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.download_btn": "Scarica il documento PDF",
 
     // Compteur Salaatu
     "compteur.badge": "Sfida 1 Miliardo",
@@ -1921,6 +1941,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "La Dahira KSN",
     "dahirapage.hero_desc":
       "Descubre la presidencia, las comisiones oficiales, el reglamento interno y toda la organización de la Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.overline": "Recursos y Transparencia",
+    "documents.title": "Documentos Oficiales KSN",
+    "documents.intro":
+      "Consulta y descarga los documentos de referencia que rigen la organización y el funcionamiento de la Dahira Kippangog Salaatu 'Alaa Nabii.",
+    "documents.download_btn": "Descargar el documento PDF",
 
     // Compteur Salaatu
     "compteur.badge": "Reto 1 Mil Millones",
@@ -2431,6 +2456,11 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahirapage.hero_title": "داهيرا KSN",
     "dahirapage.hero_desc":
       "اكتشف الرئاسة واللجان الرسمية والنظام الداخلي وكامل تنظيم داهيرا كيبانغوغ صلاة على النبي.",
+    "documents.overline": "الموارد والشفافية",
+    "documents.title": "وثائق KSN الرسمية",
+    "documents.intro":
+      "اطّلع على الوثائق المرجعية التي تنظّم عمل داهيرا كيبانغوغ صلاة على النبي وحمّلها.",
+    "documents.download_btn": "تحميل ملف PDF",
 
     // Compteur Salaatu
     "compteur.badge": "تحدي المليار",

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FaFilePdf, FaDownload } from "react-icons/fa6";
 import { listOfficialDocuments } from "@/lib/admin-data";
+import { useT } from "@/lib/i18n/context";
 
 type DocumentItem = {
   title: string;
@@ -40,6 +41,7 @@ function formatSize(bytes: number): string {
 }
 
 export default function DocumentsTelechargement() {
+  const { t } = useT();
   const [items, setItems] = useState<DocumentItem[]>(PLACEHOLDERS);
 
   // Fetch Firestore au mount. Si > 0 entrees visibles, remplace les placeholders.
@@ -74,13 +76,13 @@ export default function DocumentsTelechargement() {
       <div className="bg-white rounded-[28px] sm:rounded-[40px] p-6 sm:p-12 shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
         <div className="text-center mb-10 sm:mb-14">
           <span className="text-[#B8860B] uppercase tracking-[0.2em] sm:tracking-[0.25em] font-semibold text-xs sm:text-sm">
-            Ressources & Transparence
+            {t("documents.overline")}
           </span>
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            Documents Officiels KSN
+            {t("documents.title")}
           </h2>
           <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Consultez et téléchargez les documents de référence qui régissent l&apos;organisation et le fonctionnement du Dahira Kippangog Salaatu &apos;Alaa Nabii.
+            {t("documents.intro")}
           </p>
         </div>
 
@@ -117,7 +119,7 @@ export default function DocumentsTelechargement() {
                 className="inline-flex items-center justify-center gap-2 bg-[#0F7C55] hover:bg-[#0A3D24] text-white py-3.5 rounded-xl font-semibold text-sm shadow-md hover:scale-[1.02] active:scale-[0.98] transition duration-200"
               >
                 <FaDownload className="text-xs" />
-                Télécharger le document PDF
+                {t("documents.download_btn")}
               </a>
             </div>
           ))}
