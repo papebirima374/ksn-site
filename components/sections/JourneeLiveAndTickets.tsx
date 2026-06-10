@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getStreamingLink } from "@/lib/admin-data";
 import { FaYoutube, FaVideo } from "react-icons/fa6";
+import { useT } from "@/lib/i18n/context";
 
 function getEmbedUrl(url: string): string {
   const defaultEmbed = "https://www.youtube.com/embed/Ea-OwQNhH0I";
@@ -36,6 +37,7 @@ const CHAT_MESSAGES = [
 ];
 
 export default function JourneeLiveAndTickets() {
+  const { t } = useT();
   // Chat simulation
   const [chatList, setChatList] = useState<{ user: string; text: string }[]>(CHAT_MESSAGES.slice(0, 3));
   
@@ -79,11 +81,11 @@ export default function JourneeLiveAndTickets() {
               <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
             </span>
             <span className="text-white text-xs font-bold uppercase tracking-wider">
-              Direct Officiel (Prochaine Édition)
+              {t("journee.live_badge")}
             </span>
           </div>
           <span className="bg-[#D4AF37]/20 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-            26 Déc. 2026
+            {t("journee.live_date_short")}
           </span>
         </div>
 
@@ -107,17 +109,17 @@ export default function JourneeLiveAndTickets() {
           <div className="bg-black/35 rounded-2xl p-4 border border-white/5">
             <h3 className="text-white font-display font-bold text-base sm:text-lg flex items-center gap-2">
               <FaYoutube className="text-red-500 text-xl" />
-              Journée Salaatu &apos;Alaa Nabii en direct de Touba
+              {t("journee.live_yt_title")}
             </h3>
             <p className="text-white/60 text-xs mt-1">
-              La retransmission vidéo débutera le matin de l&apos;événement à 07h00 GMT. Abonnez-vous à notre chaîne officielle pour ne rater aucun live.
+              {t("journee.live_yt_desc")}
             </p>
           </div>
 
           {/* Simulatated Live Chat */}
           <div className="bg-black/25 rounded-2xl p-4 border border-white/5">
             <p className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] mb-3">
-              Flux de prières des fidèles
+              {t("journee.live_chat_title")}
             </p>
             <div className="space-y-2 h-[95px] overflow-hidden flex flex-col justify-end">
               {chatList.map((msg, i) => (

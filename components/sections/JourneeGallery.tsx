@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaCamera, FaXmark, FaImage, FaYoutube, FaVideo } from "react-icons/fa6";
 import { listGallery, listYoutubeLinks, YoutubeLink } from "@/lib/admin-data";
 import { GalleryItem as DBGalleryItem } from "@/lib/admin-types";
+import { useT } from "@/lib/i18n/context";
 
 function getYoutubeVideoId(url: string): string | null {
   if (!url) return null;
@@ -21,6 +22,7 @@ function getYoutubeVideoId(url: string): string | null {
 }
 
 export default function JourneeGallery() {
+  const { t } = useT();
   const [activeTab, setActiveTab] = useState<"photos" | "videos">("photos");
   const [dbItems, setDbItems] = useState<DBGalleryItem[]>([]);
   const [ytLinks, setYtLinks] = useState<YoutubeLink[]>([]);
@@ -46,7 +48,7 @@ export default function JourneeGallery() {
 
   const displayItems = dbItems.map((d) => ({
     src: d.src,
-    caption: d.alt || "Souvenir KSN",
+    caption: d.alt || t("journee.gallery_souvenir"),
     year: d.year || "2025",
     bgClass: "bg-gradient-to-br from-[#0F7C55] to-[#0A3D24]"
   }));
@@ -55,13 +57,13 @@ export default function JourneeGallery() {
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="text-center mb-8">
         <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
-          Souvenirs Multimédias
+          {t("journee.gallery_overline")}
         </span>
         <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-          Les éditions précédentes
+          {t("journee.gallery_title")}
         </h2>
         <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base mb-8">
-          Quelques instantanés et conférences capturés lors des précédentes éditions de la Journée Salaatu ʿAlaa Nabii à Touba.
+          {t("journee.gallery_desc")}
         </p>
       </div>
 
@@ -76,7 +78,7 @@ export default function JourneeGallery() {
               : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
           }`}
         >
-          📷 Photos Souvenirs
+          {t("journee.gallery_photos")}
         </button>
         <button
           type="button"
@@ -87,7 +89,7 @@ export default function JourneeGallery() {
               : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
           }`}
         >
-          🎥 Vidéos & Conférences ({ytLinks.length})
+          {t("journee.gallery_videos")} ({ytLinks.length})
         </button>
       </div>
 
@@ -96,12 +98,12 @@ export default function JourneeGallery() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 animate-fadeIn">
           {loading ? (
             <div className="col-span-full py-12 text-center text-white/50">
-              Chargement des photos...
+              {t("journee.gallery_loading_photos")}
             </div>
           ) : displayItems.length === 0 ? (
             <div className="col-span-full py-16 text-center text-white/50 bg-white/5 rounded-3xl border border-white/10">
               <FaImage className="mx-auto text-5xl text-white/30 mb-3" />
-              <p className="text-sm">Aucune photo souvenir disponible pour le moment.</p>
+              <p className="text-sm">{t("journee.gallery_no_photos")}</p>
             </div>
           ) : (
             displayItems.map((item, i) => (
@@ -150,12 +152,12 @@ export default function JourneeGallery() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fadeIn">
           {loading ? (
             <div className="col-span-full py-12 text-center text-white/50">
-              Chargement des vidéos...
+              {t("journee.gallery_loading_videos")}
             </div>
           ) : ytLinks.length === 0 ? (
             <div className="col-span-full py-16 text-center text-white/50 bg-white/5 rounded-3xl border border-white/10">
               <FaYoutube className="mx-auto text-5xl text-white/30 mb-3" />
-              <p className="text-sm">Aucune vidéo d&apos;archive disponible pour le moment.</p>
+              <p className="text-sm">{t("journee.gallery_no_videos")}</p>
             </div>
           ) : (
             ytLinks.map((link) => {
@@ -193,7 +195,7 @@ export default function JourneeGallery() {
                     </div>
                     <div className="p-5">
                       <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#D4AF37] flex items-center gap-1.5">
-                        <FaVideo className="text-[10px]" /> Vidéo {link.year ? `· Édition ${link.year}` : ""}
+                        <FaVideo className="text-[10px]" /> {t("journee.gallery_video_label")} {link.year ? `· ${t("journee.gallery_edition")} ${link.year}` : ""}
                       </span>
                       <h3 className="font-display font-bold text-white text-sm sm:text-base mt-1.5 leading-snug line-clamp-2">
                         {link.title}
@@ -211,8 +213,7 @@ export default function JourneeGallery() {
       <div className="mt-12 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 max-w-3xl mx-auto text-center">
         <FaCamera className="mx-auto text-[#D4AF37] text-2xl mb-3" />
         <p className="text-white/80 text-sm sm:text-base leading-7">
-          Vous avez des photos ou des vidéos des éditions précédentes ? Partagez-les avec
-          nous via{" "}
+          {t("journee.gallery_share_1")}{" "}
           <a
             href="https://wa.me/message/2RQFZOER66SOC1"
             target="_blank"
@@ -221,7 +222,7 @@ export default function JourneeGallery() {
           >
             WhatsApp
           </a>{" "}
-          — elles enrichiront nos galeries pour toute la communauté.
+          — {t("journee.gallery_share_2")}
         </p>
       </div>
 
@@ -258,7 +259,7 @@ export default function JourneeGallery() {
                 {displayItems[openIdx].caption}
               </p>
               <p className="text-[#D4AF37] text-sm mt-1 font-semibold">
-                Édition {displayItems[openIdx].year}
+                {t("journee.gallery_edition")} {displayItems[openIdx].year}
               </p>
             </div>
           </div>
