@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Kit Vidéo — Présentation du site KSN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:radial-gradient(130% 100% at 50% -10%,#0F7C55 0%,#0A3D24 48%,#06251a 100%);color:#fff;min-height:100vh;padding-bottom:90px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+header{text-align:center;padding:70px 20px 40px}
+.kicker{color:#D4AF37;font-weight:800;letter-spacing:.3em;text-transform:uppercase;font-size:13px}
+h1{font-family:'Playfair Display';font-size:clamp(34px,6vw,64px);font-weight:900;margin-top:14px}
+.sub{color:#d7e7df;margin-top:14px;font-size:16px;max-width:640px;margin-left:auto;margin-right:auto;line-height:1.7}
+.hint{display:inline-block;margin-top:22px;background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.4);border-radius:999px;padding:10px 22px;font-size:13px;font-weight:600;color:#D4AF37}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;margin-top:40px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:18px;backdrop-filter:blur(8px)}
+.num{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:#D4AF37;color:#0A3D24;font-weight:800;font-size:14px}
+.ttl{font-weight:700;font-size:14.5px;margin:10px 0 12px;line-height:1.45;min-height:42px}
+.shot{width:100%;border-radius:16px;display:block;background:#082F22}
+.btns{display:flex;gap:8px;margin-top:12px}
+.btn{flex:1;text-align:center;text-decoration:none;font-weight:700;font-size:12px;padding:10px 6px;border-radius:12px;transition:.2s}
+.btn.cap{background:#0F7C55;color:#fff;border:1px solid rgba(255,255,255,.15)}
+.btn.cap:hover{background:#0c6647}
+.btn.mock{background:linear-gradient(90deg,#B8860B,#D4AF37);color:#0A3D24}
+.btn.mock:hover{filter:brightness(1.08)}
+.sect{font-family:'Playfair Display';font-size:26px;font-weight:700;color:#D4AF37;margin-top:56px;border-bottom:1px solid rgba(212,175,55,.3);padding-bottom:10px}
+footer{text-align:center;margin-top:70px;color:#9fbfb0;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Kit Vidéo Officiel</div>
+  <h1>Présentation du site KSN</h1>
+  <p class="sub">22 scènes dans l'ordre de présentation de la vidéo. Pour chaque scène :
+  la <strong>capture brute</strong> (1170×2532, plein écran téléphone) et le
+  <strong>mockup téléphone</strong> (PNG transparent, prêt pour le montage).</p>
+  <span class="hint">💡 Clic droit → « Enregistrer l'image sous… » ou bouton Télécharger</span>
+</header>
+
+<div class="wrap">
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>Dahira Kippangog Salaatu ʿAlaa Nabii — salaatualaanabii.com</footer>
+
+<script>
+const SCENES = [
+  ["01","accueil-hero","Accueil — calligraphie & titre"],
+  ["02","accueil-journee","Accueil — bannière Journée + compte à rebours"],
+  ["03","accueil-compteur","Accueil — compteur communautaire"],
+  ["04","dahira-hero","Le Dahira — présentation"],
+  ["05","dahira-commissions","Le Dahira — commissions officielles"],
+  ["06","histoire-timeline","Notre Histoire — les jalons"],
+  ["07","challenge-hero","Challenge 1 Milliard — présentation"],
+  ["08","challenge-compteur","Challenge — compteur live"],
+  ["09","challenge-progression","Challenge — progression mensuelle"],
+  ["10","journee-countdown","Journée Salaatu — compte à rebours"],
+  ["11","journee-programme","Journée — programme des 7 moments"],
+  ["12","journee-live","Journée — direct officiel YouTube"],
+  ["13","spiritualite-jour","Spiritualité — Salaatou du jour"],
+  ["14","spiritualite-bibliotheque","Spiritualité — bibliothèque des Salaats"],
+  ["15","media-galerie","Média — galerie photos"],
+  ["16","media-reseaux","Média — réseaux sociaux"],
+  ["17","boutique","Boutique officielle"],
+  ["18","blog","Blog & actualités"],
+  ["19","education","Éducation — académie KSN"],
+  ["20","don","Faire un don"],
+  ["21","inscription-formulaire","Rejoindre — formulaire d'intégration"],
+  ["22","accueil-arabe","Multilingue — accueil en arabe (RTL)"],
+];
+const grid = document.getElementById("grid");
+for (const [n, slug, title] of SCENES) {
+  const cap = `kit-assets/video/captures/${n}-${slug}.png`;
+  const mock = `kit-assets/video/mockups/${n}-${slug}.png`;
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <span class="num">${n}</span>
+    <div class="ttl">${title}</div>
+    <img class="shot" src="${mock}" alt="${title}" loading="lazy">
+    <div class="btns">
+      <a class="btn cap" href="${cap}" download="ksn-${n}-${slug}-capture.png">Capture</a>
+      <a class="btn mock" href="${mock}" download="ksn-${n}-${slug}-mockup.png">Mockup</a>
+    </div>`;
+  grid.appendChild(card);
+}
+</script>
+</body>
+</html>
