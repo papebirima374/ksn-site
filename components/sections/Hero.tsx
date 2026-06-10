@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useT } from "@/lib/i18n/context";
 import { JOIN_WHATSAPP_LINK } from "@/lib/constants";
+import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 
 export default function Hero() {
   const { t } = useT();
@@ -11,11 +12,9 @@ export default function Hero() {
       id="accueil"
       className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 lg:pt-48 pb-16 sm:pb-24"
     >
-      {/* Calligraphy header — centered & animated, full width */}
+      {/* Calligraphy header — image logo/salaatu en masque, rempli avec l'or du logo */}
       <div className="text-center mb-12 sm:mb-16">
-        <p className="animate-calligraphy font-arabic text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[#D4AF37] leading-none">
-          صلى الله على محمد
-        </p>
+        <SalaatuCalligraphy className="animate-calligraphy mx-auto h-20 sm:h-24 md:h-28 lg:h-32" />
         <div className="mt-6 sm:mt-8 mx-auto w-24 sm:w-32 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
       </div>
 

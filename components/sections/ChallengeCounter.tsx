@@ -10,6 +10,7 @@ import {
 } from "@/lib/challenge";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
 import { useT } from "@/lib/i18n/context";
+import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 
 type Tab = "thisWeek" | "lastWeek" | "today" | "thisMonth" | "lastMonth";
 
@@ -92,9 +93,7 @@ export default function ChallengeCounter() {
         <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#B8860B]/10 blur-[140px]" />
 
         <div className="relative z-10 text-center">
-          <p className="font-arabic text-3xl sm:text-4xl md:text-5xl text-[#D4AF37] mb-3">
-            صلى الله على محمد
-          </p>
+          <SalaatuCalligraphy className="mx-auto h-12 sm:h-14 md:h-16 mb-3" />
           <p className="uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#D4AF37] text-xs sm:text-sm font-bold">
             {t("compteur.badge")}
           </p>

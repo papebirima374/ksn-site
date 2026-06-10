@@ -33,8 +33,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.badge": "Kippangog Salaatu 'Alaa Nabii",
     "hero.title_line1": "Une communauté",
     "hero.title_line2": "spirituelle moderne",
-    "hero.title_line3": "au service du",
-    "hero.title_line4": "Salaatu ﷺ",
+    "hero.title_line3": "au service de la",
+    "hero.title_line4": "Prière sur le Prophète Muhammad ﷺ",
     "hero.subtitle":
       "Créé le 02 Janvier 2021 à Touba, KSN œuvre pour la promotion de la Prière sur le Prophète Muhammad ﷺ à travers une organisation structurée, des activités spirituelles et une communauté internationale engagée.",
     "hero.card_overline": "Vie Institutionnelle KSN",
@@ -729,7 +729,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.title_line1": "Mbokk mi",
     "hero.title_line2": "tax na ci diiney",
     "hero.title_line3": "ngir Salaatu",
-    "hero.title_line4": "ci Yonent bi ﷺ",
+    "hero.title_line4": "ci Yonent bi Muhammad ﷺ",
     "hero.subtitle":
       "KSN sosu woon na 02 Sanwiyee 2021 ci Touba, ngir tëralu Salaatu ci Yonent bi Muhammad ﷺ ak yax mbokk mu mag te jëm ci àdduna bi.",
     "hero.card_overline": "Yoonu Dahira KSN",
@@ -1150,7 +1150,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.title_line1": "A modern",
     "hero.title_line2": "spiritual community",
     "hero.title_line3": "at the service of",
-    "hero.title_line4": "Salaatu ﷺ",
+    "hero.title_line4": "Prayer upon the Prophet Muhammad ﷺ",
     "hero.subtitle":
       "Founded on January 2, 2021 in Touba, KSN works to promote prayers upon the Prophet Muhammad ﷺ through a structured organization, spiritual activities, and an engaged international community.",
     "hero.card_overline": "KSN Institutional Life",
@@ -1839,8 +1839,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.badge": "Kippangog Salaatu 'Alaa Nabii",
     "hero.title_line1": "Una comunità",
     "hero.title_line2": "spirituale moderna",
-    "hero.title_line3": "al servizio del",
-    "hero.title_line4": "Salaatu ﷺ",
+    "hero.title_line3": "al servizio della",
+    "hero.title_line4": "Preghiera sul Profeta Muhammad ﷺ",
     "hero.subtitle":
       "Fondato il 2 gennaio 2021 a Touba, KSN promuove la preghiera sul Profeta Muhammad ﷺ attraverso un'organizzazione strutturata, attività spirituali e una comunità internazionale impegnata.",
     "hero.card_overline": "Vita Istituzionale KSN",
@@ -2536,8 +2536,8 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "hero.badge": "Kippangog Salaatu 'Alaa Nabii",
     "hero.title_line1": "Una comunidad",
     "hero.title_line2": "espiritual moderna",
-    "hero.title_line3": "al servicio del",
-    "hero.title_line4": "Salaatu ﷺ",
+    "hero.title_line3": "al servicio de la",
+    "hero.title_line4": "Oración sobre el Profeta Muhammad ﷺ",
     "hero.subtitle":
       "Fundada el 2 de enero de 2021 en Touba, KSN trabaja para promover el rezo sobre el Profeta Muhammad ﷺ a través de una organización estructurada, actividades espirituales y una comunidad internacional comprometida.",
     "hero.card_overline": "Vida Institucional KSN",

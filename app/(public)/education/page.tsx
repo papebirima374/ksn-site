@@ -21,6 +21,7 @@ import {
 } from "react-icons/fa6";
 import { isModuleUnlocked } from "@/lib/education/progress";
 import { motion } from "framer-motion";
+import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 import { LINKS, JOIN_WHATSAPP_LINK } from "@/lib/constants";
 import { EducationModule, EducationLesson } from "@/lib/admin-types";
 import { listEducationModules, listEducationLessons } from "@/lib/admin-data";
@@ -150,9 +151,10 @@ export default function EducationPage() {
         <IslamicPattern variant="star8" opacity={0.06} />
 
         <section className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 lg:pt-48 pb-16 text-center">
-          <p className="font-arabic text-3xl sm:text-4xl md:text-5xl text-[#C9A961] mb-6">
-            صلى الله على محمد
-          </p>
+          <SalaatuCalligraphy
+            className="mx-auto h-12 sm:h-14 md:h-16 mb-6"
+            fill="bg-[#C9A961]"
+          />
 
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C9A961]/15 border border-[#C9A961]/40 mb-6">
             <span className="relative flex w-2 h-2">
@@ -326,9 +328,10 @@ export default function EducationPage() {
 
       {/* HERO Éducation — palette parchemin */}
       <section className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-12 text-center">
-        <p className="font-arabic text-3xl sm:text-4xl text-[#C9A961] mb-6">
-          صلى الله على محمد
-        </p>
+        <SalaatuCalligraphy
+          className="mx-auto h-12 sm:h-14 mb-6"
+          fill="bg-[#C9A961]"
+        />
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#064E3B]/10 border border-[#064E3B]/20 mb-5">
           <span className="uppercase tracking-[0.25em] text-[#064E3B] text-[10px] font-bold">
             Académie KSN — Accès libre

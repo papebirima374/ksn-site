@@ -12,6 +12,7 @@ import {
 } from "@/lib/challenge";
 import { useVisibleInterval } from "@/lib/useVisibleInterval";
 import { useT } from "@/lib/i18n/context";
+import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 
 const STORAGE_KEY = "ksn-salaatu-count";
 const DATE_KEY = "ksn-salaatu-date";
@@ -109,9 +110,7 @@ export default function CompteurSalaatu() {
         <div className="relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* COLONNE GAUCHE — TEASER DU CHALLENGE */}
           <div className="text-center lg:text-left">
-            <p className="font-arabic text-3xl sm:text-4xl text-[#D4AF37] mb-3">
-              صلى الله على محمد
-            </p>
+            <SalaatuCalligraphy className="mx-auto lg:mx-0 h-12 sm:h-14 mb-3" />
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 mb-4">
               <span className="relative flex w-2 h-2">
