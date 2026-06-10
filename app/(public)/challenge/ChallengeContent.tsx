@@ -6,7 +6,7 @@ import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import ChallengeProgression from "@/components/sections/ChallengeProgression";
 import ShareButton from "@/components/ui/ShareButton";
-import { LINKS, JOIN_WHATSAPP_LINK } from "@/lib/constants";
+import { LINKS } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
 export default function ChallengeContent() {
@@ -237,14 +237,12 @@ export default function ChallengeContent() {
           <p className="mt-3 text-sm text-gray-500">{t("challenge.reward_ref")}</p>
 
           <div className="mt-10 grid sm:grid-cols-3 gap-3 sm:gap-4">
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/inscription"
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
               <FaWhatsapp /> {t("cta.join")}
-            </a>
+            </Link>
             <a
               href={LINKS.whatsapp}
               target="_blank"

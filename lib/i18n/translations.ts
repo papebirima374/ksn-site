@@ -405,6 +405,25 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.wa_title": "WhatsApp Officiel",
     "social.wa_text": "Rejoignez la communauté officielle et contactez directement KSN.",
 
+    // Formulaire de demande d'intégration au groupe WhatsApp
+    "join.form_title": "Demande d'intégration",
+    "join.form_desc": "Remplis ce formulaire : ta demande sera envoyée à l'équipe du Dahira sur WhatsApp pour rejoindre le groupe officiel.",
+    "join.first_name": "Prénom",
+    "join.last_name": "Nom",
+    "join.phone": "Numéro de téléphone",
+    "join.address": "Adresse",
+    "join.profession": "Profession",
+    "join.optional": "facultatif",
+    "join.rules_title": "Voici les règles pour adhérer",
+    "join.rule1": "Avoir une carte de membre à 1 000 FCFA",
+    "join.rule2": "La prière sur le Prophète ﷺ est obligatoire pour chaque membre, selon le Salaatu et le nombre que tu peux",
+    "join.rule3": "Télécharger l'application mobile pour y ajouter tes nombres de Salaatu",
+    "join.rule4": "Une cotisation mensuelle de 500 FCFA pour l'entraide au sein du Dahira et la Journée Salaatu ʿAlaa Nabii",
+    "join.accept": "J'ai lu et j'accepte les règles d'adhésion du Dahira",
+    "join.submit": "Envoyer ma demande sur WhatsApp",
+    "join.error_required": "Merci de remplir tous les champs obligatoires.",
+    "join.error_rules": "Merci de lire et d'accepter les règles d'adhésion.",
+
     // App KSN
     "appksn.badge": "Application Mobile KSN",
     "appksn.title": "Emportez KSN Partout Avec Vous 📱",
@@ -1166,6 +1185,21 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.telegram": "Mbooloo KSN ak xibaar yu am solo.",
     "social.wa_title": "WhatsApp bu Officiel",
     "social.wa_text": "Bokkal ci mbooloo mu officiel te jokkoo ak KSN bu jëkk.",
+
+    // Formulaire de demande d'intégration (jets)
+    "join.form_title": "Ñaan ngir bokk",
+    "join.form_desc": "Fessalal formulaire bii: sa ñaan dina dem ci ekibu Dahira ji ci WhatsApp ngir bokk ci groupe bu officiel bi.",
+    "join.first_name": "Sa tur",
+    "join.last_name": "Sa sant",
+    "join.phone": "Nimero telefon",
+    "join.address": "Fa nga dëkk",
+    "join.profession": "Sa liggéey",
+    "join.optional": "du war",
+    "join.rules_title": "Lii mooy sart yi",
+    "join.accept": "Jàng naa sart yi te nangu naa ko",
+    "join.submit": "Yónne sama ñaan ci WhatsApp",
+    "join.error_required": "Fessalal fépp fu war.",
+    "join.error_rules": "Jàngal sart yi te nangu ko.",
   },
 
   en: {
@@ -1559,6 +1593,25 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.telegram": "KSN community and important information.",
     "social.wa_title": "Official WhatsApp",
     "social.wa_text": "Join the official community and contact KSN directly.",
+
+    // Formulaire de demande d'intégration au groupe WhatsApp
+    "join.form_title": "Membership request",
+    "join.form_desc": "Fill in this form: your request will be sent to the Dahira team on WhatsApp to join the official group.",
+    "join.first_name": "First name",
+    "join.last_name": "Last name",
+    "join.phone": "Phone number",
+    "join.address": "Address",
+    "join.profession": "Profession",
+    "join.optional": "optional",
+    "join.rules_title": "Here are the membership rules",
+    "join.rule1": "Get a membership card for 1,000 FCFA",
+    "join.rule2": "Prayer upon the Prophet ﷺ is mandatory for every member, with the Salaatu and the number you can",
+    "join.rule3": "Download the mobile app to record your Salaatu counts",
+    "join.rule4": "A monthly contribution of 500 FCFA for mutual aid within the Dahira and the Salaatu ʿAlaa Nabii Day",
+    "join.accept": "I have read and accept the Dahira's membership rules",
+    "join.submit": "Send my request on WhatsApp",
+    "join.error_required": "Please fill in all required fields.",
+    "join.error_rules": "Please read and accept the membership rules.",
 
     // App KSN
     "appksn.badge": "KSN Mobile App",
@@ -2271,6 +2324,25 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.telegram": "Comunità KSN e informazioni importanti.",
     "social.wa_title": "WhatsApp Ufficiale",
     "social.wa_text": "Unisciti alla comunità ufficiale e contatta direttamente KSN.",
+
+    // Formulaire de demande d'intégration au groupe WhatsApp
+    "join.form_title": "Richiesta di adesione",
+    "join.form_desc": "Compila questo modulo: la tua richiesta sarà inviata al team del Dahira su WhatsApp per entrare nel gruppo ufficiale.",
+    "join.first_name": "Nome",
+    "join.last_name": "Cognome",
+    "join.phone": "Numero di telefono",
+    "join.address": "Indirizzo",
+    "join.profession": "Professione",
+    "join.optional": "facoltativo",
+    "join.rules_title": "Ecco le regole per aderire",
+    "join.rule1": "Avere una tessera di membro a 1.000 FCFA",
+    "join.rule2": "La preghiera sul Profeta ﷺ è obbligatoria per ogni membro, con il Salaatu e il numero che puoi",
+    "join.rule3": "Scaricare l'app mobile per registrare i tuoi numeri di Salaatu",
+    "join.rule4": "Una quota mensile di 500 FCFA per il mutuo soccorso nel Dahira e la Giornata Salaatu ʿAlaa Nabii",
+    "join.accept": "Ho letto e accetto le regole di adesione del Dahira",
+    "join.submit": "Inviare la mia richiesta su WhatsApp",
+    "join.error_required": "Si prega di compilare tutti i campi obbligatori.",
+    "join.error_rules": "Si prega di leggere e accettare le regole di adesione.",
 
     // App KSN
     "appksn.badge": "Applicazione Mobile KSN",
@@ -2991,6 +3063,25 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.wa_title": "WhatsApp Oficial",
     "social.wa_text": "Únete a la comunidad oficial y contacta directamente con KSN.",
 
+    // Formulaire de demande d'intégration au groupe WhatsApp
+    "join.form_title": "Solicitud de adhesión",
+    "join.form_desc": "Rellena este formulario: tu solicitud será enviada al equipo del Dahira por WhatsApp para unirte al grupo oficial.",
+    "join.first_name": "Nombre",
+    "join.last_name": "Apellido",
+    "join.phone": "Número de teléfono",
+    "join.address": "Dirección",
+    "join.profession": "Profesión",
+    "join.optional": "opcional",
+    "join.rules_title": "Estas son las reglas para adherirse",
+    "join.rule1": "Tener una tarjeta de miembro de 1.000 FCFA",
+    "join.rule2": "La oración sobre el Profeta ﷺ es obligatoria para cada miembro, con el Salaatu y el número que puedas",
+    "join.rule3": "Descargar la aplicación móvil para registrar tus números de Salaatu",
+    "join.rule4": "Una cuota mensual de 500 FCFA para la ayuda mutua dentro del Dahira y la Jornada Salaatu ʿAlaa Nabii",
+    "join.accept": "He leído y acepto las reglas de adhesión del Dahira",
+    "join.submit": "Enviar mi solicitud por WhatsApp",
+    "join.error_required": "Por favor, rellena todos los campos obligatorios.",
+    "join.error_rules": "Por favor, lee y acepta las reglas de adhesión.",
+
     // App KSN
     "appksn.badge": "Aplicación Móvil KSN",
     "appksn.title": "Lleva KSN Contigo a Todas Partes 📱",
@@ -3709,6 +3800,25 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "social.telegram": "مجتمع KSN والمعلومات المهمة.",
     "social.wa_title": "واتساب الرسمي",
     "social.wa_text": "انضم إلى المجتمع الرسمي وتواصل مباشرة مع KSN.",
+
+    // Formulaire de demande d'intégration au groupe WhatsApp
+    "join.form_title": "طلب الانضمام",
+    "join.form_desc": "املأ هذا النموذج: سيُرسل طلبك إلى فريق الدائرة عبر واتساب للانضمام إلى المجموعة الرسمية.",
+    "join.first_name": "الاسم الأول",
+    "join.last_name": "اسم العائلة",
+    "join.phone": "رقم الهاتف",
+    "join.address": "العنوان",
+    "join.profession": "المهنة",
+    "join.optional": "اختياري",
+    "join.rules_title": "هذه هي قواعد الانضمام",
+    "join.rule1": "الحصول على بطاقة عضوية بـ 1000 فرنك",
+    "join.rule2": "الصلاة على النبي ﷺ واجبة على كل عضو، بالصيغة والعدد الذي تستطيع",
+    "join.rule3": "تحميل التطبيق لتسجيل عدد صلواتك",
+    "join.rule4": "اشتراك شهري بـ 500 فرنك للتكافل داخل الدائرة ويوم الصلاة على النبي ﷺ",
+    "join.accept": "قرأت قواعد الانضمام إلى الدائرة وأوافق عليها",
+    "join.submit": "إرسال طلبي عبر واتساب",
+    "join.error_required": "يرجى ملء جميع الحقول الإلزامية.",
+    "join.error_rules": "يرجى قراءة قواعد الانضمام والموافقة عليها.",
 
     // App KSN
     "appksn.badge": "تطبيق KSN للهاتف",

@@ -22,7 +22,7 @@ import {
 import { isModuleUnlocked } from "@/lib/education/progress";
 import { motion } from "framer-motion";
 import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
-import { LINKS, JOIN_WHATSAPP_LINK } from "@/lib/constants";
+import { LINKS } from "@/lib/constants";
 import { EducationModule, EducationLesson } from "@/lib/admin-types";
 import { listEducationModules, listEducationLessons } from "@/lib/admin-data";
 import { collection, addDoc } from "firebase/firestore";
@@ -287,15 +287,13 @@ export default function EducationPage() {
           )}
 
           <div className="mt-10 flex items-center justify-center gap-6 flex-wrap">
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/inscription"
               className="text-[#064E3B] hover:underline text-xs sm:text-sm font-semibold flex items-center gap-1.5"
             >
               Devenir membre du Dahira{" "}
               <FaArrowRight className="text-[10px]" />
-            </a>
+            </Link>
             <span className="text-[#1A1611]/20">|</span>
             <a
               href={LINKS.whatsapp}

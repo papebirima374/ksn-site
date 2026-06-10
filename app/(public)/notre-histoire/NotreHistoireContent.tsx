@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ShareButton from "@/components/ui/ShareButton";
-import { LINKS, JOIN_WHATSAPP_LINK, SITE } from "@/lib/constants";
+import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
 type Milestone = {
@@ -214,14 +214,12 @@ export default function NotreHistoireContent() {
           </p>
 
           <div className="mt-8 grid sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/inscription"
               className="inline-flex items-center justify-center bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-4 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
               {t("histoire.cta_member")} →
-            </a>
+            </Link>
             <a
               href={LINKS.whatsapp}
               target="_blank"

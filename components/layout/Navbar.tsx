@@ -12,7 +12,7 @@ import {
   FaWhatsapp,
   FaChevronDown,
 } from "react-icons/fa6";
-import { LINKS, SITE, JOIN_WHATSAPP_LINK } from "@/lib/constants";
+import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import SearchBar from "@/components/layout/SearchBar";
@@ -151,16 +151,14 @@ export default function Navbar() {
             <NotificationBell />
             <LanguageSwitcher />
 
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/inscription"
               className="hidden xl:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white font-semibold px-2.5 2xl:px-3.5 py-2.5 rounded-2xl transition text-xs whitespace-nowrap"
-              title="Rejoindre le Dahira sur WhatsApp"
+              title="Rejoindre le Dahira"
             >
               <FaWhatsapp className="text-[14px] text-[#25D366]" />
               <span className="hidden 2xl:inline">Rejoindre</span>
-            </a>
+            </Link>
 
             <Link
               href="/don"
@@ -197,16 +195,14 @@ export default function Navbar() {
 
         {open && (
           <nav className="lg:hidden mt-3 bg-[#0A3D24]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-5 shadow-2xl overflow-y-auto max-h-[calc(100dvh-90px)]">
-            {/* REJOINDRE via WhatsApp en tete du drawer */}
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* REJOINDRE via formulaire d'integration en tete du drawer */}
+            <Link
+              href="/inscription"
               onClick={() => setOpen(false)}
               className="flex items-center justify-center gap-2 mb-4 py-3 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/40 text-white font-semibold text-sm transition"
             >
               <FaWhatsapp className="text-[#25D366] text-lg" /> Rejoindre le Dahira
-            </a>
+            </Link>
 
             <div className="space-y-1">
               {navItems.map((item) =>
@@ -275,15 +271,13 @@ export default function Navbar() {
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <a
-                href={JOIN_WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/inscription"
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-center gap-2 py-3 text-center font-semibold text-[#25D366] border border-[#25D366]/40 rounded-xl"
               >
                 <FaWhatsapp /> Rejoindre
-              </a>
+              </Link>
               <Link
                 href="/don"
                 onClick={() => setOpen(false)}

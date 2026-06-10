@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useT } from "@/lib/i18n/context";
-import { JOIN_WHATSAPP_LINK } from "@/lib/constants";
 import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 
 export default function Hero() {
@@ -39,14 +38,12 @@ export default function Hero() {
           </p>
 
           <div className="mt-8 sm:mt-10 flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-5">
-            <a
-              href={JOIN_WHATSAPP_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href="/inscription"
               className="bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 sm:px-8 py-4 sm:py-5 rounded-2xl font-bold shadow-xl hover:scale-105 transition text-sm sm:text-base"
             >
               {t("cta.join")}
-            </a>
+            </Link>
 
             <Link
               href="/dahira"
@@ -94,10 +91,8 @@ export default function Hero() {
                 </p>
               </Link>
 
-              <a
-                href={JOIN_WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/inscription"
                 className="block bg-white/10 hover:bg-white/15 rounded-2xl p-4 sm:p-5 transition"
               >
                 <h3 className="text-white font-semibold text-sm sm:text-base">
@@ -106,7 +101,7 @@ export default function Hero() {
                 <p className="text-white/60 text-xs sm:text-sm mt-1">
                   {t("hero.card_membre_desc")}
                 </p>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
