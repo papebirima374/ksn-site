@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FaFacebookF,
   FaInstagram,
@@ -7,56 +9,33 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6";
 import { LINKS } from "@/lib/constants";
+import { useT } from "@/lib/i18n/context";
 
 const SOCIALS = [
-  {
-    Icon: FaFacebookF,
-    title: "Facebook",
-    text: "Publications officielles, événements et vie du Dahira.",
-    href: LINKS.facebook,
-  },
-  {
-    Icon: FaYoutube,
-    title: "YouTube",
-    text: "Conférences, Salaatou, enseignements et lives.",
-    href: LINKS.youtube,
-  },
-  {
-    Icon: FaTiktok,
-    title: "TikTok",
-    text: "Capsules spirituelles et contenus courts KSN.",
-    href: LINKS.tiktok,
-  },
-  {
-    Icon: FaInstagram,
-    title: "Instagram",
-    text: "Photos officielles, inspirations et médias.",
-    href: LINKS.instagram,
-  },
-  {
-    Icon: FaTelegram,
-    title: "Telegram",
-    text: "Communauté KSN et informations importantes.",
-    href: LINKS.telegram,
-  },
+  { Icon: FaFacebookF, title: "Facebook", textKey: "social.facebook", href: LINKS.facebook },
+  { Icon: FaYoutube, title: "YouTube", textKey: "social.youtube", href: LINKS.youtube },
+  { Icon: FaTiktok, title: "TikTok", textKey: "social.tiktok", href: LINKS.tiktok },
+  { Icon: FaInstagram, title: "Instagram", textKey: "social.instagram", href: LINKS.instagram },
+  { Icon: FaTelegram, title: "Telegram", textKey: "social.telegram", href: LINKS.telegram },
 ];
 
 export default function ReseauxSociaux() {
+  const { t } = useT();
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
       <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-16">
         <div className="text-center">
           <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            Communauté Digitale
+            {t("section.communaute_digitale")}
           </span>
 
           <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            Suivez KSN Partout
+            {t("section.suivez_partout")}
           </h2>
 
           <p className="mt-4 sm:mt-6 text-gray-600 max-w-3xl mx-auto leading-7 sm:leading-8 text-sm sm:text-base">
-            Retrouvez les contenus spirituels, vidéos, rappels, événements et
-            publications officielles de KSN sur toutes nos plateformes.
+            {t("social.desc")}
           </p>
         </div>
 
@@ -78,7 +57,7 @@ export default function ReseauxSociaux() {
                   {s.title}
                 </h3>
                 <p className="mt-3 sm:mt-4 text-gray-600 leading-6 sm:leading-7 text-sm sm:text-base">
-                  {s.text}
+                  {t(s.textKey)}
                 </p>
               </a>
             );
@@ -94,10 +73,10 @@ export default function ReseauxSociaux() {
               <FaWhatsapp />
             </div>
             <h3 className="font-display mt-4 sm:mt-5 text-xl sm:text-2xl font-bold">
-              WhatsApp Officiel
+              {t("social.wa_title")}
             </h3>
             <p className="mt-3 sm:mt-4 leading-6 sm:leading-7 text-sm sm:text-base">
-              Rejoignez la communauté officielle et contactez directement KSN.
+              {t("social.wa_text")}
             </p>
           </a>
         </div>

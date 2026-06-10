@@ -38,7 +38,7 @@ export default function ChallengeContent() {
       <PageHero
         overline={t("challenge.overline")}
         title={t("challenge.title")}
-        arabic={t("challenge.arabic")}
+        salaatuCalligraphy
         description={t("challenge.desc")}
       />
 

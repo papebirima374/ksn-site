@@ -1,7 +1,11 @@
+import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
+
 type PageHeroProps = {
   overline?: string;
   title: string;
   arabic?: string;
+  /** Affiche la calligraphie image "صلى الله على محمد" (logo/salaatu) à la place du texte arabe */
+  salaatuCalligraphy?: boolean;
   description?: string;
 };
 
@@ -9,15 +13,20 @@ export default function PageHero({
   overline,
   title,
   arabic,
+  salaatuCalligraphy = false,
   description,
 }: PageHeroProps) {
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 lg:pt-48 pb-12 sm:pb-16">
       <div className="text-center max-w-4xl mx-auto">
-        {arabic && (
-          <p className="font-arabic text-2xl sm:text-3xl md:text-4xl text-[#D4AF37] mb-4">
-            {arabic}
-          </p>
+        {salaatuCalligraphy ? (
+          <SalaatuCalligraphy className="mx-auto h-12 sm:h-14 md:h-16 mb-4" />
+        ) : (
+          arabic && (
+            <p className="font-arabic text-2xl sm:text-3xl md:text-4xl text-[#D4AF37] mb-4">
+              {arabic}
+            </p>
+          )
         )}
 
         {overline && (

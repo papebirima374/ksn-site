@@ -384,6 +384,27 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_text": "Rejoignez-nous à Touba le 26 décembre 2026 pour la Journée Salaatu ʿAlaa Nabii — une journée entière dédiée à la prière sur le Prophète Muhammad ﷺ.",
     "journee.share_label": "Partager l'événement",
 
+    // Page Média (hero, galerie, réseaux sociaux)
+    "mediapage.hero_desc": "Galerie photos, vidéos, conférences, rassemblements et moments forts de Kippangog Salaatu 'Alaa Nabii.",
+    "gallery.overline": "Galerie Photos KSN",
+    "gallery.title": "Moments du Dahira",
+    "gallery.desc": "Cliquez sur une photo pour la voir en grand. Filtrez par catégorie pour retrouver un événement précis.",
+    "gallery.cat_tous": "Tous",
+    "gallery.cat_evenements": "Événements",
+    "gallery.cat_activites": "Activités",
+    "gallery.cat_journee": "Journée Salaatu",
+    "gallery.cat_assemblee": "Assemblée générale",
+    "gallery.empty": "Aucune photo dans cette catégorie pour l'instant.",
+    "gallery.footer": "Galerie alimentée par l'équipe KSN — {count} photos disponibles.",
+    "social.desc": "Retrouvez les contenus spirituels, vidéos, rappels, événements et publications officielles de KSN sur toutes nos plateformes.",
+    "social.facebook": "Publications officielles, événements et vie du Dahira.",
+    "social.youtube": "Conférences, Salaatou, enseignements et lives.",
+    "social.tiktok": "Capsules spirituelles et contenus courts KSN.",
+    "social.instagram": "Photos officielles, inspirations et médias.",
+    "social.telegram": "Communauté KSN et informations importantes.",
+    "social.wa_title": "WhatsApp Officiel",
+    "social.wa_text": "Rejoignez la communauté officielle et contactez directement KSN.",
+
     // App KSN
     "appksn.badge": "Application Mobile KSN",
     "appksn.title": "Emportez KSN Partout Avec Vous 📱",
@@ -418,6 +439,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 
     // Contact
     "contact.badge": "Contact Officiel",
+    "contact.wa_alert": "📩 Nouveau message depuis le site KSN",
     "contact.title": "Entrer en Contact Avec la KSN",
     "contact.desc": "Une question, une adhésion, une collaboration ou une demande d'information ? Notre équipe est disponible pour vous accompagner.",
     "contact.hq": "📍 Siège du Dahira",
@@ -1122,6 +1144,28 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_title": "Bisu Salaatu ʿAlaa Nabii — 26 Desàmbar 2026",
     "journee.share_text": "Fekksil nu ci Touba 26 Desàmbar 2026 ngir Bisu Salaatu ʿAlaa Nabii — benn bis bu mat sëkk bu ñu jagleel salaatu ci Yonent bi Muhammad ﷺ.",
     "journee.share_label": "Séddale xew bi",
+    "contact.wa_alert": "📩 Bataaxal bu bees bu jóge ci site KSN",
+
+    // Page Média (jets — à valider par un locuteur natif)
+    "mediapage.hero_desc": "Galeri nataal, wideo, ndaje, daje ak jamono yu mag yu Kippangog Salaatu 'Alaa Nabii.",
+    "gallery.overline": "Galeri Nataal KSN",
+    "gallery.title": "Jamonoy Dahira ji",
+    "gallery.desc": "Bësal ci nataal ngir gis ko bu mag. Tannal ci catégorie ngir gis benn xew bu wér.",
+    "gallery.cat_tous": "Yépp",
+    "gallery.cat_evenements": "Xew yi",
+    "gallery.cat_activites": "Jëf yi",
+    "gallery.cat_journee": "Bisu Salaatu",
+    "gallery.cat_assemblee": "Ndaje mu mag",
+    "gallery.empty": "Amul benn nataal ci catégorie bii léegi.",
+    "gallery.footer": "Galeri bi ekibu KSN moo koy toppatoo — {count} nataal ñoo am.",
+    "social.desc": "Gisal ay contenu diiney, wideo, fattali, xew ak yëgle yu officiel yu KSN ci sunu plateforme yépp.",
+    "social.facebook": "Yëgle yu officiel, xew ak dundu Dahira ji.",
+    "social.youtube": "Ndaje, Salaatou, njàngale ak live yi.",
+    "social.tiktok": "Wideo yu gàtt yu diiney yu KSN.",
+    "social.instagram": "Nataal yu officiel, xalaat ak media.",
+    "social.telegram": "Mbooloo KSN ak xibaar yu am solo.",
+    "social.wa_title": "WhatsApp bu Officiel",
+    "social.wa_text": "Bokkal ci mbooloo mu officiel te jokkoo ak KSN bu jëkk.",
   },
 
   en: {
@@ -1495,6 +1539,27 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_text": "Join us in Touba on December 26, 2026 for the Salaatu ʿAlaa Nabii Day — a full day dedicated to prayer upon the Prophet Muhammad ﷺ.",
     "journee.share_label": "Share the event",
 
+    // Page Média (hero, galerie, réseaux sociaux)
+    "mediapage.hero_desc": "Photo gallery, videos, lectures, gatherings and highlights of Kippangog Salaatu 'Alaa Nabii.",
+    "gallery.overline": "KSN Photo Gallery",
+    "gallery.title": "Moments of the Dahira",
+    "gallery.desc": "Click a photo to view it full size. Filter by category to find a specific event.",
+    "gallery.cat_tous": "All",
+    "gallery.cat_evenements": "Events",
+    "gallery.cat_activites": "Activities",
+    "gallery.cat_journee": "Salaatu Day",
+    "gallery.cat_assemblee": "General assembly",
+    "gallery.empty": "No photos in this category yet.",
+    "gallery.footer": "Gallery maintained by the KSN team — {count} photos available.",
+    "social.desc": "Find KSN's spiritual content, videos, reminders, events and official publications on all our platforms.",
+    "social.facebook": "Official publications, events and Dahira life.",
+    "social.youtube": "Lectures, Salaatou, teachings and live streams.",
+    "social.tiktok": "Spiritual capsules and short KSN content.",
+    "social.instagram": "Official photos, inspiration and media.",
+    "social.telegram": "KSN community and important information.",
+    "social.wa_title": "Official WhatsApp",
+    "social.wa_text": "Join the official community and contact KSN directly.",
+
     // App KSN
     "appksn.badge": "KSN Mobile App",
     "appksn.title": "Take KSN Everywhere With You 📱",
@@ -1529,6 +1594,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 
     // Contact
     "contact.badge": "Official Contact",
+    "contact.wa_alert": "📩 New message from the KSN website",
     "contact.title": "Get in touch with KSN",
     "contact.desc": "A question, membership request, collaboration or info? Our team is available to assist you.",
     "contact.hq": "📍 Dahira Headquarters",
@@ -2185,6 +2251,27 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_text": "Raggiungici a Touba il 26 dicembre 2026 per la Giornata Salaatu ʿAlaa Nabii — un'intera giornata dedicata alla preghiera sul Profeta Muhammad ﷺ.",
     "journee.share_label": "Condividi l'evento",
 
+    // Page Média (hero, galerie, réseaux sociaux)
+    "mediapage.hero_desc": "Galleria fotografica, video, conferenze, raduni e momenti salienti di Kippangog Salaatu 'Alaa Nabii.",
+    "gallery.overline": "Galleria Foto KSN",
+    "gallery.title": "Momenti del Dahira",
+    "gallery.desc": "Clicca su una foto per vederla a grandezza intera. Filtra per categoria per ritrovare un evento preciso.",
+    "gallery.cat_tous": "Tutte",
+    "gallery.cat_evenements": "Eventi",
+    "gallery.cat_activites": "Attività",
+    "gallery.cat_journee": "Giornata Salaatu",
+    "gallery.cat_assemblee": "Assemblea generale",
+    "gallery.empty": "Nessuna foto in questa categoria per il momento.",
+    "gallery.footer": "Galleria curata dal team KSN — {count} foto disponibili.",
+    "social.desc": "Trova i contenuti spirituali, i video, i promemoria, gli eventi e le pubblicazioni ufficiali di KSN su tutte le nostre piattaforme.",
+    "social.facebook": "Pubblicazioni ufficiali, eventi e vita del Dahira.",
+    "social.youtube": "Conferenze, Salaatou, insegnamenti e dirette.",
+    "social.tiktok": "Capsule spirituali e contenuti brevi KSN.",
+    "social.instagram": "Foto ufficiali, ispirazioni e media.",
+    "social.telegram": "Comunità KSN e informazioni importanti.",
+    "social.wa_title": "WhatsApp Ufficiale",
+    "social.wa_text": "Unisciti alla comunità ufficiale e contatta direttamente KSN.",
+
     // App KSN
     "appksn.badge": "Applicazione Mobile KSN",
     "appksn.title": "Porta KSN Sempre Con Te 📱",
@@ -2219,6 +2306,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 
     // Contact
     "contact.badge": "Contatto Ufficiale",
+    "contact.wa_alert": "📩 Nuovo messaggio dal sito KSN",
     "contact.title": "Contatta la KSN",
     "contact.desc": "Una domanda, una richiesta di adesione, una collaborazione o informazioni? Il nostro team è a disposizione.",
     "contact.hq": "📍 Sede della Dahira",
@@ -2882,6 +2970,27 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_text": "Acompáñanos en Touba el 26 de diciembre de 2026 para la Jornada Salaatu ʿAlaa Nabii — un día entero dedicado a la oración sobre el Profeta Muhammad ﷺ.",
     "journee.share_label": "Compartir el evento",
 
+    // Page Média (hero, galerie, réseaux sociaux)
+    "mediapage.hero_desc": "Galería de fotos, vídeos, conferencias, encuentros y momentos destacados de Kippangog Salaatu 'Alaa Nabii.",
+    "gallery.overline": "Galería de Fotos KSN",
+    "gallery.title": "Momentos del Dahira",
+    "gallery.desc": "Haz clic en una foto para verla en grande. Filtra por categoría para encontrar un evento concreto.",
+    "gallery.cat_tous": "Todas",
+    "gallery.cat_evenements": "Eventos",
+    "gallery.cat_activites": "Actividades",
+    "gallery.cat_journee": "Jornada Salaatu",
+    "gallery.cat_assemblee": "Asamblea general",
+    "gallery.empty": "No hay fotos en esta categoría por el momento.",
+    "gallery.footer": "Galería mantenida por el equipo KSN — {count} fotos disponibles.",
+    "social.desc": "Encuentra los contenidos espirituales, vídeos, recordatorios, eventos y publicaciones oficiales de KSN en todas nuestras plataformas.",
+    "social.facebook": "Publicaciones oficiales, eventos y vida del Dahira.",
+    "social.youtube": "Conferencias, Salaatou, enseñanzas y directos.",
+    "social.tiktok": "Cápsulas espirituales y contenidos cortos KSN.",
+    "social.instagram": "Fotos oficiales, inspiraciones y medios.",
+    "social.telegram": "Comunidad KSN e información importante.",
+    "social.wa_title": "WhatsApp Oficial",
+    "social.wa_text": "Únete a la comunidad oficial y contacta directamente con KSN.",
+
     // App KSN
     "appksn.badge": "Aplicación Móvil KSN",
     "appksn.title": "Lleva KSN Contigo a Todas Partes 📱",
@@ -2916,6 +3025,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 
     // Contact
     "contact.badge": "Contacto Oficial",
+    "contact.wa_alert": "📩 Nuevo mensaje desde el sitio KSN",
     "contact.title": "Ponte en contacto con la KSN",
     "contact.desc": "¿Una pregunta, solicitud de adhesión, colaboración o información? Nuestro equipo está a su disposición.",
     "contact.hq": "📍 Sede de la Dahira",
@@ -3579,6 +3689,27 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "journee.share_text": "انضموا إلينا في طوبى يوم 26 ديسمبر 2026 ليوم الصلاة على النبي ﷺ — يوم كامل مخصص للصلاة على النبي محمد ﷺ.",
     "journee.share_label": "مشاركة الحدث",
 
+    // Page Média (hero, galerie, réseaux sociaux)
+    "mediapage.hero_desc": "معرض الصور والفيديوهات والمحاضرات والتجمعات وأبرز لحظات دائرة كيبانگوگ الصلاة على النبي.",
+    "gallery.overline": "معرض صور KSN",
+    "gallery.title": "لحظات الدائرة",
+    "gallery.desc": "انقر على صورة لعرضها بالحجم الكامل. صفِّ حسب الفئة للعثور على حدث معين.",
+    "gallery.cat_tous": "الكل",
+    "gallery.cat_evenements": "الفعاليات",
+    "gallery.cat_activites": "الأنشطة",
+    "gallery.cat_journee": "يوم الصلاة على النبي",
+    "gallery.cat_assemblee": "الجمعية العامة",
+    "gallery.empty": "لا توجد صور في هذه الفئة حالياً.",
+    "gallery.footer": "المعرض يديره فريق KSN — {count} صورة متاحة.",
+    "social.desc": "اطلع على المحتويات الروحانية والفيديوهات والتذكيرات والفعاليات والمنشورات الرسمية لـ KSN على جميع منصاتنا.",
+    "social.facebook": "المنشورات الرسمية والفعاليات وحياة الدائرة.",
+    "social.youtube": "محاضرات، صلوات، دروس وبث مباشر.",
+    "social.tiktok": "مقاطع روحانية ومحتويات قصيرة من KSN.",
+    "social.instagram": "صور رسمية وإلهامات ووسائط.",
+    "social.telegram": "مجتمع KSN والمعلومات المهمة.",
+    "social.wa_title": "واتساب الرسمي",
+    "social.wa_text": "انضم إلى المجتمع الرسمي وتواصل مباشرة مع KSN.",
+
     // App KSN
     "appksn.badge": "تطبيق KSN للهاتف",
     "appksn.title": "احمل تطبيق KSN معك أينما كنت 📱",
@@ -3613,6 +3744,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 
     // Contact
     "contact.badge": "الاتصال الرسمي",
+    "contact.wa_alert": "📩 رسالة جديدة من موقع KSN",
     "contact.title": "تواصل مع KSN",
     "contact.desc": "هل لديك سؤال، أو طلب انخراط، أو تعاون، أو طلب معلومات؟ فريقنا رهن إشارتكم لمرافقتكم.",
     "contact.hq": "📍 مقر الدائرة",

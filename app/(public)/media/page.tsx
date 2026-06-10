@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PageHero from "@/components/layout/PageHero";
+import MediaHero from "./MediaHero";
 import Media from "@/components/sections/Media";
 import Gallery from "@/components/sections/Gallery";
 import ReseauxSociaux from "@/components/sections/ReseauxSociaux";
@@ -14,11 +14,7 @@ export const metadata: Metadata = {
 export default function MediaPage() {
   return (
     <>
-      <PageHero
-        overline="Média KSN"
-        title="Activités du Dahira & Vie Communautaire"
-        description="Galerie photos, vidéos, conférences, rassemblements et moments forts de Kippangog Salaatu 'Alaa Nabii."
-      />
+      <MediaHero />
 
       <Media />
       <Gallery />

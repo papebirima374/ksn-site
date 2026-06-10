@@ -30,7 +30,7 @@ export default function JourneeBanner() {
               className="font-arabic text-3xl sm:text-4xl text-[#0F7C55] mb-3"
               dir="rtl"
             >
-              {t("journee.arabic")}
+              يوم الصلاة على النبي ﷺ
             </p>
 
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0F7C55] text-[#D4AF37] mb-5">
