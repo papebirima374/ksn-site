@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import DahiraHero from "@/components/sections/DahiraHero";
-import Commissions from "@/components/sections/Commissions";
-import LeDahira from "@/components/sections/LeDahira";
-import Presidence from "@/components/sections/Presidence";
 import Stats from "@/components/sections/Stats";
-import MotDuPresident from "@/components/sections/MotDuPresident";
-import OrganigrammeBureau from "@/components/sections/OrganigrammeBureau";
-import DocumentsTelechargement from "@/components/sections/DocumentsTelechargement";
+import DahiraTabs from "./DahiraTabs";
 
 export const metadata: Metadata = {
   title: "Le Dahira",
@@ -18,13 +13,7 @@ export default function DahiraPage() {
   return (
     <>
       <DahiraHero />
-
-      <Presidence />
-      <MotDuPresident />
-      <LeDahira />
-      <OrganigrammeBureau />
-      <Commissions />
-      <DocumentsTelechargement />
+      <DahiraTabs />
       <Stats />
     </>
   );

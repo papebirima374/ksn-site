@@ -424,6 +424,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.error_required": "Merci de remplir tous les champs obligatoires.",
     "join.error_rules": "Merci de lire et d'accepter les règles d'adhésion.",
 
+    // Onglets de la page Dahira
+    "dahiratabs.presidence": "Présidence",
+    "dahiratabs.dahira": "Le Dahira",
+    "dahiratabs.organigramme": "Organigramme",
+    "dahiratabs.commissions": "Commissions",
+    "dahiratabs.documents": "Documents",
+
     // App KSN
     "appksn.badge": "Application Mobile KSN",
     "appksn.title": "Emportez KSN Partout Avec Vous 📱",
@@ -1200,6 +1207,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.submit": "Yónne sama ñaan ci WhatsApp",
     "join.error_required": "Fessalal fépp fu war.",
     "join.error_rules": "Jàngal sart yi te nangu ko.",
+
+    // Onglets de la page Dahira (jets)
+    "dahiratabs.presidence": "Njiit yi",
+    "dahiratabs.dahira": "Dahira ji",
+    "dahiratabs.organigramme": "Tëralin wi",
+    "dahiratabs.commissions": "Komisioŋ yi",
+    "dahiratabs.documents": "Dokimaa yi",
   },
 
   en: {
@@ -1612,6 +1626,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.submit": "Send my request on WhatsApp",
     "join.error_required": "Please fill in all required fields.",
     "join.error_rules": "Please read and accept the membership rules.",
+
+    // Onglets de la page Dahira
+    "dahiratabs.presidence": "Presidency",
+    "dahiratabs.dahira": "The Dahira",
+    "dahiratabs.organigramme": "Organization chart",
+    "dahiratabs.commissions": "Commissions",
+    "dahiratabs.documents": "Documents",
 
     // App KSN
     "appksn.badge": "KSN Mobile App",
@@ -2343,6 +2364,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.submit": "Inviare la mia richiesta su WhatsApp",
     "join.error_required": "Si prega di compilare tutti i campi obbligatori.",
     "join.error_rules": "Si prega di leggere e accettare le regole di adesione.",
+
+    // Onglets de la page Dahira
+    "dahiratabs.presidence": "Presidenza",
+    "dahiratabs.dahira": "Il Dahira",
+    "dahiratabs.organigramme": "Organigramma",
+    "dahiratabs.commissions": "Commissioni",
+    "dahiratabs.documents": "Documenti",
 
     // App KSN
     "appksn.badge": "Applicazione Mobile KSN",
@@ -3082,6 +3110,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.error_required": "Por favor, rellena todos los campos obligatorios.",
     "join.error_rules": "Por favor, lee y acepta las reglas de adhesión.",
 
+    // Onglets de la page Dahira
+    "dahiratabs.presidence": "Presidencia",
+    "dahiratabs.dahira": "El Dahira",
+    "dahiratabs.organigramme": "Organigrama",
+    "dahiratabs.commissions": "Comisiones",
+    "dahiratabs.documents": "Documentos",
+
     // App KSN
     "appksn.badge": "Aplicación Móvil KSN",
     "appksn.title": "Lleva KSN Contigo a Todas Partes 📱",
@@ -3819,6 +3854,13 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "join.submit": "إرسال طلبي عبر واتساب",
     "join.error_required": "يرجى ملء جميع الحقول الإلزامية.",
     "join.error_rules": "يرجى قراءة قواعد الانضمام والموافقة عليها.",
+
+    // Onglets de la page Dahira
+    "dahiratabs.presidence": "الرئاسة",
+    "dahiratabs.dahira": "الدائرة",
+    "dahiratabs.organigramme": "الهيكل التنظيمي",
+    "dahiratabs.commissions": "اللجان",
+    "dahiratabs.documents": "الوثائق",
 
     // App KSN
     "appksn.badge": "تطبيق KSN للهاتف",

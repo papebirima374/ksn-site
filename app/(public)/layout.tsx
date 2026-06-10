@@ -21,7 +21,7 @@ export default function PublicLayout({
     <I18nProvider>
       <AuthProvider>
         <CartProvider>
-          <main className="relative min-h-screen overflow-hidden bg-[#082F22]">
+          <main className="relative min-h-screen overflow-x-clip bg-[#082F22]">
             <PullToRefresh />
             <Background />
             <Navbar />
