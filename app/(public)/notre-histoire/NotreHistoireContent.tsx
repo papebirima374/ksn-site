@@ -8,9 +8,13 @@ import {
   FaWhatsapp,
   FaStar,
   FaHandHoldingHeart,
+  FaBookOpen,
+  FaTimeline,
+  FaGem,
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ShareButton from "@/components/ui/ShareButton";
+import SectionTabs from "@/components/ui/SectionTabs";
 import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
@@ -39,6 +43,12 @@ const VALUE_KEYS = [
   { t: "histoire.v4_title", d: "histoire.v4_text" },
 ];
 
+const TABS = [
+  { id: "origines", labelKey: "tabs.origines", icon: <FaBookOpen /> },
+  { id: "jalons", labelKey: "tabs.jalons", icon: <FaTimeline /> },
+  { id: "valeurs", labelKey: "tabs.valeurs", icon: <FaGem /> },
+];
+
 export default function NotreHistoireContent() {
   const { t } = useT();
   const stats = [
@@ -57,150 +67,162 @@ export default function NotreHistoireContent() {
         description={t("histoire.hero_desc")}
       />
 
-      {/* ORIGINES */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
-          <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-            {t("histoire.origins_overline")}
-          </span>
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            {t("histoire.origins_title")}
-          </h2>
+      <SectionTabs
+        tabs={TABS}
+        renderPanel={(id) => (
+          <>
+            {id === "origines" && (
+              <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+                <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
+                  <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
+                    {t("histoire.origins_overline")}
+                  </span>
+                  <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
+                    {t("histoire.origins_title")}
+                  </h2>
 
-          <div className="mt-8 space-y-5 text-gray-700 leading-7 sm:leading-8 text-sm sm:text-base">
-            <p>{t("histoire.origins_p1")}</p>
-            <p>
-              {t("histoire.origins_p2")} <strong>{SITE.fullName}</strong>.
-            </p>
-            <p>{t("histoire.origins_p3")}</p>
-          </div>
+                  <div className="mt-8 space-y-5 text-gray-700 leading-7 sm:leading-8 text-sm sm:text-base">
+                    <p>{t("histoire.origins_p1")}</p>
+                    <p>
+                      {t("histoire.origins_p2")} <strong>{SITE.fullName}</strong>.
+                    </p>
+                    <p>{t("histoire.origins_p3")}</p>
+                  </div>
 
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {stats.map((s) => (
-              <div key={s.label} className="bg-[#F8F5EF] rounded-2xl p-4 sm:p-5 text-center">
-                <div className="font-display text-2xl sm:text-3xl md:text-4xl font-black text-[#0F7C55] tabular-nums">
-                  {s.value}
+                  <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                    {stats.map((s) => (
+                      <div key={s.label} className="bg-[#F8F5EF] rounded-2xl p-4 sm:p-5 text-center">
+                        <div className="font-display text-2xl sm:text-3xl md:text-4xl font-black text-[#0F7C55] tabular-nums">
+                          {s.value}
+                        </div>
+                        <div className="mt-1 text-xs sm:text-sm text-gray-600 font-medium">
+                          {s.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="mt-1 text-xs sm:text-sm text-gray-600 font-medium">
-                  {s.label}
+              </section>
+            )}
+
+            {id === "jalons" && (
+              <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+                <div className="text-center mb-10 sm:mb-14">
+                  <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
+                    {t("histoire.timeline_overline")}
+                  </span>
+                  <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+                    {t("histoire.timeline_title")}
+                  </h2>
+                  <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
+                    {t("histoire.timeline_desc")}
+                  </p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* TIMELINE */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="text-center mb-10 sm:mb-14">
-          <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
-            {t("histoire.timeline_overline")}
-          </span>
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-            {t("histoire.timeline_title")}
-          </h2>
-          <p className="mt-4 text-white/70 max-w-2xl mx-auto text-sm sm:text-base">
-            {t("histoire.timeline_desc")}
-          </p>
-        </div>
+                <div className="relative">
+                  <div className="absolute left-7 sm:left-1/2 top-0 bottom-0 w-px bg-[#D4AF37]/30 sm:-translate-x-1/2" />
+                  <div className="space-y-6 sm:space-y-10">
+                    {MILESTONES.map((m, i) => {
+                      const isEven = i % 2 === 0;
+                      return (
+                        <div
+                          key={m.titleKey}
+                          className={`relative flex sm:items-center gap-4 sm:gap-8 ${
+                            isEven ? "sm:flex-row" : "sm:flex-row-reverse"
+                          }`}
+                        >
+                          <div className="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
+                            <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-xl border-2 bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] text-[#D4AF37] border-[#D4AF37]/40">
+                              {m.icon}
+                            </div>
+                          </div>
+                          <div className="flex-1 sm:w-[calc(50%-3rem)] sm:max-w-[calc(50%-3rem)]">
+                            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-7 hover:bg-white/10 transition">
+                              <div className="flex items-center gap-2 mb-3">
+                                <span className="font-display text-2xl sm:text-3xl font-black text-[#D4AF37] tabular-nums leading-none">
+                                  {m.year}
+                                </span>
+                                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-white/50 font-bold pt-1">
+                                  {t(m.dateKey)}
+                                </span>
+                              </div>
+                              <h3 className="font-display text-lg sm:text-xl font-bold text-white">
+                                {t(m.titleKey)}
+                              </h3>
+                              <p className="mt-2 text-white/70 text-sm sm:text-base leading-6 sm:leading-7">
+                                {t(m.textKey)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="hidden sm:block sm:flex-1" />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+            )}
 
-        <div className="relative">
-          <div className="absolute left-7 sm:left-1/2 top-0 bottom-0 w-px bg-[#D4AF37]/30 sm:-translate-x-1/2" />
-          <div className="space-y-6 sm:space-y-10">
-            {MILESTONES.map((m, i) => {
-              const isEven = i % 2 === 0;
-              return (
-                <div
-                  key={m.titleKey}
-                  className={`relative flex sm:items-center gap-4 sm:gap-8 ${
-                    isEven ? "sm:flex-row" : "sm:flex-row-reverse"
-                  }`}
-                >
-                  <div className="relative z-10 flex-shrink-0 sm:absolute sm:left-1/2 sm:-translate-x-1/2">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-xl border-2 bg-gradient-to-br from-[#0F7C55] to-[#0A3D24] text-[#D4AF37] border-[#D4AF37]/40">
-                      {m.icon}
+            {id === "valeurs" && (
+              <>
+                <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+                  <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
+                    <div className="text-center mb-10 sm:mb-12">
+                      <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
+                        {t("histoire.values_overline")}
+                      </span>
+                      <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
+                        {t("histoire.values_title")}
+                      </h2>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
+                      {VALUE_KEYS.map((v, i) => (
+                        <div key={v.t} className="bg-[#F8F5EF] rounded-2xl sm:rounded-3xl p-6 sm:p-7">
+                          <div className="flex items-baseline gap-3 mb-3">
+                            <span className="font-display text-3xl sm:text-4xl font-black text-[#D4AF37]/40 tabular-nums leading-none">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F7C55]">
+                              {t(v.t)}
+                            </h3>
+                          </div>
+                          <p className="text-gray-700 text-sm sm:text-base leading-6 sm:leading-7">
+                            {t(v.d)}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="flex-1 sm:w-[calc(50%-3rem)] sm:max-w-[calc(50%-3rem)]">
-                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-7 hover:bg-white/10 transition">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="font-display text-2xl sm:text-3xl font-black text-[#D4AF37] tabular-nums leading-none">
-                          {m.year}
-                        </span>
-                        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-white/50 font-bold pt-1">
-                          {t(m.dateKey)}
-                        </span>
-                      </div>
-                      <h3 className="font-display text-lg sm:text-xl font-bold text-white">
-                        {t(m.titleKey)}
-                      </h3>
-                      <p className="mt-2 text-white/70 text-sm sm:text-base leading-6 sm:leading-7">
-                        {t(m.textKey)}
+                </section>
+
+                {/* CITATION SPIRITUELLE */}
+                <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
+                  <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-6 sm:p-12 md:p-14 text-white text-center">
+                    <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
+                    <div className="relative z-10">
+                      <p className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37]" dir="rtl">
+                        مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا
+                      </p>
+                      <p className="mt-6 italic text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
+                        {t("histoire.quote_text")}
+                      </p>
+                      <p className="mt-3 text-xs sm:text-sm text-[#D4AF37]/90">
+                        {t("histoire.quote_attr")}
+                      </p>
+                      <p className="mt-6 sm:mt-8 max-w-2xl mx-auto text-sm sm:text-base text-white/80 leading-7">
+                        {t("histoire.quote_closing")}
                       </p>
                     </div>
                   </div>
-                  <div className="hidden sm:block sm:flex-1" />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+                </section>
+              </>
+            )}
+          </>
+        )}
+      />
 
-      {/* NOS VALEURS */}
-      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">
-          <div className="text-center mb-10 sm:mb-12">
-            <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold text-xs sm:text-sm">
-              {t("histoire.values_overline")}
-            </span>
-            <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-              {t("histoire.values_title")}
-            </h2>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
-            {VALUE_KEYS.map((v, i) => (
-              <div key={v.t} className="bg-[#F8F5EF] rounded-2xl sm:rounded-3xl p-6 sm:p-7">
-                <div className="flex items-baseline gap-3 mb-3">
-                  <span className="font-display text-3xl sm:text-4xl font-black text-[#D4AF37]/40 tabular-nums leading-none">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <h3 className="font-display text-lg sm:text-xl font-bold text-[#0F7C55]">
-                    {t(v.t)}
-                  </h3>
-                </div>
-                <p className="text-gray-700 text-sm sm:text-base leading-6 sm:leading-7">
-                  {t(v.d)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CITATION SPIRITUELLE */}
-      <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[45px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-6 sm:p-12 md:p-14 text-white text-center">
-          <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
-          <div className="relative z-10">
-            <p className="font-arabic text-2xl sm:text-3xl md:text-4xl leading-loose text-[#D4AF37]" dir="rtl">
-              مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا
-            </p>
-            <p className="mt-6 italic text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
-              {t("histoire.quote_text")}
-            </p>
-            <p className="mt-3 text-xs sm:text-sm text-[#D4AF37]/90">
-              {t("histoire.quote_attr")}
-            </p>
-            <p className="mt-6 sm:mt-8 max-w-2xl mx-auto text-sm sm:text-base text-white/80 leading-7">
-              {t("histoire.quote_closing")}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTAs FINAUX */}
+      {/* CTAs FINAUX — toujours visibles */}
       <section className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
         <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 text-center">
           <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] flex items-center justify-center text-[#0F7C55] text-2xl mb-5">

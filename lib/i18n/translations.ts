@@ -431,6 +431,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.commissions": "Commissions",
     "dahiratabs.documents": "Documents",
 
+    // Onglets partagés (Journée, Spiritualité, Média, Histoire, Challenge)
+    "tabs.presentation": "Présentation",
+    "tabs.programme": "Programme",
+    "tabs.direct": "Direct",
+    "tabs.galerie": "Galerie",
+    "tabs.participer": "Participer",
+    "tabs.jour": "Salaatou du jour",
+    "tabs.bibliotheque": "Bibliothèque",
+    "tabs.ressources": "Ressources",
+    "tabs.activites": "Activités",
+    "tabs.reseaux": "Réseaux sociaux",
+    "tabs.app": "App KSN",
+    "tabs.origines": "Origines",
+    "tabs.jalons": "Les jalons",
+    "tabs.valeurs": "Nos valeurs",
+    "tabs.progression": "Progression",
+    "tabs.spirituel": "Versets & Hadiths",
+
     // App KSN
     "appksn.badge": "Application Mobile KSN",
     "appksn.title": "Emportez KSN Partout Avec Vous 📱",
@@ -1214,6 +1232,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.organigramme": "Tëralin wi",
     "dahiratabs.commissions": "Komisioŋ yi",
     "dahiratabs.documents": "Dokimaa yi",
+
+    // Onglets partagés (jets)
+    "tabs.presentation": "Njëkk",
+    "tabs.programme": "Prograam bi",
+    "tabs.direct": "Direct bi",
+    "tabs.galerie": "Galeri bi",
+    "tabs.participer": "Bokk ci",
+    "tabs.jour": "Salaatou bisu tey",
+    "tabs.bibliotheque": "Téereekaay bi",
+    "tabs.ressources": "Njumtukaay yi",
+    "tabs.activites": "Jëf yi",
+    "tabs.reseaux": "Réseaux yi",
+    "tabs.app": "App KSN",
+    "tabs.origines": "Cosaan",
+    "tabs.jalons": "Jamono yi",
+    "tabs.valeurs": "Sunu gëm-gëm",
+    "tabs.progression": "Yokkute bi",
+    "tabs.spirituel": "Aaya ak Hadiis",
   },
 
   en: {
@@ -1633,6 +1669,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.organigramme": "Organization chart",
     "dahiratabs.commissions": "Commissions",
     "dahiratabs.documents": "Documents",
+
+    // Onglets partagés
+    "tabs.presentation": "Overview",
+    "tabs.programme": "Programme",
+    "tabs.direct": "Live",
+    "tabs.galerie": "Gallery",
+    "tabs.participer": "Take part",
+    "tabs.jour": "Salaatou of the day",
+    "tabs.bibliotheque": "Library",
+    "tabs.ressources": "Resources",
+    "tabs.activites": "Activities",
+    "tabs.reseaux": "Social media",
+    "tabs.app": "KSN App",
+    "tabs.origines": "Origins",
+    "tabs.jalons": "Milestones",
+    "tabs.valeurs": "Our values",
+    "tabs.progression": "Progress",
+    "tabs.spirituel": "Verses & Hadiths",
 
     // App KSN
     "appksn.badge": "KSN Mobile App",
@@ -2371,6 +2425,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.organigramme": "Organigramma",
     "dahiratabs.commissions": "Commissioni",
     "dahiratabs.documents": "Documenti",
+
+    // Onglets partagés
+    "tabs.presentation": "Presentazione",
+    "tabs.programme": "Programma",
+    "tabs.direct": "Diretta",
+    "tabs.galerie": "Galleria",
+    "tabs.participer": "Partecipare",
+    "tabs.jour": "Salaatou del giorno",
+    "tabs.bibliotheque": "Biblioteca",
+    "tabs.ressources": "Risorse",
+    "tabs.activites": "Attività",
+    "tabs.reseaux": "Social",
+    "tabs.app": "App KSN",
+    "tabs.origines": "Origini",
+    "tabs.jalons": "Le tappe",
+    "tabs.valeurs": "I nostri valori",
+    "tabs.progression": "Progressione",
+    "tabs.spirituel": "Versetti & Hadith",
 
     // App KSN
     "appksn.badge": "Applicazione Mobile KSN",
@@ -3117,6 +3189,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.commissions": "Comisiones",
     "dahiratabs.documents": "Documentos",
 
+    // Onglets partagés
+    "tabs.presentation": "Presentación",
+    "tabs.programme": "Programa",
+    "tabs.direct": "En directo",
+    "tabs.galerie": "Galería",
+    "tabs.participer": "Participar",
+    "tabs.jour": "Salaatou del día",
+    "tabs.bibliotheque": "Biblioteca",
+    "tabs.ressources": "Recursos",
+    "tabs.activites": "Actividades",
+    "tabs.reseaux": "Redes sociales",
+    "tabs.app": "App KSN",
+    "tabs.origines": "Orígenes",
+    "tabs.jalons": "Los hitos",
+    "tabs.valeurs": "Nuestros valores",
+    "tabs.progression": "Progresión",
+    "tabs.spirituel": "Versículos & Hadices",
+
     // App KSN
     "appksn.badge": "Aplicación Móvil KSN",
     "appksn.title": "Lleva KSN Contigo a Todas Partes 📱",
@@ -3861,6 +3951,24 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "dahiratabs.organigramme": "الهيكل التنظيمي",
     "dahiratabs.commissions": "اللجان",
     "dahiratabs.documents": "الوثائق",
+
+    // Onglets partagés
+    "tabs.presentation": "تقديم",
+    "tabs.programme": "البرنامج",
+    "tabs.direct": "البث المباشر",
+    "tabs.galerie": "المعرض",
+    "tabs.participer": "المشاركة",
+    "tabs.jour": "صلاة اليوم",
+    "tabs.bibliotheque": "المكتبة",
+    "tabs.ressources": "الموارد",
+    "tabs.activites": "الأنشطة",
+    "tabs.reseaux": "الشبكات الاجتماعية",
+    "tabs.app": "تطبيق KSN",
+    "tabs.origines": "النشأة",
+    "tabs.jalons": "المحطات",
+    "tabs.valeurs": "قيمنا",
+    "tabs.progression": "التقدم",
+    "tabs.spirituel": "آيات وأحاديث",
 
     // App KSN
     "appksn.badge": "تطبيق KSN للهاتف",
