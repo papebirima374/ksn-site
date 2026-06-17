@@ -455,7 +455,7 @@ export default function MemberForm({ initial }: Props) {
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  transform: `scale(${zoom}) translate(${x}px, ${y}px)`,
+                  transform: `translate(${x}px, ${y}px) scale(${zoom})`,
                   transformOrigin: "center center",
                 }}
               />
