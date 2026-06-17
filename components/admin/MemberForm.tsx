@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect, useRef } from "react";
+import { useState, FormEvent, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
@@ -40,11 +40,42 @@ export default function MemberForm({ initial }: Props) {
   // Cropping States
   const [croppingImage, setCroppingImage] = useState<string | null>(null);
   const [croppingFile, setCroppingFile] = useState<File | null>(null);
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [zoom, setZoom] = useState(1.0);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
+
+  // Cropper container dimensions
+  const W_c = 200;
+  const H_c = 230;
+
+  // Compute allowed translation boundaries dynamically based on image aspect ratio and zoom
+  const constraints = useMemo(() => {
+    if (!imageSize.width || !imageSize.height) {
+      return { minX: -150, maxX: 150, minY: -150, maxY: 150 };
+    }
+    const scale = Math.max(W_c / imageSize.width, H_c / imageSize.height);
+    const W_z = imageSize.width * scale * zoom;
+    const H_z = imageSize.height * scale * zoom;
+
+    const maxX = Math.max(0, Math.round((W_z - W_c) / 2));
+    const maxY = Math.max(0, Math.round((H_z - H_c) / 2));
+
+    return {
+      minX: -maxX,
+      maxX: maxX,
+      minY: -maxY,
+      maxY: maxY
+    };
+  }, [imageSize, zoom]);
+
+  // Automatically clamp translation offsets whenever zoom or constraints change
+  useEffect(() => {
+    setX((prev) => Math.max(constraints.minX, Math.min(constraints.maxX, prev)));
+    setY((prev) => Math.max(constraints.minY, Math.min(constraints.maxY, prev)));
+  }, [constraints]);
 
   useEffect(() => {
     if (!initial && !matricule) {
@@ -111,8 +142,8 @@ export default function MemberForm({ initial }: Props) {
     if (!isDragging) return;
     const dx = e.clientX - dragStart.current.x;
     const dy = e.clientY - dragStart.current.y;
-    setX((prev) => Math.max(-150, Math.min(150, prev + Math.round(dx / zoom))));
-    setY((prev) => Math.max(-150, Math.min(150, prev + Math.round(dy / zoom))));
+    setX((prev) => Math.max(constraints.minX, Math.min(constraints.maxX, prev + Math.round(dx))));
+    setY((prev) => Math.max(constraints.minY, Math.min(constraints.maxY, prev + Math.round(dy))));
     dragStart.current = { x: e.clientX, y: e.clientY };
   };
 
@@ -339,6 +370,13 @@ export default function MemberForm({ initial }: Props) {
                       setZoom(1.0);
                       setX(0);
                       setY(0);
+
+                      // Load image to retrieve dimensions for constraints
+                      const img = new window.Image();
+                      img.src = reader.result as string;
+                      img.onload = () => {
+                        setImageSize({ width: img.width, height: img.height });
+                      };
                     };
                     reader.readAsDataURL(f);
                   }
@@ -448,8 +486,8 @@ export default function MemberForm({ initial }: Props) {
                 </div>
                 <input
                   type="range"
-                  min="-150"
-                  max="150"
+                  min={constraints.minX}
+                  max={constraints.maxX}
                   step="1"
                   value={x}
                   onChange={(e) => setX(parseInt(e.target.value))}
@@ -464,8 +502,8 @@ export default function MemberForm({ initial }: Props) {
                 </div>
                 <input
                   type="range"
-                  min="-150"
-                  max="150"
+                  min={constraints.minY}
+                  max={constraints.maxY}
                   step="1"
                   value={y}
                   onChange={(e) => setY(parseInt(e.target.value))}
