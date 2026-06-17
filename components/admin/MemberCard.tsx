@@ -65,39 +65,37 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           }}
         />
 
-        {/* Logo (gauche, plus grand, bordure fine) */}
+        {/* Logo (gauche, plus grand, bordure or fine, sans rond blanc) */}
         <div
-          className="absolute z-10 rounded-full overflow-hidden bg-white shadow-md"
-          style={{ width: "5em", height: "5em", left: "1.2em", top: "1em", border: "0.09em solid rgba(212,175,55,0.7)", ...PRINT_FIX }}
+          className="absolute z-10 rounded-full overflow-hidden shadow-md"
+          style={{ width: "5.2em", height: "5.2em", left: "1.2em", top: "0.9em", border: "0.1em solid #D4AF37", ...PRINT_FIX }}
         >
-          <Image src="/logo/ksn-logo.png" alt="Logo KSN" fill sizes="100px" className="object-cover" style={{ padding: 0 }} />
+          <Image
+            src="/logo/ksn-logo.png"
+            alt="Logo KSN"
+            fill
+            sizes="110px"
+            className="object-cover"
+            style={{ transform: "scale(1.2)" }}
+          />
         </div>
 
-        {/* Titre centré */}
-        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-[6.5em]">
+        {/* Titre centré (plus grand) */}
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-[6em]">
           <h1
             className="font-sans font-extrabold text-white leading-[1.15] tracking-wide"
-            style={{ fontSize: "0.92em" }}
+            style={{ fontSize: "1.12em" }}
           >
             Kippaangog Salaatu &apos;Alaa Nabii{" "}
             <span className="font-serif text-[#D4AF37]">ﷺ</span>
           </h1>
           <p
-            className="text-[#D4AF37] font-sans font-black uppercase tracking-[0.28em] mt-[0.45em] leading-none"
-            style={{ fontSize: "0.6em" }}
+            className="text-[#D4AF37] font-sans font-black uppercase tracking-[0.26em] mt-[0.5em] leading-none"
+            style={{ fontSize: "0.72em" }}
           >
             Carte de Membre Officielle
           </p>
         </div>
-
-        {/* Siège (droite) */}
-        <p
-          className="absolute z-10 text-white/85 font-sans font-bold uppercase tracking-wide text-right leading-tight"
-          style={{ fontSize: "0.52em", right: "1.4em", top: "1.4em", width: "8em" }}
-        >
-          Siège Social
-          <br />Touba
-        </p>
       </div>
 
       {/* ── CORPS : photo (carré arrondi) + infos + QR ─────────────── */}
@@ -168,10 +166,10 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         style={{ height: "1.9em", borderTop: "0.12em solid #D4AF37", ...PRINT_FIX }}
       >
         <p
-          className="text-[#0F7C55] font-sans font-extrabold uppercase tracking-[0.18em] leading-none whitespace-nowrap"
-          style={{ fontSize: "0.58em" }}
+          className="text-[#0F7C55] font-sans font-extrabold uppercase tracking-[0.06em] leading-none whitespace-nowrap"
+          style={{ fontSize: "0.56em" }}
         >
-          Commission KSN · salaatualaanabii.com
+          Siège Social : Touba · Commission KSN · salaatualaanabii.com
         </p>
       </div>
     </div>
