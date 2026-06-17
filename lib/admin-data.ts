@@ -433,14 +433,19 @@ export async function assertNoDuplicateMember(args: {
 export async function createMember(
   data: Omit<Member, "id" | "matricule" | "createdAt"> & {
     matricule?: string;
-  }
+  },
+  opts?: { skipContactDuplicateCheck?: boolean }
 ): Promise<Member> {
   const db = getDb();
-  // Duplicate guard
-  await assertNoDuplicateMember({
-    email: data.email,
-    telephone: data.telephone,
-  });
+  // Duplicate guard — désactivé pour les imports en masse (cartes de membre),
+  // où l'identité fiable est le matricule/sourceUid et où des proches peuvent
+  // légitimement partager un même numéro de téléphone.
+  if (!opts?.skipContactDuplicateCheck) {
+    await assertNoDuplicateMember({
+      email: data.email,
+      telephone: data.telephone,
+    });
+  }
   // Only "actif" members get a real matricule. "en_attente" placeholders
   // are tagged with "PENDING" so they don't burn a sequence number until
   // the admin validates them.
@@ -817,6 +822,10 @@ export async function importMembersFromJson(
     if (m.sourceUid) existingByKey.add(`uid:${m.sourceUid}`);
     if (m.email) existingByKey.add(`email:${m.email.toLowerCase()}`);
     if (m.telephone) existingByKey.add(`tel:${m.telephone.replace(/\D+/g, "")}`);
+    // Garde-fou matricule : jamais deux membres avec le même matricule.
+    if (m.matricule && m.matricule !== "PENDING") {
+      existingByKey.add(`mat:${parseInt(m.matricule, 10)}`);
+    }
   }
 
   // Find current highest matricule so we keep numbering sequential.
@@ -828,10 +837,20 @@ export async function importMembersFromJson(
     const telKey = r.telephone
       ? `tel:${r.telephone.replace(/\D+/g, "")}`
       : null;
+    // Matricule fourni déjà pris → on n'écrase jamais (anti-doublon strict).
+    const matKey = r.matricule ? `mat:${parseInt(r.matricule, 10)}` : null;
+    // Identité explicite = matricule ou sourceUid. Si elle existe, le téléphone
+    // n'est PAS un critère de doublon (familles partageant un numéro).
+    const hasExplicitId = Boolean(matKey || sourceKey);
+    if (matKey && existingByKey.has(matKey)) {
+      report.skipped++;
+      report.errors.push(`Matricule ${r.matricule} déjà présent — ignoré.`);
+      continue;
+    }
     if (
       (sourceKey && existingByKey.has(sourceKey)) ||
       (emailKey && existingByKey.has(emailKey)) ||
-      (telKey && existingByKey.has(telKey))
+      (!hasExplicitId && telKey && existingByKey.has(telKey))
     ) {
       report.skipped++;
       continue;
@@ -860,11 +879,12 @@ export async function importMembersFromJson(
         sourceUid: r.sourceUid,
         status: "actif",
         createdBy,
-      });
+      }, { skipContactDuplicateCheck: true });
       report.inserted++;
       if (sourceKey) existingByKey.add(sourceKey);
       if (emailKey) existingByKey.add(emailKey);
       if (telKey) existingByKey.add(telKey);
+      existingByKey.add(`mat:${parseInt(matricule, 10)}`);
     } catch (e) {
       report.errors.push(
         e instanceof Error ? e.message : "Erreur inconnue à l'import"

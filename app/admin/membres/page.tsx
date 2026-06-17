@@ -388,21 +388,51 @@ function ImportModal({
           Importer des membres depuis JSON
         </h2>
         <p className="mt-2 text-sm text-gray-600 leading-6">
-          Collez un tableau JSON. Champs reconnus : <code>sourceUid</code>,{" "}
-          <code>prenom</code>, <code>nom</code>, <code>email</code>,{" "}
-          <code>telephone</code>, <code>profession</code>, <code>region</code>,{" "}
-          <code>ville</code>, <code>pays</code>, <code>dateNaissance</code>,{" "}
-          <code>photo</code>, <code>matricule</code>. Les doublons (même
+          Chargez un fichier <code>.json</code> ou collez un tableau JSON. Champs
+          reconnus : <code>sourceUid</code>, <code>prenom</code>, <code>nom</code>,{" "}
+          <code>email</code>, <code>telephone</code>, <code>profession</code>,{" "}
+          <code>region</code>, <code>ville</code>, <code>pays</code>,{" "}
+          <code>domicile</code>, <code>dateNaissance</code>, <code>photo</code>,{" "}
+          <code>matricule</code>. Les doublons (même <strong>matricule</strong>,
           sourceUid, email ou téléphone) sont ignorés.
         </p>
+
+        <label className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#F8F5EF] hover:bg-[#EFE9DD] border border-[#0F7C55]/15 text-[#0F7C55] font-semibold text-sm cursor-pointer">
+          <FaFileImport /> Choisir un fichier .json
+          <input
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => setText(String(reader.result || ""));
+              reader.readAsText(file);
+              e.target.value = "";
+            }}
+          />
+        </label>
 
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          rows={12}
-          placeholder='[\n  { "prenom": "Birima", "nom": "Gueye", "telephone": "+221780178444", "ville": "Louga" }\n]'
-          className="mt-4 w-full font-mono text-xs rounded-xl border border-gray-200 p-3 text-[#0F7C55] bg-white"
+          rows={10}
+          placeholder='[\n  { "matricule": "0001", "prenom": "Birima", "nom": "Gueye", "telephone": "+221780178444", "domicile": "Louga" }\n]'
+          className="mt-3 w-full font-mono text-xs rounded-xl border border-gray-200 p-3 text-[#0F7C55] bg-white"
         />
+        {text.trim().startsWith("[") && (
+          <p className="mt-1 text-xs text-gray-500">
+            {(() => {
+              try {
+                const n = JSON.parse(text);
+                return Array.isArray(n) ? `${n.length} membre(s) prêt(s) à importer.` : "";
+              } catch {
+                return "";
+              }
+            })()}
+          </p>
+        )}
 
         {error && (
           <p className="mt-3 text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">

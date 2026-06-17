@@ -43,4 +43,11 @@ next-env.d.ts
 # internal documents (sensitive, not for public repo)
 /documents
 
+# Données personnelles des membres — JAMAIS dans le dépôt public.
+# Cartes de membre (PDF Canva), texte extrait et JSON d'import contiennent
+# noms + téléphones. Restent en local pour la commission administrative.
+/docs/*.pdf
+/docs/pdf*.txt
+/docs/membres-import.json
+
 .vercel
