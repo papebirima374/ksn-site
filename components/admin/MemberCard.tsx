@@ -98,7 +98,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
       </div>
 
       {/* CARD BODY CONTENT */}
-      <div className="relative z-20 px-[1.2em] pt-[1em] grid grid-cols-[6.4em_1fr_6.5em] gap-[0.8em] items-start">
+      <div className="absolute left-[1.2em] right-[1.2em] top-[4.2em] bottom-[1.8em] z-20 grid grid-cols-[6.4em_1fr_6.5em] gap-[0.8em] items-center">
         
         {/* Photo Column */}
         <div
@@ -124,25 +124,8 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           )}
         </div>
 
-        {/* Details Column with Circular Watermark Seal behind it */}
+        {/* Details Column */}
         <div className="relative flex flex-col gap-[0.5em] mt-[0.2em] z-10">
-          {/* Circular watermark seal */}
-          <div className="absolute right-0 bottom-0 w-[8em] aspect-square opacity-[0.07] text-[#0F7C55] pointer-events-none z-0">
-            <svg viewBox="0 0 120 120" className="w-full h-full">
-              <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="1" />
-              <circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
-              <circle cx="60" cy="60" r="41" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              <path id="seal-text-path-card" d="M 60,60 m -45,0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" fill="none" />
-              <text className="font-sans font-bold uppercase tracking-wider" style={{ fontSize: "6.5px", fill: "currentColor" }}>
-                <textPath href="#seal-text-path-card" startOffset="50%" textAnchor="middle">
-                  KIPPAANGOG SALAATU • TOUBA SENEGAL •
-                </textPath>
-              </text>
-              <text x="60" y="66" textAnchor="middle" className="font-serif font-bold" style={{ fontSize: "20px", fill: "currentColor" }}>
-                ﷺ
-              </text>
-            </svg>
-          </div>
 
           {/* Fields */}
           <div className="relative z-10">
@@ -205,7 +188,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           className="text-white/80 font-sans tracking-widest font-semibold uppercase leading-none"
           style={{ fontSize: "0.52em" }}
         >
-          Propulsé par KSN Tech • salaatualaanabii.com
+          COM. KSN . SALAATUALAANABII.COM
         </p>
       </div>
     </div>

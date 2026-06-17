@@ -1,0 +1,13 @@
+.next/
+node_modules/
+documents/
+docs/
+.git/
+.claude/
+affiche-studio/
+*.pdf
+*.zip
+*.tar.gz
+*.rar
+*.mp3
+*.wav
