@@ -299,7 +299,7 @@ function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
 }
 
 function padMatricule(n: number): string {
-  return String(n).padStart(4, "0");
+  return "KSN-" + String(n).padStart(4, "0");
 }
 
 export async function nextMatricule(): Promise<string> {
@@ -309,7 +309,8 @@ export async function nextMatricule(): Promise<string> {
   );
   if (snap.empty) return padMatricule(1);
   const top = snap.docs[0].data() as Member;
-  const n = parseInt(top.matricule ?? "0", 10);
+  const raw = (top.matricule ?? "").replace(/\D/g, "");
+  const n = parseInt(raw || "0", 10);
   return padMatricule(Number.isFinite(n) ? n + 1 : 1);
 }
 
@@ -399,6 +400,45 @@ export async function backfillPublicCards(): Promise<number> {
   }
   return count;
 }
+
+/** Migrates all members with purely numeric matricules to KSN- prefixed matricules.
+ * Also deletes the old publicCard and creates a new one, and updates associated finances. */
+export async function migratePreviousMatricules(): Promise<number> {
+  const db = getDb();
+  const members = await listMembers();
+  let count = 0;
+  for (const m of members) {
+    const matricule = (m.matricule ?? "").trim();
+    if (matricule && /^\d+$/.test(matricule) && matricule !== "PENDING") {
+      const oldMatricule = matricule;
+      const n = parseInt(oldMatricule, 10);
+      if (!Number.isFinite(n)) continue;
+      const newMatricule = padMatricule(n);
+
+      // 1. Update the member document
+      await updateDoc(doc(db, "members", m.id), { matricule: newMatricule });
+
+      // 2. Delete old public card if it exists
+      await deleteDoc(doc(db, "publicCards", oldMatricule));
+
+      // 3. Write new public card
+      const updatedMember = { ...m, matricule: newMatricule };
+      await syncPublicCard(updatedMember);
+
+      // 4. Update associated finances
+      const snapFinances = await getDocs(
+        query(collection(db, "finances"), where("memberMatricule", "==", oldMatricule))
+      );
+      for (const fDoc of snapFinances.docs) {
+        await updateDoc(doc(db, "finances", fDoc.id), { memberMatricule: newMatricule });
+      }
+
+      count++;
+    }
+  }
+  return count;
+}
+
 
 function normalizePhone(p?: string): string {
   return (p ?? "").replace(/\D+/g, "");
@@ -836,12 +876,14 @@ export async function importMembersFromJson(
     if (m.telephone) existingByKey.add(`tel:${m.telephone.replace(/\D+/g, "")}`);
     // Garde-fou matricule : jamais deux membres avec le même matricule.
     if (m.matricule && m.matricule !== "PENDING") {
-      existingByKey.add(`mat:${parseInt(m.matricule, 10)}`);
+      const cleanMatStr = m.matricule.replace(/\D/g, "");
+      if (cleanMatStr) existingByKey.add(`mat:${parseInt(cleanMatStr, 10)}`);
     }
   }
 
   // Find current highest matricule so we keep numbering sequential.
-  let next = parseInt((await nextMatricule()).replace(/^0+/, "") || "1", 10);
+  const nextRaw = (await nextMatricule()).replace(/\D/g, "");
+  let next = parseInt(nextRaw || "1", 10);
 
   for (const r of raw) {
     const sourceKey = r.sourceUid ? `uid:${r.sourceUid}` : null;
@@ -850,7 +892,8 @@ export async function importMembersFromJson(
       ? `tel:${r.telephone.replace(/\D+/g, "")}`
       : null;
     // Matricule fourni déjà pris → on n'écrase jamais (anti-doublon strict).
-    const matKey = r.matricule ? `mat:${parseInt(r.matricule, 10)}` : null;
+    const cleanRMatStr = r.matricule ? r.matricule.replace(/\D/g, "") : "";
+    const matKey = cleanRMatStr ? `mat:${parseInt(cleanRMatStr, 10)}` : null;
     // Identité explicite = matricule ou sourceUid. Si elle existe, le téléphone
     // n'est PAS un critère de doublon (familles partageant un numéro).
     const hasExplicitId = Boolean(matKey || sourceKey);
@@ -896,7 +939,8 @@ export async function importMembersFromJson(
       if (sourceKey) existingByKey.add(sourceKey);
       if (emailKey) existingByKey.add(emailKey);
       if (telKey) existingByKey.add(telKey);
-      existingByKey.add(`mat:${parseInt(matricule, 10)}`);
+      const cleanNewMatStr = matricule.replace(/\D/g, "");
+      if (cleanNewMatStr) existingByKey.add(`mat:${parseInt(cleanNewMatStr, 10)}`);
     } catch (e) {
       report.errors.push(
         e instanceof Error ? e.message : "Erreur inconnue à l'import"

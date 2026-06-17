@@ -11,6 +11,7 @@ import {
   uploadMemberPhoto,
   nextMatricule,
   checkDuplicateEmailOrPhone,
+  broadcastNotificationToPerm,
 } from "@/lib/admin-data";
 import { COMMON_PROFESSIONS, SENEGAL_REGIONS } from "@/lib/regions";
 
@@ -205,6 +206,18 @@ export default function MemberForm({ initial }: Props) {
           photoPath,
           createdBy: user.uid,
         });
+
+        try {
+          await broadcastNotificationToPerm("finances.write", {
+            type: "info",
+            title: "Nouveau membre inscrit",
+            body: `Un nouveau membre (${prenom} ${nom}) a été inscrit. Veuillez enregistrer ses frais d'inscription.`,
+            link: "/admin/membres",
+          });
+        } catch (err) {
+          console.error("Failed to notify finance commission:", err);
+        }
+
         router.push(`/admin/membres/${m.id}`);
       }
     } catch (e) {
@@ -238,13 +251,13 @@ export default function MemberForm({ initial }: Props) {
           </Labelled>
         </div>
 
-        <Labelled label="Matricule (auto-généré, modifiable)">
+        <Labelled label="Matricule (auto-généré)">
           <input
             type="text"
-            value={matricule}
-            onChange={(e) => setMatricule(e.target.value.replace(/\D/g, "").padStart(4, "0").slice(-6))}
+            readOnly
+            value={matricule === "PENDING" ? "Sera attribué à la validation" : matricule}
             placeholder="0001"
-            className={`${inputClass} font-mono tabular-nums`}
+            className={`${inputClass} font-mono tabular-nums bg-gray-50 text-gray-500 cursor-not-allowed`}
           />
         </Labelled>
 

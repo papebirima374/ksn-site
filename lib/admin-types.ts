@@ -551,6 +551,7 @@ export type FinanceType = "income" | "expense";
 export const FINANCE_CATEGORIES: Record<FinanceType, string[]> = {
   income: [
     "Cotisation mensuelle",
+    "Frais d'inscription",
     "Cotisation annuelle",
     "Don général",
     "Don événement",

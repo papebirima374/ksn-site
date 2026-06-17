@@ -14,10 +14,12 @@ import {
   FaLocationDot,
   FaFilePdf,
   FaTrashCan,
+  FaCoins,
+  FaXmark,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { hasPermission, Member } from "@/lib/admin-types";
+import { hasPermission, Member, FinanceEntry, FINANCE_METHODS } from "@/lib/admin-types";
 import {
   listMembers,
   deleteMember,
@@ -29,6 +31,8 @@ import {
   backfillVilleFromDomicile,
   ImportMember,
   ImportReport,
+  listFinanceEntries,
+  createFinanceEntry,
 } from "@/lib/admin-data";
 import { exportMembersPdf } from "@/lib/members-pdf";
 
@@ -41,8 +45,12 @@ const STATUS_FR: Record<string, string> = {
 export default function AdminMembresPage() {
   const { user } = useAuth();
   const canEdit = hasPermission(user, "members.write");
+  const isFinance = hasPermission(user, "finances.write");
   const canDelete = user?.role === "admin";
+  const canView = canEdit || isFinance;
+
   const [members, setMembers] = useState<Member[]>([]);
+  const [financeEntries, setFinanceEntries] = useState<FinanceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
@@ -50,8 +58,50 @@ export default function AdminMembresPage() {
   const [fVille, setFVille] = useState("all");
   const [fProf, setFProf] = useState("all");
   const [fStatus, setFStatus] = useState<"all" | "actif" | "en_attente" | "inactif">("all");
+  const [fPayment, setFPayment] = useState<string>("all");
   const [importOpen, setImportOpen] = useState(false);
   const [deletingAll, setDeletingAll] = useState(false);
+  const [paymentMember, setPaymentMember] = useState<Member | null>(null);
+
+  const MONTHS_FR = useMemo(
+    () => [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
+    []
+  );
+
+  const hasPaidInscription = (memberId: string) => {
+    return financeEntries.some(
+      (e) =>
+        e.memberId === memberId &&
+        e.type === "income" &&
+        e.category === "Frais d'inscription"
+    );
+  };
+
+  const hasPaidCotisationThisMonth = (memberId: string) => {
+    const monthName = MONTHS_FR[new Date().getMonth()];
+    const year = new Date().getFullYear();
+    const matchStr = `${monthName} ${year}`.toLowerCase();
+    return financeEntries.some(
+      (e) =>
+        e.memberId === memberId &&
+        e.type === "income" &&
+        e.category === "Cotisation mensuelle" &&
+        e.description?.toLowerCase().includes(matchStr)
+    );
+  };
 
   async function handleDeleteAll() {
     if (!canDelete) return;
@@ -98,7 +148,12 @@ export default function AdminMembresPage() {
   async function reload() {
     setLoading(true);
     try {
-      setMembers(await listMembers());
+      const [membersData, financeData] = await Promise.all([
+        listMembers(),
+        listFinanceEntries(),
+      ]);
+      setMembers(membersData);
+      setFinanceEntries(financeData);
       setError("");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de chargement");
@@ -144,11 +199,20 @@ export default function AdminMembresPage() {
       if (fVille !== "all" && m.ville !== fVille) return false;
       if (fProf !== "all" && m.profession !== fProf) return false;
       if (fStatus !== "all" && m.status !== fStatus) return false;
+
+      // Payment filters
+      if (fPayment !== "all") {
+        if (fPayment === "cotisation_ok" && !hasPaidCotisationThisMonth(m.id)) return false;
+        if (fPayment === "cotisation_ko" && hasPaidCotisationThisMonth(m.id)) return false;
+        if (fPayment === "inscription_ok" && !hasPaidInscription(m.id)) return false;
+        if (fPayment === "inscription_ko" && hasPaidInscription(m.id)) return false;
+      }
+
       if (!q) return true;
       const hay = `${m.prenom} ${m.nom} ${m.matricule} ${m.email ?? ""} ${m.telephone ?? ""} ${m.ville ?? ""} ${m.region ?? ""} ${m.profession ?? ""}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [members, search, fRegion, fVille, fProf, fStatus]);
+  }, [members, search, fRegion, fVille, fProf, fStatus, fPayment, financeEntries]);
 
   async function handleDelete(member: Member) {
     if (!canDelete) return;
@@ -167,6 +231,19 @@ export default function AdminMembresPage() {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de validation");
     }
+  }
+
+  if (!loading && user && !canView) {
+    return (
+      <AdminShell>
+        <div className="p-8 text-center bg-white rounded-3xl shadow-md my-12">
+          <h2 className="font-display text-2xl font-bold text-red-600 mb-2">Accès refusé</h2>
+          <p className="text-gray-600">
+            Vous n'avez pas les droits nécessaires pour accéder à la liste des membres.
+          </p>
+        </div>
+      </AdminShell>
+    );
   }
 
   return (
@@ -228,7 +305,7 @@ export default function AdminMembresPage() {
       </header>
 
       <div className="bg-white rounded-3xl shadow-md p-4 sm:p-6 mb-6">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-3">
           <div className="lg:col-span-2 relative">
             <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
@@ -268,6 +345,17 @@ export default function AdminMembresPage() {
             {professions.map((p) => (
               <option key={p} value={p}>{p}</option>
             ))}
+          </select>
+          <select
+            value={fPayment}
+            onChange={(e) => setFPayment(e.target.value)}
+            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
+          >
+            <option value="all">Tous les paiements</option>
+            <option value="cotisation_ok">Cotisation réglée (ce mois)</option>
+            <option value="cotisation_ko">Cotisation non réglée (ce mois)</option>
+            <option value="inscription_ok">Inscription réglée</option>
+            <option value="inscription_ko">Inscription non réglée</option>
           </select>
         </div>
         <div className="flex gap-2 mt-3 flex-wrap">
@@ -350,7 +438,7 @@ export default function AdminMembresPage() {
                 <p className="text-xs text-gray-500 truncate">
                   📍 {[m.ville, m.region].filter(Boolean).join(", ") || "—"}
                 </p>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex flex-wrap items-center gap-1.5 mt-2">
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-widest ${
                       m.status === "actif"
@@ -362,6 +450,24 @@ export default function AdminMembresPage() {
                   >
                     {m.status === "en_attente" ? "en attente" : m.status}
                   </span>
+                  {hasPaidInscription(m.id) ? (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-[#B8860B] border border-[#B8860B]/20">
+                      Inscr. OK
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-600 border border-red-200/30">
+                      Inscr. KO
+                    </span>
+                  )}
+                  {hasPaidCotisationThisMonth(m.id) ? (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/30">
+                      Cotis. OK
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-50 text-gray-500 border border-gray-200/30">
+                      Cotis. KO
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-1 mt-3 flex-wrap">
                   <Link
@@ -398,6 +504,15 @@ export default function AdminMembresPage() {
                       )}
                     </>
                   )}
+                  {isFinance && (
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMember(m)}
+                      className="inline-flex items-center gap-1 text-xs text-[#0F7C55] hover:text-[#B8860B] font-bold ml-3"
+                    >
+                      <FaCoins /> Enregistrer Paiement
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -410,6 +525,18 @@ export default function AdminMembresPage() {
           onClose={() => setImportOpen(false)}
           onDone={async () => {
             setImportOpen(false);
+            await reload();
+          }}
+        />
+      )}
+
+      {paymentMember && (
+        <RecordPaymentModal
+          member={paymentMember}
+          user={user}
+          onClose={() => setPaymentMember(null)}
+          onDone={async () => {
+            setPaymentMember(null);
             await reload();
           }}
         />
@@ -565,6 +692,278 @@ function ImportModal({
             </button>
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ============ RECORD PAYMENT MODAL ============
+interface RecordPaymentModalProps {
+  member: Member;
+  user: any;
+  onClose: () => void;
+  onDone: () => void;
+}
+
+function RecordPaymentModal({
+  member,
+  user,
+  onClose,
+  onDone,
+}: RecordPaymentModalProps) {
+  const MONTHS_FR = [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre",
+  ];
+
+  const currentYear = new Date().getFullYear();
+  const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
+
+  const [category, setCategory] = useState("Cotisation mensuelle");
+  const [selectedMonth, setSelectedMonth] = useState(MONTHS_FR[new Date().getMonth()]);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [amount, setAmount] = useState(500);
+  const [method, setMethod] = useState("Wave");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [reference, setReference] = useState("");
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState("");
+
+  const generatedDescription = useMemo(() => {
+    if (category === "Cotisation mensuelle") {
+      return `Cotisation - ${selectedMonth} ${selectedYear}`;
+    }
+    return "Frais d'inscription";
+  }, [category, selectedMonth, selectedYear]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    setError("");
+    setRunning(true);
+    try {
+      const entryData: any = {
+        type: "income",
+        category,
+        amount: Number(amount),
+        description: generatedDescription,
+        date,
+        method,
+        memberId: member.id,
+        memberMatricule: member.matricule || "",
+        memberName: `${member.prenom} ${member.nom}`,
+        recordedBy: user.email || user.uid,
+      };
+
+      if (reference.trim()) {
+        entryData.reference = reference.trim();
+      }
+
+      await createFinanceEntry(entryData);
+      alert("✅ Paiement enregistré avec succès.");
+      onDone();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur d'enregistrement");
+    } finally {
+      setRunning(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+        >
+          <FaXmark className="text-xl" />
+        </button>
+
+        <h2 className="font-display text-2xl font-bold text-[#0F7C55] mb-2 flex items-center gap-2">
+          <FaCoins className="text-[#B8860B]" /> Enregistrer un paiement
+        </h2>
+        <p className="text-sm text-gray-500 mb-6">
+          Membre : <strong className="text-[#0F7C55]">{member.prenom} {member.nom}</strong> ({member.matricule ? `#${member.matricule}` : "Pas de matricule"})
+        </p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-2">
+              Type de paiement
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setCategory("Cotisation mensuelle");
+                  setAmount(500);
+                }}
+                className={`py-2 px-3 rounded-xl border text-xs font-bold text-center transition ${
+                  category === "Cotisation mensuelle"
+                    ? "border-[#0F7C55] bg-[#0F7C55]/5 text-[#0F7C55]"
+                    : "border-gray-200 hover:bg-gray-50 text-gray-600"
+                }`}
+              >
+                Cotisation mensuelle
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCategory("Frais d'inscription");
+                  setAmount(1000);
+                }}
+                className={`py-2 px-3 rounded-xl border text-xs font-bold text-center transition ${
+                  category === "Frais d'inscription"
+                    ? "border-[#0F7C55] bg-[#0F7C55]/5 text-[#0F7C55]"
+                    : "border-gray-200 hover:bg-gray-50 text-gray-600"
+                }`}
+              >
+                Frais d'inscription
+              </button>
+            </div>
+          </div>
+
+          {category === "Cotisation mensuelle" && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+                  Mois
+                </label>
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+                >
+                  {MONTHS_FR.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+                  Année
+                </label>
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+                >
+                  {YEARS.map((y) => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+                Montant (FCFA)
+              </label>
+              <input
+                type="number"
+                min="0"
+                required
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white font-mono"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+                Mode
+              </label>
+              <select
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+              >
+                {FINANCE_METHODS.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+              Date du paiement
+            </label>
+            <input
+              type="date"
+              required
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full block min-w-0 rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white font-mono"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+              Libellé de transaction (Généré)
+            </label>
+            <input
+              type="text"
+              readOnly
+              value={generatedDescription}
+              className="w-full rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-sm text-gray-500 font-semibold"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
+              Référence / Notes (Optionnel)
+            </label>
+            <input
+              type="text"
+              value={reference}
+              onChange={(e) => setReference(e.target.value)}
+              placeholder="N° transaction, Wave ref, etc."
+              className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
+            />
+          </div>
+
+          {error && (
+            <p className="text-xs text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
+              {error}
+            </p>
+          )}
+
+          <div className="mt-6 flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-[#0F7C55] font-semibold text-sm"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              disabled={running}
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] font-bold text-sm disabled:opacity-50"
+            >
+              {running ? "Enregistrement…" : "Confirmer"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

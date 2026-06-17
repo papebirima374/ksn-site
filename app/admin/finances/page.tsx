@@ -17,12 +17,14 @@ import {
   FinanceType,
   FINANCE_CATEGORIES,
   FINANCE_METHODS,
+  Member,
 } from "@/lib/admin-types";
 import {
   listFinanceEntries,
   createFinanceEntry,
   deleteFinanceEntry,
   financeStats,
+  listMembers,
 } from "@/lib/admin-data";
 
 function fmtMoney(n: number): string {
@@ -32,6 +34,7 @@ function fmtMoney(n: number): string {
 export default function AdminFinancesPage() {
   const { user } = useAuth();
   const canEdit = hasPermission(user, "finances.write");
+  const canDelete = user?.role === "admin";
   const [entries, setEntries] = useState<FinanceEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -78,6 +81,7 @@ export default function AdminFinancesPage() {
   );
 
   async function handleDelete(e: FinanceEntry) {
+    if (!canDelete) return;
     if (!confirm(`Supprimer cette ${e.type === "income" ? "entrée" : "sortie"} de ${fmtMoney(e.amount)} ?`)) return;
     await deleteFinanceEntry(e.id);
     await reload();
@@ -164,6 +168,7 @@ export default function AdminFinancesPage() {
             onChange={(e) => setFFrom(e.target.value)}
             placeholder="Du"
             className={selectClass}
+            style={{ maxWidth: "100%", minWidth: "0px" }}
           />
           <input
             type="date"
@@ -171,6 +176,7 @@ export default function AdminFinancesPage() {
             onChange={(e) => setFTo(e.target.value)}
             placeholder="Au"
             className={selectClass}
+            style={{ maxWidth: "100%", minWidth: "0px" }}
           />
           <button
             type="button"
@@ -255,7 +261,7 @@ export default function AdminFinancesPage() {
                 >
                   {e.type === "income" ? "+" : "−"} {fmtMoney(e.amount)}
                 </p>
-                {canEdit && (
+                {canDelete && (
                   <button
                     type="button"
                     onClick={() => handleDelete(e)}
@@ -311,7 +317,7 @@ function StatCard({
 }
 
 const selectClass =
-  "rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white";
+  "rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white w-full block min-w-0";
 
 function NewEntryModal({
   onClose,
@@ -330,8 +336,28 @@ function NewEntryModal({
   const [method, setMethod] = useState(FINANCE_METHODS[0]);
   const [memberName, setMemberName] = useState("");
   const [memberMatricule, setMemberMatricule] = useState("");
+  const [memberId, setMemberId] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const [allMembers, setAllMembers] = useState<Member[]>([]);
+  const [memberSearch, setMemberSearch] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  useEffect(() => {
+    listMembers().then(setAllMembers).catch(console.error);
+  }, []);
+
+  const filteredMembers = useMemo(() => {
+    const q = memberSearch.toLowerCase().trim();
+    if (!q) return [];
+    return allMembers.filter((m) => {
+      const nomComplet = `${m.prenom} ${m.nom}`.toLowerCase();
+      const tel = (m.telephone || "").toLowerCase();
+      const matricule = (m.matricule || "").toLowerCase();
+      return nomComplet.includes(q) || tel.includes(q) || matricule.includes(q);
+    });
+  }, [allMembers, memberSearch]);
 
   function handleTypeChange(t: FinanceType) {
     setType(t);
@@ -346,18 +372,23 @@ function NewEntryModal({
     try {
       const n = parseInt(amount.replace(/\D/g, ""), 10);
       if (!Number.isFinite(n) || n <= 0) throw new Error("Montant invalide");
-      await createFinanceEntry({
+
+      const entryData: any = {
         type,
         category,
         amount: n,
-        description: description || undefined,
-        reference: reference || undefined,
         date,
         method,
-        memberName: memberName || undefined,
-        memberMatricule: memberMatricule || undefined,
         recordedBy: user.uid,
-      });
+      };
+
+      if (description.trim()) entryData.description = description.trim();
+      if (reference.trim()) entryData.reference = reference.trim();
+      if (memberId) entryData.memberId = memberId;
+      if (memberName.trim()) entryData.memberName = memberName.trim();
+      if (memberMatricule.trim()) entryData.memberMatricule = memberMatricule.trim();
+
+      await createFinanceEntry(entryData);
       onDone();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur d'enregistrement");
@@ -416,14 +447,14 @@ function NewEntryModal({
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <div>
+          <div className="min-w-0">
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">
               Catégorie
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className={selectClass + " w-full"}
+              className={selectClass}
             >
               {FINANCE_CATEGORIES[type].map((c) => (
                 <option key={c} value={c}>
@@ -432,7 +463,7 @@ function NewEntryModal({
               ))}
             </select>
           </div>
-          <div>
+          <div className="min-w-0">
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">
               Montant (FCFA) *
             </label>
@@ -443,13 +474,13 @@ function NewEntryModal({
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="ex: 5000"
-              className={selectClass + " w-full font-mono tabular-nums"}
+              className={selectClass + " font-mono tabular-nums"}
             />
           </div>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <div>
+          <div className="min-w-0">
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">
               Date *
             </label>
@@ -458,17 +489,18 @@ function NewEntryModal({
               required
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className={selectClass + " w-full"}
+              className={selectClass}
+              style={{ maxWidth: "100%", minWidth: "0px" }}
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <label className="block text-xs font-semibold text-gray-600 mb-1.5">
               Moyen de paiement
             </label>
             <select
               value={method}
               onChange={(e) => setMethod(e.target.value)}
-              className={selectClass + " w-full"}
+              className={selectClass}
             >
               {FINANCE_METHODS.map((m) => (
                 <option key={m} value={m}>
@@ -481,19 +513,104 @@ function NewEntryModal({
 
         {type === "income" && (
           <div className="grid sm:grid-cols-2 gap-4">
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                Membre (nom)
+                Membre (nom, prénom, tél)
               </label>
-              <input
-                type="text"
-                value={memberName}
-                onChange={(e) => setMemberName(e.target.value)}
-                placeholder="ex: Birima GUEYE"
-                className={selectClass + " w-full"}
-              />
+              <div className="relative">
+                <input
+                  type="text"
+                  value={memberSearch}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setMemberSearch(val);
+                    setShowDropdown(true);
+                    setMemberName(val);
+                    setMemberId("");
+                    setMemberMatricule("");
+                  }}
+                  onFocus={() => setShowDropdown(true)}
+                  placeholder="Rechercher un membre..."
+                  className={selectClass}
+                />
+
+                {memberSearch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMemberSearch("");
+                      setMemberName("");
+                      setMemberId("");
+                      setMemberMatricule("");
+                      setShowDropdown(false);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    <FaXmark />
+                  </button>
+                )}
+
+                {showDropdown && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setShowDropdown(false)}
+                    />
+                    <div className="absolute z-20 left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-xl shadow-lg">
+                      {allMembers.length === 0 ? (
+                        <div className="p-3 text-xs text-gray-500">
+                          Chargement des membres...
+                        </div>
+                      ) : (
+                        <>
+                          {(() => {
+                            const list = memberSearch.trim() ? filteredMembers : allMembers;
+                            if (list.length === 0) {
+                              return (
+                                <div className="p-3 text-xs text-gray-500">
+                                  Aucun membre trouvé
+                                </div>
+                              );
+                            }
+                            return list.map((m) => (
+                              <button
+                                key={m.id}
+                                type="button"
+                                onClick={() => {
+                                  setMemberId(m.id);
+                                  setMemberName(`${m.prenom} ${m.nom}`);
+                                  setMemberMatricule(m.matricule || "");
+                                  setMemberSearch(
+                                    `${m.prenom} ${m.nom} (${m.matricule || "sans matricule"})`
+                                  );
+                                  setShowDropdown(false);
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm hover:bg-[#F8F5EF] text-[#0F7C55] transition flex items-center justify-between border-b border-gray-50 last:border-0"
+                              >
+                                <div>
+                                  <span className="font-bold">
+                                    {m.prenom} {m.nom}
+                                  </span>
+                                  {m.telephone && (
+                                    <span className="text-xs text-gray-500 ml-2">
+                                      ({m.telephone})
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="font-mono text-xs text-[#B8860B] font-bold">
+                                  #{m.matricule || "—"}
+                                </span>
+                              </button>
+                            ));
+                          })()}
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                 Matricule
               </label>
@@ -502,7 +619,7 @@ function NewEntryModal({
                 value={memberMatricule}
                 onChange={(e) => setMemberMatricule(e.target.value)}
                 placeholder="0001"
-                className={selectClass + " w-full font-mono"}
+                className={selectClass + " font-mono"}
               />
             </div>
           </div>

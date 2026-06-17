@@ -67,7 +67,8 @@ service cloud.firestore {
           && request.resource.data.statut == "actif")
         || hasPerm("members.write")
       );
-      allow delete: if hasPerm("members.write");
+      // Suppression réservée aux admins (la commission peut éditer, pas supprimer).
+      allow delete: if isAdmin();
     }
 
     // ─── Cartes publiques (vérification QR) ─────────────────────────────

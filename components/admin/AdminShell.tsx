@@ -88,6 +88,10 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     if ("adminOnly" in item && item.adminOnly) {
       return user?.role === "admin";
     }
+    // Grant access to Membres sidebar link if user has members.write OR finances.write
+    if (item.href === "/admin/membres") {
+      return hasPermission(user, "members.write") || hasPermission(user, "finances.write");
+    }
     // Items publics (perm null) ou items necessitant une permission specifique
     return !item.perm ? true : hasPermission(user, item.perm);
   });

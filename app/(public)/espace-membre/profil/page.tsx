@@ -19,6 +19,7 @@ import {
   createMember,
   uploadMemberPhoto,
   selfActivateMember,
+  broadcastNotificationToPerm,
 } from "@/lib/admin-data";
 import { Member } from "@/lib/admin-types";
 import { PAYMENT, JOIN_WHATSAPP_LINK } from "@/lib/constants";
@@ -566,6 +567,17 @@ function VisitorDashboard({
         status: "en_attente",
         createdBy: user.uid,
       });
+
+      try {
+        await broadcastNotificationToPerm("finances.write", {
+          type: "info",
+          title: "Nouveau membre inscrit (en attente)",
+          body: `Un nouveau membre (${prenom} ${nom}) s'est inscrit en attente de validation.`,
+          link: "/admin/membres",
+        });
+      } catch (err) {
+        console.error("Failed to notify finance commission:", err);
+      }
       await onSubmitted();
       setStep("success");
     } catch (e) {
