@@ -41,6 +41,7 @@ const STATUS_FR: Record<string, string> = {
 export default function AdminMembresPage() {
   const { user } = useAuth();
   const canEdit = hasPermission(user, "members.write");
+  const canDelete = user?.role === "admin";
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -54,6 +55,7 @@ export default function AdminMembresPage() {
   const [deletingAll, setDeletingAll] = useState(false);
 
   async function handleDeleteAll() {
+    if (!canDelete) return;
     const total = members.length;
     if (total === 0) return;
     if (
@@ -169,6 +171,7 @@ export default function AdminMembresPage() {
   }, [members, search, fRegion, fVille, fProf, fStatus]);
 
   async function handleDelete(member: Member) {
+    if (!canDelete) return;
     if (!confirm(`Supprimer définitivement ${member.prenom} ${member.nom} ?`)) return;
     await deleteMember(member);
     await reload();
@@ -229,15 +232,17 @@ export default function AdminMembresPage() {
               >
                 <FaLocationDot /> {fixingVille ? "Réparation…" : "Réparer les villes"}
               </button>
-              <button
-                type="button"
-                onClick={handleDeleteAll}
-                disabled={deletingAll || members.length === 0}
-                title="Supprimer tous les membres (pour un ré-import complet)"
-                className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 py-3 px-5 rounded-xl font-semibold text-sm hover:bg-red-50 transition disabled:opacity-50"
-              >
-                <FaTrashCan /> {deletingAll ? "Suppression…" : "Tout supprimer"}
-              </button>
+              {canDelete && (
+                <button
+                  type="button"
+                  onClick={handleDeleteAll}
+                  disabled={deletingAll || members.length === 0}
+                  title="Supprimer tous les membres (pour un ré-import complet)"
+                  className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 py-3 px-5 rounded-xl font-semibold text-sm hover:bg-red-50 transition disabled:opacity-50"
+                >
+                  <FaTrashCan /> {deletingAll ? "Suppression…" : "Tout supprimer"}
+                </button>
+              )}
               <Link
                 href="/admin/membres/nouveau"
                 className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
@@ -409,13 +414,15 @@ export default function AdminMembresPage() {
                       >
                         <FaPenToSquare /> Éditer
                       </Link>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(m)}
-                        className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-semibold ml-3"
-                      >
-                        <FaTrash />
-                      </button>
+                      {canDelete && (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(m)}
+                          className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-semibold ml-3"
+                        >
+                          <FaTrash />
+                        </button>
+                      )}
                     </>
                   )}
                 </div>

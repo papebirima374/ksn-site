@@ -13,6 +13,7 @@ import { getMember, deleteMember } from "@/lib/admin-data";
 export default function MemberDetailPage() {
   const { user } = useAuth();
   const canEdit = hasPermission(user, "members.write");
+  const canDelete = user?.role === "admin";
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -36,7 +37,7 @@ export default function MemberDetailPage() {
   }, [id]);
 
   async function handleDelete() {
-    if (!member) return;
+    if (!canDelete || !member) return;
     if (!confirm(`Supprimer ${member.prenom} ${member.nom} ?`)) return;
     await deleteMember(member);
     router.push("/admin/membres");
@@ -67,13 +68,15 @@ export default function MemberDetailPage() {
             >
               <FaPenToSquare /> Éditer
             </Link>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-xl font-semibold text-sm"
-            >
-              <FaTrash /> Supprimer
-            </button>
+            {canDelete && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="inline-flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 px-4 rounded-xl font-semibold text-sm"
+              >
+                <FaTrash /> Supprimer
+              </button>
+            )}
           </div>
         )}
       </div>

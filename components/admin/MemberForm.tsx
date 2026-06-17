@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
@@ -37,6 +37,15 @@ export default function MemberForm({ initial }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // Cropping States
+  const [croppingImage, setCroppingImage] = useState<string | null>(null);
+  const [croppingFile, setCroppingFile] = useState<File | null>(null);
+  const [zoom, setZoom] = useState(1.0);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     if (!initial && !matricule) {
       nextMatricule().then(setMatricule).catch(() => {});
@@ -55,6 +64,62 @@ export default function MemberForm({ initial }: Props) {
       setUploading(false);
     }
   }
+
+  const handleCropConfirm = () => {
+    if (!croppingImage || !croppingFile) return;
+    const canvas = document.createElement("canvas");
+    canvas.width = 400;
+    canvas.height = 460;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      const img = new window.Image();
+      img.src = croppingImage;
+      img.onload = () => {
+        const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+        const drawWidth = img.width * scale * zoom;
+        const drawHeight = img.height * scale * zoom;
+        
+        // Preview container is 200x230, Canvas is 400x460 (so factor = 2)
+        const factor = canvas.width / 200;
+        const dx = (canvas.width - drawWidth) / 2 + (x * factor);
+        const dy = (canvas.height - drawHeight) / 2 + (y * factor);
+        
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const croppedFile = new File([blob], croppingFile.name, { type: "image/jpeg" });
+            handlePhoto(croppedFile);
+            setCroppingImage(null);
+            setCroppingFile(null);
+          }
+        }, "image/jpeg", 0.9);
+      };
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+    dragStart.current = { x: e.clientX, y: e.clientY };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.current.x;
+    const dy = e.clientY - dragStart.current.y;
+    setX((prev) => Math.max(-150, Math.min(150, prev + Math.round(dx / zoom))));
+    setY((prev) => Math.max(-150, Math.min(150, prev + Math.round(dy / zoom))));
+    dragStart.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -266,7 +331,17 @@ export default function MemberForm({ initial }: Props) {
                 accept="image/*"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
-                  if (f) handlePhoto(f);
+                  if (f) {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                      setCroppingImage(reader.result as string);
+                      setCroppingFile(f);
+                      setZoom(1.0);
+                      setX(0);
+                      setY(0);
+                    };
+                    reader.readAsDataURL(f);
+                  }
                 }}
                 className="text-sm text-[#0F7C55] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#0F7C55] file:text-white file:font-semibold file:cursor-pointer"
               />
@@ -314,6 +389,114 @@ export default function MemberForm({ initial }: Props) {
           Annuler
         </button>
       </div>
+
+      {croppingImage && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center select-none">
+            <h3 className="font-display text-lg font-bold text-[#0F7C55] mb-2 text-center">
+              Ajuster la photo du membre
+            </h3>
+            <p className="text-xs text-gray-500 mb-4 text-center">
+              Faites glisser l&apos;image ou utilisez les curseurs ci-dessous pour centrer et zoomer.
+            </p>
+            
+            {/* Crop window wrapper with standard PointerEvents */}
+            <div 
+              className="relative overflow-hidden border border-[#0F7C55]/30 rounded-2xl bg-[#F8F5EF] flex items-center justify-center shadow-inner cursor-move touch-none"
+              style={{ width: "200px", height: "230px" }}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+            >
+              <img
+                src={croppingImage}
+                alt="Rognage"
+                className="max-w-none pointer-events-none"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transform: `scale(${zoom}) translate(${x}px, ${y}px)`,
+                  transformOrigin: "center center",
+                }}
+              />
+            </div>
+            
+            {/* Range Controls */}
+            <div className="w-full mt-5 space-y-4">
+              <div>
+                <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                  <span>Zoom</span>
+                  <span className="font-mono text-[#0F7C55]">{zoom.toFixed(2)}x</span>
+                </div>
+                <input
+                  type="range"
+                  min="1.0"
+                  max="4.0"
+                  step="0.05"
+                  value={zoom}
+                  onChange={(e) => setZoom(parseFloat(e.target.value))}
+                  className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[#0F7C55]"
+                />
+              </div>
+              
+              <div>
+                <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                  <span>Décalage horizontal</span>
+                  <span className="font-mono text-[#0F7C55]">{x}px</span>
+                </div>
+                <input
+                  type="range"
+                  min="-150"
+                  max="150"
+                  step="1"
+                  value={x}
+                  onChange={(e) => setX(parseInt(e.target.value))}
+                  className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[#0F7C55]"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                  <span>Décalage vertical</span>
+                  <span className="font-mono text-[#0F7C55]">{y}px</span>
+                </div>
+                <input
+                  type="range"
+                  min="-150"
+                  max="150"
+                  step="1"
+                  value={y}
+                  onChange={(e) => setY(parseInt(e.target.value))}
+                  className="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-[#0F7C55]"
+                />
+              </div>
+            </div>
+            
+            {/* Action buttons */}
+            <div className="flex gap-2 w-full mt-6">
+              <button
+                type="button"
+                onClick={handleCropConfirm}
+                className="flex-1 bg-[#0F7C55] hover:bg-[#082F22] text-white py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-[0.98]"
+              >
+                Valider
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCroppingImage(null);
+                  setCroppingFile(null);
+                }}
+                className="px-4 border border-gray-200 text-gray-500 hover:bg-gray-50 py-2.5 rounded-xl text-sm font-semibold transition"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
