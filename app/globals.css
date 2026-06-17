@@ -242,6 +242,9 @@ html, body {
   body:has(.print-card) .print-card,
   body:has(.print-card) .print-card * {
     visibility: visible;
+    /* Forcer l'impression des fonds verts/dorés (sinon les couleurs sautent) */
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   body:has(.print-card) .print-card {
     position: absolute;
@@ -261,6 +264,13 @@ html, body {
 .print-card {
   page-break-inside: avoid;
   break-inside: avoid;
+  /* Conserve fidèlement couleurs/dégradés à l'impression et en PDF */
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.print-card * {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 /* ========================================================================

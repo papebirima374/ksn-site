@@ -7,14 +7,17 @@ type Props = {
 };
 
 // Carte de membre format CR-80 (carte d'identité) : 85,6 × 53,98 mm — ratio 1.586.
-// Design inspiré d'une carte de visite pro, adapté à l'identité islamique KSN
-// (vert #0F7C55 / or #D4AF37) : bandeau dégradé + logo + QR encadré + photo +
-// champs à puces dorées + bas de carte. Tailles en `em` pour un rendu d'impression fidèle.
+// Design islamique KSN (vert #0F7C55 / or #D4AF37) : bandeau dégradé, logo,
+// titre centré, photo en carré arrondi, infos + QR de vérification, bas de carte.
+// Tailles en `em` calées pour un rendu d'impression identique à l'aperçu.
+const PRINT_FIX = {
+  WebkitPrintColorAdjust: "exact" as const,
+  printColorAdjust: "exact" as const,
+};
+
 export default function MemberCard({ member, size = "preview" }: Props) {
   const w = size === "print" ? "8.56cm" : "540px";
   const h = size === "print" ? "5.398cm" : "340px";
-  // Base em calée pour que le print partage exactement la grille du preview
-  // (≈ 36em de large) → rendu d'impression identique à l'aperçu écran.
   const baseFontSize = size === "print" ? "0.238cm" : "15px";
 
   const domicile =
@@ -37,15 +40,17 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         border: "0.07em solid rgba(15, 81, 50, 0.18)",
         background: "#FCFBF7",
         fontSize: baseFontSize,
+        ...PRINT_FIX,
       }}
     >
-      {/* ── BANDEAU SUPÉRIEUR (dégradé vert) ───────────────────────── */}
+      {/* ── BANDEAU SUPÉRIEUR (dégradé vert, titre centré) ──────────── */}
       <div
-        className="relative"
+        className="relative flex-shrink-0"
         style={{
-          height: "9em",
+          height: "7em",
           background:
             "linear-gradient(125deg, #0F7C55 0%, #0A3D24 70%, #082F22 100%)",
+          ...PRINT_FIX,
         }}
       >
         {/* Motif géométrique islamique discret */}
@@ -56,82 +61,64 @@ export default function MemberCard({ member, size = "preview" }: Props) {
             backgroundImage:
               "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0l6 6-6 6-6-6zM0 20l6 6-6 6zM40 20l-6 6 6 6zM20 40l6-6-6-6-6 6z' fill='%23D4AF37'/%3E%3C/svg%3E\")",
             backgroundSize: "2.4em 2.4em",
+            ...PRINT_FIX,
           }}
         />
-        {/* Cercles décoratifs (profondeur) */}
-        <div
-          className="absolute rounded-full pointer-events-none"
-          style={{ width: "9em", height: "9em", top: "-4em", right: "9em", background: "rgba(212,175,55,0.10)" }}
-        />
-        <div
-          className="absolute rounded-full pointer-events-none"
-          style={{ width: "6em", height: "6em", bottom: "-3em", left: "5em", background: "rgba(255,255,255,0.05)" }}
-        />
 
-        {/* Logo + titre (gauche) */}
-        <div className="absolute z-10 flex items-center gap-[0.7em]" style={{ left: "1.4em", top: "1.25em", right: "8.2em" }}>
-          <div
-            className="relative rounded-full overflow-hidden bg-white shadow-md flex-shrink-0"
-            style={{ width: "3.5em", height: "3.5em", border: "0.12em solid rgba(212,175,55,0.6)" }}
-          >
-            <Image src="/logo/ksn-logo.png" alt="Logo KSN" fill sizes="80px" className="object-contain p-[0.12em]" />
-          </div>
-          <div className="min-w-0">
-            <h1
-              className="font-sans font-extrabold text-white leading-[1.12] tracking-wide"
-              style={{ fontSize: "0.82em" }}
-            >
-              Kippaangog Salaatu &apos;Alaa Nabii{" "}
-              <span className="font-serif text-[#D4AF37]">ﷺ</span>
-            </h1>
-            <p
-              className="text-[#D4AF37] font-sans font-black uppercase tracking-[0.2em] mt-[0.35em] leading-none"
-              style={{ fontSize: "0.62em" }}
-            >
-              Carte de Membre Officielle
-            </p>
-          </div>
-        </div>
-
-        {/* QR encadré (droite, déborde légèrement sur le corps) */}
+        {/* Logo (gauche, plus grand, bordure fine) */}
         <div
-          className="absolute z-20 bg-white rounded-[0.7em] shadow-lg flex flex-col items-center justify-center"
-          style={{ width: "6.6em", height: "6.6em", right: "1.4em", top: "1.4em", padding: "0.45em" }}
+          className="absolute z-10 rounded-full overflow-hidden bg-white shadow-md"
+          style={{ width: "5em", height: "5em", left: "1.2em", top: "1em", border: "0.09em solid rgba(212,175,55,0.7)", ...PRINT_FIX }}
         >
-          {member.matricule ? (
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(verifyUrl)}`}
-              alt="QR de vérification"
-              className="w-full h-full object-contain"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full border border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-center font-sans" style={{ fontSize: "0.5em" }}>
-              QR Code
-            </div>
-          )}
+          <Image src="/logo/ksn-logo.png" alt="Logo KSN" fill sizes="100px" className="object-cover" style={{ padding: 0 }} />
         </div>
+
+        {/* Titre centré */}
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center text-center px-[6.5em]">
+          <h1
+            className="font-sans font-extrabold text-white leading-[1.15] tracking-wide"
+            style={{ fontSize: "0.92em" }}
+          >
+            Kippaangog Salaatu &apos;Alaa Nabii{" "}
+            <span className="font-serif text-[#D4AF37]">ﷺ</span>
+          </h1>
+          <p
+            className="text-[#D4AF37] font-sans font-black uppercase tracking-[0.28em] mt-[0.45em] leading-none"
+            style={{ fontSize: "0.6em" }}
+          >
+            Carte de Membre Officielle
+          </p>
+        </div>
+
+        {/* Siège (droite) */}
+        <p
+          className="absolute z-10 text-white/85 font-sans font-bold uppercase tracking-wide text-right leading-tight"
+          style={{ fontSize: "0.52em", right: "1.4em", top: "1.4em", width: "8em" }}
+        >
+          Siège Social
+          <br />Touba
+        </p>
       </div>
 
-      {/* ── CORPS (photo + champs) ─────────────────────────────────── */}
-      <div className="relative flex-1 flex items-stretch" style={{ padding: "1.15em 1.4em 0.7em" }}>
-        {/* Photo du membre */}
+      {/* ── CORPS : photo (carré arrondi) + infos + QR ─────────────── */}
+      <div className="relative flex-1 flex items-center" style={{ padding: "0.85em 1.4em" }}>
+        {/* Photo en carré arrondi */}
         <div
-          className="relative rounded-[0.7em] overflow-hidden flex-shrink-0 bg-[#EBF0ED]"
-          style={{ width: "7.3em", height: "100%", border: "0.13em solid #D4AF37" }}
+          className="relative rounded-[0.9em] overflow-hidden flex-shrink-0 bg-[#EBF0ED] self-center"
+          style={{ width: "8.8em", height: "8.8em", border: "0.14em solid #D4AF37", ...PRINT_FIX }}
         >
           {member.photo ? (
             <Image
               src={member.photo}
               alt={fullName}
               fill
-              sizes="160px"
+              sizes="180px"
               className="object-cover"
               unoptimized={member.photo.startsWith("http")}
             />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-white to-[#E2EBE6] text-[#0F7C55]/35">
-              <span className="font-serif font-black" style={{ fontSize: "2.4em" }}>
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white to-[#E2EBE6] text-[#0F7C55]/35" style={PRINT_FIX}>
+              <span className="font-serif font-black" style={{ fontSize: "2.6em" }}>
                 {(member.prenom?.[0] ?? "?")}
                 {(member.nom?.[0] ?? "")}
               </span>
@@ -139,25 +126,52 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           )}
         </div>
 
-        {/* Champs à puces dorées */}
-        <div className="flex-1 flex flex-col justify-center gap-[0.6em]" style={{ paddingLeft: "1.25em" }}>
+        {/* Infos (label au-dessus de la valeur) */}
+        <div className="flex-1 flex flex-col justify-center gap-[0.55em]" style={{ paddingLeft: "1.2em", paddingRight: "0.8em" }}>
           <Field label="Prénom & Nom" value={fullName} />
           <Field label="Téléphone" value={member.telephone || "—"} />
           <Field label="Domicile" value={domicile} />
           <Field label="Matricule" value={`N° ${member.matricule || "—"}`} highlight />
         </div>
+
+        {/* QR de vérification (à côté des infos) */}
+        <div className="flex flex-col items-center flex-shrink-0 self-center">
+          <div
+            className="bg-white rounded-[0.6em] shadow-md flex items-center justify-center"
+            style={{ width: "6.4em", height: "6.4em", padding: "0.4em", border: "0.06em solid rgba(15,81,50,0.12)", ...PRINT_FIX }}
+          >
+            {member.matricule ? (
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(verifyUrl)}`}
+                alt="QR de vérification"
+                className="w-full h-full object-contain"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full border border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-center font-sans" style={{ fontSize: "0.5em" }}>
+                QR Code
+              </div>
+            )}
+          </div>
+          <p
+            className="text-[#0F7C55] font-sans font-bold uppercase tracking-wide text-center mt-[0.4em] leading-none whitespace-nowrap"
+            style={{ fontSize: "0.45em" }}
+          >
+            Scannez pour vérifier
+          </p>
+        </div>
       </div>
 
       {/* ── BAS DE CARTE ───────────────────────────────────────────── */}
       <div
-        className="relative flex items-center justify-center"
-        style={{ height: "2.1em", borderTop: "0.12em solid #D4AF37" }}
+        className="relative flex-shrink-0 flex items-center justify-center"
+        style={{ height: "1.9em", borderTop: "0.12em solid #D4AF37", ...PRINT_FIX }}
       >
         <p
           className="text-[#0F7C55] font-sans font-extrabold uppercase tracking-[0.18em] leading-none whitespace-nowrap"
-          style={{ fontSize: "0.6em" }}
+          style={{ fontSize: "0.58em" }}
         >
-          Siège : Touba · salaatualaanabii.com
+          Commission KSN · salaatualaanabii.com
         </p>
       </div>
     </div>
@@ -174,16 +188,15 @@ function Field({
   highlight?: boolean;
 }) {
   return (
-    <div className="flex items-start gap-[0.55em] leading-none min-w-0">
-      {/* Puce dorée */}
+    <div className="flex items-start gap-[0.5em] leading-none min-w-0">
       <span
         className="rounded-full flex-shrink-0"
-        style={{ width: "0.5em", height: "0.5em", marginTop: "0.45em", background: "#D4AF37" }}
+        style={{ width: "0.45em", height: "0.45em", marginTop: "0.4em", background: "#D4AF37", ...PRINT_FIX }}
       />
       <div className="min-w-0">
         <span
-          className="block text-[#0F7C55]/70 font-sans font-bold uppercase tracking-[0.12em]"
-          style={{ fontSize: "0.56em" }}
+          className="block text-[#0F7C55]/70 font-sans font-bold uppercase tracking-[0.1em]"
+          style={{ fontSize: "0.54em" }}
         >
           {label}
         </span>
@@ -191,7 +204,7 @@ function Field({
           className={`block font-sans font-extrabold tracking-wide truncate ${
             highlight ? "text-[#B8860B]" : "text-[#161616]"
           }`}
-          style={{ fontSize: "0.96em", marginTop: "0.12em" }}
+          style={{ fontSize: "0.92em", marginTop: "0.1em" }}
         >
           {value}
         </span>
