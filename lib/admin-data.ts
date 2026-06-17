@@ -545,6 +545,18 @@ export async function deleteMember(member: Member) {
   }
 }
 
+/** Supprime TOUS les membres (et leurs cartes publiques). Destructif :
+ *  à n'utiliser que pour un ré-import complet. Retourne le nombre supprimé. */
+export async function deleteAllMembers(): Promise<number> {
+  const members = await listMembers();
+  let n = 0;
+  for (const m of members) {
+    await deleteMember(m);
+    n++;
+  }
+  return n;
+}
+
 export async function uploadMemberPhoto(file: File): Promise<{
   url: string;
   path: string;
@@ -893,6 +905,26 @@ export async function importMembersFromJson(
   }
 
   return report;
+}
+
+/** Réparation en masse : recopie `domicile` → `ville` pour les membres dont la
+ *  ville est vide (cas des cartes PDF importées avec la localité dans domicile).
+ *  Idempotent : ne touche que les fiches où ville est absente. */
+export async function backfillVilleFromDomicile(): Promise<{ updated: number; skipped: number }> {
+  const members = await listMembers();
+  let updated = 0;
+  let skipped = 0;
+  for (const m of members) {
+    const ville = (m.ville ?? "").trim();
+    const domicile = (m.domicile ?? "").trim();
+    if (!ville && domicile) {
+      await updateMember(m.id, { ville: domicile });
+      updated++;
+    } else {
+      skipped++;
+    }
+  }
+  return { updated, skipped };
 }
 
 export async function importSalaatuFullLibrary(): Promise<void> {

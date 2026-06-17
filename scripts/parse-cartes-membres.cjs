@@ -88,6 +88,9 @@ for (const file of FILES) {
       prenom,
       nom,
       telephone: phone || undefined,
+      // Le PDF dit "Domicile" mais le site affiche le champ "Ville / Localité".
+      // On mappe donc la localité vers `ville` (et on garde `domicile` aussi).
+      ville: domicile || undefined,
       domicile: domicile || undefined,
       sourceUid: `carte-pdf-${matPadded}`, // clé de dé-doublonnage stable
     });

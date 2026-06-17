@@ -11,6 +11,9 @@ import {
   FaTrash,
   FaPenToSquare,
   FaCircleCheck,
+  FaLocationDot,
+  FaFilePdf,
+  FaTrashCan,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
@@ -18,13 +21,22 @@ import { hasPermission, Member } from "@/lib/admin-types";
 import {
   listMembers,
   deleteMember,
+  deleteAllMembers,
   updateMember,
   validateMember,
   importMembersFromJson,
   backfillPublicCards,
+  backfillVilleFromDomicile,
   ImportMember,
   ImportReport,
 } from "@/lib/admin-data";
+import { exportMembersPdf } from "@/lib/members-pdf";
+
+const STATUS_FR: Record<string, string> = {
+  actif: "Actifs",
+  en_attente: "En attente",
+  inactif: "Inactifs",
+};
 
 export default function AdminMembresPage() {
   const { user } = useAuth();
@@ -38,6 +50,68 @@ export default function AdminMembresPage() {
   const [fProf, setFProf] = useState("all");
   const [fStatus, setFStatus] = useState<"all" | "actif" | "en_attente" | "inactif">("all");
   const [importOpen, setImportOpen] = useState(false);
+  const [fixingVille, setFixingVille] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
+
+  async function handleDeleteAll() {
+    const total = members.length;
+    if (total === 0) return;
+    if (
+      !confirm(
+        `⚠️ SUPPRIMER TOUS LES MEMBRES ?\n\nCela supprimera définitivement les ${total} membre(s) et leurs cartes publiques. Action irréversible — à n'utiliser que pour un ré-import complet.`
+      )
+    )
+      return;
+    const word = prompt(`Pour confirmer, tapez SUPPRIMER en majuscules :`);
+    if (word !== "SUPPRIMER") {
+      alert("Suppression annulée.");
+      return;
+    }
+    setDeletingAll(true);
+    try {
+      setError("");
+      const n = await deleteAllMembers();
+      alert(`🗑️ ${n} membre(s) supprimé(s). Vous pouvez maintenant ré-importer le fichier JSON.`);
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la suppression");
+    } finally {
+      setDeletingAll(false);
+    }
+  }
+
+  function handleExportPdf() {
+    const labelParts: string[] = [];
+    if (fStatus !== "all") labelParts.push(STATUS_FR[fStatus]);
+    if (fRegion !== "all") labelParts.push(fRegion);
+    if (fVille !== "all") labelParts.push(fVille);
+    if (fProf !== "all") labelParts.push(fProf);
+    if (search.trim()) labelParts.push(`« ${search.trim()} »`);
+    const label = labelParts.length ? labelParts.join(" · ") : "Tous les membres";
+    exportMembersPdf(filtered, { filterLabel: label }).catch((e) =>
+      setError(e instanceof Error ? e.message : "Erreur lors de la génération du PDF")
+    );
+  }
+
+  async function handleFixVilles() {
+    if (
+      !confirm(
+        "Réparer les villes ?\n\nPour chaque membre dont la Ville est vide, on y recopie son Domicile (cas des cartes importées depuis les PDF). Aucune fiche déjà renseignée n'est modifiée."
+      )
+    )
+      return;
+    setFixingVille(true);
+    try {
+      setError("");
+      const { updated, skipped } = await backfillVilleFromDomicile();
+      alert(`✅ ${updated} ville(s) corrigée(s), ${skipped} fiche(s) inchangée(s).`);
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la réparation des villes");
+    } finally {
+      setFixingVille(false);
+    }
+  }
 
   async function reload() {
     setLoading(true);
@@ -127,23 +201,52 @@ export default function AdminMembresPage() {
             {members.length > 1 ? "s" : ""}.
           </p>
         </div>
-        {canEdit && (
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setImportOpen(true)}
-              className="inline-flex items-center gap-2 bg-white border border-[#0F7C55] text-[#0F7C55] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#F8F5EF] transition"
-            >
-              <FaFileImport /> Importer JSON
-            </button>
-            <Link
-              href="/admin/membres/nouveau"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
-            >
-              <FaPlus /> Nouveau membre
-            </Link>
-          </div>
-        )}
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleExportPdf}
+            disabled={filtered.length === 0}
+            title="Télécharger la liste affichée en PDF (logo + en-tête KSN)"
+            className="inline-flex items-center gap-2 bg-white border border-[#0F7C55] text-[#0F7C55] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#F8F5EF] transition disabled:opacity-50"
+          >
+            <FaFilePdf /> Télécharger PDF
+          </button>
+          {canEdit && (
+            <>
+              <button
+                type="button"
+                onClick={() => setImportOpen(true)}
+                className="inline-flex items-center gap-2 bg-white border border-[#0F7C55] text-[#0F7C55] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#F8F5EF] transition"
+              >
+                <FaFileImport /> Importer JSON
+              </button>
+              <button
+                type="button"
+                onClick={handleFixVilles}
+                disabled={fixingVille}
+                title="Recopie le Domicile dans le champ Ville pour les fiches dont la ville est vide"
+                className="inline-flex items-center gap-2 bg-white border border-[#B8860B] text-[#B8860B] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#FBF7EE] transition disabled:opacity-50"
+              >
+                <FaLocationDot /> {fixingVille ? "Réparation…" : "Réparer les villes"}
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAll}
+                disabled={deletingAll || members.length === 0}
+                title="Supprimer tous les membres (pour un ré-import complet)"
+                className="inline-flex items-center gap-2 bg-white border border-red-300 text-red-600 py-3 px-5 rounded-xl font-semibold text-sm hover:bg-red-50 transition disabled:opacity-50"
+              >
+                <FaTrashCan /> {deletingAll ? "Suppression…" : "Tout supprimer"}
+              </button>
+              <Link
+                href="/admin/membres/nouveau"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-3 px-5 rounded-xl font-bold text-sm"
+              >
+                <FaPlus /> Nouveau membre
+              </Link>
+            </>
+          )}
+        </div>
       </header>
 
       <div className="bg-white rounded-3xl shadow-md p-4 sm:p-6 mb-6">
