@@ -8,9 +8,9 @@ type Props = {
 
 // CR-80 ID card layout: 85.6 × 53.98 mm (aspect ratio 1.586).
 export default function MemberCard({ member, size = "preview" }: Props) {
-  const w = size === "print" ? 540 : 520;
-  const h = Math.round(w / 1.586);
-  const baseFontSize = size === "print" ? "14.5px" : "14px";
+  const w = size === "print" ? "8.56cm" : "520px";
+  const h = size === "print" ? "5.398cm" : "328px";
+  const baseFontSize = size === "print" ? "0.23cm" : "14px";
   
   const domicile =
     member.domicile ||
@@ -22,8 +22,8 @@ export default function MemberCard({ member, size = "preview" }: Props) {
     <div
       className="print-card relative overflow-hidden mx-auto select-none"
       style={{
-        width: `${w}px`,
-        height: `${h}px`,
+        width: w,
+        height: h,
         maxWidth: "100%",
         borderRadius: "1.1em",
         boxShadow: size === "print" ? "none" : "0 15px 35px rgba(15, 81, 50, 0.12)",
@@ -65,11 +65,11 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         aria-hidden="true"
       >
         {/* Lighter wave layer */}
-        <path d="M 150,0 L 10,0 C 40,50 100,60 150,68 Z" fill="#149b74" opacity="0.35" />
+        <path d="M 150,0 L 70,0 C 100,45 130,55 150,62 Z" fill="#149b74" opacity="0.35" />
         {/* Main green wave layer */}
-        <path d="M 150,0 L 30,0 C 55,42 105,52 150,58 Z" fill="#0F7C55" />
+        <path d="M 150,0 L 85,0 C 110,40 135,48 150,52 Z" fill="#0F7C55" />
         {/* Gold accent border */}
-        <path d="M 150,58 C 105,52 55,42 30,0" fill="none" stroke="#D4AF37" strokeWidth="2" />
+        <path d="M 150,52 C 135,48 110,40 85,0" fill="none" stroke="#D4AF37" strokeWidth="2" />
       </svg>
 
       {/* BOTTOM-LEFT CORNER WAVE */}
@@ -97,11 +97,11 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         aria-hidden="true"
       >
         {/* Lighter wave layer */}
-        <path d="M 150,70 L 10,70 C 40,20 100,10 150,2 Z" fill="#149b74" opacity="0.35" />
+        <path d="M 150,70 L 70,70 C 100,25 130,15 150,8 Z" fill="#149b74" opacity="0.35" />
         {/* Main green wave layer */}
-        <path d="M 150,70 L 30,70 C 55,28 105,18 150,12 Z" fill="#0F7C55" />
+        <path d="M 150,70 L 85,70 C 110,30 135,22 150,18 Z" fill="#0F7C55" />
         {/* Gold accent border */}
-        <path d="M 150,12 C 105,18 55,28 30,70" fill="none" stroke="#D4AF37" strokeWidth="2" />
+        <path d="M 150,18 C 135,22 110,30 85,70" fill="none" stroke="#D4AF37" strokeWidth="2" />
       </svg>
 
       {/* Outer border frame inside card */}
@@ -126,14 +126,14 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           {/* Title / Subtitle */}
           <div>
             <h1
-              className="font-sans font-extrabold text-[#0F7C55] tracking-wide flex items-center gap-[0.2em] leading-none"
+              className="font-sans font-extrabold text-[#0F7C55] tracking-wide flex items-center gap-[0.2em] leading-none whitespace-nowrap"
               style={{ fontSize: "0.95em" }}
             >
               <span>KIPPAANGOG SALAATU &apos;ALAA NABII</span>
               <span className="font-serif font-bold text-[#D4AF37]">ﷺ</span>
             </h1>
             <p
-              className="text-[#D4AF37] font-sans font-black tracking-[0.22em] mt-[0.3em] leading-none"
+              className="text-[#D4AF37] font-sans font-black tracking-[0.22em] mt-[0.3em] leading-none whitespace-nowrap"
               style={{ fontSize: "0.62em" }}
             >
               CARTE DE MEMBRE
@@ -143,7 +143,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
         
         {/* Siège Social */}
         <div className="text-right">
-          <p className="text-[#0F7C55] font-extrabold uppercase tracking-wide leading-none border-b border-[#0F7C55]/30 pb-[0.2em]" style={{ fontSize: "0.58em" }}>
+          <p className="text-[#0F7C55] font-extrabold uppercase tracking-wide leading-none border-b border-[#0F7C55]/30 pb-[0.2em] whitespace-nowrap" style={{ fontSize: "0.58em" }}>
             Siège Social: Touba
           </p>
         </div>
@@ -207,7 +207,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
             )}
           </div>
           <p
-            className="text-[#D4AF37] font-sans font-bold tracking-wide text-center mt-[0.5em] uppercase leading-none"
+            className="text-[#D4AF37] font-sans font-bold tracking-wide text-center mt-[0.5em] uppercase leading-none whitespace-nowrap"
             style={{ fontSize: "0.42em" }}
           >
             Scannez pour vérifier
@@ -219,7 +219,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
       {/* BOTTOM SLOGAN BAR centered overlay */}
       <div className="absolute bottom-[0.65em] left-0 right-0 text-center z-20 pointer-events-none">
         <p
-          className="text-[#0F7C55] font-sans tracking-[0.25em] font-extrabold uppercase leading-none"
+          className="text-[#0F7C55] font-sans tracking-[0.25em] font-extrabold uppercase leading-none whitespace-nowrap"
           style={{ fontSize: "0.55em" }}
         >
           COM. KSN . SALAATUALAANABII.COM

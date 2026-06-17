@@ -218,6 +218,11 @@ html, body {
 }
 
 @media print {
+  @page {
+    size: 85.6mm 53.98mm;
+    margin: 0;
+  }
+
   /* Hide common layout components by default when printing */
   header, footer, aside, nav, button, .no-print {
     display: none !important;
