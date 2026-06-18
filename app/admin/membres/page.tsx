@@ -147,26 +147,35 @@ export default function AdminMembresPage() {
 
   async function reload() {
     setLoading(true);
+    // Membres : lisibles par tout utilisateur connecté.
     try {
-      const [membersData, financeData] = await Promise.all([
-        listMembers(),
-        listFinanceEntries(),
-      ]);
-      setMembers(membersData);
-      setFinanceEntries(financeData);
+      setMembers(await listMembers());
       setError("");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de chargement");
     } finally {
       setLoading(false);
     }
+    // Finances : seulement si l'utilisateur a la permission (sinon la règle
+    // Firestore refuse la lecture). La commission "membres" ne voit donc pas
+    // les statuts de paiement, mais la liste des membres reste accessible.
+    if (isFinance) {
+      try {
+        setFinanceEntries(await listFinanceEntries());
+      } catch {
+        /* non bloquant — n'empêche pas l'affichage des membres */
+      }
+    } else {
+      setFinanceEntries([]);
+    }
   }
 
+  // Recharge dès que l'authentification est résolue (et si les droits changent).
   useEffect(() => {
-    setTimeout(() => {
-      reload();
-    }, 0);
-  }, []);
+    if (!user) return;
+    reload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.uid, isFinance]);
 
   // Backfill : génère les cartes publiques manquantes (vérification QR) une
   // fois par session admin. Silencieux et non bloquant.
@@ -346,17 +355,19 @@ export default function AdminMembresPage() {
               <option key={p} value={p}>{p}</option>
             ))}
           </select>
-          <select
-            value={fPayment}
-            onChange={(e) => setFPayment(e.target.value)}
-            className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
-          >
-            <option value="all">Tous les paiements</option>
-            <option value="cotisation_ok">Cotisation réglée (ce mois)</option>
-            <option value="cotisation_ko">Cotisation non réglée (ce mois)</option>
-            <option value="inscription_ok">Inscription réglée</option>
-            <option value="inscription_ko">Inscription non réglée</option>
-          </select>
+          {isFinance && (
+            <select
+              value={fPayment}
+              onChange={(e) => setFPayment(e.target.value)}
+              className="rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
+            >
+              <option value="all">Tous les paiements</option>
+              <option value="cotisation_ok">Cotisation réglée (ce mois)</option>
+              <option value="cotisation_ko">Cotisation non réglée (ce mois)</option>
+              <option value="inscription_ok">Inscription réglée</option>
+              <option value="inscription_ko">Inscription non réglée</option>
+            </select>
+          )}
         </div>
         <div className="flex gap-2 mt-3 flex-wrap">
           {(["all", "actif", "en_attente", "inactif"] as const).map((s) => (
@@ -450,7 +461,7 @@ export default function AdminMembresPage() {
                   >
                     {m.status === "en_attente" ? "en attente" : m.status}
                   </span>
-                  {hasPaidInscription(m.id) ? (
+                  {isFinance && (hasPaidInscription(m.id) ? (
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-[#B8860B] border border-[#B8860B]/20">
                       Inscr. OK
                     </span>
@@ -458,8 +469,8 @@ export default function AdminMembresPage() {
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-600 border border-red-200/30">
                       Inscr. KO
                     </span>
-                  )}
-                  {hasPaidCotisationThisMonth(m.id) ? (
+                  ))}
+                  {isFinance && (hasPaidCotisationThisMonth(m.id) ? (
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/30">
                       Cotis. OK
                     </span>
@@ -467,7 +478,7 @@ export default function AdminMembresPage() {
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-50 text-gray-500 border border-gray-200/30">
                       Cotis. KO
                     </span>
-                  )}
+                  ))}
                 </div>
                 <div className="flex gap-1 mt-3 flex-wrap">
                   <Link
