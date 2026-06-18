@@ -187,7 +187,8 @@ service cloud.firestore {
     }
 
     // ─── Menu navigation (custom) ───────────────────────────────────────
-    match /menu/{id} {
+    // Collection réelle = "menuItems" (cf. lib/admin-data.ts).
+    match /menuItems/{id} {
       allow read: if true;
       allow write: if hasPerm("menu.write");
     }
