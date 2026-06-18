@@ -169,7 +169,7 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           className="text-[#0F7C55] font-sans font-extrabold uppercase tracking-[0.06em] leading-none whitespace-nowrap"
           style={{ fontSize: "0.56em" }}
         >
-          Siège Social : Touba · Commission KSN · salaatualaanabii.com
+          Siège Social : Touba · Com. KSN · salaatualaanabii.com
         </p>
       </div>
     </div>
