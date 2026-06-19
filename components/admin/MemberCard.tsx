@@ -4,6 +4,10 @@ import { Member } from "@/lib/admin-types";
 type Props = {
   member: Member;
   size?: "preview" | "print";
+  // Quand true, la photo et le QR passent par un proxy same-origin
+  // (/api/img-proxy) pour être capturables par html2canvas sans erreur CORS
+  // (utilisé pour la génération de la planche de cartes PDF).
+  proxyImages?: boolean;
 };
 
 // Carte de membre format CR-80 (carte d'identité) : 85,6 × 53,98 mm — ratio 1.586.
@@ -15,7 +19,7 @@ const PRINT_FIX = {
   printColorAdjust: "exact" as const,
 };
 
-export default function MemberCard({ member, size = "preview" }: Props) {
+export default function MemberCard({ member, size = "preview", proxyImages = false }: Props) {
   const w = size === "print" ? "8.56cm" : "540px";
   const h = size === "print" ? "5.398cm" : "340px";
   const baseFontSize = size === "print" ? "0.238cm" : "15px";
@@ -27,6 +31,12 @@ export default function MemberCard({ member, size = "preview" }: Props) {
     "—";
   const fullName = `${member.prenom} ${member.nom}`.trim() || "—";
   const verifyUrl = `https://salaatualaanabii.com/verifier-carte/${member.matricule}`;
+  const qrDirect = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(verifyUrl)}`;
+  const qrSrc = proxyImages ? `/api/img-proxy?url=${encodeURIComponent(qrDirect)}` : qrDirect;
+  const photoSrc =
+    member.photo && proxyImages && /^https?:/.test(member.photo)
+      ? `/api/img-proxy?url=${encodeURIComponent(member.photo)}`
+      : member.photo;
 
   return (
     <div
@@ -106,14 +116,23 @@ export default function MemberCard({ member, size = "preview" }: Props) {
           style={{ width: "8.8em", height: "8.8em", border: "0.14em solid #D4AF37", ...PRINT_FIX }}
         >
           {member.photo ? (
-            <Image
-              src={member.photo}
-              alt={fullName}
-              fill
-              sizes="180px"
-              className="object-cover"
-              unoptimized={member.photo.startsWith("http")}
-            />
+            proxyImages ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={photoSrc}
+                alt={fullName}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={member.photo}
+                alt={fullName}
+                fill
+                sizes="180px"
+                className="object-cover"
+                unoptimized={member.photo.startsWith("http")}
+              />
+            )
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-white to-[#E2EBE6] text-[#0F7C55]/35" style={PRINT_FIX}>
               <span className="font-serif font-black" style={{ fontSize: "2.6em" }}>
@@ -139,8 +158,9 @@ export default function MemberCard({ member, size = "preview" }: Props) {
             style={{ width: "6.4em", height: "6.4em", padding: "0.4em", border: "0.06em solid rgba(15,81,50,0.12)", ...PRINT_FIX }}
           >
             {member.matricule ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(verifyUrl)}`}
+                src={qrSrc}
                 alt="QR de vérification"
                 className="w-full h-full object-contain"
                 loading="lazy"

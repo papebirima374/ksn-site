@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import MemberCard from "@/components/admin/MemberCard";
 import {
   FaPlus,
   FaFileImport,
@@ -62,6 +63,10 @@ export default function AdminMembresPage() {
   const [importOpen, setImportOpen] = useState(false);
   const [deletingAll, setDeletingAll] = useState(false);
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
+  // Planche de cartes PDF (membres avec photo)
+  const [printMembers, setPrintMembers] = useState<Member[] | null>(null);
+  const [printStatus, setPrintStatus] = useState("");
+  const printRef = useRef<HTMLDivElement>(null);
 
   const MONTHS_FR = useMemo(
     () => [
@@ -144,6 +149,64 @@ export default function AdminMembresPage() {
       setError(e instanceof Error ? e.message : "Erreur lors de la génération du PDF")
     );
   }
+
+  // Planche de cartes à imprimer : uniquement les membres AVEC photo
+  // (dans la sélection filtrée), 10 cartes par page A4 prêtes à découper.
+  function handlePrintCards() {
+    const withPhoto = filtered.filter((m) => m.photo);
+    if (withPhoto.length === 0) {
+      alert(
+        "Aucun membre avec photo dans la sélection actuelle.\n\nAjoutez d'abord des photos, ou ajustez les filtres."
+      );
+      return;
+    }
+    setError("");
+    setPrintStatus(`Préparation de ${withPhoto.length} carte(s)…`);
+    setPrintMembers(withPhoto);
+  }
+
+  // Capture les cartes (DOM) en images puis assemble le PDF, une fois rendues.
+  useEffect(() => {
+    if (!printMembers || !printRef.current) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const container = printRef.current!;
+        // Attendre le chargement de toutes les images (logo, photo, QR via proxy)
+        const imgs = Array.from(container.querySelectorAll("img"));
+        await Promise.all(
+          imgs.map((img) =>
+            img.complete
+              ? Promise.resolve()
+              : new Promise((res) => {
+                  img.onload = () => res(null);
+                  img.onerror = () => res(null);
+                })
+          )
+        );
+        await new Promise((r) => setTimeout(r, 400)); // marge de rendu
+        if (cancelled) return;
+        const nodes = Array.from(
+          container.querySelectorAll<HTMLElement>(".print-card")
+        );
+        const { buildMemberCardsPdf } = await import("@/lib/member-cards-pdf");
+        await buildMemberCardsPdf(nodes, (done, total) => {
+          if (!cancelled) setPrintStatus(`Génération… ${done}/${total}`);
+        });
+      } catch (e) {
+        if (!cancelled)
+          setError(e instanceof Error ? e.message : "Erreur lors de la planche PDF");
+      } finally {
+        if (!cancelled) {
+          setPrintMembers(null);
+          setPrintStatus("");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [printMembers]);
 
   async function reload() {
     setLoading(true);
@@ -291,6 +354,15 @@ export default function AdminMembresPage() {
               >
                 <FaFileImport /> Importer JSON
               </button>
+              <button
+                type="button"
+                onClick={handlePrintCards}
+                disabled={!!printMembers}
+                title="Planche PDF des cartes (membres avec photo) — 10 par page A4, prêtes à découper"
+                className="inline-flex items-center gap-2 bg-white border border-[#B8860B] text-[#B8860B] py-3 px-5 rounded-xl font-semibold text-sm hover:bg-[#FBF7EE] transition disabled:opacity-50"
+              >
+                <FaIdCard /> {printMembers ? (printStatus || "Génération…") : "Planche cartes PDF"}
+              </button>
               {canDelete && (
                 <button
                   type="button"
@@ -312,6 +384,19 @@ export default function AdminMembresPage() {
           )}
         </div>
       </header>
+
+      {/* Rendu hors-écran des cartes pour la capture html2canvas (planche PDF) */}
+      {printMembers && (
+        <div
+          ref={printRef}
+          aria-hidden
+          style={{ position: "fixed", left: -100000, top: 0 }}
+        >
+          {printMembers.map((m) => (
+            <MemberCard key={m.id} member={m} proxyImages />
+          ))}
+        </div>
+      )}
 
       <div className="bg-white rounded-3xl shadow-md p-4 sm:p-6 mb-6">
         <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-3">
