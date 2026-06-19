@@ -65,6 +65,7 @@ export default function AdminMembresPage() {
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
   // Planche de cartes PDF (membres avec photo)
   const [printMembers, setPrintMembers] = useState<Member[] | null>(null);
+  const [printQr, setPrintQr] = useState<Record<string, string>>({});
   const [printStatus, setPrintStatus] = useState("");
   const printRef = useRef<HTMLDivElement>(null);
 
@@ -152,7 +153,7 @@ export default function AdminMembresPage() {
 
   // Planche de cartes à imprimer : uniquement les membres AVEC photo
   // (dans la sélection filtrée), 10 cartes par page A4 prêtes à découper.
-  function handlePrintCards() {
+  async function handlePrintCards() {
     const withPhoto = filtered.filter((m) => m.photo);
     if (withPhoto.length === 0) {
       alert(
@@ -162,6 +163,20 @@ export default function AdminMembresPage() {
     }
     setError("");
     setPrintStatus(`Préparation de ${withPhoto.length} carte(s)…`);
+    // Pré-génère les QR en local (data URL) — évite 1 appel réseau par carte.
+    try {
+      const QRCode = (await import("qrcode")).default;
+      const entries = await Promise.all(
+        withPhoto.map(async (m) => {
+          const url = `https://salaatualaanabii.com/verifier-carte/${m.matricule}`;
+          const data = await QRCode.toDataURL(url, { margin: 0, width: 200 });
+          return [m.id, data] as const;
+        })
+      );
+      setPrintQr(Object.fromEntries(entries));
+    } catch {
+      setPrintQr({}); // fallback : le proxy prendra le relais
+    }
     setPrintMembers(withPhoto);
   }
 
@@ -199,6 +214,7 @@ export default function AdminMembresPage() {
       } finally {
         if (!cancelled) {
           setPrintMembers(null);
+          setPrintQr({});
           setPrintStatus("");
         }
       }
@@ -393,7 +409,7 @@ export default function AdminMembresPage() {
           style={{ position: "fixed", left: -100000, top: 0 }}
         >
           {printMembers.map((m) => (
-            <MemberCard key={m.id} member={m} proxyImages />
+            <MemberCard key={m.id} member={m} proxyImages qrDataUrl={printQr[m.id]} />
           ))}
         </div>
       )}

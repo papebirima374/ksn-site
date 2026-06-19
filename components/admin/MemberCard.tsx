@@ -4,10 +4,12 @@ import { Member } from "@/lib/admin-types";
 type Props = {
   member: Member;
   size?: "preview" | "print";
-  // Quand true, la photo et le QR passent par un proxy same-origin
-  // (/api/img-proxy) pour être capturables par html2canvas sans erreur CORS
-  // (utilisé pour la génération de la planche de cartes PDF).
+  // Quand true, la photo passe par un proxy same-origin (/api/img-proxy) pour
+  // être capturable par html2canvas sans erreur CORS (planche de cartes PDF).
   proxyImages?: boolean;
+  // QR pré-généré (data URL). Fourni lors de la génération de la planche PDF
+  // pour éviter 1 appel réseau par carte (sinon très lent en masse).
+  qrDataUrl?: string;
 };
 
 // Carte de membre format CR-80 (carte d'identité) : 85,6 × 53,98 mm — ratio 1.586.
@@ -19,7 +21,7 @@ const PRINT_FIX = {
   printColorAdjust: "exact" as const,
 };
 
-export default function MemberCard({ member, size = "preview", proxyImages = false }: Props) {
+export default function MemberCard({ member, size = "preview", proxyImages = false, qrDataUrl }: Props) {
   const w = size === "print" ? "8.56cm" : "540px";
   const h = size === "print" ? "5.398cm" : "340px";
   const baseFontSize = size === "print" ? "0.238cm" : "15px";
@@ -32,7 +34,12 @@ export default function MemberCard({ member, size = "preview", proxyImages = fal
   const fullName = `${member.prenom} ${member.nom}`.trim() || "—";
   const verifyUrl = `https://salaatualaanabii.com/verifier-carte/${member.matricule}`;
   const qrDirect = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=0&data=${encodeURIComponent(verifyUrl)}`;
-  const qrSrc = proxyImages ? `/api/img-proxy?url=${encodeURIComponent(qrDirect)}` : qrDirect;
+  // Priorité au QR pré-généré (data URL, zéro réseau) ; sinon proxy ; sinon direct.
+  const qrSrc = qrDataUrl
+    ? qrDataUrl
+    : proxyImages
+      ? `/api/img-proxy?url=${encodeURIComponent(qrDirect)}`
+      : qrDirect;
   const photoSrc =
     member.photo && proxyImages && /^https?:/.test(member.photo)
       ? `/api/img-proxy?url=${encodeURIComponent(member.photo)}`

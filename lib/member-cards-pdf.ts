@@ -33,7 +33,7 @@ export async function buildMemberCardsPdf(
     if (i > 0 && idx === 0) doc.addPage();
 
     const canvas = await html2canvas(nodes[i], {
-      scale: 3,
+      scale: 2, // ~320 DPI à 85,6 mm — net pour l'impression, 2× plus rapide que 3
       backgroundColor: "#ffffff",
       useCORS: true,
       logging: false,
