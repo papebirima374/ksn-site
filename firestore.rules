@@ -46,7 +46,10 @@ service cloud.firestore {
     // ─── Users (profils Auth + permissions) ─────────────────────────────
     match /users/{uid} {
       allow read: if isSignedIn() && (request.auth.uid == uid || isAdmin());
-      allow create: if isSignedIn() && request.auth.uid == uid;
+      // Création : par soi-même (auto-inscription) OU par un gestionnaire
+      // d'utilisateurs (l'admin crée le compte via une session secondaire,
+      // mais le doc Firestore est écrit sous SA session → besoin de users.write).
+      allow create: if isSignedIn() && (request.auth.uid == uid || hasPerm("users.write"));
       allow update: if isSignedIn() && (request.auth.uid == uid || hasPerm("users.write"));
       allow delete: if hasPerm("users.write");
     }
