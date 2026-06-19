@@ -78,6 +78,19 @@ export default function MemberForm({ initial }: Props) {
     setY((prev) => Math.max(constraints.minY, Math.min(constraints.maxY, prev)));
   }, [constraints]);
 
+  // Dimensions d'affichage de l'image dans le cadre (échelle "cover" × zoom).
+  // Le preview reproduit AINSI exactement le rendu du canvas de sortie :
+  // l'image déborde du cadre (jamais de fond visible) et le déplacement
+  // montre la même portion que ce qui sera enregistré (WYSIWYG).
+  const view = useMemo(() => {
+    if (!imageSize.width || !imageSize.height) return { w: W_c, h: H_c };
+    const scale = Math.max(W_c / imageSize.width, H_c / imageSize.height);
+    return {
+      w: imageSize.width * scale * zoom,
+      h: imageSize.height * scale * zoom,
+    };
+  }, [imageSize, zoom]);
+
   useEffect(() => {
     if (!initial && !matricule) {
       nextMatricule().then(setMatricule).catch(() => {});
@@ -122,12 +135,16 @@ export default function MemberForm({ initial }: Props) {
         
         canvas.toBlob((blob) => {
           if (blob) {
-            const croppedFile = new File([blob], croppingFile.name, { type: "image/jpeg" });
+            const croppedFile = new File(
+              [blob],
+              croppingFile.name.replace(/\.[^.]+$/, "") + ".jpg",
+              { type: "image/jpeg" }
+            );
             handlePhoto(croppedFile);
             setCroppingImage(null);
             setCroppingFile(null);
           }
-        }, "image/jpeg", 0.9);
+        }, "image/jpeg", 0.82);
       };
     }
   };
@@ -389,6 +406,12 @@ export default function MemberForm({ initial }: Props) {
                       img.src = reader.result as string;
                       img.onload = () => {
                         setImageSize({ width: img.width, height: img.height });
+                        // Position par défaut : aligner le HAUT de l'image sur le
+                        // haut du cadre → on voit le visage (les photos coupaient
+                        // la tête car on centrait verticalement par défaut).
+                        const scale = Math.max(W_c / img.width, H_c / img.height);
+                        const Hz = img.height * scale; // zoom = 1.0 au chargement
+                        setY(Math.max(0, Math.round((Hz - H_c) / 2)));
                       };
                     };
                     reader.readAsDataURL(f);
@@ -463,13 +486,15 @@ export default function MemberForm({ initial }: Props) {
               <img
                 src={croppingImage}
                 alt="Rognage"
-                className="max-w-none pointer-events-none"
+                draggable={false}
+                className="pointer-events-none select-none"
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  transform: `translate(${x}px, ${y}px) scale(${zoom})`,
-                  transformOrigin: "center center",
+                  position: "absolute",
+                  width: `${view.w}px`,
+                  height: `${view.h}px`,
+                  maxWidth: "none",
+                  left: `${(W_c - view.w) / 2 + x}px`,
+                  top: `${(H_c - view.h) / 2 + y}px`,
                 }}
               />
             </div>
