@@ -15,7 +15,7 @@ import {
   deleteField,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, signOut, deleteUser } from "firebase/auth";
 import { getDb, getBucket, getSecondaryAuth } from "./firebase";
 import {
   Article,
@@ -275,14 +275,22 @@ export async function createUserAccount(
   // 1) Cree le compte Auth via l'instance secondaire (n'affecte pas la session admin)
   const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
   const uid = cred.user.uid;
-  // 2) Cree le profil Firestore
-  await createUserDoc(uid, {
-    email,
-    displayName: profile.displayName,
-    role: profile.role,
-    commission: profile.commission,
-    permissions: profile.permissions,
-  });
+  // 2) Cree le profil Firestore. Si l'ecriture echoue (ex. regles), on
+  //    supprime le compte Auth orphelin pour permettre un nouvel essai avec
+  //    le meme email (sinon "auth/email-already-in-use").
+  try {
+    await createUserDoc(uid, {
+      email,
+      displayName: profile.displayName,
+      role: profile.role,
+      commission: profile.commission,
+      permissions: profile.permissions,
+    });
+  } catch (e) {
+    try { await deleteUser(cred.user); } catch { /* compte deja parti / non supprimable */ }
+    try { await signOut(secondaryAuth); } catch { /* ignore */ }
+    throw e;
+  }
   // 3) Sign-out de l'instance secondaire (l'instance principale reste connectee)
   await signOut(secondaryAuth);
   return uid;
