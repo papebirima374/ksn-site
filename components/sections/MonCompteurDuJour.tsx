@@ -30,6 +30,16 @@ export default function MonCompteurDuJour() {
       val = Number(localStorage.getItem(STORAGE_KEY) || "0");
     }
     setPersonal(val);
+
+    // Synchro entre onglets / pages : si le compteur change ailleurs
+    // (autre onglet, ou l'autre exemplaire accueil↔challenge), on suit.
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue != null) {
+        setPersonal(Number(e.newValue) || 0);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const add = (n: number) => {

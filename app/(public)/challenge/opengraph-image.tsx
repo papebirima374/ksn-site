@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og";
 import {
-  estimatedChallengeStats,
   CHALLENGE_TARGET,
   fmtNumber,
   progressTowardTarget,
@@ -9,16 +8,36 @@ import {
 export const alt = "Challenge 1 Milliard de Salaatu — KSN";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+// Régénère l'aperçu au plus toutes les 5 min → reflète le vrai compteur admin.
+export const revalidate = 300;
+
+/** Lit le vrai total du challenge (Firestore settings/challenge) via l'API REST
+ *  publique — même source que les compteurs du site. 0 par défaut/erreur. */
+async function getRealTotal(): Promise<number> {
+  try {
+    const pid = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "ksn-site";
+    const url = `https://firestore.googleapis.com/v1/projects/${pid}/databases/(default)/documents/settings/challenge`;
+    const res = await fetch(url, { next: { revalidate: 300 } });
+    if (!res.ok) return 0;
+    const data = await res.json();
+    const raw =
+      data?.fields?.total?.integerValue ?? data?.fields?.total?.doubleValue;
+    const n = raw != null ? parseInt(String(raw), 10) : 0;
+    return Number.isFinite(n) ? n : 0;
+  } catch {
+    return 0;
+  }
+}
 
 /** OG image dynamique pour /challenge.
  *  Satori (engine ImageResponse) exige des enfants atomiques : on
  *  precompute toutes les chaines pour eviter "multiple children
  *  without display: flex". */
 export default async function Image() {
-  const stats = estimatedChallengeStats();
-  const percent = progressTowardTarget(stats.total);
+  const total = await getRealTotal();
+  const percent = progressTowardTarget(total);
 
-  const totalStr = fmtNumber(stats.total);
+  const totalStr = fmtNumber(total);
   const subStr = `sur ${fmtNumber(CHALLENGE_TARGET)}  —  ${percent.toFixed(3)} %`;
   const progressWidth = `${Math.max(percent, 0.5)}%`;
 
