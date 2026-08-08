@@ -223,5 +223,36 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Compteur du Challenge : lecture publique, écriture admin (règle ci-dessus),
+    // PLUS un incrément public BORNÉ pour les contributions des visiteurs.
+    // (Firestore applique l'union des règles : admin OU incrément validé.)
+    match /settings/challenge {
+      allow read: if true;
+      allow update: if isAdmin() || (
+        request.resource.data.total is number &&
+        resource.data.total is number &&
+        request.resource.data.total > resource.data.total &&
+        request.resource.data.total - resource.data.total <= 5000
+      );
+    }
+
+    // Journal des contributions des visiteurs : création publique bornée,
+    // lecture + suppression réservées à l'admin (historique / correction).
+    match /challengeContributions/{id} {
+      allow read: if isAdmin() || hasPerm("members.write");
+      allow create: if request.resource.data.amount is number
+                    && request.resource.data.amount >= 1
+                    && request.resource.data.amount <= 5000;
+      allow update: if false;
+      allow delete: if isAdmin() || hasPerm("members.write");
+    }
+
+    // Médias du Challenge (annonces / Jour J avec commentaire) : affichés
+    // publiquement, gérés par l'admin.
+    match /challengeMedia/{id} {
+      allow read: if true;
+      allow write: if isAdmin() || hasPerm("gallery.write");
+    }
   }
 }

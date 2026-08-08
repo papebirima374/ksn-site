@@ -83,7 +83,23 @@ export function progressTowardTarget(total: number): number {
 // Lecture publique + écriture admin (déjà couvert par les règles settings/{id}).
 
 import { getDb } from "./firebase";
-import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  onSnapshot,
+  setDoc,
+  getDoc,
+  collection,
+  deleteDoc,
+  query,
+  orderBy,
+  limit,
+  writeBatch,
+  increment,
+} from "firebase/firestore";
+
+/** Plafond par contribution (anti-abus) : un visiteur ajoute au plus ce nombre
+ *  de Salaatu en une fois. L'admin peut toujours corriger/supprimer. */
+export const MAX_CONTRIBUTION = 5000;
 
 /** Abonnement temps réel au total du challenge. Renvoie une fonction
  *  de désabonnement. Le total vaut 0 tant que l'admin ne l'a pas défini. */
@@ -117,4 +133,61 @@ export async function setChallengeTotal(total: number): Promise<void> {
     { total: Math.max(0, Math.floor(total)), updatedAt: Date.now() },
     { merge: true }
   );
+}
+
+// ─── Contributions des visiteurs ────────────────────────────────────────────
+// Un visiteur ajoute son nombre de Salaatu : on incrémente le total (settings/
+// challenge) ET on journalise la contribution (challengeContributions) pour que
+// l'admin puisse consulter l'historique et supprimer une erreur.
+
+export type Contribution = {
+  id: string;
+  amount: number;
+  name?: string | null;
+  createdAt: number;
+};
+
+/** Contribution publique : incrément borné du total + journalisation (atomique). */
+export async function contributeSalaatu(amount: number, name?: string): Promise<number> {
+  const db = getDb();
+  const amt = Math.max(1, Math.min(MAX_CONTRIBUTION, Math.floor(amount)));
+  const batch = writeBatch(db);
+  const logRef = doc(collection(db, "challengeContributions"));
+  batch.set(logRef, {
+    amount: amt,
+    name: (name ?? "").trim().slice(0, 40) || null,
+    createdAt: Date.now(),
+  });
+  batch.set(
+    doc(db, "settings", "challenge"),
+    { total: increment(amt), updatedAt: Date.now() },
+    { merge: true }
+  );
+  await batch.commit();
+  return amt;
+}
+
+/** Historique des contributions (admin). */
+export function subscribeContributions(
+  cb: (list: Contribution[]) => void
+): () => void {
+  const db = getDb();
+  return onSnapshot(
+    query(collection(db, "challengeContributions"), orderBy("createdAt", "desc"), limit(300)),
+    (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Contribution, "id">) }))),
+    () => cb([])
+  );
+}
+
+/** Suppression d'une contribution (admin) : retire le doc ET décrémente le total. */
+export async function deleteContribution(id: string, amount: number): Promise<void> {
+  const db = getDb();
+  const batch = writeBatch(db);
+  batch.delete(doc(db, "challengeContributions", id));
+  batch.set(
+    doc(db, "settings", "challenge"),
+    { total: increment(-Math.abs(Math.floor(amount))), updatedAt: Date.now() },
+    { merge: true }
+  );
+  await batch.commit();
 }

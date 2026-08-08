@@ -120,6 +120,63 @@ export async function deleteGalleryItem(item: GalleryItem) {
   await deleteDoc(doc(db, "gallery", item.id));
 }
 
+// ============ MÉDIAS DU CHALLENGE (annonces / Jour J) ============
+
+export type ChallengeMedia = {
+  id: string;
+  type: "annonce" | "jourj";
+  src: string;
+  storagePath: string;
+  comment: string;
+  createdAt: number;
+  createdBy?: string;
+};
+
+export async function listChallengeMedia(): Promise<ChallengeMedia[]> {
+  const db = getDb();
+  const snap = await getDocs(
+    query(collection(db, "challengeMedia"), orderBy("createdAt", "desc"))
+  );
+  return snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<ChallengeMedia, "id">),
+  }));
+}
+
+export async function addChallengeMedia(
+  file: File,
+  meta: { type: ChallengeMedia["type"]; comment: string; createdBy: string }
+): Promise<ChallengeMedia> {
+  const bucket = getBucket();
+  const path = `challenge/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
+  const r = ref(bucket, path);
+  await uploadBytes(r, file);
+  const url = await getDownloadURL(r);
+  const db = getDb();
+  const data = {
+    type: meta.type,
+    src: url,
+    storagePath: path,
+    comment: meta.comment.trim(),
+    createdAt: Date.now(),
+    createdBy: meta.createdBy,
+  };
+  const docRef = await addDoc(collection(db, "challengeMedia"), data);
+  return { id: docRef.id, ...data };
+}
+
+export async function deleteChallengeMedia(item: ChallengeMedia) {
+  const db = getDb();
+  if (item.storagePath) {
+    try {
+      await deleteObject(ref(getBucket(), item.storagePath));
+    } catch {
+      /* fichier déjà supprimé */
+    }
+  }
+  await deleteDoc(doc(db, "challengeMedia", item.id));
+}
+
 // ============ ARTICLES ============
 
 export async function listArticles(): Promise<Article[]> {

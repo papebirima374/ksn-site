@@ -12,6 +12,8 @@ import {
 import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
 import MonCompteurDuJour from "@/components/sections/MonCompteurDuJour";
+import ContributionForm from "@/components/sections/ContributionForm";
+import ChallengeMediaWall from "@/components/sections/ChallengeMediaWall";
 import ShareButton from "@/components/ui/ShareButton";
 import SectionTabs from "@/components/ui/SectionTabs";
 import { LINKS } from "@/lib/constants";
@@ -58,15 +60,24 @@ export default function ChallengeContent() {
       {/* COMPTEUR LIVE — toujours visible */}
       <ChallengeCounter />
 
-      {/* MON COMPTEUR DU JOUR — compteur personnel (toujours visible) */}
-      <section className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 -mt-8 sm:-mt-12">
+      {/* MON COMPTEUR DU JOUR + CONTRIBUTION (toujours visibles) */}
+      <section className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 -mt-8 sm:-mt-12 space-y-6">
         <div className="relative overflow-hidden rounded-[28px] sm:rounded-[40px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-5 sm:p-8">
           <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
           <div className="relative z-10">
             <MonCompteurDuJour />
           </div>
         </div>
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[40px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-5 sm:p-8">
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#B8860B]/10 blur-3xl pointer-events-none" />
+          <div className="relative z-10">
+            <ContributionForm />
+          </div>
+        </div>
       </section>
+
+      {/* ANNONCES & PHOTOS JOUR J (si l'admin en a ajouté) */}
+      <ChallengeMediaWall />
 
       <SectionTabs
         tabs={TABS}
