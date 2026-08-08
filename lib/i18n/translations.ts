@@ -592,6 +592,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "challenge.reward_fr": "« Celui qui prie sur moi une fois, Allah prie sur lui dix fois. »",
     "challenge.reward_ref": "— Le Prophète Muhammad ﷺ (rapporté par Muslim)",
     "challenge.share_label": "Partager le défi",
+    "challenge.share_invite": "Rejoins le Challenge 1 Milliard de Salaatu ʿAlaa Nabii ﷺ avec la communauté KSN. Ensemble, prions sur le Prophète Muhammad ﷺ jusqu'au milliard !",
 
     // Don Page
     "don.overline": "Soutenir le Dahira",
@@ -1831,6 +1832,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "challenge.reward_fr": "“Whoever sends blessings upon me once, Allah will send blessings upon him ten times.”",
     "challenge.reward_ref": "— The Prophet Muhammad ﷺ (reported by Muslim)",
     "challenge.share_label": "Share the challenge",
+    "challenge.share_invite": "Join the 1 Billion Salaatu ʿAlaa Nabii ﷺ Challenge with the KSN community. Together, let us pray upon Prophet Muhammad ﷺ all the way to one billion!",
 
     // Don Page
     "don.overline": "Support the Dahira",
@@ -2587,6 +2589,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "challenge.reward_fr": "«Chi prega su di me una volta, Allah pregherà su di lui dieci volte.»",
     "challenge.reward_ref": "— Il Profeta Muhammad ﷺ (riportato da Muslim)",
     "challenge.share_label": "Condividi la sfida",
+    "challenge.share_invite": "Unisciti alla Sfida del Miliardo di Salaatu ʿAlaa Nabii ﷺ con la comunità KSN. Insieme, preghiamo sul Profeta Muhammad ﷺ fino al miliardo!",
 
     // Don Page
     "don.overline": "Sostieni la Dahira",
@@ -3350,6 +3353,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "challenge.reward_fr": "«Quien pida una bendición para mí una vez, Allah derramará diez bendiciones sobre él.»",
     "challenge.reward_ref": "— El Profeta Muhammad ﷺ (transmitido por Muslim)",
     "challenge.share_label": "Compartir el desafío",
+    "challenge.share_invite": "Únete al Desafío de los Mil Millones de Salaatu ʿAlaa Nabii ﷺ con la comunidad KSN. ¡Juntos, oremos por el Profeta Muhammad ﷺ hasta los mil millones!",
 
     // Don Page
     "don.overline": "Apoyar a la Dahira",
@@ -4113,6 +4117,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     "challenge.reward_fr": "«مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا»",
     "challenge.reward_ref": "— النبي محمد ﷺ (رواه مسلم)",
     "challenge.share_label": "شارك التحدي",
+    "challenge.share_invite": "انضم إلى تحدي المليار صلاة على النبي ﷺ مع جماعة KSN. معًا نصلي على النبي محمد ﷺ حتى المليار!",
 
     // Don Page
     "don.overline": "دعم الدائرة",

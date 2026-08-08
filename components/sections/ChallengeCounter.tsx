@@ -1,53 +1,45 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FaPenToSquare } from "react-icons/fa6";
 import {
-  estimatedChallengeStats,
   CHALLENGE_TARGET,
   fmtNumber,
   progressTowardTarget,
-  type ChallengeStats,
+  subscribeChallengeTotal,
+  getChallengeTotal,
+  setChallengeTotal,
 } from "@/lib/challenge";
-import { useVisibleInterval } from "@/lib/useVisibleInterval";
 import { useT } from "@/lib/i18n/context";
+import { useAuth } from "@/lib/auth-context";
 import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
+import ShareButton from "@/components/ui/ShareButton";
 
-type Tab = "thisWeek" | "lastWeek" | "today" | "thisMonth" | "lastMonth";
-
-/** Compteur live du challenge 1 milliard.
- *  Aujourd'hui : estimation animee, basee sur le rythme reel de l'app.
- *  Demain : branche sur Firestore KIPPAANGOG via une 2e Firebase app. */
+/** Compteur LIVE du challenge 1 milliard.
+ *  Total réel piloté par l'admin (Firestore settings/challenge), lu en
+ *  temps réel via onSnapshot. Démarre à 0 tant que l'admin ne l'a pas défini. */
 export default function ChallengeCounter() {
   const { t } = useT();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
-  const TABS: { id: Tab; label: string }[] = [
-    { id: "thisWeek", label: t("challenge.thisWeek") },
-    { id: "lastWeek", label: t("challenge.lastWeek") },
-    { id: "today", label: t("challenge.today") },
-    { id: "thisMonth", label: t("challenge.thisMonth") },
-    { id: "lastMonth", label: t("challenge.lastMonth") },
-  ];
-
-  // null cote SSR pour eviter hydration mismatch sur Date.now()
-  const [stats, setStats] = useState<ChallengeStats | null>(null);
-  const [tab, setTab] = useState<Tab>("thisWeek");
+  const [total, setTotal] = useState<number | null>(null);
   const [displayTotal, setDisplayTotal] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
   const raf = useRef<number | null>(null);
 
-  // Premier tick cote client uniquement
+  // Abonnement temps réel au total
   useEffect(() => {
-    setStats(estimatedChallengeStats());
+    const unsub = subscribeChallengeTotal((value) => setTotal(value));
+    return () => unsub();
   }, []);
 
-  // Mise a jour des stats brutes — pause quand l'onglet est cache
-  useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
-
-  // Animation fluide du compteur principal (tween 60fps).
-  // S'arrete des qu'on a rattrape la cible pour eviter une boucle rAF
-  // infinie qui ferait chauffer l'iPhone.
+  // Animation fluide du compteur vers la valeur live (s'arrête à la cible)
   useEffect(() => {
-    if (!stats) return;
-    const target = stats.total;
+    if (total === null) return;
+    const target = total;
     function tick() {
       let reached = false;
       setDisplayTotal((current) => {
@@ -58,32 +50,35 @@ export default function ChallengeCounter() {
         }
         return Math.floor(current + diff * 0.08);
       });
-      if (!reached) {
-        raf.current = requestAnimationFrame(tick);
-      }
+      if (!reached) raf.current = requestAnimationFrame(tick);
     }
     raf.current = requestAnimationFrame(tick);
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [stats]);
+  }, [total]);
 
   const percent = progressTowardTarget(displayTotal);
-  const tabValue = (() => {
-    if (!stats) return 0;
-    switch (tab) {
-      case "thisWeek":
-        return stats.thisWeek;
-      case "lastWeek":
-        return Math.floor(7 * 24 * 3600 * (7_000_000 / (7 * 24 * 60 * 60)));
-      case "today":
-        return stats.today;
-      case "thisMonth":
-        return stats.thisMonth;
-      case "lastMonth":
-        return stats.lastMonth;
+
+  async function openEditor() {
+    const cur = await getChallengeTotal().catch(() => total ?? 0);
+    setDraft(String(cur));
+    setEditing(true);
+  }
+
+  async function saveTotal() {
+    const n = parseInt(draft.replace(/\D+/g, ""), 10);
+    if (isNaN(n)) return;
+    setSaving(true);
+    try {
+      await setChallengeTotal(n);
+      setEditing(false);
+    } finally {
+      setSaving(false);
     }
-  })();
+  }
+
+  const shareText = t("challenge.share_invite");
 
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
@@ -136,54 +131,71 @@ export default function ChallengeCounter() {
 
           {/* INDICATEUR LIVE */}
           <div className="mt-6 sm:mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-            {stats?.isLive ? (
-              <>
-                <span className="relative flex w-2.5 h-2.5">
-                  <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                  <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                </span>
-                <span className="text-xs font-bold text-emerald-300">
-                  {t("challenge.live")}
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="text-[#D4AF37]">📊</span>
-                <span className="text-xs font-medium text-white/70">
-                  {t("challenge.estimated")}
-                </span>
-              </>
+            <span className="relative flex w-2.5 h-2.5">
+              <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+              <span className="relative inline-flex w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            </span>
+            <span className="text-xs font-bold text-emerald-300">
+              {t("challenge.live")}
+            </span>
+          </div>
+
+          {/* ACTIONS : partager (tous) + mettre à jour (admin) */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <ShareButton
+              title={`${t("challenge.title")} — KSN`}
+              text={shareText}
+              variant="primary"
+              label={t("challenge.share_label")}
+              className="!px-6 !py-3.5 !rounded-2xl"
+            />
+            {isAdmin && !editing && (
+              <button
+                type="button"
+                onClick={openEditor}
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/15 transition"
+              >
+                <FaPenToSquare /> Mettre à jour le compteur
+              </button>
             )}
           </div>
-        </div>
 
-        {/* ONGLETS PAR PERIODE */}
-        <div className="relative z-10 mt-12 sm:mt-16">
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTab(t.id)}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
-                  tab === t.id
-                    ? "bg-[#D4AF37] text-[#0F7C55]"
-                    : "bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center backdrop-blur-md">
-            <p className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold">
-              {TABS.find((t) => t.id === tab)?.label}
-            </p>
-            <p className="font-display mt-3 text-4xl sm:text-5xl md:text-6xl font-bold text-white tabular-nums">
-              {fmtNumber(tabValue)}
-            </p>
-            <p className="mt-2 text-sm text-white/60">{t("challenge.offered")}</p>
-          </div>
+          {/* ÉDITEUR ADMIN */}
+          {isAdmin && editing && (
+            <div className="mt-5 max-w-md mx-auto bg-white/10 border border-white/20 rounded-2xl p-4 text-left">
+              <label className="block text-xs uppercase tracking-widest text-[#D4AF37] font-bold mb-2">
+                Total cumulé (Salaatu)
+              </label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="0"
+                className="w-full rounded-xl bg-white/90 text-[#0F7C55] font-bold px-4 py-3 outline-none tabular-nums"
+              />
+              <div className="flex gap-2 mt-3 justify-end">
+                <button
+                  type="button"
+                  onClick={() => setEditing(false)}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white/80 text-sm font-semibold"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={saveTotal}
+                  disabled={saving}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] text-sm font-bold disabled:opacity-50"
+                >
+                  {saving ? "Enregistrement…" : "Enregistrer"}
+                </button>
+              </div>
+              <p className="mt-2 text-[11px] text-white/50 leading-snug">
+                Visible en direct par tous les visiteurs dès l&apos;enregistrement.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </section>

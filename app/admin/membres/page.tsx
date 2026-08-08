@@ -63,6 +63,10 @@ export default function AdminMembresPage() {
   const [importOpen, setImportOpen] = useState(false);
   const [deletingAll, setDeletingAll] = useState(false);
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
+  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
+  const [previewPdfName, setPreviewPdfName] = useState<string>("");
+  const [pdfDocInstance, setPdfDocInstance] = useState<any>(null);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
   // Planche de cartes PDF (membres avec photo)
   const [printMembers, setPrintMembers] = useState<Member[] | null>(null);
   const [printQr, setPrintQr] = useState<Record<string, string>>({});
@@ -137,8 +141,13 @@ export default function AdminMembresPage() {
     }
   }
 
-  function handleExportPdf() {
+  async function handleExportPdf() {
     if (!canDelete) return;
+    setError("");
+    setPrintStatus("Génération du PDF...");
+    setPreviewModalOpen(true);
+    setPreviewPdfUrl(null);
+    setPdfDocInstance(null);
     const labelParts: string[] = [];
     if (fStatus !== "all") labelParts.push(STATUS_FR[fStatus]);
     if (fRegion !== "all") labelParts.push(fRegion);
@@ -146,9 +155,20 @@ export default function AdminMembresPage() {
     if (fProf !== "all") labelParts.push(fProf);
     if (search.trim()) labelParts.push(`« ${search.trim()} »`);
     const label = labelParts.length ? labelParts.join(" · ") : "Tous les membres";
-    exportMembersPdf(filtered, { filterLabel: label }).catch((e) =>
-      setError(e instanceof Error ? e.message : "Erreur lors de la génération du PDF")
-    );
+    const stamp = new Date().toISOString().slice(0, 10);
+    setPreviewPdfName(`membres-ksn-${stamp}.pdf`);
+
+    try {
+      const docInstance = await exportMembersPdf(filtered, { filterLabel: label });
+      const blobUrl = docInstance.output("bloburl");
+      setPdfDocInstance(docInstance);
+      setPreviewPdfUrl(typeof blobUrl === "string" ? blobUrl : blobUrl.toString());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la génération du PDF");
+      setPreviewModalOpen(false);
+    } finally {
+      setPrintStatus("");
+    }
   }
 
   // Planche de cartes à imprimer : uniquement les membres AVEC photo
@@ -162,6 +182,11 @@ export default function AdminMembresPage() {
       return;
     }
     setError("");
+    setPreviewModalOpen(true);
+    setPreviewPdfUrl(null);
+    setPdfDocInstance(null);
+    const stamp = new Date().toISOString().slice(0, 10);
+    setPreviewPdfName(`cartes-membres-ksn-${stamp}.pdf`);
     setPrintStatus(`Préparation de ${withPhoto.length} carte(s)…`);
     // Pré-génère les QR en local (data URL) — évite 1 appel réseau par carte.
     try {
@@ -194,8 +219,18 @@ export default function AdminMembresPage() {
             img.complete
               ? Promise.resolve()
               : new Promise((res) => {
-                  img.onload = () => res(null);
-                  img.onerror = () => res(null);
+                  const timer = setTimeout(() => {
+                    console.warn("Image load timeout:", img.src);
+                    res(null);
+                  }, 8000); // 8 seconds safety timeout
+                  img.onload = () => {
+                    clearTimeout(timer);
+                    res(null);
+                  };
+                  img.onerror = () => {
+                    clearTimeout(timer);
+                    res(null);
+                  };
                 })
           )
         );
@@ -205,12 +240,19 @@ export default function AdminMembresPage() {
           container.querySelectorAll<HTMLElement>(".print-card")
         );
         const { buildMemberCardsPdf } = await import("@/lib/member-cards-pdf");
-        await buildMemberCardsPdf(nodes, (done, total) => {
+        const docInstance = await buildMemberCardsPdf(nodes, (done, total) => {
           if (!cancelled) setPrintStatus(`Génération… ${done}/${total}`);
         });
+        if (!cancelled) {
+          const blobUrl = docInstance.output("bloburl");
+          setPdfDocInstance(docInstance);
+          setPreviewPdfUrl(typeof blobUrl === "string" ? blobUrl : blobUrl.toString());
+        }
       } catch (e) {
-        if (!cancelled)
+        if (!cancelled) {
           setError(e instanceof Error ? e.message : "Erreur lors de la planche PDF");
+          setPreviewModalOpen(false);
+        }
       } finally {
         if (!cancelled) {
           setPrintMembers(null);
@@ -652,6 +694,91 @@ export default function AdminMembresPage() {
             await reload();
           }}
         />
+      )}
+
+      {/* Modal d'aperçu PDF interactif */}
+      {previewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-[#F8F5EF]">
+              <div>
+                <h3 className="font-display font-bold text-[#0F7C55] text-lg">
+                  Aperçu du Document PDF
+                </h3>
+                {previewPdfName && (
+                  <p className="text-xs text-gray-500 font-mono mt-0.5">
+                    {previewPdfName}
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => {
+                  setPreviewModalOpen(false);
+                  setPreviewPdfUrl(null);
+                  setPdfDocInstance(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                <FaXmark className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 p-6 overflow-y-auto bg-gray-50 flex flex-col items-center justify-center min-h-[300px]">
+              {!previewPdfUrl ? (
+                <div className="text-center py-12 flex flex-col items-center gap-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0F7C55]"></div>
+                  <div>
+                    <p className="font-semibold text-gray-700">
+                      Génération du PDF en cours...
+                    </p>
+                    <p className="text-sm text-gray-500 font-mono mt-2 bg-[#F8F5EF] py-1 px-3 rounded-lg border border-gray-100">
+                      {printStatus || "Calcul en cours..."}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-full flex flex-col gap-3">
+                  <p className="text-xs text-gray-500 text-center sm:text-left">
+                    💡 Sur certains navigateurs mobiles, l'aperçu PDF peut ne pas s'afficher directement. Utilisez le bouton "Télécharger" ci-dessous pour enregistrer le fichier.
+                  </p>
+                  <iframe
+                    src={previewPdfUrl}
+                    className="w-full h-[50vh] sm:h-[60vh] border border-gray-200 rounded-2xl bg-white shadow-inner"
+                    title="Aperçu du PDF"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 bg-[#F8F5EF]">
+              <button
+                type="button"
+                onClick={() => {
+                  setPreviewModalOpen(false);
+                  setPreviewPdfUrl(null);
+                  setPdfDocInstance(null);
+                }}
+                className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 transition"
+              >
+                Fermer
+              </button>
+              {previewPdfUrl && pdfDocInstance && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    pdfDocInstance.save(previewPdfName);
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#0F7C55] to-[#0A3D24] text-white font-bold text-sm hover:shadow-lg transition flex items-center gap-2"
+                >
+                  <FaFilePdf /> Télécharger le PDF
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </AdminShell>
   );

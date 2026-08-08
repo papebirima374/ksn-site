@@ -77,3 +77,44 @@ export function fmtNumber(n: number): string {
 export function progressTowardTarget(total: number): number {
   return Math.min(100, (total / CHALLENGE_TARGET) * 100);
 }
+
+// ─── Compteur RÉEL (Firestore, piloté par l'admin) ──────────────────────────
+// Document unique : settings/challenge = { total: number, updatedAt: number }.
+// Lecture publique + écriture admin (déjà couvert par les règles settings/{id}).
+
+import { getDb } from "./firebase";
+import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
+
+/** Abonnement temps réel au total du challenge. Renvoie une fonction
+ *  de désabonnement. Le total vaut 0 tant que l'admin ne l'a pas défini. */
+export function subscribeChallengeTotal(
+  cb: (total: number, updatedAt: number | null) => void
+): () => void {
+  const db = getDb();
+  return onSnapshot(
+    doc(db, "settings", "challenge"),
+    (snap) => {
+      const d = snap.data() as { total?: number; updatedAt?: number } | undefined;
+      cb(typeof d?.total === "number" ? d.total : 0, d?.updatedAt ?? null);
+    },
+    () => cb(0, null)
+  );
+}
+
+/** Lecture ponctuelle (ex. pré-remplir le champ admin). */
+export async function getChallengeTotal(): Promise<number> {
+  const db = getDb();
+  const snap = await getDoc(doc(db, "settings", "challenge"));
+  const d = snap.data() as { total?: number } | undefined;
+  return typeof d?.total === "number" ? d.total : 0;
+}
+
+/** Écriture (admin uniquement, contrôlé par les règles Firestore). */
+export async function setChallengeTotal(total: number): Promise<void> {
+  const db = getDb();
+  await setDoc(
+    doc(db, "settings", "challenge"),
+    { total: Math.max(0, Math.floor(total)), updatedAt: Date.now() },
+    { merge: true }
+  );
+}

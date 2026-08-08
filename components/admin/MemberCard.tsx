@@ -87,14 +87,26 @@ export default function MemberCard({ member, size = "preview", proxyImages = fal
           className="absolute z-10 rounded-full overflow-hidden shadow-md"
           style={{ width: "5.2em", height: "5.2em", left: "1.2em", top: "0.9em", border: "0.1em solid #D4AF37", ...PRINT_FIX }}
         >
-          <Image
-            src="/logo/ksn-logo.png"
-            alt="Logo KSN"
-            fill
-            sizes="110px"
-            className="object-cover"
-            style={{ transform: "scale(1.2)" }}
-          />
+          {proxyImages ? (
+            // Chargement immédiat (pas de lazy) : la carte est rendue hors-écran
+            // pour la planche PDF, un next/image lazy ne se chargerait jamais.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src="/logo/ksn-logo.png"
+              alt="Logo KSN"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ transform: "scale(1.2)" }}
+            />
+          ) : (
+            <Image
+              src="/logo/ksn-logo.png"
+              alt="Logo KSN"
+              fill
+              sizes="110px"
+              className="object-cover"
+              style={{ transform: "scale(1.2)" }}
+            />
+          )}
         </div>
 
         {/* Titre centré (plus grand) */}

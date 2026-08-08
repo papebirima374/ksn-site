@@ -23,7 +23,10 @@ export async function GET(req: NextRequest) {
     return new Response("Hôte non autorisé", { status: 403 });
   }
   try {
-    const upstream = await fetch(parsed.toString());
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 6000);
+    const upstream = await fetch(parsed.toString(), { signal: controller.signal });
+    clearTimeout(timer);
     if (!upstream.ok) {
       return new Response("Image indisponible", { status: upstream.status });
     }

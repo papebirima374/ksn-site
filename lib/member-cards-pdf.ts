@@ -20,7 +20,7 @@ const GAP_Y = 3;
 export async function buildMemberCardsPdf(
   nodes: HTMLElement[],
   onProgress?: (done: number, total: number) => void
-): Promise<void> {
+): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
 
   const gridW = COLS * CARD_W + (COLS - 1) * GAP_X;
@@ -54,5 +54,5 @@ export async function buildMemberCardsPdf(
     onProgress?.(i + 1, nodes.length);
   }
 
-  doc.save(`cartes-membres-ksn-${new Date().toISOString().slice(0, 10)}.pdf`);
+  return doc;
 }

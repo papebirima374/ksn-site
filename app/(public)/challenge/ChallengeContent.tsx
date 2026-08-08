@@ -6,20 +6,17 @@ import {
   FaApple,
   FaGooglePlay,
   FaHandshakeAngle,
-  FaChartLine,
   FaHandsPraying,
   FaBookQuran,
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ChallengeCounter from "@/components/sections/ChallengeCounter";
-import ChallengeProgression from "@/components/sections/ChallengeProgression";
 import ShareButton from "@/components/ui/ShareButton";
 import SectionTabs from "@/components/ui/SectionTabs";
 import { LINKS } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
 const TABS = [
-  { id: "progression", labelKey: "tabs.progression", icon: <FaChartLine /> },
   { id: "participer", labelKey: "tabs.participer", icon: <FaHandsPraying /> },
   { id: "spirituel", labelKey: "tabs.spirituel", icon: <FaBookQuran /> },
 ];
@@ -64,7 +61,6 @@ export default function ChallengeContent() {
         tabs={TABS}
         renderPanel={(id) => (
           <>
-            {id === "progression" && <ChallengeProgression />}
             {id === "participer" && (
       <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
         <div className="bg-white rounded-[28px] sm:rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] p-6 sm:p-12 md:p-14">

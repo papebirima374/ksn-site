@@ -10,7 +10,10 @@ const GRAY = "#666666";
 
 async function loadLogoDataUrl(): Promise<string | null> {
   try {
-    const res = await fetch("/logo/ksn-logo.png");
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch("/logo/ksn-logo.png", { signal: controller.signal });
+    clearTimeout(timer);
     const blob = await res.blob();
     return await new Promise((resolve) => {
       const r = new FileReader();
@@ -38,7 +41,7 @@ function statusColor(s: string): [number, number, number] {
 export async function exportMembersPdf(
   members: Member[],
   opts?: { filterLabel?: string }
-): Promise<void> {
+): Promise<jsPDF> {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth(); // 595
   const pageH = doc.internal.pageSize.getHeight(); // 842
@@ -155,6 +158,5 @@ export async function exportMembersPdf(
     }
   }
 
-  const stamp = new Date().toISOString().slice(0, 10);
-  doc.save(`membres-ksn-${stamp}.pdf`);
+  return doc;
 }

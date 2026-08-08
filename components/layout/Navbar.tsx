@@ -71,24 +71,7 @@ export default function Navbar() {
         },
       ],
     },
-    {
-      kind: "group",
-      label: t("nav.spiritualite"),
-      children: [
-        {
-          label: t("nav.spiritualite"),
-          href: "/spiritualite",
-          description: "Salaatu du jour, bibliothèque, dhikrs et invocations",
-        },
-        {
-          label: "Éducation Islamique",
-          href: "/education",
-          description:
-            "Tazawwud-ss-Sighar de Cheikh Ahmadou Bamba — académie spirituelle",
-          badge: "À venir",
-        },
-      ],
-    },
+    { kind: "link", label: t("nav.spiritualite"), href: "/spiritualite" },
     { kind: "link", label: t("nav.media"), href: "/media" },
     { kind: "link", label: "Challenge", href: "/challenge" },
     { kind: "link", label: "Journée", href: "/journee-salaatu" },
