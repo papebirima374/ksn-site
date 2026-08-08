@@ -2,53 +2,37 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { FaArrowRight, FaBolt } from "react-icons/fa6";
+import { FaArrowRight } from "react-icons/fa6";
 import {
-  estimatedChallengeStats,
   CHALLENGE_TARGET,
   fmtNumber,
   progressTowardTarget,
-  type ChallengeStats,
+  subscribeChallengeTotal,
 } from "@/lib/challenge";
-import { useVisibleInterval } from "@/lib/useVisibleInterval";
 import { useT } from "@/lib/i18n/context";
 import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
-
-const STORAGE_KEY = "ksn-salaatu-count";
-const DATE_KEY = "ksn-salaatu-date";
-
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
+import MonCompteurDuJour from "@/components/sections/MonCompteurDuJour";
 
 /** Mini-compteur sur la home : teaser du Challenge 1 Milliard.
- *  Partage la meme source de donnees que /challenge (lib/challenge.ts)
+ *  Total REEL partage avec /challenge (Firestore settings/challenge, live)
  *  pour eviter toute incoherence de chiffres entre pages. */
 export default function CompteurSalaatu() {
   const { t } = useT();
 
-  // IMPORTANT : on initialise a null pour eviter une hydration mismatch.
-  // estimatedChallengeStats() depend de Date.now() qui differe entre le
-  // rendu serveur (SSR) et l'hydratation client. On remplit en useEffect.
-  const [stats, setStats] = useState<ChallengeStats | null>(null);
+  const [total, setTotal] = useState<number | null>(null);
   const [displayTotal, setDisplayTotal] = useState(0);
-  const [personal, setPersonal] = useState(0);
-  const [pulse, setPulse] = useState(false);
   const raf = useRef<number | null>(null);
 
-  // Tick initial cote client uniquement
+  // Abonnement temps reel au total du challenge
   useEffect(() => {
-    setStats(estimatedChallengeStats());
+    const unsub = subscribeChallengeTotal((value) => setTotal(value));
+    return () => unsub();
   }, []);
 
-  // Refresh stats brutes — uniquement quand l'onglet est visible
-  useVisibleInterval(() => setStats(estimatedChallengeStats()), 1000);
-
-  // Animation fluide du compteur : on s'arrete des qu'on a rattrape la cible
-  // pour eviter une boucle rAF infinie qui chauffe le mobile.
+  // Animation fluide du compteur : on s'arrete des qu'on a rattrape la cible.
   useEffect(() => {
-    if (!stats) return;
-    const target = stats.total;
+    if (total === null) return;
+    const target = total;
     function tick() {
       let reached = false;
       setDisplayTotal((current) => {
@@ -67,37 +51,7 @@ export default function CompteurSalaatu() {
     return () => {
       if (raf.current) cancelAnimationFrame(raf.current);
     };
-  }, [stats]);
-
-  // Compteur personnel quotidien (localStorage)
-  useEffect(() => {
-    const today = todayKey();
-    const savedDate = localStorage.getItem(DATE_KEY);
-    let val = 0;
-    if (savedDate !== today) {
-      localStorage.setItem(DATE_KEY, today);
-      localStorage.setItem(STORAGE_KEY, "0");
-    } else {
-      val = Number(localStorage.getItem(STORAGE_KEY) || "0");
-    }
-    setPersonal(val);
-  }, []);
-
-  const increment = () => {
-    const next = personal + 1;
-    setPersonal(next);
-    localStorage.setItem(STORAGE_KEY, String(next));
-    localStorage.setItem(DATE_KEY, todayKey());
-    setPulse(true);
-    setTimeout(() => setPulse(false), 200);
-  };
-
-  const reset = () => {
-    if (confirm(t("compteur.reset_confirm"))) {
-      setPersonal(0);
-      localStorage.setItem(STORAGE_KEY, "0");
-    }
-  };
+  }, [total]);
 
   const percent = progressTowardTarget(displayTotal);
 
@@ -160,48 +114,9 @@ export default function CompteurSalaatu() {
             </Link>
           </div>
 
-          {/* COLONNE DROITE — COMPTE UR PERSO */}
+          {/* COLONNE DROITE — MON COMPTEUR DU JOUR */}
           <div className="relative">
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[24px] sm:rounded-[35px] p-6 sm:p-10 text-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4">
-                <FaBolt className="text-[#D4AF37] text-xs" />
-                <span className="uppercase tracking-[0.2em] text-[#D4AF37] text-[10px] sm:text-xs font-bold">
-                  {t("compteur.perso_title")}
-                </span>
-              </div>
-
-              <div
-                className={`font-display mt-2 text-6xl sm:text-7xl md:text-8xl font-bold tabular-nums transition-transform ${
-                  pulse ? "scale-110 text-[#D4AF37]" : "text-white"
-                }`}
-              >
-                {personal}
-              </div>
-
-              <p className="mt-3 text-white/60 text-xs sm:text-sm">
-                {t("compteur.perso_desc")}
-              </p>
-
-              <button
-                type="button"
-                onClick={increment}
-                className="mt-6 sm:mt-8 w-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg shadow-xl hover:scale-105 active:scale-95 transition"
-              >
-                {t("compteur.perso_btn")}
-              </button>
-
-              <button
-                type="button"
-                onClick={reset}
-                className="mt-3 text-xs sm:text-sm text-white/50 hover:text-white/80 transition underline"
-              >
-                {t("compteur.reset")}
-              </button>
-
-              <p className="mt-5 sm:mt-6 text-xs text-white/50 italic">
-                {t("compteur.hadith")}
-              </p>
-            </div>
+            <MonCompteurDuJour />
           </div>
         </div>
       </div>

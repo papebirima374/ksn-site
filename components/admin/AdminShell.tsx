@@ -22,6 +22,7 @@ import {
   FaFilePdf,
   FaGraduationCap,
   FaCrown,
+  FaBullseye,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
@@ -39,6 +40,7 @@ const NAV = [
   { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" as const },
   { href: "/admin/documents", label: "Documents PDF", Icon: FaFilePdf, perm: "articles.write" as const },
   { href: "/admin/education", label: "Éducation & Culture", Icon: FaGraduationCap, perm: "education.write" as const },
+  { href: "/admin/challenge", label: "Compteur Challenge", Icon: FaBullseye, perm: null, adminOnly: true },
   { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
   { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
 ];

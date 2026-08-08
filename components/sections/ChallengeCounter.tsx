@@ -1,33 +1,25 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FaPenToSquare } from "react-icons/fa6";
 import {
   CHALLENGE_TARGET,
   fmtNumber,
   progressTowardTarget,
   subscribeChallengeTotal,
-  getChallengeTotal,
-  setChallengeTotal,
 } from "@/lib/challenge";
 import { useT } from "@/lib/i18n/context";
-import { useAuth } from "@/lib/auth-context";
 import SalaatuCalligraphy from "@/components/ui/SalaatuCalligraphy";
 import ShareButton from "@/components/ui/ShareButton";
 
 /** Compteur LIVE du challenge 1 milliard.
  *  Total réel piloté par l'admin (Firestore settings/challenge), lu en
- *  temps réel via onSnapshot. Démarre à 0 tant que l'admin ne l'a pas défini. */
+ *  temps réel via onSnapshot. Démarre à 0 tant que l'admin ne l'a pas défini.
+ *  La mise à jour du chiffre se fait côté ADMIN (/admin/challenge). */
 export default function ChallengeCounter() {
   const { t } = useT();
-  const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
 
   const [total, setTotal] = useState<number | null>(null);
   const [displayTotal, setDisplayTotal] = useState(0);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState("");
-  const [saving, setSaving] = useState(false);
   const raf = useRef<number | null>(null);
 
   // Abonnement temps réel au total
@@ -59,25 +51,6 @@ export default function ChallengeCounter() {
   }, [total]);
 
   const percent = progressTowardTarget(displayTotal);
-
-  async function openEditor() {
-    const cur = await getChallengeTotal().catch(() => total ?? 0);
-    setDraft(String(cur));
-    setEditing(true);
-  }
-
-  async function saveTotal() {
-    const n = parseInt(draft.replace(/\D+/g, ""), 10);
-    if (isNaN(n)) return;
-    setSaving(true);
-    try {
-      await setChallengeTotal(n);
-      setEditing(false);
-    } finally {
-      setSaving(false);
-    }
-  }
-
   const shareText = t("challenge.share_invite");
 
   return (
@@ -140,8 +113,8 @@ export default function ChallengeCounter() {
             </span>
           </div>
 
-          {/* ACTIONS : partager (tous) + mettre à jour (admin) */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {/* ACTION : partager (tous) */}
+          <div className="mt-8 flex items-center justify-center">
             <ShareButton
               title={`${t("challenge.title")} — KSN`}
               text={shareText}
@@ -149,53 +122,7 @@ export default function ChallengeCounter() {
               label={t("challenge.share_label")}
               className="!px-6 !py-3.5 !rounded-2xl"
             />
-            {isAdmin && !editing && (
-              <button
-                type="button"
-                onClick={openEditor}
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-sm hover:bg-white/15 transition"
-              >
-                <FaPenToSquare /> Mettre à jour le compteur
-              </button>
-            )}
           </div>
-
-          {/* ÉDITEUR ADMIN */}
-          {isAdmin && editing && (
-            <div className="mt-5 max-w-md mx-auto bg-white/10 border border-white/20 rounded-2xl p-4 text-left">
-              <label className="block text-xs uppercase tracking-widest text-[#D4AF37] font-bold mb-2">
-                Total cumulé (Salaatu)
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="0"
-                className="w-full rounded-xl bg-white/90 text-[#0F7C55] font-bold px-4 py-3 outline-none tabular-nums"
-              />
-              <div className="flex gap-2 mt-3 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setEditing(false)}
-                  className="px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white/80 text-sm font-semibold"
-                >
-                  Annuler
-                </button>
-                <button
-                  type="button"
-                  onClick={saveTotal}
-                  disabled={saving}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] text-sm font-bold disabled:opacity-50"
-                >
-                  {saving ? "Enregistrement…" : "Enregistrer"}
-                </button>
-              </div>
-              <p className="mt-2 text-[11px] text-white/50 leading-snug">
-                Visible en direct par tous les visiteurs dès l&apos;enregistrement.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </section>
