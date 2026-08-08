@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
 import {
-  getChallengeTotal,
   setChallengeTotal,
   CHALLENGE_TARGET,
   fmtNumber,
   progressTowardTarget,
+  subscribeChallengeTotal,
   subscribeContributions,
   deleteContribution,
   type Contribution,
@@ -76,20 +76,22 @@ export default function AdminChallengePage() {
 
   useEffect(() => {
     if (!isAdmin) return;
-    (async () => {
-      try {
-        const n = await getChallengeTotal();
-        setCurrent(n);
+    let first = true;
+    // Valeur actuelle EN DIRECT (reflète contributions/suppressions immédiatement)
+    const unsubTotal = subscribeChallengeTotal((n) => {
+      setCurrent(n);
+      if (first) {
         setDraft(String(n));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : "Erreur de chargement");
-      } finally {
-        setLoading(false);
+        first = false;
       }
-    })();
+      setLoading(false);
+    });
     reloadMedia();
-    const unsub = subscribeContributions(setContribs);
-    return () => unsub();
+    const unsubContribs = subscribeContributions(setContribs);
+    return () => {
+      unsubTotal();
+      unsubContribs();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
@@ -97,9 +99,7 @@ export default function AdminChallengePage() {
     if (!confirm(`Supprimer cette contribution de ${fmtNumber(c.amount)} Salaatu ?\n\nLe total sera diminué d'autant.`)) return;
     try {
       await deleteContribution(c.id, c.amount);
-      // Rafraîchit la valeur affichée (le décrément est déjà appliqué en base)
-      setCurrent((prev) => Math.max(0, prev - c.amount));
-      setDraft((prev) => String(Math.max(0, (parseInt(prev.replace(/\D+/g, ""), 10) || 0) - c.amount)));
+      // La « Valeur actuelle » se met à jour toute seule (abonnement live).
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur de suppression");
     }
