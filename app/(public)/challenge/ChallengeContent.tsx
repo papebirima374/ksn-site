@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   FaWhatsapp,
@@ -18,6 +19,8 @@ import ShareButton from "@/components/ui/ShareButton";
 import SectionTabs from "@/components/ui/SectionTabs";
 import { LINKS } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
+import { subscribeGammuDate } from "@/lib/challenge";
+import EventCountdown from "@/components/sections/EventCountdown";
 
 const TABS = [
   { id: "participer", labelKey: "tabs.participer", icon: <FaHandsPraying /> },
@@ -26,6 +29,13 @@ const TABS = [
 
 export default function ChallengeContent() {
   const { t } = useT();
+
+  const [gammuTarget, setGammuTarget] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsub = subscribeGammuDate(setGammuTarget);
+    return () => unsub();
+  }, []);
 
   const howToSteps = [
     {
@@ -59,6 +69,25 @@ export default function ChallengeContent() {
 
       {/* COMPTEUR LIVE — toujours visible */}
       <ChallengeCounter />
+
+      {/* COMPTE DE REBOURS GAMOU */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 -mt-10 sm:-mt-14">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-6">
+            <span className="uppercase tracking-[0.25em] text-[#D4AF37] font-semibold text-[11px] sm:text-xs">
+              {t("challenge.countdown_overline")}
+            </span>
+            <h3 className="font-display mt-2 text-2xl sm:text-3xl font-bold text-white">
+              {t("challenge.countdown_title")}
+            </h3>
+          </div>
+          {gammuTarget ? (
+            <EventCountdown target={gammuTarget} passedLabel={t("countdown.gammu_passed")} />
+          ) : (
+            <div className="h-[140px] rounded-3xl bg-white/5 animate-pulse" />
+          )}
+        </div>
+      </div>
 
       {/* MON COMPTEUR DU JOUR + CONTRIBUTION (toujours visibles) */}
       <section className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 -mt-8 sm:-mt-12 space-y-6">

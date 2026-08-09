@@ -1,0 +1,94 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { FaChevronRight, FaXmark } from "react-icons/fa6";
+import { useT } from "@/lib/i18n/context";
+
+export default function FloatingChallengeBanner() {
+  const { t } = useT();
+  const pathname = usePathname();
+
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const dismissed = localStorage.getItem("ksn-challenge-banner-dismissed");
+    if (!dismissed) {
+      const timer = setTimeout(() => {
+        setVisible(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  if (!mounted) return null;
+
+  const isExcludedRoute =
+    pathname === "/challenge" ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/espace-membre") ||
+    pathname.startsWith("/verifier-carte");
+
+  if (isExcludedRoute || !visible) return null;
+
+  const handleDismiss = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    localStorage.setItem("ksn-challenge-banner-dismissed", "1");
+    setVisible(false);
+  };
+
+  return (
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 30px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}} />
+      
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-xl animate-fade-in-up">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0A3D24] via-[#0F7C55] to-[#0A3D24] border border-[#D4AF37]/35 shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-4 sm:p-5 text-white flex items-center justify-between gap-4">
+          <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-[#D4AF37]/15 blur-2xl pointer-events-none" />
+
+          <button
+            onClick={handleDismiss}
+            className="absolute top-2.5 right-2.5 p-1 text-white/50 hover:text-white transition duration-200"
+            title="Fermer"
+          >
+            <FaXmark size={14} />
+          </button>
+
+          <div className="flex-1 pr-3">
+            <span className="inline-block bg-[#D4AF37] text-[#06251a] font-extrabold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded mb-1.5 shadow-sm">
+              Challenge 1 Milliard
+            </span>
+            <p className="text-xs sm:text-sm text-gray-100 font-medium leading-relaxed">
+              {t("banner.challenge_text")}
+            </p>
+          </div>
+
+          <Link
+            href="/challenge"
+            className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#D4AF37] text-[#06251a] hover:bg-[#F5D76E] px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition duration-300"
+          >
+            {t("banner.challenge_btn")} <FaChevronRight size={10} className="stroke-[3px]" />
+          </Link>
+        </div>
+      </div>
+    </>
+  );
+}

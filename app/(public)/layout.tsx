@@ -8,6 +8,7 @@ import CookieBanner from "@/components/layout/CookieBanner";
 import CartDrawer from "@/components/boutique/CartDrawer";
 import CartBadge from "@/components/boutique/CartBadge";
 import NotificationToast from "@/components/layout/NotificationToast";
+import FloatingChallengeBanner from "@/components/layout/FloatingChallengeBanner";
 import { I18nProvider } from "@/lib/i18n/context";
 import { AuthProvider } from "@/lib/auth-context";
 import { CartProvider } from "@/lib/cart-context";
@@ -33,6 +34,7 @@ export default function PublicLayout({
             <CartDrawer />
             <CookieBanner />
             <NotificationToast />
+            <FloatingChallengeBanner />
           </main>
         </CartProvider>
       </AuthProvider>

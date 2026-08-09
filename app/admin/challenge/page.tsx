@@ -12,7 +12,22 @@ import {
   subscribeContributions,
   deleteContribution,
   type Contribution,
+  addToChallengeTotal,
+  getChallengeSettings,
+  setGammuDate,
 } from "@/lib/challenge";
+
+function isoToLocalInput(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function localInputToIso(local: string): string {
+  const d = new Date(local);
+  return d.toISOString();
+}
 import {
   ChallengeMedia,
   addChallengeMedia,
@@ -39,6 +54,15 @@ export default function AdminChallengePage() {
   const [mComment, setMComment] = useState("");
   const [mFile, setMFile] = useState<File | null>(null);
   const [mUploading, setMUploading] = useState(false);
+
+  // Ajout de Salaatus (relatif)
+  const [amountToAdd, setAmountToAdd] = useState("");
+  const [addLabel, setAddLabel] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  // Date du Gàmmu
+  const [gammuDateInput, setGammuDateInput] = useState("");
+  const [savingGammu, setSavingGammu] = useState(false);
 
   async function reloadMedia() {
     try {
@@ -88,12 +112,66 @@ export default function AdminChallengePage() {
     });
     reloadMedia();
     const unsubContribs = subscribeContributions(setContribs);
+
+    // Charger les paramètres (dont la date du Gàmmu)
+    (async () => {
+      try {
+        const settings = await getChallengeSettings();
+        if (settings?.gammuDate) {
+          setGammuDateInput(isoToLocalInput(settings.gammuDate));
+        }
+      } catch (e) {
+        console.error("Erreur de chargement des paramètres", e);
+      }
+    })();
+
     return () => {
       unsubTotal();
       unsubContribs();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
+
+  async function handleAdd() {
+    const amt = parseInt(amountToAdd.replace(/\D+/g, ""), 10);
+    if (isNaN(amt) || amt <= 0) {
+      setError("Entrez un nombre positif de Salaatu à ajouter.");
+      return;
+    }
+    setAdding(true);
+    setError("");
+    setSuccess("");
+    try {
+      const label = addLabel.trim() || "Ajout admin";
+      await addToChallengeTotal(amt, label);
+      setAmountToAdd("");
+      setAddLabel("");
+      setSuccess(`✅ ${fmtNumber(amt)} Salaatu ajoutés avec succès au compteur collectif.`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur d'ajout");
+    } finally {
+      setAdding(false);
+    }
+  }
+
+  async function handleSaveGammu() {
+    if (!gammuDateInput) {
+      setError("Saisissez une date et une heure valides pour le Gàmmu.");
+      return;
+    }
+    setSavingGammu(true);
+    setError("");
+    setSuccess("");
+    try {
+      const iso = localInputToIso(gammuDateInput);
+      await setGammuDate(iso);
+      setSuccess("✅ Date du Gàmmu mise à jour avec succès.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur lors de la mise à jour de la date");
+    } finally {
+      setSavingGammu(false);
+    }
+  }
 
   async function removeContribution(c: Contribution) {
     if (!confirm(`Supprimer cette contribution de ${fmtNumber(c.amount)} Salaatu ?\n\nLe total sera diminué d'autant.`)) return;
@@ -161,81 +239,170 @@ export default function AdminChallengePage() {
       {loading ? (
         <p className="text-gray-500">Chargement…</p>
       ) : (
-        <div className="max-w-xl bg-white rounded-3xl shadow-md p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6 text-[#0F7C55]">
-            <div className="w-11 h-11 rounded-xl bg-[#F8F5EF] flex items-center justify-center text-[#B8860B]">
-              <FaBullseye />
+        <div className="space-y-6 max-w-xl">
+          {/* CARTE PRINCIPALE DU COMPTEUR */}
+          <div className="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-6 text-[#0F7C55]">
+              <div className="w-11 h-11 rounded-xl bg-[#F8F5EF] flex items-center justify-center text-[#B8860B]">
+                <FaBullseye />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Valeur actuelle</p>
+                <p className="font-display text-2xl font-bold tabular-nums">
+                  {fmtNumber(current)}
+                </p>
+              </div>
             </div>
+
+            {/* SECTION 1: AJOUTER UN LOT DE SALAATU (Relativement) */}
+            <div className="bg-[#F8F5EF]/50 border border-[#B8860B]/10 rounded-2xl p-4 sm:p-5 mb-6">
+              <h3 className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-3 flex items-center gap-2">
+                📿 Ajouter des Salaatu au total
+              </h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Nombre de Salaatu à ajouter</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={amountToAdd}
+                    onChange={(e) => setAmountToAdd(e.target.value)}
+                    placeholder="Ex: 5000"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-[#0F7C55] font-bold tabular-nums outline-none focus:border-[#0F7C55] text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] text-gray-500 mb-1">Description (ex: Relevé App KSN)</label>
+                  <input
+                    type="text"
+                    value={addLabel}
+                    onChange={(e) => setAddLabel(e.target.value)}
+                    placeholder="Facultatif (ex: Relevé du Dimanche)"
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-gray-700 outline-none focus:border-[#0F7C55] text-sm"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  disabled={adding || !amountToAdd}
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#0F7C55] text-white hover:bg-[#0A3D24] px-4 py-2.5 rounded-xl font-bold text-sm transition disabled:opacity-40"
+                >
+                  {adding ? "Ajout en cours…" : "Ajouter au compteur"}
+                </button>
+              </div>
+            </div>
+
+            <hr className="my-6 border-gray-100" />
+
+            {/* SECTION 2: FORCER OU CORRIGER LE TOTAL CUMULE */}
             <div>
-              <p className="text-xs text-gray-500">Valeur actuelle</p>
-              <p className="font-display text-2xl font-bold tabular-nums">
-                {fmtNumber(current)}
+              <h3 className="text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-3">
+                ⚙️ Ajuster ou forcer le total cumulé
+              </h3>
+              
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder="0"
+                  className="w-full rounded-xl border border-gray-200 px-4 py-3 text-[#0F7C55] font-bold tabular-nums text-lg outline-none focus:border-[#0F7C55]"
+                />
+
+                {/* Aperçu de la progression */}
+                <div>
+                  <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-full transition-all"
+                      style={{ width: `${Math.max(percent, 0.3)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between mt-2 text-xs text-gray-500 tabular-nums">
+                    <span className="text-[#B8860B] font-bold">{percent.toFixed(3)} %</span>
+                    <span>sur {fmtNumber(CHALLENGE_TARGET)}</span>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
+                    {error}
+                  </p>
+                )}
+                {success && (
+                  <p className="text-sm text-emerald-800 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+                    {success}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={save}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-5 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50"
+                  >
+                    <FaFloppyDisk /> {saving ? "Enregistrement…" : "Forcer le total"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm("Remettre le compteur à 0 ?")) setDraft("0");
+                    }}
+                    className="inline-flex items-center gap-2 bg-white border border-gray-200 text-[#0F7C55] px-4 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-50"
+                  >
+                    <FaArrowsRotate /> Remettre à 0
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-5 text-xs text-gray-500 leading-relaxed border-t border-gray-100 pt-4">
+              💡 Le total ci-dessus inclut <strong>tes saisies</strong> (relevé de
+              l&apos;app) <strong>et les contributions des visiteurs</strong> du site. Chaque contribution s&apos;ajoute automatiquement.
+            </p>
+          </div>
+
+          {/* CARTE COMPTE A REBOURS DU GAMOU */}
+          <div className="bg-white rounded-3xl shadow-md p-6 sm:p-8">
+            <div className="flex items-center gap-3 mb-4 text-[#0F7C55]">
+              <div className="w-11 h-11 rounded-xl bg-[#F8F5EF] flex items-center justify-center text-[#B8860B]">
+                <FaMoon />
+              </div>
+              <div>
+                <h3 className="font-display text-lg font-bold">Date du Gàmmu (Mawlid)</h3>
+                <p className="text-xs text-gray-500">Compte à rebours public</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">
+                  Date et heure cibles du Gàmmu
+                </label>
+                <input
+                  type="datetime-local"
+                  value={gammuDateInput}
+                  onChange={(e) => setGammuDateInput(e.target.value)}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-[#0F7C55] font-semibold outline-none focus:border-[#0F7C55]"
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSaveGammu}
+                disabled={savingGammu || !gammuDateInput}
+                className="inline-flex items-center gap-2 bg-[#0F7C55] text-white hover:bg-[#0A3D24] px-5 py-2.5 rounded-xl font-bold text-sm transition disabled:opacity-50"
+              >
+                <FaFloppyDisk /> {savingGammu ? "Enregistrement…" : "Enregistrer la date"}
+              </button>
+
+              <p className="text-xs text-gray-500 leading-relaxed border-t border-gray-100 pt-3">
+                ℹ️ La date saisie est convertie en UTC et synchronisée avec le compte à rebours de la page publique du challenge.
               </p>
             </div>
           </div>
-
-          <label className="block text-xs uppercase tracking-widest text-[#B8860B] font-bold mb-2">
-            Nouveau total cumulé (Salaatu)
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder="0"
-            className="w-full rounded-xl border border-gray-200 px-4 py-3 text-[#0F7C55] font-bold tabular-nums text-lg outline-none focus:border-[#0F7C55]"
-          />
-
-          {/* Aperçu de la progression */}
-          <div className="mt-4">
-            <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[#B8860B] to-[#D4AF37] rounded-full transition-all"
-                style={{ width: `${Math.max(percent, 0.3)}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-500 tabular-nums">
-              <span className="text-[#B8860B] font-bold">{percent.toFixed(3)} %</span>
-              <span>sur {fmtNumber(CHALLENGE_TARGET)}</span>
-            </div>
-          </div>
-
-          {error && (
-            <p className="mt-4 text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
-          )}
-          {success && (
-            <p className="mt-4 text-sm text-emerald-800 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-              {success}
-            </p>
-          )}
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={save}
-              disabled={saving}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#0F7C55] px-6 py-3 rounded-xl font-bold text-sm disabled:opacity-50"
-            >
-              <FaFloppyDisk /> {saving ? "Enregistrement…" : "Enregistrer"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm("Remettre le compteur à 0 ?")) setDraft("0");
-              }}
-              className="inline-flex items-center gap-2 bg-white border border-gray-200 text-[#0F7C55] px-5 py-3 rounded-xl font-semibold text-sm hover:bg-gray-50"
-            >
-              <FaArrowsRotate /> Remettre à 0
-            </button>
-          </div>
-
-          <p className="mt-5 text-xs text-gray-500 leading-relaxed border-t border-gray-100 pt-4">
-            💡 Le total ci-dessus inclut <strong>tes saisies</strong> (relevé de
-            l&apos;app) <strong>et les contributions des visiteurs</strong> du site
-            (ci-dessous). Chaque contribution s&apos;ajoute automatiquement.
-          </p>
         </div>
       )}
 
