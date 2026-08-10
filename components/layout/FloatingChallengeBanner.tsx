@@ -29,9 +29,7 @@ export default function FloatingChallengeBanner() {
 
   const isExcludedRoute =
     pathname === "/challenge" ||
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/espace-membre") ||
-    pathname.startsWith("/verifier-carte");
+    pathname.startsWith("/admin");
 
   if (isExcludedRoute || !visible) return null;
 
@@ -60,20 +58,20 @@ export default function FloatingChallengeBanner() {
         }
       `}} />
       
-      <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
+      <div className="fixed bottom-4 sm:bottom-6 inset-x-0 z-50 flex justify-center px-3 sm:px-4 pointer-events-none">
         <div className="w-full max-w-xl pointer-events-auto animate-fade-in-up">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0A3D24] via-[#0F7C55] to-[#0A3D24] border border-[#D4AF37]/35 shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-4 sm:p-5 text-white flex items-center justify-between gap-4">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0A3D24] via-[#0F7C55] to-[#0A3D24] border border-[#D4AF37]/35 shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-3.5 pr-9 sm:p-5 sm:pr-11 text-white flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-[#D4AF37]/15 blur-2xl pointer-events-none" />
 
             <button
               onClick={handleDismiss}
-              className="absolute top-2.5 right-2.5 p-1 text-white/50 hover:text-white transition duration-200"
+              className="absolute top-2 right-2 p-1.5 text-white/50 hover:text-white transition duration-200 z-10"
               title="Fermer"
             >
               <FaXmark size={14} />
             </button>
 
-            <div className="flex-1 pr-3">
+            <div className="min-w-0 flex-1">
               <span className="inline-block bg-[#D4AF37] text-[#06251a] font-extrabold text-[9px] uppercase tracking-wider px-2 py-0.5 rounded mb-1.5 shadow-sm">
                 Challenge 1 Milliard
               </span>
@@ -84,7 +82,7 @@ export default function FloatingChallengeBanner() {
 
             <Link
               href="/challenge"
-              className="flex-shrink-0 inline-flex items-center gap-1.5 bg-[#D4AF37] text-[#06251a] hover:bg-[#F5D76E] px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition duration-300"
+              className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-1.5 bg-[#D4AF37] text-[#06251a] hover:bg-[#F5D76E] px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition duration-300"
             >
               {t("banner.challenge_btn")} <FaChevronRight size={10} className="stroke-[3px]" />
             </Link>
