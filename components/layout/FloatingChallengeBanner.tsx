@@ -16,7 +16,7 @@ export default function FloatingChallengeBanner() {
   useEffect(() => {
     setMounted(true);
 
-    const dismissed = localStorage.getItem("ksn-challenge-banner-dismissed");
+    const dismissed = localStorage.getItem("ksn-challenge-banner-dismissed-v2");
     if (!dismissed) {
       const timer = setTimeout(() => {
         setVisible(true);
@@ -36,7 +36,7 @@ export default function FloatingChallengeBanner() {
   const handleDismiss = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    localStorage.setItem("ksn-challenge-banner-dismissed", "1");
+    localStorage.setItem("ksn-challenge-banner-dismissed-v2", "1");
     setVisible(false);
   };
 
@@ -58,7 +58,7 @@ export default function FloatingChallengeBanner() {
         }
       `}} />
       
-      <div className="fixed bottom-4 sm:bottom-6 inset-x-0 z-50 flex justify-center px-3 sm:px-4 pointer-events-none">
+      <div className="fixed inset-x-0 z-50 flex justify-center px-3 sm:px-4 pointer-events-none bottom-[calc(6.25rem_+_env(safe-area-inset-bottom))] md:bottom-6">
         <div className="w-full max-w-xl pointer-events-auto animate-fade-in-up">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0A3D24] via-[#0F7C55] to-[#0A3D24] border border-[#D4AF37]/35 shadow-[0_12px_40px_rgba(0,0,0,0.35)] p-3.5 pr-9 sm:p-5 sm:pr-11 text-white flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-[#D4AF37]/15 blur-2xl pointer-events-none" />
