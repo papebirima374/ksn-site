@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -35,7 +35,22 @@ import {
   deleteChallengeMedia,
 } from "@/lib/admin-data";
 import Image from "next/image";
-import { FaBullseye, FaFloppyDisk, FaArrowsRotate, FaTrash, FaClockRotateLeft, FaUser, FaImage, FaBullhorn, FaMoon } from "react-icons/fa6";
+import { FaBullseye, FaFloppyDisk, FaArrowsRotate, FaTrash, FaClockRotateLeft, FaUser, FaImage, FaBullhorn, FaMoon, FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
+
+/** Clé de jour local (YYYY-MM-DD) à partir d'une date/timestamp. */
+function dayKeyOf(ts: string | number): string {
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return "0000-00-00";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+/** Libellé lisible d'un jour (ex: « lundi 10 août »). */
+function formatDayLabel(key: string): string {
+  const d = new Date(key + "T00:00:00");
+  if (isNaN(d.getTime())) return key;
+  return d.toLocaleDateString("fr-FR", { weekday: "long", day: "2-digit", month: "long" });
+}
 
 export default function AdminChallengePage() {
   const { user } = useAuth();
@@ -48,6 +63,9 @@ export default function AdminChallengePage() {
   const [draft, setDraft] = useState("");
   const [current, setCurrent] = useState(0);
   const [contribs, setContribs] = useState<Contribution[]>([]);
+  // Filtres de l'historique des contributions
+  const [contribSearch, setContribSearch] = useState("");
+  const [contribDay, setContribDay] = useState("all");
   // Médias (annonces / Jour J)
   const [media, setMedia] = useState<ChallengeMedia[]>([]);
   const [mType, setMType] = useState<ChallengeMedia["type"]>("annonce");
@@ -184,6 +202,29 @@ export default function AdminChallengePage() {
   }
 
   const contribTotal = contribs.reduce((s, c) => s + (c.amount || 0), 0);
+
+  // Jours disponibles (avec compteur), triés du plus récent au plus ancien
+  const availableDays = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const c of contribs) {
+      const k = dayKeyOf(c.createdAt);
+      map.set(k, (map.get(k) || 0) + 1);
+    }
+    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+  }, [contribs]);
+
+  // Contributions filtrées (par jour + par nom)
+  const filteredContribs = useMemo(() => {
+    const q = contribSearch.trim().toLowerCase();
+    return contribs.filter((c) => {
+      if (contribDay !== "all" && dayKeyOf(c.createdAt) !== contribDay) return false;
+      if (q && !(c.name || "anonyme").toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [contribs, contribDay, contribSearch]);
+
+  const filteredTotal = filteredContribs.reduce((s, c) => s + (c.amount || 0), 0);
+  const isFiltered = contribDay !== "all" || contribSearch.trim() !== "";
 
   async function save() {
     const n = parseInt(draft.replace(/\D+/g, ""), 10);
@@ -409,22 +450,74 @@ export default function AdminChallengePage() {
       {/* ── HISTORIQUE DES CONTRIBUTIONS DES VISITEURS ── */}
       {!loading && (
         <div className="max-w-2xl bg-white rounded-3xl shadow-md p-6 sm:p-8 mt-6">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <h2 className="font-display text-xl font-bold text-[#0F7C55] flex items-center gap-2">
               <FaClockRotateLeft className="text-[#B8860B]" /> Contributions des visiteurs
             </h2>
             <span className="text-sm text-gray-500 tabular-nums">
-              {contribs.length} · {fmtNumber(contribTotal)} Salaatu
+              {filteredContribs.length} · {fmtNumber(filteredTotal)} Salaatu
+              {isFiltered && (
+                <span className="text-gray-400"> (sur {contribs.length})</span>
+              )}
             </span>
           </div>
+
+          {/* Barre de filtres : recherche par nom + filtre par jour */}
+          {contribs.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-2 mb-4">
+              <div className="relative flex-1">
+                <FaMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
+                <input
+                  type="text"
+                  value={contribSearch}
+                  onChange={(e) => setContribSearch(e.target.value)}
+                  placeholder="Rechercher un nom…"
+                  className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-9 py-2 text-sm text-[#0F7C55] outline-none focus:border-[#0F7C55]"
+                />
+                {contribSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setContribSearch("")}
+                    title="Effacer"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full text-gray-400 hover:bg-gray-100 flex items-center justify-center"
+                  >
+                    <FaXmark className="text-xs" />
+                  </button>
+                )}
+              </div>
+              <select
+                value={contribDay}
+                onChange={(e) => setContribDay(e.target.value)}
+                className="rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-[#0F7C55] font-medium outline-none focus:border-[#0F7C55] capitalize"
+              >
+                <option value="all">Tous les jours ({contribs.length})</option>
+                {availableDays.map(([k, n]) => (
+                  <option key={k} value={k}>
+                    {formatDayLabel(k)} ({n})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {contribs.length === 0 ? (
             <p className="text-gray-500 text-sm py-4 text-center">
               Aucune contribution pour l&apos;instant. Elles apparaîtront ici en direct.
             </p>
+          ) : filteredContribs.length === 0 ? (
+            <p className="text-gray-500 text-sm py-6 text-center">
+              Aucun résultat pour ce filtre.{" "}
+              <button
+                type="button"
+                onClick={() => { setContribSearch(""); setContribDay("all"); }}
+                className="text-[#0F7C55] font-semibold underline"
+              >
+                Réinitialiser
+              </button>
+            </p>
           ) : (
-            <ul className="divide-y divide-gray-100">
-              {contribs.map((c) => (
+            <ul className="divide-y divide-gray-100 max-h-[30rem] overflow-y-auto -mx-2 px-2">
+              {filteredContribs.map((c) => (
                 <li key={c.id} className="flex items-center gap-3 py-3">
                   <div className="w-9 h-9 rounded-full bg-[#F8F5EF] flex items-center justify-center text-[#B8860B] flex-shrink-0">
                     <FaUser className="text-sm" />
