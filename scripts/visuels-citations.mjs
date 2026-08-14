@@ -289,7 +289,7 @@ for (const brute of citations) {
     ...brute,
     signature: brute.signature || data.signatureParDefaut,
   };
-  const theme = args.theme || citation.theme || "vert";
+  const theme = args.theme || citation.theme || data.themeParDefaut || "nuit";
   const suffixe = args.theme ? `-${args.theme}` : "";
   for (const format of formats) {
     const p = await browser.newPage();

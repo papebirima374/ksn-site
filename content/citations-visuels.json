@@ -1,11 +1,30 @@
 {
   "signatureParDefaut": "Usmaan Sall Barñi",
+  "themeParDefaut": "nuit",
   "citations": [
     {
       "id": "01-saxoo-salaatu",
       "texte": "Saxoo Salaatu Alaa Nabii dina yómbal nek Sherif",
       "signature": "Usmaan Sall Barñi",
-      "theme": "vert"
+      "theme": "nuit"
+    },
+    {
+      "id": "02-salaatu-gaaw",
+      "texte": "Salaatu Alaa nabi moo gaaw ci lepp lu nit di sakku",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "03-xamal-rassuulullaahi",
+      "texte": "Xamal ne ni nga mel ci Salaatu Alaa nabi noonu nga mel ci RassuululLaahi",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "04-loo-jendee",
+      "texte": "Loo jëndee Salaatu Alaa nabi dula rëcci",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
     }
   ]
 }

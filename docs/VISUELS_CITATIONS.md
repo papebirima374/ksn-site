@@ -19,7 +19,8 @@ Générateur de visuels islamiques carrés (1080×1080) et story (1080×1920)
 - `id` : sert de nom de fichier, en minuscules sans espace.
 - `texte` : jamais retouché par le script (orthographe wolof conservée).
 - `signature` : facultatif, sinon `signatureParDefaut` du fichier.
-- `theme` : `vert` (défaut), `nuit`, `creme`, `emeraude`.
+- `theme` : `nuit` (défaut du projet), `vert`, `creme`, `emeraude`.
+  Le défaut se change une fois pour toutes via `themeParDefaut`.
 - `mention` : facultatif, petite ligne en capitales sous la signature.
 
 ## Générer
