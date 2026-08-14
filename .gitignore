@@ -51,3 +51,6 @@ next-env.d.ts
 /docs/membres-import.json
 
 .vercel
+
+# cache polices du generateur de visuels
+/scripts/.fonts-cache
