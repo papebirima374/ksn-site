@@ -25,6 +25,42 @@
       "texte": "Loo jëndee Salaatu Alaa nabi dula rëcci",
       "signature": "Usmaan Sall Barñi",
       "theme": "nuit"
+    },
+    {
+      "id": "05-begg-salaatu",
+      "texte": "Bëgg Salaatu Ala Nabi day firndé sopp RassuululLaah",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "06-baril-xamme",
+      "texte": "Baril Salaatu Alaa Nabi dina tax RassuululLaah xamme la",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "07-yombal-naan",
+      "texte": "Saxoo Salaatu Alaa Nabi dina yombal ñaan gu nangu",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "08-buntu-ubbeeku",
+      "texte": "Buntu bu të ubbeeku dafa dajee dul ak Salaatu Alaa Nabi",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "09-feebaru-cer",
+      "texte": "Feebaru cër, Salaatu Alaa Nabi garab la ci",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
+    },
+    {
+      "id": "10-feebaru-xol",
+      "texte": "Feebaru xol Salaatu Alaa Nabi moo ci man dara",
+      "signature": "Usmaan Sall Barñi",
+      "theme": "nuit"
     }
   ]
 }

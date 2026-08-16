@@ -168,13 +168,13 @@ body {
 .corps { flex:1; display:flex; align-items:center; justify-content:center;
   width:100%; padding:${story ? "26px 4px" : "10px 4px"}; }
 .citation { position:relative; color:${t.texte}; font-weight:700; line-height:1.26;
-  letter-spacing:.004em; max-width:${story ? 800 : 790}px; text-wrap:balance;
+  letter-spacing:.004em; max-width:${story ? 770 : 748}px; text-wrap:balance;
   text-shadow:0 2px 26px rgba(0,0,0,${theme === "creme" ? 0.06 : 0.4}); }
 .citation::before, .citation::after {
   font-family:"Playfair Display", serif; color:${t.or}; opacity:.42; font-weight:900;
   position:absolute; line-height:1; font-size:104px; }
-.citation::before { content:"\\201C"; left:-56px; top:-42px; }
-.citation::after  { content:"\\201D"; right:-56px; bottom:-46px; }
+.citation::before { content:"\\201C"; left:-62px; top:-42px; }
+.citation::after  { content:"\\201D"; right:-62px; bottom:-46px; }
 
 .pied { display:flex; flex-direction:column; align-items:center; gap:${story ? 24 : 18}px;
   padding-bottom:${story ? 44 : 10}px; width:100%; }
