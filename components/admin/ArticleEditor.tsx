@@ -196,21 +196,24 @@ export default function ArticleEditor({ initial }: Props) {
         primaryLang,
         translations,
       };
+      // Firestore refuse les valeurs `undefined` : on n'ajoute publishedAt
+      // que lorsque l'article est publie.
       if (initial) {
-        await updateArticle(initial.id, {
-          ...shared,
-          publishedAt:
-            status === "published"
-              ? initial.publishedAt ?? Date.now()
-              : undefined,
-        });
+        const patch: Partial<Article> = { ...shared };
+        if (status === "published") {
+          patch.publishedAt = initial.publishedAt ?? Date.now();
+        }
+        await updateArticle(initial.id, patch);
       } else {
-        await createArticle({
+        const payload: Omit<Article, "id" | "createdAt" | "updatedAt"> = {
           ...shared,
-          publishedAt: status === "published" ? Date.now() : undefined,
           authorId: user.uid,
           authorName: user.displayName ?? user.email,
-        });
+        };
+        if (status === "published") {
+          payload.publishedAt = Date.now();
+        }
+        await createArticle(payload);
       }
       router.push("/admin/articles");
     } catch (e) {
