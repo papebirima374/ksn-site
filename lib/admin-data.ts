@@ -220,12 +220,16 @@ export async function deleteArticle(id: string) {
   await deleteDoc(doc(db, "articles", id));
 }
 
-export async function uploadArticleCover(file: File): Promise<string> {
+export async function uploadArticleImage(file: File): Promise<string> {
   const bucket = getBucket();
   const path = `articles/${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
   const r = ref(bucket, path);
   await uploadBytes(r, file);
   return getDownloadURL(r);
+}
+
+export async function uploadArticleCover(file: File): Promise<string> {
+  return uploadArticleImage(file);
 }
 
 // ============ SALAATU DU JOUR ============
