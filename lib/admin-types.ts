@@ -422,6 +422,35 @@ export type Testimonial = {
 
 export type ArticleStatus = "draft" | "published";
 
+/** Photo de la galerie d'un article (affichee sous le texte). */
+export type ArticleImage = {
+  url: string;
+  /** Legende facultative affichee sous la photo. */
+  caption?: string;
+};
+
+/** Langues supportees pour un article multilingue. */
+export type ArticleLang = "fr" | "ar" | "en" | "wo";
+
+export const ARTICLE_LANGS: {
+  id: ArticleLang;
+  label: string;
+  native: string;
+  dir: "ltr" | "rtl";
+}[] = [
+  { id: "fr", label: "Francais", native: "Francais", dir: "ltr" },
+  { id: "ar", label: "Arabe", native: "العربية", dir: "rtl" },
+  { id: "en", label: "Anglais", native: "English", dir: "ltr" },
+  { id: "wo", label: "Wolof", native: "Wolof", dir: "ltr" },
+];
+
+/** Contenu d'un article dans UNE langue donnee. */
+export type ArticleTranslation = {
+  title: string;
+  excerpt: string;
+  content: string;
+};
+
 export type Article = {
   id: string;
   title: string;
@@ -429,13 +458,34 @@ export type Article = {
   excerpt: string;
   content: string;
   coverImage?: string;
+  /** Photos supplementaires : galerie en bas d'article. */
+  images?: ArticleImage[];
   status: ArticleStatus;
   publishedAt?: number;
   authorId: string;
   authorName?: string;
   createdAt: number;
   updatedAt: number;
+  /** Langue des champs title/excerpt/content ci-dessus. Defaut "fr".
+   *  Les anciens articles (sans ce champ) sont traites comme "fr". */
+  primaryLang?: ArticleLang;
+  /** Traductions additionnelles par langue (hors langue principale).
+   *  Absent = article monolingue (comportement historique). */
+  translations?: Partial<Record<ArticleLang, ArticleTranslation>>;
 };
+
+/** Renvoie la liste ordonnee des langues reellement disponibles pour un
+ *  article : langue principale d'abord, puis traductions non vides. */
+export function articleLangs(a: Pick<Article, "primaryLang" | "translations">): ArticleLang[] {
+  const primary = a.primaryLang ?? "fr";
+  const order: ArticleLang[] = ["fr", "ar", "en", "wo"];
+  const has = (l: ArticleLang) => {
+    if (l === primary) return true;
+    const t = a.translations?.[l];
+    return Boolean(t && (t.title?.trim() || t.content?.trim()));
+  };
+  return order.filter(has);
+}
 
 export type GalleryItem = {
   id: string;
