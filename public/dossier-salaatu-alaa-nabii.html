@@ -96,9 +96,6 @@ body {
 
 h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 
-/* Ligature « ṣallā Llāhu ʿalayhi wa-sallam » — rendue par Amiri */
-.salla { font-family: var(--f-arabe); font-size: 1.28em; line-height: 1; }
-
 .eyebrow {
   font-family: var(--f-ui);
   font-size: 11px;
@@ -152,16 +149,7 @@ h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
   display: block;
   background: #FFFDF8;
   padding: 3px;
-  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.55), 0 20px 48px -18px rgba(0, 0, 0, 0.7);
-}
-
-.arabe-couv {
-  font-family: var(--f-arabe);
-  font-size: clamp(24px, 4.4vw, 38px);
-  line-height: 1.5;
-  color: var(--or-clair);
-  direction: rtl;
-  margin: 0;
+  border: 2px solid rgba(212, 175, 55, 0.65);
 }
 
 .couv-label { color: var(--or-pale); }
@@ -677,23 +665,14 @@ tfoot td, tfoot th {
   border-bottom: 1px solid var(--filet-or);
 }
 
-.intercalaire .arabe {
-  font-family: var(--f-arabe);
-  font-size: clamp(24px, 4vw, 34px);
-  line-height: 1.7;
-  color: var(--titre);
-  direction: rtl;
-  margin: 0 auto;
-  max-width: 22ch;
-}
-
 .intercalaire .trad {
-  font-family: var(--f-lecture);
+  font-family: var(--f-display);
   font-style: italic;
-  font-size: 17.5px;
-  color: var(--encre-doux);
-  margin: 18px auto 0;
-  max-width: 54ch;
+  font-size: clamp(21px, 2.8vw, 27px);
+  line-height: 1.55;
+  color: var(--titre);
+  margin: 0 auto;
+  max-width: 40ch;
 }
 
 .intercalaire .source {
@@ -831,7 +810,7 @@ a:focus-visible {
   body { background: #FFFFFF; color: #171310; font-size: 11.5pt; }
   .couverture { break-after: page; }
   .section { break-inside: avoid; padding: 22px 0; }
-  .carte, .formule, .etape, .membre { break-inside: avoid; }
+  .carte, .formule, .etape, .membre, .intercalaire { break-inside: avoid; }
   .rail-sticky { position: static; }
   .pied { background: #FFFFFF; color: #171310; break-before: page; }
   .pied h2, .contact .nom { color: #082F22; }
@@ -850,8 +829,6 @@ a:focus-visible {
   <div class="couv-inner">
     <img class="sceau" src="/logo/ksn-logo.png" alt="Sceau de la Dahira Kippaangog Salaatu ʿAlaa Nabii" width="118" height="118" />
 
-    <p class="arabe-couv">الصلاة على النبي ﷺ</p>
-
     <div>
       <p class="eyebrow couv-label">Dossier de production &amp; de partenariat</p>
       <h1 class="couv-titre">Salaatu ʿAlaa&nbsp;Nabii</h1>
@@ -862,7 +839,7 @@ a:focus-visible {
 
     <p class="couv-chapeau">
       Un regard sur la place, la signification et la pratique de la prière sur le
-      Prophète&nbsp;<span class="salla">ﷺ</span>, à travers la parole des guides religieux, les témoignages des
+      Prophète, à travers la parole des guides religieux, les témoignages des
       fidèles et l'expérience vivante des communautés.
     </p>
 
@@ -923,7 +900,7 @@ a:focus-visible {
       <p class="chapo">
         Chaque année, la Dahira <strong>Kippaangog Salaatu ʿAlaa Nabii (KSN)</strong> réunit
         guides religieux et fidèles pour une journée entière consacrée à la prière sur le
-        Prophète <span class="salla">ﷺ</span>. L'édition du <strong>26 décembre 2026, à Touba</strong>, servira de point
+        Prophète. L'édition du <strong>26 décembre 2026, à Touba</strong>, servira de point
         de départ à un documentaire-reportage qui ira ensuite à la rencontre des guides et des
         fidèles, dans plusieurs villes, pour recueillir leurs enseignements et leurs
         témoignages.
@@ -994,7 +971,7 @@ a:focus-visible {
       <h2 class="titre-section">Trois voix, un même fil</h2>
       <p>
         À travers des entretiens avec des guides religieux et des témoignages de fidèles, le
-        film explore les différentes dimensions de la prière sur le Prophète <span class="salla">ﷺ</span>. Il donne la
+        film explore les différentes dimensions de la prière sur le Prophète. Il donne la
         parole à des personnes de références différentes, afin de présenter leurs explications,
         leurs enseignements et leur vécu.
       </p>
@@ -1029,7 +1006,6 @@ a:focus-visible {
 </main>
 
 <div class="intercalaire">
-  <p class="arabe">إِنَّ ٱللَّهَ وَمَلَٰٓئِكَتَهُۥ يُصَلُّونَ عَلَى ٱلنَّبِىِّ</p>
   <p class="trad">
     « Certes, Allah et Ses anges prient sur le Prophète. Ô vous qui croyez, priez sur lui et
     adressez-lui vos salutations. »
@@ -1058,7 +1034,7 @@ a:focus-visible {
         <li><strong>La parole des guides religieux</strong> mérite d'être documentée et préservée pendant qu'elle est disponible.</li>
         <li><strong>Les témoignages des fidèles</strong> apportent une perspective humaine que le texte seul ne restitue pas.</li>
         <li><strong>Un film bien réalisé</strong> touche un public bien plus large que l'événement lui-même, et pendant des années.</li>
-        <li><strong>Le sous-titrage</strong> ouvre le film à la diaspora et aux publics non lusophones des langues des intervenants.</li>
+        <li><strong>Le sous-titrage</strong> ouvre le film à la diaspora et aux publics qui ne parlent pas les langues des intervenants.</li>
       </ul>
     </div>
   </section>
