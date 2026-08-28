@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Dossier de production et de partenariat du documentaire-reportage Salaatu ʿAlaa Nabii — Dahira KSN, Touba, 26 décembre 2026." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/logo/ksn-logo.png" />
+<title>Salaatu ʿAlaa Nabii — Dossier de production</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" />
+
+<style>
+/* ============================================================
+   KSN — Dossier de production « Salaatu ʿAlaa Nabii »
+   Jetons repris de app/globals.css (identité KSN)
+   ============================================================ */
+
+:root {
+  /* Palette — état clair (parchemin) */
+  --nuit:        #06170F;
+  --emeraude-deep:#082F22;
+  --emeraude-dark:#0A3D24;
+  --emeraude:    #0F7C55;
+  --or:          #B8860B;
+  --or-clair:    #D4AF37;
+  --or-pale:     #E8D9A6;
+
+  --ground:      #FAF8F3;
+  --ground-alt:  #F3EDE0;
+  --surface:     #FFFDF8;
+  --encre:       #171310;
+  --encre-doux:  #4A443C;
+  --encre-tenu:  #7C7469;
+  --filet:       rgba(23, 19, 16, 0.12);
+  --filet-or:    rgba(184, 134, 11, 0.32);
+
+  --titre:       var(--emeraude-deep);
+  --accent:      var(--or);
+  --accent-vif:  var(--or-clair);
+
+  /* Typo */
+  --f-display: "Playfair Display", "Iowan Old Style", Georgia, serif;
+  --f-lecture: "Crimson Pro", Georgia, "Times New Roman", serif;
+  --f-ui:      "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-arabe:   "Amiri", "Scheherazade New", serif;
+
+  /* Rythme */
+  --colonne: 68ch;
+  --page: 1140px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:     #06140E;
+    --ground-alt: #0A2117;
+    --surface:    #0C2419;
+    --encre:      #EDE7DA;
+    --encre-doux: #B9C6BC;
+    --encre-tenu: #8AA093;
+    --filet:      rgba(237, 231, 218, 0.14);
+    --filet-or:   rgba(212, 175, 55, 0.34);
+    --titre:      #E8D9A6;
+    --accent:     var(--or-clair);
+    --accent-vif: var(--or-pale);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:     #06140E;
+  --ground-alt: #0A2117;
+  --surface:    #0C2419;
+  --encre:      #EDE7DA;
+  --encre-doux: #B9C6BC;
+  --encre-tenu: #8AA093;
+  --filet:      rgba(237, 231, 218, 0.14);
+  --filet-or:   rgba(212, 175, 55, 0.34);
+  --titre:      #E8D9A6;
+  --accent:     var(--or-clair);
+  --accent-vif: var(--or-pale);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--encre);
+  font-family: var(--f-lecture);
+  font-size: 18px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+
+/* Ligature « ṣallā Llāhu ʿalayhi wa-sallam » — rendue par Amiri */
+.salla { font-family: var(--f-arabe); font-size: 1.28em; line-height: 1; }
+
+.eyebrow {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   COUVERTURE — reprise du hero du site (toujours en émeraude)
+   ============================================================ */
+
+.couverture {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(15, 124, 85, 0.42) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(184, 134, 11, 0.14) 0%, transparent 60%),
+    linear-gradient(168deg, #0A3D24 0%, #082F22 45%, #06170F 100%);
+  color: #F1EDE2;
+  padding: clamp(48px, 8vw, 96px) 24px clamp(40px, 6vw, 72px);
+}
+
+/* Motif discret de points, rappel du fond du site */
+.couverture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(212, 175, 55, 0.16) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.couverture > * { position: relative; }
+
+.couv-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+}
+
+.sceau {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: block;
+  background: #FFFDF8;
+  padding: 3px;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.55), 0 20px 48px -18px rgba(0, 0, 0, 0.7);
+}
+
+.arabe-couv {
+  font-family: var(--f-arabe);
+  font-size: clamp(24px, 4.4vw, 38px);
+  line-height: 1.5;
+  color: var(--or-clair);
+  direction: rtl;
+  margin: 0;
+}
+
+.couv-label { color: var(--or-pale); }
+
+.couv-titre {
+  font-size: clamp(40px, 8.4vw, 82px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.couv-sous {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--or-clair);
+  margin: 0;
+}
+
+.couv-chapeau {
+  max-width: 62ch;
+  font-size: 19px;
+  line-height: 1.7;
+  color: rgba(241, 237, 226, 0.86);
+  margin: 0;
+}
+
+.filet-or {
+  width: 92px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--or-clair), transparent);
+  border: 0;
+  margin: 0;
+}
+
+.couv-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  font-family: var(--f-ui);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+}
+
+.jeton {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 999px;
+  padding: 7px 16px;
+  color: var(--or-pale);
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+}
+
+.jeton strong { color: #FFFFFF; font-weight: 600; }
+
+/* ============================================================
+   BANDEAU CHIFFRES CLÉS
+   ============================================================ */
+
+.chiffres {
+  background: var(--ground-alt);
+  border-top: 1px solid var(--filet-or);
+  border-bottom: 1px solid var(--filet-or);
+}
+
+.chiffres-grille {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 34px 24px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+
+.chiffre { text-align: center; }
+
+.chiffre dt {
+  font-family: var(--f-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--encre-tenu);
+  margin-bottom: 8px;
+}
+
+.chiffre dd {
+  margin: 0;
+  font-family: var(--f-display);
+  font-size: clamp(21px, 2.6vw, 30px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--titre);
+  font-variant-numeric: tabular-nums;
+}
+
+.chiffre dd small {
+  display: block;
+  font-family: var(--f-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--encre-tenu);
+  margin-top: 4px;
+}
+
+/* ============================================================
+   CORPS DU DOSSIER — grille asymétrique
+   ============================================================ */
+
+.dossier {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 24px 96px;
+}
+
+.section {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 0 40px;
+  padding: 56px 0;
+  border-bottom: 1px solid var(--filet);
+}
+
+.section:last-of-type { border-bottom: 0; }
+
+.rail { position: relative; }
+
+.rail-sticky { position: sticky; top: 32px; }
+
+.numero {
+  font-family: var(--f-display);
+  font-size: 54px;
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--accent);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.rail .eyebrow {
+  color: var(--accent);
+  margin-top: 12px;
+  display: block;
+}
+
+.corps { min-width: 0; }
+
+.corps > * + * { margin-top: 20px; }
+
+.titre-section {
+  font-size: clamp(27px, 3.6vw, 38px);
+  font-weight: 700;
+  line-height: 1.14;
+  letter-spacing: -0.015em;
+  color: var(--titre);
+}
+
+.corps p { max-width: var(--colonne); margin: 0; color: var(--encre-doux); }
+
+.corps p.chapo {
+  font-size: 20.5px;
+  line-height: 1.68;
+  color: var(--encre);
+}
+
+.corps p strong { color: var(--titre); font-weight: 600; }
+
+/* --- Cartes --- */
+
+.cartes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.carte {
+  background: var(--surface);
+  border: 1px solid var(--filet);
+  border-top: 2px solid var(--filet-or);
+  border-radius: 3px;
+  padding: 22px 22px 24px;
+}
+
+.carte h3 {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--titre);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+
+.carte p { font-size: 16.5px; line-height: 1.65; }
+
+/* --- Listes --- */
+
+.liste { list-style: none; padding: 0; margin: 0; max-width: var(--colonne); }
+
+.liste li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 11px;
+  color: var(--encre-doux);
+}
+
+.liste li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.72em;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+
+.liste li strong { color: var(--titre); font-weight: 600; }
+
+/* --- Tableau ligne éditoriale --- */
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-ui);
+  font-size: 15px;
+}
+
+th, td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--filet);
+  vertical-align: top;
+}
+
+thead th {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--encre-tenu);
+  border-bottom: 1px solid var(--filet-or);
+}
+
+tbody th {
+  font-weight: 600;
+  color: var(--titre);
+  white-space: nowrap;
+  width: 32%;
+}
+
+tbody td { color: var(--encre-doux); }
+
+td.nombre, th.nombre {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+tfoot td, tfoot th {
+  border-top: 2px solid var(--filet-or);
+  border-bottom: 0;
+  font-weight: 700;
+  color: var(--titre);
+  font-size: 16px;
+}
+
+/* --- Graphique budget (construit à la main) --- */
+
+.budget { display: grid; gap: 13px; margin-top: 30px; }
+
+.poste {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr) 104px;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--f-ui);
+  font-size: 14px;
+}
+
+.poste-nom { color: var(--encre-doux); }
+
+.piste {
+  height: 12px;
+  background: var(--ground-alt);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.barre {
+  height: 100%;
+  background: linear-gradient(90deg, var(--emeraude) 0%, var(--emeraude-dark) 100%);
+  border-radius: 2px;
+}
+
+.poste.majeur .barre {
+  background: linear-gradient(90deg, var(--or-clair) 0%, var(--or) 100%);
+}
+
+.poste-val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--titre);
+}
+
+.legende {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-family: var(--f-ui);
+  font-size: 12.5px;
+  color: var(--encre-tenu);
+}
+
+.legende span { display: inline-flex; align-items: center; gap: 8px; }
+
+.pastille { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+.pastille.or { background: linear-gradient(90deg, var(--or-clair), var(--or)); }
+.pastille.vert { background: linear-gradient(90deg, var(--emeraude), var(--emeraude-dark)); }
+
+/* --- Rétroplanning --- */
+
+.planning { list-style: none; padding: 0; margin: 0; }
+
+.etape {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 0 28px;
+  padding: 0 0 26px 0;
+  position: relative;
+}
+
+.etape::before {
+  content: "";
+  position: absolute;
+  left: 161px;
+  top: 28px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--filet-or);
+}
+
+.etape:last-child::before { display: none; }
+
+.etape-date {
+  text-align: right;
+  padding-right: 4px;
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  padding-top: 4px;
+}
+
+.etape-corps { position: relative; }
+
+.etape-corps::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 10px;
+  width: 11px;
+  height: 11px;
+  background: var(--ground);
+  border: 2px solid var(--accent);
+  transform: rotate(45deg);
+}
+
+.etape.pivot .etape-corps::before { background: var(--accent); }
+
+.etape h3 { font-size: 19px; font-weight: 700; color: var(--titre); margin-bottom: 5px; }
+.etape p { font-size: 16.5px; }
+
+/* --- Formules de partenariat --- */
+
+.formules {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+@media (min-width: 600px) {
+  .formules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.formule {
+  background: var(--surface);
+  border: 1px solid var(--filet);
+  border-radius: 3px;
+  padding: 24px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.formule.phare {
+  border: 1px solid var(--filet-or);
+  background:
+    linear-gradient(180deg, rgba(184, 134, 11, 0.07) 0%, transparent 42%),
+    var(--surface);
+  box-shadow: 0 18px 40px -28px rgba(8, 47, 34, 0.55);
+}
+
+.formule-nom {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.formule-prix {
+  font-family: var(--f-display);
+  font-size: 29px;
+  font-weight: 700;
+  color: var(--titre);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.formule-prix small {
+  display: block;
+  font-family: var(--f-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--encre-tenu);
+  margin-top: 6px;
+}
+
+.formule ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 9px; }
+
+.formule li {
+  position: relative;
+  padding-left: 21px;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--encre-doux);
+}
+
+.formule li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  transform: rotate(45deg);
+}
+
+/* --- Équipe --- */
+
+.equipe {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 18px;
+}
+
+.membre {
+  border-left: 2px solid var(--filet-or);
+  padding: 4px 0 4px 20px;
+}
+
+.membre h3 { font-size: 20px; font-weight: 700; color: var(--titre); }
+
+.membre .role {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 6px 0 9px;
+}
+
+.membre p { font-size: 16px; line-height: 1.6; }
+
+/* --- Encadré / note --- */
+
+.note {
+  background: var(--ground-alt);
+  border-left: 3px solid var(--accent);
+  padding: 18px 22px;
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--encre-doux);
+  max-width: var(--colonne);
+}
+
+.note strong { color: var(--titre); font-weight: 600; }
+
+/* --- Citation arabe intercalaire --- */
+
+.intercalaire {
+  text-align: center;
+  padding: 62px 24px;
+  background: var(--ground-alt);
+  border-top: 1px solid var(--filet-or);
+  border-bottom: 1px solid var(--filet-or);
+}
+
+.intercalaire .arabe {
+  font-family: var(--f-arabe);
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.7;
+  color: var(--titre);
+  direction: rtl;
+  margin: 0 auto;
+  max-width: 22ch;
+}
+
+.intercalaire .trad {
+  font-family: var(--f-lecture);
+  font-style: italic;
+  font-size: 17.5px;
+  color: var(--encre-doux);
+  margin: 18px auto 0;
+  max-width: 54ch;
+}
+
+.intercalaire .source {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--encre-tenu);
+  margin-top: 12px;
+}
+
+/* ============================================================
+   PIED — contacts
+   ============================================================ */
+
+.pied {
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 0%, rgba(15, 124, 85, 0.32) 0%, transparent 62%),
+    linear-gradient(180deg, #082F22 0%, #06170F 100%);
+  color: #F1EDE2;
+  padding: 68px 24px 56px;
+}
+
+.pied-inner { max-width: var(--page); margin: 0 auto; }
+
+.pied .eyebrow { color: var(--or-clair); }
+
+.pied h2 {
+  font-size: clamp(26px, 3.6vw, 36px);
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 12px 0 14px;
+  max-width: 22ch;
+}
+
+.pied .accroche {
+  max-width: 60ch;
+  color: rgba(241, 237, 226, 0.82);
+  margin: 0 0 38px;
+}
+
+.contacts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(212, 175, 55, 0.28);
+}
+
+.contact .nom {
+  font-family: var(--f-display);
+  font-size: 21px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.contact .fonction {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--or-clair);
+  margin: 7px 0 10px;
+}
+
+.contact a,
+.contact span.tel {
+  display: block;
+  font-family: var(--f-ui);
+  font-size: 15.5px;
+  color: rgba(241, 237, 226, 0.9);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.contact a:hover { color: var(--or-clair); text-decoration: underline; }
+
+.contact a:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--or-clair);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.mentions {
+  margin-top: 42px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: rgba(241, 237, 226, 0.5);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  justify-content: space-between;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .chiffres-grille { grid-template-columns: repeat(2, 1fr); gap: 26px 18px; }
+  .chiffre:first-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 760px) {
+  body { font-size: 17px; }
+  .section { grid-template-columns: 1fr; gap: 0; padding: 44px 0; }
+  .rail { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .rail-sticky { position: static; display: contents; }
+  .numero { font-size: 34px; }
+  .rail .eyebrow { margin-top: 0; }
+  .poste { grid-template-columns: 1fr; gap: 5px; }
+  .poste-val { text-align: left; }
+  .piste { order: 3; }
+  .etape { grid-template-columns: 1fr; gap: 6px; }
+  .etape::before { display: none; }
+  .etape-corps::before { display: none; }
+  .etape { border-left: 2px solid var(--filet-or); padding-left: 18px; }
+  .etape-date { text-align: left; padding-right: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ============================================================
+   IMPRESSION — A4
+   ============================================================ */
+
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: #FFFFFF; color: #171310; font-size: 11.5pt; }
+  .couverture { break-after: page; }
+  .section { break-inside: avoid; padding: 22px 0; }
+  .carte, .formule, .etape, .membre { break-inside: avoid; }
+  .rail-sticky { position: static; }
+  .pied { background: #FFFFFF; color: #171310; break-before: page; }
+  .pied h2, .contact .nom { color: #082F22; }
+  .pied .accroche, .contact a, .contact span.tel { color: #4A443C; }
+  .contact .fonction, .pied .eyebrow { color: #B8860B; }
+  .mentions { color: #7C7469; }
+}
+</style>
+
+</head>
+<body>
+<!-- ============================================================
+     COUVERTURE
+     ============================================================ -->
+<header class="couverture">
+  <div class="couv-inner">
+    <img class="sceau" src="/logo/ksn-logo.png" alt="Sceau de la Dahira Kippaangog Salaatu ʿAlaa Nabii" width="118" height="118" />
+
+    <p class="arabe-couv">الصلاة على النبي ﷺ</p>
+
+    <div>
+      <p class="eyebrow couv-label">Dossier de production &amp; de partenariat</p>
+      <h1 class="couv-titre">Salaatu ʿAlaa&nbsp;Nabii</h1>
+      <p class="couv-sous">Documentaire&nbsp;· Reportage</p>
+    </div>
+
+    <hr class="filet-or" />
+
+    <p class="couv-chapeau">
+      Un regard sur la place, la signification et la pratique de la prière sur le
+      Prophète&nbsp;<span class="salla">ﷺ</span>, à travers la parole des guides religieux, les témoignages des
+      fidèles et l'expérience vivante des communautés.
+    </p>
+
+    <div class="couv-meta">
+      <span class="jeton">Tournage pivot&nbsp;: <strong>26 décembre 2026</strong> — Touba</span>
+      <span class="jeton">Budget&nbsp;: <strong>520 000 FCFA</strong></span>
+      <span class="jeton">Financement recherché&nbsp;: <strong>500 000 FCFA</strong></span>
+    </div>
+
+    <div class="couv-meta">
+      <span class="jeton">Porteur&nbsp;: <strong>Birama Gueuye</strong></span>
+      <span class="jeton">Réalisation&nbsp;: <strong>Khadim Fall — Cosmos Studio</strong></span>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     CHIFFRES CLÉS
+     ============================================================ -->
+<section class="chiffres" aria-label="Le projet en chiffres">
+  <dl class="chiffres-grille">
+    <div class="chiffre">
+      <dt>Événement pivot</dt>
+      <dd>26 déc. 2026<small>Journée SAN — Touba</small></dd>
+    </div>
+    <div class="chiffre">
+      <dt>Budget prévisionnel</dt>
+      <dd>520 000<small>FCFA</small></dd>
+    </div>
+    <div class="chiffre">
+      <dt>Recherché</dt>
+      <dd>500 000<small>FCFA</small></dd>
+    </div>
+    <div class="chiffre">
+      <dt>Format</dt>
+      <dd>26–40 min<small>+ capsules courtes</small></dd>
+    </div>
+    <div class="chiffre">
+      <dt>Livraison</dt>
+      <dd>Mars 2027<small>toutes plateformes</small></dd>
+    </div>
+  </dl>
+</section>
+
+<!-- ============================================================
+     DOSSIER
+     ============================================================ -->
+<main class="dossier">
+
+  <!-- 01 — L'essentiel -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">01</div>
+      <span class="eyebrow">L'essentiel</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Le projet en cinq lignes</h2>
+      <p class="chapo">
+        Chaque année, la Dahira <strong>Kippaangog Salaatu ʿAlaa Nabii (KSN)</strong> réunit
+        guides religieux et fidèles pour une journée entière consacrée à la prière sur le
+        Prophète <span class="salla">ﷺ</span>. L'édition du <strong>26 décembre 2026, à Touba</strong>, servira de point
+        de départ à un documentaire-reportage qui ira ensuite à la rencontre des guides et des
+        fidèles, dans plusieurs villes, pour recueillir leurs enseignements et leurs
+        témoignages.
+      </p>
+      <p>
+        Le film ne se limitera pas à la captation de la journée&nbsp;: il en fera le cœur d'un
+        récit plus large sur ce que le Salaatu ʿAlaa Nabii signifie, ce qu'il engage et
+        comment il se transmet. Nous recherchons <strong>500 000 FCFA</strong> pour couvrir la
+        préparation, les déplacements, le tournage et la postproduction.
+      </p>
+      <div class="note">
+        <strong>Ce que nous demandons.</strong> Un accompagnement financier ou matériel, en une
+        ou plusieurs contributions, avant le <strong>30 septembre 2026</strong> — date à
+        laquelle le budget doit être bouclé pour engager les repérages et sécuriser les
+        rendez-vous avec les intervenants avant la Journée.
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 — Genèse -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">02</div>
+      <span class="eyebrow">Genèse</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">D'une journée à un documentaire</h2>
+      <p class="chapo">
+        La Journée Salaatu ʿAlaa Nabii existe déjà. Ce qui manque, c'est une trace — une trace
+        soignée, durable, qui dépasse le cercle des présents.
+      </p>
+      <div class="cartes">
+        <article class="carte">
+          <h3>Un événement comme point de départ</h3>
+          <p>
+            Au-delà de la couverture de la journée, le projet part à la rencontre de guides
+            religieux et de fidèles pour recueillir leurs paroles et leurs enseignements. La
+            Journée est le cadre principal du film, mais elle n'en est pas la limite.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Une démarche immersive</h3>
+          <p>
+            Le tournage se poursuivra dans d'autres lieux et régions, selon la disponibilité et
+            la localisation des intervenants retenus. L'approche est documentaire, humaine,
+            proche des visages et des voix.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Un projet de transmission</h3>
+          <p>
+            Le film s'inscrit dans une volonté de valoriser la transmission orale et les
+            enseignements religieux, avec une réalisation respectueuse du caractère sacré du
+            sujet et un contenu accessible au plus grand nombre.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 — Synopsis -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">03</div>
+      <span class="eyebrow">Synopsis</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Trois voix, un même fil</h2>
+      <p>
+        À travers des entretiens avec des guides religieux et des témoignages de fidèles, le
+        film explore les différentes dimensions de la prière sur le Prophète <span class="salla">ﷺ</span>. Il donne la
+        parole à des personnes de références différentes, afin de présenter leurs explications,
+        leurs enseignements et leur vécu.
+      </p>
+      <div class="cartes">
+        <article class="carte">
+          <h3>La parole des guides</h3>
+          <p>
+            Des entretiens approfondis avec des guides religieux et des érudits pour explorer
+            les fondements spirituels, théologiques et historiques du Salaatu ʿAlaa Nabii.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Le témoignage des fidèles</h3>
+          <p>
+            Des fidèles de différentes communautés racontent la manière dont cette prière est
+            vécue au quotidien, dans sa dimension personnelle autant que collective.
+          </p>
+        </article>
+        <article class="carte">
+          <h3>Les lieux et l'ambiance</h3>
+          <p>
+            Mosquées, espaces d'enseignement, scènes de vie&nbsp;: des plans d'illustration
+            assurent la continuité visuelle entre les témoignages et ancrent le récit dans son
+            contexte.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intercalaire -->
+</main>
+
+<div class="intercalaire">
+  <p class="arabe">إِنَّ ٱللَّهَ وَمَلَٰٓئِكَتَهُۥ يُصَلُّونَ عَلَى ٱلنَّبِىِّ</p>
+  <p class="trad">
+    « Certes, Allah et Ses anges prient sur le Prophète. Ô vous qui croyez, priez sur lui et
+    adressez-lui vos salutations. »
+  </p>
+  <p class="source">Sourate Al-Ahzâb, verset 56</p>
+</div>
+
+<main class="dossier">
+
+  <!-- 04 — Pourquoi maintenant -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">04</div>
+      <span class="eyebrow">Enjeu</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Pourquoi ce projet, maintenant</h2>
+      <p>
+        La transmission des savoirs religieux passe de plus en plus par le numérique, et de
+        moins en moins par la seule présence physique. Dans ce contexte, un contenu audiovisuel
+        rigoureux et respectueux peut servir de référence bien au-delà du cercle des présents à
+        la Journée.
+      </p>
+      <ul class="liste">
+        <li><strong>Peu de contenus de qualité</strong> existent aujourd'hui sur cette pratique en format documentaire.</li>
+        <li><strong>La parole des guides religieux</strong> mérite d'être documentée et préservée pendant qu'elle est disponible.</li>
+        <li><strong>Les témoignages des fidèles</strong> apportent une perspective humaine que le texte seul ne restitue pas.</li>
+        <li><strong>Un film bien réalisé</strong> touche un public bien plus large que l'événement lui-même, et pendant des années.</li>
+        <li><strong>Le sous-titrage</strong> ouvre le film à la diaspora et aux publics non lusophones des langues des intervenants.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 05 — Objectifs -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">05</div>
+      <span class="eyebrow">Objectifs</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Ce que le film doit accomplir</h2>
+      <div class="cartes">
+        <article class="carte">
+          <h3>Documenter &amp; expliquer</h3>
+          <p>Restituer les dimensions spirituelles, historiques et pratiques du Salaatu ʿAlaa Nabii par la parole des guides et des érudits.</p>
+        </article>
+        <article class="carte">
+          <h3>Recueillir les témoignages</h3>
+          <p>Donner une voix à des fidèles de profils et d'horizons différents, pour illustrer la diversité des vécus.</p>
+        </article>
+        <article class="carte">
+          <h3>Rendre accessible</h3>
+          <p>Produire un contenu pédagogique, sous-titré, diffusable sur toutes les plateformes et compréhensible par un public multilingue.</p>
+        </article>
+        <article class="carte">
+          <h3>Valoriser la transmission</h3>
+          <p>Préserver et diffuser ces savoirs au-delà des frontières géographiques, avec une réalisation soignée et durable.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 — Format -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">06</div>
+      <span class="eyebrow">Format</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Format &amp; ligne éditoriale</h2>
+      <div class="table-wrap">
+        <table>
+          <tbody>
+            <tr><th scope="row">Genre</th><td>Documentaire-reportage</td></tr>
+            <tr><th scope="row">Durée visée</th><td>26 à 40 minutes, à confirmer selon la matière recueillie et le nombre d'intervenants</td></tr>
+            <tr><th scope="row">Intervenants</th><td>Guides religieux, érudits et fidèles</td></tr>
+            <tr><th scope="row">Langues</th><td>Wolof, français et arabe, selon les intervenants</td></tr>
+            <tr><th scope="row">Sous-titrage</th><td>Français et anglais, pour l'accessibilité et la diaspora</td></tr>
+            <tr><th scope="row">Zone de tournage</th><td>Touba pour la Journée, puis différentes villes selon la localisation des intervenants</td></tr>
+            <tr><th scope="row">Diffusion</th><td>YouTube, réseaux sociaux, plateformes numériques, télévision et opportunités de projection</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">
+        <strong>Ton.</strong> Une réalisation sobre, immersive et respectueuse du caractère
+        spirituel du sujet. Les entretiens constituent le cœur du récit&nbsp;; les images
+        d'illustration et les séquences d'ambiance les relient. L'étalonnage et l'habillage
+        graphique restent chaleureux et contemplatifs — jamais spectaculaires.
+      </p>
+    </div>
+  </section>
+
+  <!-- 07 — Approche technique -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">07</div>
+      <span class="eyebrow">Réalisation</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Approche artistique &amp; technique</h2>
+      <ul class="liste">
+        <li><strong>Entretiens filmés</strong> avec une attention particulière portée au cadre, à la lumière et au son.</li>
+        <li><strong>Plans d'illustration</strong> des lieux, mosquées, espaces d'enseignement et scènes de vie pertinentes.</li>
+        <li><strong>Séquences d'ambiance</strong> assurant la continuité visuelle entre les témoignages.</li>
+        <li><strong>Montage</strong> alternant paroles, images d'illustration et, si nécessaire, une voix off discrète.</li>
+        <li><strong>Étalonnage et habillage graphique</strong> adaptés au ton documentaire et à l'identité visuelle de KSN.</li>
+        <li><strong>Sous-titrage</strong> intégré dès le montage pour permettre une diffusion multilingue immédiate.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 08 — Livrables -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">08</div>
+      <span class="eyebrow">Livrables</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Ce qui sera livré</h2>
+      <p>
+        Le financement ne produit pas seulement un film&nbsp;: il produit un ensemble de
+        contenus réutilisables par la Dahira et par ses partenaires tout au long de l'année.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Livrable</th><th scope="col">Détail</th><th scope="col" class="nombre">Quantité</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Documentaire</th><td>Master HD, version sous-titrée FR et EN</td><td class="nombre">1 × 26–40 min</td></tr>
+            <tr><th scope="row">Capsules courtes</th><td>Format vertical pour réseaux sociaux</td><td class="nombre">3 à 5 × 60–90 s</td></tr>
+            <tr><th scope="row">Aftermovie</th><td>Résumé de la Journée du 26 décembre</td><td class="nombre">1 × 3–5 min</td></tr>
+            <tr><th scope="row">Bande-annonce</th><td>Pour l'annonce de la sortie du film</td><td class="nombre">1 × 60 s</td></tr>
+            <tr><th scope="row">Photographies</th><td>Sélection HD libre de droits pour la Dahira</td><td class="nombre">50 à 80</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 — Production -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">09</div>
+      <span class="eyebrow">Production</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Organisation de la production</h2>
+      <p>
+        La production s'articule en quatre phases séquentielles, chacune conditionnant la
+        suivante. La préproduction est déterminante&nbsp;: c'est elle qui fixe la qualité et la
+        faisabilité de l'ensemble.
+      </p>
+      <div class="cartes">
+        <article class="carte">
+          <h3>Préproduction</h3>
+          <p>Identification et prise de contact avec les intervenants, préparation des entretiens, organisation des déplacements et planification des journées de tournage.</p>
+        </article>
+        <article class="carte">
+          <h3>Tournage</h3>
+          <p>Déplacements selon la localisation des intervenants, captation des entretiens, des témoignages et des images d'illustration — dont la Journée du 26 décembre.</p>
+        </article>
+        <article class="carte">
+          <h3>Postproduction</h3>
+          <p>Dérushage, montage, traitement sonore, étalonnage, habillage graphique et sous-titrage.</p>
+        </article>
+        <article class="carte">
+          <h3>Diffusion</h3>
+          <p>Préparation des versions adaptées à chaque plateforme et à chaque format, puis lancement coordonné de la diffusion.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — Calendrier -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">10</div>
+      <span class="eyebrow">Calendrier</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Rétroplanning</h2>
+      <p>
+        Le calendrier est construit à rebours à partir de la Journée du 26 décembre 2026, seule
+        date non déplaçable du projet.
+      </p>
+      <ol class="planning">
+        <li class="etape">
+          <div class="etape-date">Sept. 2026</div>
+          <div class="etape-corps">
+            <h3>Bouclage du financement</h3>
+            <p>Recherche et confirmation des partenaires. Sans engagement à cette date, les repérages ne peuvent pas démarrer.</p>
+          </div>
+        </li>
+        <li class="etape">
+          <div class="etape-date">Oct. 2026</div>
+          <div class="etape-corps">
+            <h3>Sélection des intervenants &amp; repérages</h3>
+            <p>Prise de contact avec les guides religieux, validation de la liste des intervenants, repérages des lieux et planification des déplacements.</p>
+          </div>
+        </li>
+        <li class="etape">
+          <div class="etape-date">Nov. – déc. 2026</div>
+          <div class="etape-corps">
+            <h3>Tournage en régions</h3>
+            <p>Entretiens avec les guides et les fidèles dans les différentes villes, captation des images d'illustration et des séquences d'ambiance.</p>
+          </div>
+        </li>
+        <li class="etape pivot">
+          <div class="etape-date">26 déc. 2026</div>
+          <div class="etape-corps">
+            <h3>Journée Salaatu ʿAlaa Nabii — Touba</h3>
+            <p>Captation intégrale de la Journée&nbsp;: prières, chants des Khassida, dhikr, prises de parole. Séquence centrale du documentaire.</p>
+          </div>
+        </li>
+        <li class="etape">
+          <div class="etape-date">Janv. – févr. 2027</div>
+          <div class="etape-corps">
+            <h3>Montage &amp; postproduction</h3>
+            <p>Dérushage, montage, mixage son, étalonnage, habillage graphique et sous-titrage des interventions.</p>
+          </div>
+        </li>
+        <li class="etape">
+          <div class="etape-date">Mars 2027</div>
+          <div class="etape-corps">
+            <h3>Livraison &amp; diffusion</h3>
+            <p>Livraison des masters et des capsules, puis lancement de la diffusion sur les plateformes numériques et auprès des chaînes.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 11 — Budget -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">11</div>
+      <span class="eyebrow">Budget</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Budget prévisionnel</h2>
+      <p>
+        Le budget prévisionnel s'élève à <strong>520 000 FCFA</strong>, dont
+        <strong>500 000 FCFA</strong> sont recherchés auprès de partenaires. Les
+        20 000 FCFA restants correspondent à la communication et à la marge d'ajustement, pris
+        en charge par la Dahira.
+      </p>
+
+      <div class="budget" role="img" aria-label="Répartition du budget : montage 150 000 FCFA, déplacements 120 000, tournage 120 000, préparation 50 000, son et lumière 50 000, communication 20 000, marge 10 000, pour un total de 520 000 FCFA">
+        <div class="poste majeur">
+          <div class="poste-nom">Montage &amp; postproduction</div>
+          <div class="piste"><div class="barre" style="width:100%"></div></div>
+          <div class="poste-val">150 000</div>
+        </div>
+        <div class="poste majeur">
+          <div class="poste-nom">Déplacements et transport</div>
+          <div class="piste"><div class="barre" style="width:80%"></div></div>
+          <div class="poste-val">120 000</div>
+        </div>
+        <div class="poste majeur">
+          <div class="poste-nom">Tournage / matériel technique</div>
+          <div class="piste"><div class="barre" style="width:80%"></div></div>
+          <div class="poste-val">120 000</div>
+        </div>
+        <div class="poste">
+          <div class="poste-nom">Préparation / repérage</div>
+          <div class="piste"><div class="barre" style="width:33.3%"></div></div>
+          <div class="poste-val">50 000</div>
+        </div>
+        <div class="poste">
+          <div class="poste-nom">Son et lumière</div>
+          <div class="piste"><div class="barre" style="width:33.3%"></div></div>
+          <div class="poste-val">50 000</div>
+        </div>
+        <div class="poste">
+          <div class="poste-nom">Communication / diffusion</div>
+          <div class="piste"><div class="barre" style="width:13.3%"></div></div>
+          <div class="poste-val">20 000</div>
+        </div>
+        <div class="poste">
+          <div class="poste-nom">Marge d'ajustement</div>
+          <div class="piste"><div class="barre" style="width:6.7%"></div></div>
+          <div class="poste-val">10 000</div>
+        </div>
+      </div>
+
+      <div class="legende">
+        <span><i class="pastille or"></i> Postes majeurs — 75&nbsp;% du budget</span>
+        <span><i class="pastille vert"></i> Postes complémentaires</span>
+        <span>Montants en FCFA</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Poste</th><th scope="col" class="nombre">Montant</th><th scope="col" class="nombre">Part</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Montage &amp; postproduction</th><td class="nombre">150 000</td><td class="nombre">28,8 %</td></tr>
+            <tr><th scope="row">Déplacements et transport</th><td class="nombre">120 000</td><td class="nombre">23,1 %</td></tr>
+            <tr><th scope="row">Tournage / matériel technique</th><td class="nombre">120 000</td><td class="nombre">23,1 %</td></tr>
+            <tr><th scope="row">Préparation / repérage / organisation</th><td class="nombre">50 000</td><td class="nombre">9,6 %</td></tr>
+            <tr><th scope="row">Son et lumière</th><td class="nombre">50 000</td><td class="nombre">9,6 %</td></tr>
+            <tr><th scope="row">Communication / diffusion</th><td class="nombre">20 000</td><td class="nombre">3,8 %</td></tr>
+            <tr><th scope="row">Marge d'ajustement</th><td class="nombre">10 000</td><td class="nombre">1,9 %</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><th scope="row">Total</th><td class="nombre">520 000</td><td class="nombre">100 %</td></tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="note">
+        <strong>Note.</strong> Ce montant est prévisionnel. Il pourra être ajusté en fonction du
+        nombre d'intervenants retenus, des villes de tournage, des distances à parcourir, de la
+        durée de production et des besoins techniques définitifs. Toute contribution
+        supplémentaire sera affectée en priorité aux déplacements, qui conditionnent le nombre
+        d'intervenants accessibles.
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 — Partenariat -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">12</div>
+      <span class="eyebrow">Partenariat</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Formules de partenariat</h2>
+      <p>
+        Quatre niveaux d'accompagnement sont proposés. Chaque formule est ouverte aux
+        partenaires privés, sponsors, institutions, organisations culturelles ou religieuses et
+        mécènes. Les contributions en nature — transport, hébergement, matériel, restauration —
+        sont valorisées au même titre.
+      </p>
+
+      <div class="formules">
+        <article class="formule">
+          <div class="formule-nom">Compagnon</div>
+          <div class="formule-prix">25 000<small>FCFA et plus</small></div>
+          <ul>
+            <li>Nom cité au générique de fin</li>
+            <li>Mention dans une publication de remerciement sur les réseaux</li>
+          </ul>
+        </article>
+
+        <article class="formule">
+          <div class="formule-nom">Partenaire associé</div>
+          <div class="formule-prix">100 000<small>FCFA</small></div>
+          <ul>
+            <li>Logo au générique de fin</li>
+            <li>Mention dans l'ensemble des supports de communication</li>
+            <li>Une capsule de remerciement dédiée</li>
+            <li>Photographies de la Journée utilisables librement</li>
+          </ul>
+        </article>
+
+        <article class="formule phare">
+          <div class="formule-nom">Partenaire principal</div>
+          <div class="formule-prix">250 000<small>FCFA — 2 places</small></div>
+          <ul>
+            <li>Logo au générique d'ouverture <em>et</em> de fin</li>
+            <li>Mention « avec le soutien de » sur toutes les communications</li>
+            <li>Reconnaissance officielle lors de la Journée du 26 décembre</li>
+            <li>Possibilité d'une prise de parole filmée</li>
+            <li>Ensemble des livrables photo et vidéo</li>
+          </ul>
+        </article>
+
+        <article class="formule">
+          <div class="formule-nom">Mécénat intégral</div>
+          <div class="formule-prix">520 000<small>FCFA — 1 place</small></div>
+          <ul>
+            <li>Mention exclusive « présenté par » en ouverture du film</li>
+            <li>Association au dossier et aux annonces officielles</li>
+            <li>Toutes les contreparties du partenaire principal</li>
+            <li>Modalités de visibilité définies avec le partenaire</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="note">
+        <strong>Contreparties communes.</strong> Tous les partenaires figurent dans les crédits
+        du documentaire selon les modalités convenues, sont associés aux communications liées à
+        la diffusion et peuvent bénéficier de formes de visibilité adaptées à leur niveau de
+        contribution.
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 — Équipe -->
+  <section class="section">
+    <div class="rail"><div class="rail-sticky">
+      <div class="numero">13</div>
+      <span class="eyebrow">Équipe</span>
+    </div></div>
+    <div class="corps">
+      <h2 class="titre-section">Qui porte le projet</h2>
+      <div class="equipe">
+        <article class="membre">
+          <h3>Birama Gueuye</h3>
+          <p class="role">Porteur du projet</p>
+          <p>Coordination générale, relations avec les intervenants et avec les partenaires.</p>
+        </article>
+        <article class="membre">
+          <h3>Khadim Fall</h3>
+          <p class="role">Réalisation &amp; production technique</p>
+          <p>Direction artistique, supervision du tournage et de la postproduction, en coordination étroite avec le porteur du projet.</p>
+        </article>
+        <article class="membre">
+          <h3>Cosmos Studio</h3>
+          <p class="role">Structure de production</p>
+          <p>Support technique, logistique et coordination de la postproduction.</p>
+        </article>
+        <article class="membre">
+          <h3>Collaborateurs</h3>
+          <p class="role">Selon les besoins</p>
+          <p>Renforts identifiés phase par phase pour les aspects spécialisés&nbsp;: son, lumière, montage, graphisme.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================================================
+     PIED — CONTACTS
+     ============================================================ -->
+<footer class="pied">
+  <div class="pied-inner">
+    <p class="eyebrow">Nous contacter</p>
+    <h2>Associez-vous au projet</h2>
+    <p class="accroche">
+      « Salaatu ʿAlaa Nabii » ambitionne un documentaire accessible, respectueux et humain,
+      donnant une place centrale à la parole des guides religieux et aux témoignages des
+      fidèles. Sa réalisation nécessite l'accompagnement de partenaires pour couvrir les coûts
+      de production et de déplacement.
+    </p>
+
+    <div class="contacts">
+      <div class="contact">
+        <p class="nom">Birama Gueuye</p>
+        <p class="fonction">Porteur du projet</p>
+        <a href="tel:+221780178444">78 017 84 44</a>
+      </div>
+      <div class="contact">
+        <p class="nom">Khadim Fall</p>
+        <p class="fonction">Réalisation &amp; production technique</p>
+        <a href="tel:+221768851523">76 885 15 23</a>
+      </div>
+      <div class="contact">
+        <p class="nom">Cosmos Studio</p>
+        <p class="fonction">Structure de production</p>
+        <span class="tel">Réalisation technique et postproduction</span>
+      </div>
+      <div class="contact">
+        <p class="nom">Dahira KSN</p>
+        <p class="fonction">Kippaangog Salaatu ʿAlaa Nabii</p>
+        <span class="tel">Journée annuelle — Touba</span>
+      </div>
+    </div>
+
+    <div class="mentions">
+      <span>Dossier de production &amp; de partenariat — Salaatu ʿAlaa Nabii</span>
+      <span>Document prévisionnel · Édition du 26 décembre 2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
