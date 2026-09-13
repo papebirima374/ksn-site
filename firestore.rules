@@ -33,6 +33,32 @@ service cloud.firestore {
       return isSignedIn() && userDoc().role == "admin";
     }
 
+    // Slug de la commission rattachee au compte connecte.
+    // users/<uid>.commission stocke le NOM de la commission (historique du
+    // projet), pas le slug : la correspondance se fait donc ici. Les anciens
+    // libelles (avant la fusion Secretariat + Administratif) sont acceptes,
+    // sinon les comptes deja crees perdraient l'acces a leur dossier.
+    function monSlug() {
+      return !isSignedIn() ? ""
+        : userDoc().commission == "Éducation et Culture" ? "education-culture"
+        : userDoc().commission == "Éducation & Culture" ? "education-culture"
+        : userDoc().commission == "Finances" ? "finances"
+        : userDoc().commission == "Social et Développement" ? "social-developpement"
+        : userDoc().commission == "Sociale & Développement" ? "social-developpement"
+        : userDoc().commission == "Organisation" ? "organisation"
+        : userDoc().commission == "Communication" ? "communication"
+        : userDoc().commission == "Secrétariat et Administratif" ? "secretariat-administratif"
+        : userDoc().commission == "Secrétariat" ? "secretariat-administratif"
+        : userDoc().commission == "Administratif" ? "secretariat-administratif"
+        : "";
+    }
+
+    // Le Secretariat depouille les travaux de TOUTES les commissions : c'est
+    // son role a l'assemblee. Les autres commissions ne voient que le leur.
+    function estSecretariat() {
+      return monSlug() == "secretariat-administratif";
+    }
+
     // hasPerm renvoie true si :
     //   - l'utilisateur est admin (bypass complet), OU
     //   - la permission est dans son tableau users/<uid>.permissions[]
@@ -266,7 +292,7 @@ service cloud.firestore {
         return champ == null || (champ is number && champ >= 0);
       }
 
-      allow read: if isAdmin();
+      allow read: if isAdmin() || estSecretariat();
       allow create: if request.resource.data.commission in [
                          "education-culture",
                          "finances",
@@ -295,7 +321,18 @@ service cloud.firestore {
                     && nombreOuVide(request.resource.data.cellulesActives)
                     && request.resource.data.createdAt is number;
       allow update: if false;
-      allow delete: if isAdmin();
+      allow delete: if isAdmin() || estSecretariat();
+    }
+
+    // ─── Dossiers de travail des commissions ────────────────────────────
+    // Un document par commission, l'identifiant du document EST le slug.
+    // Document vivant : la commission le reprend jusqu'a l'assemblee.
+    //   - la commission concernee : lecture + ecriture de SON dossier
+    //   - le Secretariat et l'administrateur : lecture de tous
+    //   - aucune commission ne peut lire ni ecrire le dossier d'une autre
+    match /commissionDossiers/{slug} {
+      allow read: if isAdmin() || estSecretariat() || monSlug() == slug;
+      allow write: if isAdmin() || monSlug() == slug;
     }
 
     // Médias du Challenge (annonces / Jour J avec commentaire) : affichés

@@ -66,3 +66,28 @@ export function getCommission(slug: string): Commission | undefined {
 export function commissionNom(slug: string): string {
   return getCommission(slug)?.nom ?? slug;
 }
+
+/** Noms officiels, dans l'ordre. C'est cette valeur (le nom, pas le slug) qui
+ *  est stockee dans users/<uid>.commission — historique du projet. */
+export const COMMISSION_NAMES = COMMISSIONS.map((c) => c.nom);
+
+/** Anciens libelles encore presents dans Firestore, rattaches a la liste
+ *  actuelle. Septembre 2026 : le Secretariat et l'Administratif ont fusionne.
+ *  « Relations Exterieures » ne figure plus dans la liste transmise : les
+ *  comptes qui la portent restent sans commission jusqu'a reaffectation par
+ *  l'administrateur, plutot que d'etre rattaches au hasard. */
+const ANCIENS_NOMS: Record<string, string> = {
+  "Éducation & Culture": "education-culture",
+  "Sociale & Développement": "social-developpement",
+  "Administratif": "secretariat-administratif",
+  "Secrétariat": "secretariat-administratif",
+};
+
+/** Slug d'une commission a partir du nom stocke sur un compte.
+ *  Renvoie null si le compte n'a pas de commission reconnue. */
+export function slugFromNom(nom: string | null | undefined): string | null {
+  if (!nom) return null;
+  const exact = COMMISSIONS.find((c) => c.nom === nom);
+  if (exact) return exact.slug;
+  return ANCIENS_NOMS[nom] ?? null;
+}

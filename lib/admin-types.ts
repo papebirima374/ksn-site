@@ -25,18 +25,14 @@ export const ALL_PERMISSIONS: Permission[] = [
   "education.write",
 ];
 
-/** Commissions officielles du Dahira KSN. Source unique reutilisee par
- *  le formulaire de creation, l'edition et la section publique. */
-export const COMMISSIONS_LIST = [
-  "Éducation & Culture",
-  "Finances",
-  "Sociale & Développement",
-  "Organisation",
-  "Communication",
-  "Relations Extérieures",
-  "Administratif",
-  "Secrétariat",
-] as const;
+/** Commissions officielles du Dahira KSN.
+ *  Source unique : lib/commissions.ts. Ne pas redefinir la liste ici — les
+ *  deux ont diverge par le passe (8 ici, 6 la-bas) et les comptes se sont
+ *  retrouves rattaches a des commissions qui n'existaient plus. */
+export { COMMISSION_NAMES, slugFromNom } from "./commissions";
+import { COMMISSION_NAMES as _NOMS } from "./commissions";
+
+export const COMMISSIONS_LIST = _NOMS;
 
 export type CommissionName = (typeof COMMISSIONS_LIST)[number];
 
