@@ -248,6 +248,56 @@ service cloud.firestore {
       allow delete: if isAdmin() || hasPerm("members.write");
     }
 
+    // ─── Rapports de commission (Assemblée Générale) ────────────────────
+    // Chaque responsable de commission recoit un lien non reference
+    // (/commissions/<slug>) et y depose le rapport de sa commission.
+    // Il n'y a pas d'authentification sur ce formulaire : c'est donc ICI que
+    // se fait le controle, pas dans le navigateur. La commission doit faire
+    // partie de la liste officielle, les champs obligatoires doivent etre
+    // remplis et chaque texte est plafonne (cf. MAX dans
+    // lib/commission-reports.ts — garder les deux en phase).
+    // Un rapport envoye ne peut plus etre modifie, seulement supprime par un
+    // admin : c'est une piece transmise a l'assemblee.
+    match /commissionReports/{id} {
+      function texte(champ, maxi) {
+        return champ is string && champ.size() <= maxi;
+      }
+      function nombreOuVide(champ) {
+        return champ == null || (champ is number && champ >= 0);
+      }
+
+      allow read: if isAdmin();
+      allow create: if request.resource.data.commission in [
+                         "education-culture",
+                         "finances",
+                         "social-developpement",
+                         "organisation",
+                         "communication",
+                         "secretariat-administratif"
+                       ]
+                    && request.resource.data.responsable is string
+                    && request.resource.data.responsable.size() > 0
+                    && request.resource.data.responsable.size() <= 120
+                    && texte(request.resource.data.telephone, 120)
+                    && request.resource.data.activites is string
+                    && request.resource.data.activites.size() > 0
+                    && request.resource.data.activites.size() <= 4000
+                    && request.resource.data.propositions is string
+                    && request.resource.data.propositions.size() > 0
+                    && request.resource.data.propositions.size() <= 4000
+                    && texte(request.resource.data.difficultes, 4000)
+                    && texte(request.resource.data.salaatuPrecisions, 4000)
+                    && texte(request.resource.data.cellules, 4000)
+                    && texte(request.resource.data.moyens, 4000)
+                    && texte(request.resource.data.divers, 4000)
+                    && nombreOuVide(request.resource.data.membres)
+                    && nombreOuVide(request.resource.data.salaatu)
+                    && nombreOuVide(request.resource.data.cellulesActives)
+                    && request.resource.data.createdAt is number;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
     // Médias du Challenge (annonces / Jour J avec commentaire) : affichés
     // publiquement, gérés par l'admin.
     match /challengeMedia/{id} {
