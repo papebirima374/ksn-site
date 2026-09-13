@@ -378,6 +378,52 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── Activites economiques d'une commission ─────────────────────────
+    // Les lots : une fournee de cafe, un lot revendu lors d'un evenement.
+    // Les quantites et les montants sont bornes ; la marge n'est pas stockee,
+    // elle se deduit, pour qu'elle ne puisse jamais contredire la saisie.
+    match /commissionActivites/{id} {
+      allow read: if isAdmin() || estSecretariat()
+                  || resource.data.commission == monSlug();
+      allow create, update: if (isAdmin() || request.resource.data.commission == monSlug())
+                    && request.resource.data.type in ["production", "evenement"]
+                    && request.resource.data.quantite is number
+                    && request.resource.data.quantite >= 0
+                    && request.resource.data.coutTotal is number
+                    && request.resource.data.coutTotal >= 0
+                    && request.resource.data.prixUnitaire is number
+                    && request.resource.data.prixUnitaire >= 0
+                    && request.resource.data.quantiteVendue is number
+                    && request.resource.data.quantiteVendue >= 0
+                    && request.resource.data.libelle is string
+                    && request.resource.data.libelle.size() <= 160;
+      allow delete: if isAdmin() || resource.data.commission == monSlug();
+    }
+
+    // ─── Aides versees aux membres ──────────────────────────────────────
+    // Une aide sort de la caisse de la commission, jamais de la caisse
+    // nationale. Les deux ecritures partent ensemble : l'aide n'a de sens
+    // que si la caisse bouge avec elle.
+    //
+    // Une aide ne se reecrit pas et ne s'efface pas : on corrige en annulant
+    // l'ecriture de caisse correspondante, qui reste tracee.
+    match /commissionAides/{id} {
+      allow read: if isAdmin() || estSecretariat()
+                  || resource.data.commission == monSlug();
+      allow create: if (isAdmin() || request.resource.data.commission == monSlug())
+                    && request.resource.data.montant is number
+                    && request.resource.data.montant > 0
+                    && request.resource.data.montant <= 100000000
+                    && request.resource.data.membreNom is string
+                    && request.resource.data.membreNom.size() > 0
+                    && request.resource.data.motif is string
+                    && request.resource.data.motif.size() <= 80
+                    && request.resource.data.date is string
+                    && request.resource.data.date.size() == 10;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
     // ─── Membres d'une commission ───────────────────────────────────────
     // Une simple liste, piochee dans les membres du Dahira. Ces personnes
     // n'ont PAS de compte : rien ici ne donne d'acces au site.

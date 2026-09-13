@@ -19,6 +19,10 @@ export type Commission = {
    *  n'importe quel visiteur. Les numeros vivent cote serveur, dans
    *  app/api/commission-contacts/route.ts. */
   responsable?: string;
+  /** Active les onglets Activites (production, revente) et Aides sociales.
+   *  Reserve a Social et Developpement : ce sont eux qui produisent, vendent
+   *  et puisent dans leur caisse pour aider un membre. */
+  moduleSocial?: boolean;
   /** Le releve du bisub Salaatu 'Alaa Nabii ne concerne qu'une commission :
    *  Education et Culture en a la charge. Ailleurs, la section n'est pas
    *  masquee « au cas ou » — elle n'existe pas du tout, pour ne pas faire
@@ -51,6 +55,7 @@ export const COMMISSIONS: Commission[] = [
       "Solidarité communautaire, assistance aux membres, projets sociaux et actions de développement.",
     emoji: "🤝",
     responsable: "Serigne Cheikhouna Sock",
+    moduleSocial: true,
   },
   {
     slug: "organisation",
@@ -85,6 +90,11 @@ export function getCommission(slug: string): Commission | undefined {
 /** La commission tient-elle le decompte des Salaatu ? */
 export function aBilanSalaatu(slug: string): boolean {
   return getCommission(slug)?.bilanSalaatu === true;
+}
+
+/** La commission tient-elle des activites economiques et des aides ? */
+export function aModuleSocial(slug: string): boolean {
+  return getCommission(slug)?.moduleSocial === true;
 }
 
 export function commissionNom(slug: string): string {
