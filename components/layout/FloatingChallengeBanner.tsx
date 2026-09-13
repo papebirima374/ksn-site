@@ -27,11 +27,10 @@ export default function FloatingChallengeBanner() {
 
   if (!mounted) return null;
 
-  const isExcludedRoute =
-    pathname === "/challenge" ||
-    pathname.startsWith("/admin");
-
-  if (isExcludedRoute || !visible) return null;
+  // Accueil uniquement. Affichee partout, elle recouvrait le bas de chaque
+  // page et se disputait la place avec le bandeau cookies, l'invitation a
+  // installer l'app et les boutons flottants.
+  if (pathname !== "/" || !visible) return null;
 
   const handleDismiss = (e: React.MouseEvent) => {
     e.preventDefault();

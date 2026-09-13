@@ -55,8 +55,8 @@ export default function Home() {
       <Media />
       <AppKSN />
       <ReseauxSociaux />
-      <Contact />
       <Spiritualite />
+      <Contact />
     </>
   );
 }

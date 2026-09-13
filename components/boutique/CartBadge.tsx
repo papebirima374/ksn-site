@@ -13,7 +13,7 @@ export default function CartBadge() {
       type="button"
       onClick={() => setOpen(true)}
       aria-label="Ouvrir le panier"
-      className="fixed bottom-4 right-4 sm:bottom-5 sm:right-5 z-40 group"
+      className="fixed bottom-[5.5rem] right-4 sm:bottom-[6.5rem] sm:right-5 z-40 group"
     >
       <div className="flex items-center gap-3 bg-[#0F7C55] text-white px-4 py-3 rounded-full shadow-[0_15px_40px_rgba(0,0,0,0.3)] hover:scale-105 transition relative">
         <div className="relative">
