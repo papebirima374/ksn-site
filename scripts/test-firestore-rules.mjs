@@ -1,5 +1,5 @@
 import { initializeTestEnvironment, assertSucceeds, assertFails } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, addDoc, collection, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, deleteDoc, getDocs, query, where } from "firebase/firestore";
 import fs from "node:fs";
 
 const env = await initializeTestEnvironment({
@@ -93,6 +93,26 @@ await t("Le Secrétariat fait suivre au Président", assertSucceeds(setDoc(doc(a
 await t("Communication ne transmet pas le dossier de Finances", assertFails(setDoc(doc(as("fin1"), "commissionDossiers/communication"), { statut: "transmis" }, { merge: true })));
 await t("Le Secrétariat NE RÉÉCRIT PAS le contenu du dossier", assertFails(setDoc(doc(as("sec1"), "commissionDossiers/finances"), { responsable: "réécrit par le secrétariat" }, { merge: true })));
 await t("Le Secrétariat renvoie le dossier pour complément", assertSucceeds(setDoc(doc(as("sec1"), "commissionDossiers/finances"), { statut: "brouillon", transmisAt: null }, { merge: true })));
+
+// Les lectures ci-dessus portent sur UN document. Une page, elle, interroge
+// une COLLECTION : Firestore evalue alors la regle sur chaque document
+// candidat et refuse la requete entiere des qu'un seul echoue. Une regle qui
+// laisse passer un getDoc peut donc refuser la liste — d'ou ces tests.
+console.log("\n── Requêtes de collection (ce que font vraiment les pages) ──");
+await t("Admin liste les comptes rendus", assertSucceeds(getDocs(collection(as("admin1"), "comptesRendus"))));
+await t("Secrétariat liste les comptes rendus", assertSucceeds(getDocs(collection(as("sec1"), "comptesRendus"))));
+await t("Une commission REFUSÉE sur la liste complète (à cause des brouillons)",
+  assertFails(getDocs(collection(as("fin1"), "comptesRendus"))));
+await t("Une commission liste les comptes rendus PUBLIÉS",
+  assertSucceeds(getDocs(query(collection(as("fin1"), "comptesRendus"), where("publie", "==", true)))));
+await t("Finances liste SON fil",
+  assertSucceeds(getDocs(query(collection(as("fin1"), "commissionMessages"), where("commission", "==", "finances")))));
+await t("Finances REFUSÉE sur le fil complet",
+  assertFails(getDocs(collection(as("fin1"), "commissionMessages"))));
+await t("Secrétariat liste les rapports transmis", assertSucceeds(getDocs(collection(as("sec1"), "commissionReports"))));
+await t("Secrétariat liste tous les dossiers", assertSucceeds(getDocs(collection(as("sec1"), "commissionDossiers"))));
+await t("Une commission REFUSÉE sur la liste des dossiers",
+  assertFails(getDocs(collection(as("fin1"), "commissionDossiers"))));
 
 console.log(`\n═══ ${ok} réussis, ${ko} échoués ═══`);
 await env.cleanup();

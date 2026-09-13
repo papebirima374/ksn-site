@@ -56,11 +56,15 @@ export default function AdminRapportsPage() {
   const [filtre, setFiltre] = useState<string>("");
   const [ouvert, setOuvert] = useState<string | null>(null);
 
-  useEffect(() => subscribeCommissionReports(setRapports), []);
-  useEffect(() => subscribeRelances(setRelances), []);
-  useEffect(() => subscribeTousLesDossiers(setDossiers), []);
+  // Comme ailleurs dans l'espace admin : on n'interroge Firestore qu'une fois
+  // la session restauree, sinon la requete part sans jeton et l'ecouteur meurt
+  // sur un refus dont il ne se releve pas.
+  useEffect(() => (user ? subscribeCommissionReports(setRapports) : undefined), [user]);
+  useEffect(() => (user ? subscribeRelances(setRelances) : undefined), [user]);
+  useEffect(() => (user ? subscribeTousLesDossiers(setDossiers) : undefined), [user]);
 
   useEffect(() => {
+    if (!user) return;
     let annule = false;
     (async () => {
       try {
@@ -76,7 +80,7 @@ export default function AdminRapportsPage() {
     return () => {
       annule = true;
     };
-  }, []);
+  }, [user]);
 
 
   const visibles = useMemo(

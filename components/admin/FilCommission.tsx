@@ -33,11 +33,14 @@ export default function FilCommission({
   auteur,
   role,
   peutSupprimer = false,
+  pret,
 }: {
   slug: string;
   auteur: string;
   role: string;
   peutSupprimer?: boolean;
+  /** Session restauree : tant que c'est faux, on n'interroge pas Firestore. */
+  pret: boolean;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [texte, setTexte] = useState("");
@@ -45,20 +48,18 @@ export default function FilCommission({
   const [erreur, setErreur] = useState("");
   const bas = useRef<HTMLDivElement>(null);
 
-  useEffect(
-    () =>
-      subscribeFil(
-        slug,
-        setMessages,
-        (e) =>
-          setErreur(
-            /permission/i.test(e.message)
-              ? "Accès au fil refusé. Les règles Firestore doivent être republiées."
-              : "Fil indisponible pour le moment."
-          )
-      ),
-    [slug]
-  );
+  // `pret` vaut faux tant que la session n'est pas restauree : sans jeton, la
+  // requete part refusee et l'ecouteur ne repart jamais.
+  useEffect(() => {
+    if (!pret) return;
+    return subscribeFil(slug, setMessages, (e) =>
+      setErreur(
+        /permission/i.test(e.message)
+          ? "Accès au fil refusé. Vérifiez que les règles Firestore publiées sont à jour."
+          : "Fil indisponible pour le moment."
+      )
+    );
+  }, [slug, pret]);
 
   useEffect(() => {
     bas.current?.scrollIntoView({ block: "nearest" });
