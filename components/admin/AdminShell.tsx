@@ -7,7 +7,6 @@ import {
   FaImages,
   FaNewspaper,
   FaHandsPraying,
-  FaListUl,
   FaUsers,
   FaHouse,
   FaRightFromBracket,
@@ -23,26 +22,88 @@ import {
   FaGraduationCap,
   FaCrown,
   FaBullseye,
+  FaClipboardList,
+  FaFolderOpen,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
-import { hasPermission } from "@/lib/admin-types";
+import { hasPermission, type Permission } from "@/lib/admin-types";
+import { slugFromNom } from "@/lib/commissions";
 
-const NAV = [
-  { href: "/admin", label: "Tableau de bord", Icon: FaHouse, perm: null },
-  { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" as const },
-  { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" as const },
-  { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write" as const },
-  { href: "/admin/premium/paiements", label: "Premium · Paiements", Icon: FaCrown, perm: "users.write" as const },
-  { href: "/admin/bibliotheque", label: "Bibliothèque Salaats", Icon: FaBookOpen, perm: "library.write" as const },
-  { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" as const },
-  { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" as const },
-  { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" as const },
-  { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" as const },
-  { href: "/admin/documents", label: "Documents PDF", Icon: FaFilePdf, perm: "articles.write" as const },
-  { href: "/admin/education", label: "Éducation & Culture", Icon: FaGraduationCap, perm: "education.write" as const },
-  { href: "/admin/challenge", label: "Compteur Challenge", Icon: FaBullseye, perm: null, adminOnly: true },
-  { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
-  { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" as const },
+/** Le menu est regroupe par commission : chaque responsable retrouve ses
+ *  outils sous le nom de sa commission, au lieu d'une liste de quinze entrees.
+ *
+ *  ATTENTION : le regroupement est une mise en forme, PAS un controle d'acces.
+ *  Ce qu'un utilisateur peut ouvrir reste decide par `perm` / `adminOnly`,
+ *  comme avant — sinon un compte perdrait en route un acces qu'il avait.
+ *  Un groupe disparait simplement quand aucun de ses outils n'est accessible.
+ *
+ *  Le rattachement d'un outil a une commission est un choix d'organisation :
+ *  a ajuster librement, rien d'autre n'en depend. */
+const GROUPES: {
+  titre: string;
+  slug: string | null;
+  items: {
+    href: string;
+    label: string;
+    Icon: typeof FaHouse;
+    perm: Permission | null;
+    adminOnly?: boolean;
+    secretariat?: boolean;
+  }[];
+}[] = [
+  {
+    titre: "Vue d'ensemble",
+    slug: null,
+    items: [
+      { href: "/admin", label: "Tableau de bord", Icon: FaHouse, perm: null },
+      { href: "/admin/ma-commission", label: "Ma commission", Icon: FaFolderOpen, perm: null },
+    ],
+  },
+  {
+    titre: "Secrétariat et Administratif",
+    slug: "secretariat-administratif",
+    items: [
+      { href: "/admin/rapports", label: "Rapports de commission", Icon: FaClipboardList, perm: null, secretariat: true },
+      { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" },
+      { href: "/admin/documents", label: "Documents PDF", Icon: FaFilePdf, perm: "articles.write" },
+      { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" },
+    ],
+  },
+  {
+    titre: "Finances",
+    slug: "finances",
+    items: [
+      { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" },
+      { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write" },
+      { href: "/admin/premium/paiements", label: "Premium · Paiements", Icon: FaCrown, perm: "users.write" },
+    ],
+  },
+  {
+    titre: "Éducation et Culture",
+    slug: "education-culture",
+    items: [
+      { href: "/admin/education", label: "Éducation & Culture", Icon: FaGraduationCap, perm: "education.write" },
+      { href: "/admin/bibliotheque", label: "Bibliothèque Salaats", Icon: FaBookOpen, perm: "library.write" },
+      { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" },
+    ],
+  },
+  {
+    titre: "Communication",
+    slug: "communication",
+    items: [
+      { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" },
+      { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" },
+      { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" },
+    ],
+  },
+  {
+    titre: "Organisation",
+    slug: "organisation",
+    items: [
+      { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
+      { href: "/admin/challenge", label: "Compteur Challenge", Icon: FaBullseye, perm: null, adminOnly: true },
+    ],
+  },
 ];
 
 export default function AdminShell({ children }: { children: ReactNode }) {
@@ -85,18 +146,25 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const visibleNav = NAV.filter((item) => {
-    // Items reserves a l'administrateur principal
-    if ("adminOnly" in item && item.adminOnly) {
-      return user?.role === "admin";
-    }
-    // Grant access to Membres sidebar link if user has members.write OR finances.write
+  const estAdmin = user?.role === "admin";
+  const maCommission = slugFromNom(user?.commission);
+
+  const itemVisible = (item: { href: string; perm: Permission | null; adminOnly?: boolean; secretariat?: boolean }) => {
+    // Reserve a l'administrateur principal
+    if (item.adminOnly) return estAdmin;
+    // Reserve a l'administrateur et au Secretariat : celui-ci depouille les
+    // rapports de TOUTES les commissions, c'est son role a l'assemblee.
+    if (item.secretariat) return estAdmin || maCommission === "secretariat-administratif";
+    // Membres : accessible avec members.write OU finances.write
     if (item.href === "/admin/membres") {
       return hasPermission(user, "members.write") || hasPermission(user, "finances.write");
     }
-    // Items publics (perm null) ou items necessitant une permission specifique
     return !item.perm ? true : hasPermission(user, item.perm);
-  });
+  };
+
+  const groupesVisibles = GROUPES
+    .map((g) => ({ ...g, items: g.items.filter(itemVisible) }))
+    .filter((g) => g.items.length > 0);
 
   return (
     <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#082F22] text-white dark" : "bg-[#F8F5EF] text-[#1A1A1A]"}`}>
@@ -114,26 +182,39 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           </p>
         </div>
 
-        <nav className="px-3 py-4 space-y-1 flex-1 overflow-y-auto">
-          {visibleNav.map((item) => {
-            const Icon = item.Icon;
-            const active = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${
-                  active
-                    ? "bg-[#D4AF37] text-[#0F7C55]"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            );
-          })}
+        <nav className="px-3 py-4 flex-1 overflow-y-auto">
+          {groupesVisibles.map((groupe, i) => (
+            <div key={groupe.titre} className={i === 0 ? "" : "mt-6"}>
+              {groupe.slug && (
+                <p className="px-4 mb-2 text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#D4AF37]/75">
+                  {groupe.titre}
+                </p>
+              )}
+              <div className="space-y-1">
+                {groupe.items.map((item) => {
+                  const Icon = item.Icon;
+                  const active =
+                    pathname === item.href ||
+                    (item.href !== "/admin" && pathname?.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition ${
+                        active
+                          ? "bg-[#D4AF37] text-[#082F22] font-bold"
+                          : "text-white/80 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 flex-none" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         <div className="flex-shrink-0 px-4 pt-4 border-t border-white/10 space-y-2" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}>

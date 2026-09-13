@@ -33,6 +33,32 @@ service cloud.firestore {
       return isSignedIn() && userDoc().role == "admin";
     }
 
+    // Slug de la commission rattachee au compte connecte.
+    // users/<uid>.commission stocke le NOM de la commission (historique du
+    // projet), pas le slug : la correspondance se fait donc ici. Les anciens
+    // libelles (avant la fusion Secretariat + Administratif) sont acceptes,
+    // sinon les comptes deja crees perdraient l'acces a leur dossier.
+    function monSlug() {
+      return !isSignedIn() ? ""
+        : userDoc().commission == "Éducation et Culture" ? "education-culture"
+        : userDoc().commission == "Éducation & Culture" ? "education-culture"
+        : userDoc().commission == "Finances" ? "finances"
+        : userDoc().commission == "Social et Développement" ? "social-developpement"
+        : userDoc().commission == "Sociale & Développement" ? "social-developpement"
+        : userDoc().commission == "Organisation" ? "organisation"
+        : userDoc().commission == "Communication" ? "communication"
+        : userDoc().commission == "Secrétariat et Administratif" ? "secretariat-administratif"
+        : userDoc().commission == "Secrétariat" ? "secretariat-administratif"
+        : userDoc().commission == "Administratif" ? "secretariat-administratif"
+        : "";
+    }
+
+    // Le Secretariat depouille les travaux de TOUTES les commissions : c'est
+    // son role a l'assemblee. Les autres commissions ne voient que le leur.
+    function estSecretariat() {
+      return monSlug() == "secretariat-administratif";
+    }
+
     // hasPerm renvoie true si :
     //   - l'utilisateur est admin (bypass complet), OU
     //   - la permission est dans son tableau users/<uid>.permissions[]
@@ -246,6 +272,67 @@ service cloud.firestore {
                     && request.resource.data.amount <= 5000;
       allow update: if false;
       allow delete: if isAdmin() || hasPerm("members.write");
+    }
+
+    // ─── Rapports de commission (Assemblée Générale) ────────────────────
+    // Chaque responsable de commission recoit un lien non reference
+    // (/commissions/<slug>) et y depose le rapport de sa commission.
+    // Il n'y a pas d'authentification sur ce formulaire : c'est donc ICI que
+    // se fait le controle, pas dans le navigateur. La commission doit faire
+    // partie de la liste officielle, les champs obligatoires doivent etre
+    // remplis et chaque texte est plafonne (cf. MAX dans
+    // lib/commission-reports.ts — garder les deux en phase).
+    // Un rapport envoye ne peut plus etre modifie, seulement supprime par un
+    // admin : c'est une piece transmise a l'assemblee.
+    match /commissionReports/{id} {
+      function texte(champ, maxi) {
+        return champ is string && champ.size() <= maxi;
+      }
+      function nombreOuVide(champ) {
+        return champ == null || (champ is number && champ >= 0);
+      }
+
+      allow read: if isAdmin() || estSecretariat();
+      allow create: if request.resource.data.commission in [
+                         "education-culture",
+                         "finances",
+                         "social-developpement",
+                         "organisation",
+                         "communication",
+                         "secretariat-administratif"
+                       ]
+                    && request.resource.data.responsable is string
+                    && request.resource.data.responsable.size() > 0
+                    && request.resource.data.responsable.size() <= 120
+                    && texte(request.resource.data.telephone, 120)
+                    && request.resource.data.activites is string
+                    && request.resource.data.activites.size() > 0
+                    && request.resource.data.activites.size() <= 4000
+                    && request.resource.data.propositions is string
+                    && request.resource.data.propositions.size() > 0
+                    && request.resource.data.propositions.size() <= 4000
+                    && texte(request.resource.data.difficultes, 4000)
+                    && texte(request.resource.data.salaatuPrecisions, 4000)
+                    && texte(request.resource.data.cellules, 4000)
+                    && texte(request.resource.data.moyens, 4000)
+                    && texte(request.resource.data.divers, 4000)
+                    && nombreOuVide(request.resource.data.membres)
+                    && nombreOuVide(request.resource.data.salaatu)
+                    && nombreOuVide(request.resource.data.cellulesActives)
+                    && request.resource.data.createdAt is number;
+      allow update: if false;
+      allow delete: if isAdmin() || estSecretariat();
+    }
+
+    // ─── Dossiers de travail des commissions ────────────────────────────
+    // Un document par commission, l'identifiant du document EST le slug.
+    // Document vivant : la commission le reprend jusqu'a l'assemblee.
+    //   - la commission concernee : lecture + ecriture de SON dossier
+    //   - le Secretariat et l'administrateur : lecture de tous
+    //   - aucune commission ne peut lire ni ecrire le dossier d'une autre
+    match /commissionDossiers/{slug} {
+      allow read: if isAdmin() || estSecretariat() || monSlug() == slug;
+      allow write: if isAdmin() || monSlug() == slug;
     }
 
     // Médias du Challenge (annonces / Jour J avec commentaire) : affichés
