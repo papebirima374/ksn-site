@@ -13,6 +13,7 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6";
 import { COMMISSIONS, commissionNom, aBilanSalaatu } from "@/lib/commissions";
+import { authHeader } from "@/lib/client-auth-header";
 import {
   subscribeCommissionReports,
   deleteCommissionReport,
@@ -38,11 +39,32 @@ export default function AdminRapportsPage() {
   const { user } = useAuth();
   const [rapports, setRapports] = useState<CommissionReport[]>([]);
   const [relances, setRelances] = useState<Record<string, Relance>>({});
+  /** Numeros des responsables : servis par /api/commission-contacts apres
+   *  verification du jeton, jamais embarques dans le JavaScript public. */
+  const [contacts, setContacts] = useState<Record<string, string>>({});
   const [filtre, setFiltre] = useState<string>("");
   const [ouvert, setOuvert] = useState<string | null>(null);
 
   useEffect(() => subscribeCommissionReports(setRapports), []);
   useEffect(() => subscribeRelances(setRelances), []);
+
+  useEffect(() => {
+    let annule = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/commission-contacts", { headers: await authHeader() });
+        if (!res.ok) return; // 403 pour un compte sans droit : on n'affiche rien
+        const d = await res.json();
+        if (!annule) setContacts(d?.contacts ?? {});
+      } catch {
+        // Sans les numeros, la relance ouvre WhatsApp sans destinataire :
+        // degrade, mais pas bloquant.
+      }
+    })();
+    return () => {
+      annule = true;
+    };
+  }, []);
 
 
   const visibles = useMemo(
@@ -72,7 +94,13 @@ export default function AdminRapportsPage() {
    *  du responsable et le message part directement vers lui ; sinon WhatsApp
    *  demande a qui l'envoyer. */
   async function relancer(slug: string, nom: string) {
-    const tel = (dernierPar.get(slug)?.telephone ?? "").replace(/\D+/g, "");
+    // Le numero du responsable est connu d'avance (lib/commissions.ts), donc la
+    // relance part vers la bonne personne meme si elle n'a encore rien envoye.
+    // Si elle a deja transmis un rapport, on prefere le numero qu'elle y a
+    // laisse : c'est le plus a jour.
+    const tel =
+      (dernierPar.get(slug)?.telephone ?? "").replace(/\D+/g, "") ||
+      (contacts[slug] ?? "").replace(/\D+/g, "");
     const texte = encodeURIComponent(
       `As-salaamu 'alaykum.\n\nRappel : le rapport de la commission ${nom} est attendu ` +
         `pour l'Assemblée Générale du 19 septembre 2026.\n\n${SITE.url}/commissions/${slug}\n\n` +
@@ -140,7 +168,13 @@ export default function AdminRapportsPage() {
                   <span className="block font-semibold text-sm text-[#082F22] truncate">
                     {c.nom}
                   </span>
-                  <span className="block text-xs text-[#5C7268]">
+                  {c.responsable && (
+                    <span className="block text-xs text-[#5C7268] truncate">
+                      {c.responsable}
+                      {contacts[c.slug] && ` · ${contacts[c.slug]}`}
+                    </span>
+                  )}
+                  <span className="block text-xs text-[#9BB0A6]">
                     {r
                       ? dateFr(r.createdAt)
                       : relances[c.slug]
