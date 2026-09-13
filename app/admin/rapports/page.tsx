@@ -11,7 +11,7 @@ import {
   FaCircleCheck,
   FaCircleXmark,
 } from "react-icons/fa6";
-import { COMMISSIONS, commissionNom } from "@/lib/commissions";
+import { COMMISSIONS, commissionNom, aBilanSalaatu } from "@/lib/commissions";
 import {
   subscribeCommissionReports,
   deleteCommissionReport,
@@ -50,11 +50,13 @@ export default function AdminRapportsPage() {
     return m;
   }, [rapports]);
 
-  const totalSalaatu = useMemo(
-    () =>
-      COMMISSIONS.reduce((s, c) => s + (dernierPar.get(c.slug)?.salaatu ?? 0), 0),
-    [dernierPar]
-  );
+  // Seule Education et Culture tient le decompte des Salaatu : parler d'un
+  // « cumul de toutes les commissions » laisserait croire que les autres ont
+  // oublie de le remplir.
+  const salaatuCulture = useMemo(() => {
+    const c = COMMISSIONS.find((x) => aBilanSalaatu(x.slug));
+    return c ? { nom: c.nom, total: dernierPar.get(c.slug)?.salaatu ?? null } : null;
+  }, [dernierPar]);
 
   async function supprimer(r: CommissionReport) {
     if (
@@ -118,10 +120,10 @@ export default function AdminRapportsPage() {
           })}
         </div>
 
-        {totalSalaatu > 0 && (
+        {salaatuCulture?.total != null && (
           <p className="mt-5 pt-4 border-t border-[#0F7C55]/10 text-sm text-[#082F22]">
-            Cumul des Salaatu déclarés (dernier rapport de chaque commission) :{" "}
-            <b className="text-lg tabular-nums text-[#0F7C55]">{fmt(totalSalaatu)}</b>
+            Salaatu déclarés par la commission {salaatuCulture.nom} :{" "}
+            <b className="text-lg tabular-nums text-[#0F7C55]">{fmt(salaatuCulture.total)}</b>
           </p>
         )}
       </div>

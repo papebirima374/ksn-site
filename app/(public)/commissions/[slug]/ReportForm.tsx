@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FaCheck, FaCircleExclamation, FaPrint, FaFloppyDisk } from "react-icons/fa6";
 import type { Commission } from "@/lib/commissions";
+import { aBilanSalaatu } from "@/lib/commissions";
 import { submitCommissionReport, MAX } from "@/lib/commission-reports";
 
 type Champs = {
@@ -165,6 +166,12 @@ export default function ReportForm({ commission }: { commission: Commission }) {
   }
 
   // ── Formulaire ────────────────────────────────────────────────────────
+  // Le releve des Salaatu n'existe que pour Education et Culture : les
+  // numeros de section se suivent donc sans trou selon la commission.
+  const bilan = aBilanSalaatu(commission.slug);
+  let compteur = 0;
+  const n = () => ++compteur;
+
   return (
     <div ref={hautRef} className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pb-24">
       {brouillonRestaure && (
@@ -175,7 +182,7 @@ export default function ReportForm({ commission }: { commission: Commission }) {
       )}
 
       <form onSubmit={envoyer} className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <Bloc n={1} titre="Identification">
+        <Bloc n={n()} titre="Identification">
           <Grille>
             <Champ label="Nom du responsable" requis>
               <input
@@ -212,7 +219,7 @@ export default function ReportForm({ commission }: { commission: Commission }) {
           </Champ>
         </Bloc>
 
-        <Bloc n={2} titre="Compte rendu des activités">
+        <Bloc n={n()} titre="Compte rendu des activités">
           <Champ label="Activités réalisées depuis la dernière assemblée" requis>
             <textarea
               value={f.activites}
@@ -236,8 +243,8 @@ export default function ReportForm({ commission }: { commission: Commission }) {
           </Champ>
         </Bloc>
 
-        <Bloc n={3} titre="Bilan provisoire" sous="bisub Salaatu 'Alaa Nabii">
-          <Grille>
+        {bilan && (
+          <Bloc n={n()} titre="Bilan provisoire" sous="bisub Salaatu 'Alaa Nabii">
             <Champ label="Nombre de Salaatu réalisés">
               <input
                 type="text"
@@ -248,30 +255,30 @@ export default function ReportForm({ commission }: { commission: Commission }) {
                 placeholder="Ex. 250000"
               />
             </Champ>
-            <Champ label="Nombre de cellules actives">
-              <input
-                type="text"
-                inputMode="numeric"
-                value={f.cellulesActives}
-                onChange={set("cellulesActives")}
+            <Champ label="Précisions sur le décompte">
+              <textarea
+                value={f.salaatuPrecisions}
+                onChange={set("salaatuPrecisions")}
+                maxLength={MAX.long}
+                rows={3}
                 className={INPUT}
-                placeholder="Ex. 4"
+                placeholder="Période couverte, méthode de comptage, part de chaque cellule…"
               />
             </Champ>
-          </Grille>
-          <Champ label="Précisions sur le décompte">
-            <textarea
-              value={f.salaatuPrecisions}
-              onChange={set("salaatuPrecisions")}
-              maxLength={MAX.long}
-              rows={3}
+          </Bloc>
+        )}
+
+        <Bloc n={n()} titre="Mise au point sur les cellules">
+          <Champ label="Nombre de cellules actives">
+            <input
+              type="text"
+              inputMode="numeric"
+              value={f.cellulesActives}
+              onChange={set("cellulesActives")}
               className={INPUT}
-              placeholder="Période couverte, méthode de comptage, part de chaque cellule…"
+              placeholder="Ex. 4"
             />
           </Champ>
-        </Bloc>
-
-        <Bloc n={4} titre="Mise au point sur les cellules">
           <Champ label="État des cellules de la commission">
             <textarea
               value={f.cellules}
@@ -285,7 +292,7 @@ export default function ReportForm({ commission }: { commission: Commission }) {
         </Bloc>
 
         <Bloc
-          n={5}
+          n={n()}
           titre="Propositions pour la Journée Salaatu 'Alaa Nabii"
           sous="à venir"
           accent
@@ -313,7 +320,7 @@ export default function ReportForm({ commission }: { commission: Commission }) {
           </Champ>
         </Bloc>
 
-        <Bloc n={6} titre="Divers">
+        <Bloc n={n()} titre="Divers">
           <Champ label="Autres points à porter à l'assemblée">
             <textarea
               value={f.divers}

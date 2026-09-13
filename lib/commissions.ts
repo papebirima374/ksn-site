@@ -12,6 +12,11 @@ export type Commission = {
   nom: string;
   mission: string;
   emoji: string;
+  /** Le releve du bisub Salaatu 'Alaa Nabii ne concerne qu'une commission :
+   *  Education et Culture en a la charge. Ailleurs, la section n'est pas
+   *  masquee « au cas ou » — elle n'existe pas du tout, pour ne pas faire
+   *  croire aux autres qu'on attend un chiffre d'elles. */
+  bilanSalaatu?: boolean;
 };
 
 export const COMMISSIONS: Commission[] = [
@@ -21,6 +26,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Renforcer le lien spirituel des membres à travers le Coran, les Khassidas, le Salaatu quotidien, les conférences et l'éducation islamique.",
     emoji: "📚",
+    bilanSalaatu: true,
   },
   {
     slug: "finances",
@@ -61,6 +67,11 @@ export const COMMISSIONS: Commission[] = [
 
 export function getCommission(slug: string): Commission | undefined {
   return COMMISSIONS.find((c) => c.slug === slug);
+}
+
+/** La commission tient-elle le decompte des Salaatu ? */
+export function aBilanSalaatu(slug: string): boolean {
+  return getCommission(slug)?.bilanSalaatu === true;
 }
 
 export function commissionNom(slug: string): string {

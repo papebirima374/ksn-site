@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { COMMISSIONS, commissionNom, slugFromNom } from "@/lib/commissions";
+import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
 import {
   type Dossier,
   type Ligne,
@@ -249,6 +249,7 @@ export default function MaCommissionPage() {
               />
             </Carte>
 
+            {aBilanSalaatu(slug) && (
             <Carte n={3} titre="Bilan provisoire — bisub Salaatu 'Alaa Nabii">
               <div className="grid sm:grid-cols-2 gap-4">
                 <Champ label="Nombre de Salaatu réalisés">
@@ -270,6 +271,7 @@ export default function MaCommissionPage() {
                 </Champ>
               </div>
             </Carte>
+            )}
 
             <Carte n={4} titre="Mise au point sur les cellules">
               <Cellules cellules={d.cellules} onChange={(cellules) => maj({ cellules })} />
@@ -488,13 +490,15 @@ function ApercuImpression({ d, slug }: { d: Dossier; slug: string }) {
       <BlocImpr titre="1. Compte rendu des activités" items={d.activites.filter((l) => nonVide(l.texte)).map((l) => l.texte)} />
       <BlocImpr titre="Difficultés rencontrées" items={d.difficultes.filter((l) => nonVide(l.texte)).map((l) => l.texte)} />
 
-      <section className="mb-5">
-        <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-          2. Bilan provisoire — bisub Salaatu &apos;Alaa Nabii
-        </h2>
-        <p className="text-lg font-bold tabular-nums">{d.salaatu || "—"} Salaatu</p>
-        {nonVide(d.salaatuPrecisions) && <p className="text-sm mt-1">{d.salaatuPrecisions}</p>}
-      </section>
+      {aBilanSalaatu(slug) && (
+        <section className="mb-5">
+          <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
+            2. Bilan provisoire — bisub Salaatu &apos;Alaa Nabii
+          </h2>
+          <p className="text-lg font-bold tabular-nums">{d.salaatu || "—"} Salaatu</p>
+          {nonVide(d.salaatuPrecisions) && <p className="text-sm mt-1">{d.salaatuPrecisions}</p>}
+        </section>
+      )}
 
       <section className="mb-5">
         <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">

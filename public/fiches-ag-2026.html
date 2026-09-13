@@ -214,7 +214,7 @@
   };
 
   const COMMISSIONS = [
-    ["Éducation et Culture",        "Coran, Khassidas, Salaatu quotidien, conférences et éducation islamique"],
+    ["Éducation et Culture",        "Coran, Khassidas, Salaatu quotidien, conférences et éducation islamique", true],
     ["Finances",                    "Cotisations, dons, comptabilité et financement des activités"],
     ["Social et Développement",     "Solidarité, assistance aux membres et projets sociaux"],
     ["Organisation",                "Événements, logistique, journées spirituelles et rencontres"],
@@ -289,7 +289,13 @@
     </section>`;
 
   /* ── Fiche d'une commission ────────────────────────────────────────── */
-  const fiche = ([nom, desc], i, total) => `
+  // Le releve du bisub Salaatu 'Alaa Nabii n'incombe qu'a Education et
+  // Culture : sur les autres fiches la section n'est pas imprimee, et la
+  // place liberee revient aux zones d'ecriture.
+  const fiche = ([nom, desc, bilan], i, total) => {
+    let k = 0;
+    const n = () => ++k;
+    return `
     <section class="fiche">
       ${head("Fiche de Commission")}
       <div class="ribbon">
@@ -306,12 +312,13 @@
         </div>
 
         <div class="sec">
-          ${secTitle(1, "Compte rendu de la commission")}
-          <div class="lines" style="height:45.6mm"></div>
+          ${secTitle(n(), "Compte rendu de la commission")}
+          <div class="lines" style="height:${bilan ? "45.6" : "60.8"}mm"></div>
         </div>
 
+        ${bilan ? `
         <div class="sec">
-          ${secTitle(2, "Bilan provisoire", "bisub Salaatu ’Alaa Nabii")}
+          ${secTitle(n(), "Bilan provisoire", "bisub Salaatu \u2019Alaa Nabii")}
           <div class="tally">
             <div class="lbl">
               <b>Total des Salaatu de la commission</b>
@@ -319,16 +326,16 @@
             </div>
             <div class="box"><span>Nombre de Salaatu</span></div>
           </div>
+        </div>` : ""}
+
+        <div class="sec">
+          ${secTitle(n(), "Mise au point sur les cellules")}
+          <div class="lines" style="height:${bilan ? "30.4" : "38"}mm"></div>
         </div>
 
         <div class="sec">
-          ${secTitle(3, "Mise au point sur les cellules")}
-          <div class="lines" style="height:30.4mm"></div>
-        </div>
-
-        <div class="sec">
-          ${secTitle(4, "Divers")}
-          <div class="lines" style="height:22.8mm"></div>
+          ${secTitle(n(), "Divers")}
+          <div class="lines" style="height:${bilan ? "22.8" : "30.4"}mm"></div>
         </div>
 
         <div class="signs">
@@ -338,6 +345,7 @@
       </div>
       ${foot(`Fiche ${i + 1} / ${total}`)}
     </section>`;
+  };
 
   document.getElementById("out").innerHTML =
     garde + COMMISSIONS.map((c, i) => fiche(c, i, COMMISSIONS.length)).join("");
