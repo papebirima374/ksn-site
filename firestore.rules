@@ -335,6 +335,25 @@ service cloud.firestore {
       allow write: if isAdmin() || monSlug() == slug;
     }
 
+    // ─── Relances envoyees aux commissions ──────────────────────────────
+    // Trace de la derniere relance (date + auteur). L'envoi lui-meme passe
+    // par WhatsApp, hors du site. Une commission peut voir qu'elle a ete
+    // relancee, mais pas relancer qui que ce soit.
+    match /agRelances/{slug} {
+      allow read: if isAdmin() || estSecretariat() || monSlug() == slug;
+      allow write: if isAdmin() || estSecretariat();
+    }
+
+    // ─── Comptes rendus de reunion ──────────────────────────────────────
+    // Rediges par le Secretariat. Tant que `publie` est faux, le compte rendu
+    // est un brouillon que lui seul voit ; une fois publie, toutes les
+    // commissions le lisent. Aucune commission ne peut l'ecrire.
+    match /comptesRendus/{id} {
+      allow read: if isAdmin() || estSecretariat()
+                  || (resource.data.publie == true && monSlug() != "");
+      allow write: if isAdmin() || estSecretariat();
+    }
+
     // Médias du Challenge (annonces / Jour J avec commentaire) : affichés
     // publiquement, gérés par l'admin.
     match /challengeMedia/{id} {

@@ -98,7 +98,13 @@ export function subscribeDossier(
   cb: (d: Dossier) => void,
   onErreur?: (e: Error) => void
 ): () => void {
-  const db = getDb();
+  let db;
+  try {
+    db = getDb();
+  } catch (e) {
+    onErreur?.(e as Error);
+    return () => {};
+  }
   return onSnapshot(
     doc(db, "commissionDossiers", slug),
     (snap) => cb(normaliser(slug, snap.data() as Partial<Dossier> | undefined)),

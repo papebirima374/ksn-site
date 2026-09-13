@@ -24,6 +24,7 @@ import {
   FaBullseye,
   FaClipboardList,
   FaFolderOpen,
+  FaFileLines,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, type Permission } from "@/lib/admin-types";
@@ -64,6 +65,7 @@ const GROUPES: {
     slug: "secretariat-administratif",
     items: [
       { href: "/admin/rapports", label: "Rapports de commission", Icon: FaClipboardList, perm: null, secretariat: true },
+      { href: "/admin/compte-rendu", label: "Comptes rendus", Icon: FaFileLines, perm: null },
       { href: "/admin/membres", label: "Membres", Icon: FaIdCard, perm: "members.write" },
       { href: "/admin/documents", label: "Documents PDF", Icon: FaFilePdf, perm: "articles.write" },
       { href: "/admin/utilisateurs", label: "Utilisateurs", Icon: FaUsers, perm: "users.write" },

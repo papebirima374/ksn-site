@@ -92,7 +92,16 @@ export async function submitCommissionReport(draft: ReportDraft): Promise<string
 export function subscribeCommissionReports(
   cb: (list: CommissionReport[]) => void
 ): () => void {
-  const db = getDb();
+  // getDb() leve si Firebase n'est pas configure. Sans ce garde-fou, l'effet
+  // qui appelle cette fonction casse la page au montage, au lieu de laisser
+  // AdminShell afficher son ecran « Firebase non configure ».
+  let db;
+  try {
+    db = getDb();
+  } catch {
+    cb([]);
+    return () => {};
+  }
   return onSnapshot(
     query(collection(db, "commissionReports"), orderBy("createdAt", "desc"), limit(400)),
     (snap) =>

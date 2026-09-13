@@ -10,6 +10,7 @@ import {
   FaPrint,
   FaCircleCheck,
   FaCircleXmark,
+  FaWhatsapp,
 } from "react-icons/fa6";
 import { COMMISSIONS, commissionNom, aBilanSalaatu } from "@/lib/commissions";
 import {
@@ -17,6 +18,9 @@ import {
   deleteCommissionReport,
   type CommissionReport,
 } from "@/lib/commission-reports";
+import { subscribeRelances, marquerRelance, type Relance } from "@/lib/ag-reunion";
+import { useAuth } from "@/lib/auth-context";
+import { SITE } from "@/lib/constants";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
 
@@ -31,11 +35,15 @@ function dateFr(ts: number): string {
 }
 
 export default function AdminRapportsPage() {
+  const { user } = useAuth();
   const [rapports, setRapports] = useState<CommissionReport[]>([]);
+  const [relances, setRelances] = useState<Record<string, Relance>>({});
   const [filtre, setFiltre] = useState<string>("");
   const [ouvert, setOuvert] = useState<string | null>(null);
 
   useEffect(() => subscribeCommissionReports(setRapports), []);
+  useEffect(() => subscribeRelances(setRelances), []);
+
 
   const visibles = useMemo(
     () => (filtre ? rapports.filter((r) => r.commission === filtre) : rapports),
@@ -57,6 +65,27 @@ export default function AdminRapportsPage() {
     const c = COMMISSIONS.find((x) => aBilanSalaatu(x.slug));
     return c ? { nom: c.nom, total: dernierPar.get(c.slug)?.salaatu ?? null } : null;
   }, [dernierPar]);
+
+  /** Relance d'une commission. L'envoi passe par WhatsApp — le canal reel du
+   *  Dahira — et on enregistre la date pour savoir qui a deja ete relance.
+   *  Si un rapport a deja ete recu de cette commission, on connait le numero
+   *  du responsable et le message part directement vers lui ; sinon WhatsApp
+   *  demande a qui l'envoyer. */
+  async function relancer(slug: string, nom: string) {
+    const tel = (dernierPar.get(slug)?.telephone ?? "").replace(/\D+/g, "");
+    const texte = encodeURIComponent(
+      `As-salaamu 'alaykum.\n\nRappel : le rapport de la commission ${nom} est attendu ` +
+        `pour l'Assemblée Générale du 19 septembre 2026.\n\n${SITE.url}/commissions/${slug}\n\n` +
+        `Jazaakumu Laahu khayran.`
+    );
+    window.open(tel ? `https://wa.me/${tel}?text=${texte}` : `https://wa.me/?text=${texte}`, "_blank");
+    try {
+      await marquerRelance(slug, user?.displayName || user?.email || "");
+    } catch {
+      // La relance est partie sur WhatsApp : ne pas bloquer l'utilisateur
+      // parce que la trace n'a pas pu etre ecrite.
+    }
+  }
 
   async function supprimer(r: CommissionReport) {
     if (
@@ -107,14 +136,38 @@ export default function AdminRapportsPage() {
                 ) : (
                   <FaCircleXmark className="text-[#C9A227] flex-none" />
                 )}
-                <span className="min-w-0">
+                <span className="min-w-0 flex-1">
                   <span className="block font-semibold text-sm text-[#082F22] truncate">
                     {c.nom}
                   </span>
                   <span className="block text-xs text-[#5C7268]">
-                    {r ? dateFr(r.createdAt) : "En attente"}
+                    {r
+                      ? dateFr(r.createdAt)
+                      : relances[c.slug]
+                        ? `Relancé le ${dateFr(relances[c.slug].at)}`
+                        : "En attente"}
                   </span>
                 </span>
+                {!r && (
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      relancer(c.slug, c.nom);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.stopPropagation();
+                        relancer(c.slug, c.nom);
+                      }
+                    }}
+                    title={`Relancer ${c.nom} sur WhatsApp`}
+                    className="flex-none inline-flex items-center gap-1.5 bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#0F7C55] px-2.5 py-1.5 rounded-lg text-xs font-bold transition"
+                  >
+                    <FaWhatsapp /> Relancer
+                  </span>
+                )}
               </button>
             );
           })}
