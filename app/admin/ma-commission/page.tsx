@@ -15,7 +15,7 @@ import {
   LIBELLE_STATUT,
 } from "@/lib/commission-dossier";
 import FilCommission from "@/components/admin/FilCommission";
-import { htmlDossier, imprimer, AG } from "@/lib/impression";
+import { htmlDossier, htmlFicheVierge, imprimer, AG } from "@/lib/impression";
 import {
   FaPlus,
   FaTrash,
@@ -192,14 +192,12 @@ export default function MaCommissionPage() {
             >
               <FaPaperPlane /> Transmettre au Secrétariat
             </button>
-            <a
-              href="/fiches-ag-2026.html"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => imprimer(htmlFicheVierge(slug))}
               className="inline-flex items-center gap-2 border-2 border-[#D4AF37] text-[#B8860B] px-5 py-2.5 rounded-xl font-bold hover:bg-[#D4AF37]/10 transition"
             >
-              <FaFilePdf /> Brouillon vierge
-            </a>
+              <FaFilePdf /> Ma fiche vierge
+            </button>
 
             <span className="ml-auto text-sm flex items-center gap-2">
               {etat === "enregistre" && (
