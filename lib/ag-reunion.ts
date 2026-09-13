@@ -15,7 +15,7 @@ import {
   setDoc,
   deleteDoc,
   query,
-  orderBy,
+  where,
 } from "firebase/firestore";
 
 /* ═══ Relances ═════════════════════════════════════════════════════════ */
@@ -127,7 +127,18 @@ function normaliser(id: string, d: Partial<CompteRendu> | undefined): CompteRend
   };
 }
 
+/** @param brouillonsInclus vrai pour le Secretariat et l'administrateur.
+ *
+ *  ATTENTION, ce parametre n'est pas cosmetique. La regle Firestore autorise
+ *  la lecture d'un compte rendu non publie au seul Secretariat. Sur une
+ *  REQUETE de collection, Firestore evalue la regle sur chaque document
+ *  candidat et refuse la requete ENTIERE des qu'un seul echoue : une
+ *  commission qui demanderait tous les comptes rendus serait donc refusee a
+ *  cause des brouillons, alors meme qu'elle a le droit de lire les publies.
+ *  D'ou le filtre `publie == true` ci-dessous, qui rend la requete
+ *  demontrable pour la regle. */
 export function subscribeComptesRendus(
+  brouillonsInclus: boolean,
   cb: (l: CompteRendu[]) => void,
   onErreur?: (e: Error) => void
 ): () => void {
@@ -138,9 +149,16 @@ export function subscribeComptesRendus(
     cb([]);
     return () => {};
   }
+  const base = collection(db, "comptesRendus");
   return onSnapshot(
-    query(collection(db, "comptesRendus"), orderBy("date", "desc")),
-    (snap) => cb(snap.docs.map((d) => normaliser(d.id, d.data() as Partial<CompteRendu>))),
+    // Pas d'orderBy : combine au filtre, il exigerait un index composite.
+    brouillonsInclus ? query(base) : query(base, where("publie", "==", true)),
+    (snap) =>
+      cb(
+        snap.docs
+          .map((d) => normaliser(d.id, d.data() as Partial<CompteRendu>))
+          .sort((a, b) => (a.date < b.date ? 1 : -1))
+      ),
     (e) => onErreur?.(e as Error)
   );
 }

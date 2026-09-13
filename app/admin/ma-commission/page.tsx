@@ -50,7 +50,7 @@ export default function MaCommissionPage() {
   const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
-    if (!slug) return;
+    if (!slug || !user) return;
     // Pas de remise a zero ici : le changement de commission vide deja `d`
     // dans le gestionnaire du selecteur, et `d` demarre a null.
     return subscribeDossier(
@@ -63,7 +63,7 @@ export default function MaCommissionPage() {
             : e.message
         )
     );
-  }, [slug]);
+  }, [slug, user]);
 
   const maj = (patch: Partial<Dossier>) => {
     setD((p) => (p ? { ...p, ...patch } : p));
@@ -370,6 +370,7 @@ export default function MaCommissionPage() {
               auteur={signature}
               role={monRole}
               peutSupprimer={estAdmin}
+              pret={!!user}
             />
           </div>
 

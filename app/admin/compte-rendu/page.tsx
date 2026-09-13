@@ -41,19 +41,23 @@ export default function CompteRenduPage() {
   const [etat, setEtat] = useState<"vu" | "modifie" | "enregistre">("vu");
   const [message, setMessage] = useState("");
 
-  useEffect(
-    () =>
-      subscribeComptesRendus(
-        (l) => setListe(l),
-        (e) =>
-          setMessage(
-            /permission/i.test(e.message)
-              ? "Accès refusé. Les règles Firestore doivent être publiées."
-              : e.message
-          )
-      ),
-    []
-  );
+  // L'abonnement ne part QU'UNE FOIS l'utilisateur authentifie. Cette page se
+  // monte avant qu'AdminShell ait fini de restaurer la session : un abonnement
+  // lance a vide partait sans jeton, Firestore le refusait, et l'ecouteur
+  // meurt sur erreur — il ne repartait donc jamais, meme une fois connecte.
+  useEffect(() => {
+    if (!user) return;
+    return subscribeComptesRendus(
+      peutEcrire,
+      (l) => setListe(l),
+      (e) =>
+        setMessage(
+          /permission/i.test(e.message)
+            ? "Accès refusé. Vérifiez que les règles Firestore publiées sont à jour."
+            : e.message
+        )
+    );
+  }, [user, peutEcrire]);
 
   const maj = (patch: Partial<CompteRendu>) => {
     setCr((p) => (p ? { ...p, ...patch } : p));
