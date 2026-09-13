@@ -3,11 +3,9 @@
 // Source : document officiel « LE BUREAU » (Touba, 2024), complete par les
 // attributions decrites a l'article 3 du Reglement Interieur (11 mai 2025).
 //
-// Mise a jour septembre 2026 : SOKHNA MAMAN NENE SAMB, Secretaire a
-// l'Administratif, a demissionne. Conformement a l'usage, son 1er adjoint
-// SERIGNE ELHADJI MALICK MBAYE reprend le poste. Le poste porte donc
-// `succede` : la page l'affiche comme titulaire et mentionne la succession
-// plutot que de faire disparaitre l'information.
+// Mise a jour septembre 2026 : SERIGNE ELHADJI MALICK MBAYE est titulaire du
+// poste de Secretaire a l'Administratif. On n'affiche que la composition en
+// vigueur — les mouvements de personnes ne sont pas du ressort de cette page.
 
 export type Poste = {
   titre: string;
@@ -15,8 +13,6 @@ export type Poste = {
   /** Attribution, telle que definie a l'article 3 du Reglement Interieur. */
   role: string;
   adjoints: string[];
-  /** Nom de la personne qui occupait le poste avant une demission. */
-  succede?: string;
 };
 
 export const PRESIDENCE: Poste[] = [
@@ -45,7 +41,6 @@ export const SECRETARIATS: Poste[] = [
   {
     titre: "Secrétaire à l'Administratif",
     titulaire: "Serigne Elhadji Malick Mbaye",
-    succede: "Sokhna Maman Nènè Samb",
     role: "Gère les adhésions, les documents et la délivrance des cartes de membres.",
     adjoints: ["Sokhna Ndeye Dieng — 2ème adjointe"],
   },

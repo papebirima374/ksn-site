@@ -90,8 +90,6 @@ body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;color:#12231C;backg
 .poste u{display:block;text-decoration:none;font-size:12px;font-weight:800;color:#0F7C55;margin-top:.6mm}
 .poste p{font-size:10px;line-height:1.7;color:#5C7268;margin-top:1mm}
 .poste .adj{font-size:9.5px;color:#7C8F86;margin-top:1.2mm}
-.succ{display:inline-block;margin-top:1.5mm;font-size:9px;background:rgba(212,175,55,.16);
-  border:.3mm solid rgba(212,175,55,.5);border-radius:2mm;padding:1mm 2.5mm;color:#7A5E0B}
 
 .sign{margin:0 16mm;padding:6mm;border:.4mm solid rgba(212,175,55,.5);border-radius:3mm;
   background:linear-gradient(135deg,rgba(15,124,85,.05),rgba(212,175,55,.08))}
@@ -146,7 +144,6 @@ const poste = (p) => `
 <div class="poste">
   <b>${e(p.titre)}</b>
   <u>${e(p.titulaire)}</u>
-  ${p.succede ? `<span class="succ">Succède à ${e(p.succede)}, démissionnaire</span>` : ""}
   <p>${e(p.role)}</p>
   ${p.adjoints?.length ? `<div class="adj">${p.adjoints.map(e).join(" · ")}</div>` : ""}
 </div>`;
