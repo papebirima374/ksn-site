@@ -195,7 +195,19 @@ function document(titre: string, contenu: string, classe = ""): string {
 
 /* ═══ Dossier d'une commission ═════════════════════════════════════════ */
 
-export function htmlDossier(d: Dossier, slug: string): string {
+/** Chiffres repris automatiquement de la caisse et des activites. Le
+ *  responsable n'a pas a les recopier : ils voyagent avec le rapport. */
+export type ResumeChiffre = {
+  solde: number;
+  entrees: number;
+  sorties: number;
+  activites?: { cout: number; recette: number; marge: number; invendus: number; lots: number };
+  aides?: { total: number; nombre: number };
+};
+
+const fr = (n: number) => new Intl.NumberFormat("fr-FR").format(Math.round(n)) + " F";
+
+export function htmlDossier(d: Dossier, slug: string, resume?: ResumeChiffre): string {
   const nom = commissionNom(slug);
   const bilan = aBilanSalaatu(slug);
   let n = 0;
@@ -266,6 +278,33 @@ export function htmlDossier(d: Dossier, slug: string): string {
       ${titreSection(num(), "Divers")}
       ${liste(divers)}
     </div>
+
+    ${
+      resume
+        ? `<div class="sec">
+      ${titreSection(num(), "Caisse de la commission", "sans rapport avec les finances nationales")}
+      <table>
+        <tr><td class="k">Solde</td><td><b>${e(fr(resume.solde))}</b></td></tr>
+        <tr><td class="k">Total des entrées</td><td>${e(fr(resume.entrees))}</td></tr>
+        <tr><td class="k">Total des sorties</td><td>${e(fr(resume.sorties))}</td></tr>
+        ${
+          resume.activites
+            ? `<tr><td class="k">Activités</td><td>${resume.activites.lots} lot(s) · ` +
+              `${e(fr(resume.activites.cout))} dépensés · ${e(fr(resume.activites.recette))} encaissés · ` +
+              `marge ${e(fr(resume.activites.marge))}${
+                resume.activites.invendus ? ` · ${resume.activites.invendus} invendus` : ""
+              }</td></tr>`
+            : ""
+        }
+        ${
+          resume.aides
+            ? `<tr><td class="k">Aides aux membres</td><td>${resume.aides.nombre} aide(s) — ${e(fr(resume.aides.total))}</td></tr>`
+            : ""
+        }
+      </table>
+    </div>`
+        : ""
+    }
   </div>
 
   <div class="signs">

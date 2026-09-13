@@ -14,6 +14,8 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "users/sec1"), { role: "commission", commission: "Secrétariat et Administratif", permissions: [] });
   await setDoc(doc(db, "users/fin1"), { role: "commission", commission: "Finances", permissions: [] });
   await setDoc(doc(db, "users/org1"), { role: "commission", commission: "Organisation", permissions: [] });
+  await setDoc(doc(db, "users/soc1"), { role: "commission", commission: "Social et Développement", permissions: [] });
+  await setDoc(doc(db, "commissionAides/a-soc"), { commission: "social-developpement", membreNom: "X Y", montant: 10000, motif: "Maladie", date: "2026-09-01", createdAt: 1 });
   await setDoc(doc(db, "users/anc1"), { role: "commission", commission: "Secrétariat", permissions: [] }); // ancien libelle
   await setDoc(doc(db, "users/membre1"), { role: "member", permissions: [] });
   await setDoc(doc(db, "commissionDossiers/finances"), { commission: "finances", responsable: "X" });
@@ -144,6 +146,31 @@ await t("Organisation crée une réunion", assertSucceeds(addDoc(collection(as("
 await t("Finances crée aussi ses réunions (toutes les commissions)", assertSucceeds(addDoc(collection(as("fin1"), "commissionReunions"), { commission: "finances", titre: "Point", date: "2026-09-25", createdAt: Date.now() })));
 await t("Finances NE CRÉE PAS de réunion pour Organisation", assertFails(addDoc(collection(as("fin1"), "commissionReunions"), { commission: "organisation", titre: "Pirate", date: "2026-09-25", createdAt: Date.now() })));
 await t("Le Secrétariat lit les réunions d'une commission", assertSucceeds(getDoc(doc(as("sec1"), "commissionReunions/r-org"))));
+
+console.log("\n── Activités et aides (Social et Développement) ──");
+const lot = (commission, extra = {}) => ({
+  commission, type: "production", libelle: "Fournée de café", date: "2026-09-10",
+  quantite: 200, coutTotal: 40000, prixUnitaire: 500, quantiteVendue: 180,
+  createdAt: Date.now(), createdBy: "Moi", ...extra });
+const aide = (commission, extra = {}) => ({
+  commission, membreMatricule: "M009", membreNom: "Fatou Ndiaye", membreTelephone: "+221770000009",
+  motif: "Maladie", precisions: "", montant: 15000, date: "2026-09-12",
+  createdAt: Date.now(), createdBy: "Moi", ...extra });
+
+await t("Sociale enregistre une fournée", assertSucceeds(addDoc(collection(as("soc1"), "commissionActivites"), lot("social-developpement"))));
+await t("Sociale enregistre un lot d'événement", assertSucceeds(addDoc(collection(as("soc1"), "commissionActivites"), lot("social-developpement", { type: "evenement" }))));
+await t("Type de lot inventé refusé", assertFails(addDoc(collection(as("soc1"), "commissionActivites"), lot("social-developpement", { type: "troc" }))));
+await t("Quantité négative refusée", assertFails(addDoc(collection(as("soc1"), "commissionActivites"), lot("social-developpement", { quantite: -5 }))));
+await t("Finances N'ENREGISTRE PAS une activité pour Sociale", assertFails(addDoc(collection(as("fin1"), "commissionActivites"), lot("social-developpement"))));
+
+await t("Sociale verse une aide", assertSucceeds(addDoc(collection(as("soc1"), "commissionAides"), aide("social-developpement"))));
+await t("Aide sans montant refusée", assertFails(addDoc(collection(as("soc1"), "commissionAides"), aide("social-developpement", { montant: 0 }))));
+await t("Aide sans membre refusée", assertFails(addDoc(collection(as("soc1"), "commissionAides"), aide("social-developpement", { membreNom: "" }))));
+await t("Une aide ne se réécrit pas", assertFails(setDoc(doc(as("soc1"), "commissionAides/a-soc"), { montant: 1 }, { merge: true })));
+await t("Une aide ne s'efface pas", assertFails(deleteDoc(doc(as("soc1"), "commissionAides/a-soc"))));
+await t("Finances NE LIT PAS les aides de Sociale", assertFails(getDoc(doc(as("fin1"), "commissionAides/a-soc"))));
+await t("Le Secrétariat lit les aides", assertSucceeds(getDoc(doc(as("sec1"), "commissionAides/a-soc"))));
+await t("Sociale liste SES activités", assertSucceeds(getDocs(query(collection(as("soc1"), "commissionActivites"), where("commission", "==", "social-developpement")))));
 
 console.log(`\n═══ ${ok} réussis, ${ko} échoués ═══`);
 await env.cleanup();

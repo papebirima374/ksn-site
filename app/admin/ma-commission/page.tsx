@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
+import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu, aModuleSocial } from "@/lib/commissions";
 import {
   type Dossier,
   type Ligne,
@@ -18,11 +18,22 @@ import FilCommission from "@/components/admin/FilCommission";
 import CaisseCommission from "@/components/admin/CaisseCommission";
 import MembresCommission from "@/components/admin/MembresCommission";
 import ReunionsCommission from "@/components/admin/ReunionsCommission";
+import ActivitesCommission from "@/components/admin/ActivitesCommission";
+import AidesCommission from "@/components/admin/AidesCommission";
 import {
   type MembreCommission,
   subscribeMembresCommission,
 } from "@/lib/commission-membres";
 import { htmlDossier, htmlFicheVierge, imprimer, AG } from "@/lib/impression";
+import { type Ecriture, fcfa, soldeDe, totalPar, subscribeCaisse } from "@/lib/commission-caisse";
+import {
+  type Lot,
+  type Aide,
+  bilanActivites,
+  totalAides,
+  subscribeLots,
+  subscribeAides,
+} from "@/lib/commission-activites";
 import {
   FaPlus,
   FaTrash,
@@ -38,6 +49,8 @@ import {
   FaWallet,
   FaCalendarDays,
   FaComments,
+  FaMugSaucer,
+  FaHandHoldingHeart,
 } from "react-icons/fa6";
 
 export default function MaCommissionPage() {
@@ -57,13 +70,26 @@ export default function MaCommissionPage() {
       : "commission";
   const signature = user?.displayName || user?.email || "";
 
-  type Onglet = "dossier" | "membres" | "caisse" | "reunions" | "echanges";
+  type Onglet =
+    | "dossier"
+    | "membres"
+    | "caisse"
+    | "activites"
+    | "aides"
+    | "reunions"
+    | "echanges";
   const [onglet, setOnglet] = useState<Onglet>("dossier");
 
   // La liste des membres sert a trois onglets (caisse, membres, reunions) :
   // un seul abonnement, partage.
   const [membres, setMembres] = useState<MembreCommission[]>([]);
   const [erreurMembres, setErreurMembres] = useState("");
+
+  // Chiffres repris dans le rapport transmis au Secretariat : le responsable
+  // n'a pas a les recopier a la main.
+  const [ecritures, setEcritures] = useState<Ecriture[]>([]);
+  const [lots, setLots] = useState<Lot[]>([]);
+  const [aides, setAides] = useState<Aide[]>([]);
 
   const [d, setD] = useState<Dossier | null>(null);
   const [etat, setEtat] = useState<"charge" | "modifie" | "enregistre" | "erreur">("charge");
@@ -95,6 +121,30 @@ export default function MaCommissionPage() {
       )
     );
   }, [slug, user]);
+
+  useEffect(() => {
+    if (!slug || !user) return;
+    return subscribeCaisse(slug, setEcritures);
+  }, [slug, user]);
+
+  useEffect(() => {
+    if (!slug || !user || !aModuleSocial(slug)) return;
+    const stop = [subscribeLots(slug, setLots), subscribeAides(slug, setAides)];
+    return () => stop.forEach((f) => f());
+  }, [slug, user]);
+
+  /** Ce que le rapport emportera avec lui. */
+  const resume = useMemo(() => {
+    if (!slug) return undefined;
+    const b = bilanActivites(lots);
+    return {
+      solde: soldeDe(ecritures),
+      entrees: totalPar(ecritures, "entree"),
+      sorties: totalPar(ecritures, "sortie"),
+      activites: aModuleSocial(slug) && b.lots > 0 ? b : undefined,
+      aides: aides.length ? { total: totalAides(aides), nombre: aides.length } : undefined,
+    };
+  }, [slug, ecritures, lots, aides]);
 
   const maj = (patch: Partial<Dossier>) => {
     setD((p) => (p ? { ...p, ...patch } : p));
@@ -210,6 +260,12 @@ export default function MaCommissionPage() {
                 ["dossier", "Dossier AG", <FaFileLines key="a" />],
                 ["membres", "Membres", <FaUsers key="b" />],
                 ["caisse", "Caisse", <FaWallet key="c" />],
+                ...(aModuleSocial(slug)
+                  ? ([
+                      ["activites", "Activités", <FaMugSaucer key="f" />],
+                      ["aides", "Aides", <FaHandHoldingHeart key="g" />],
+                    ] as [Onglet, string, React.ReactNode][])
+                  : []),
                 ["reunions", "Réunions", <FaCalendarDays key="d" />],
                 ["echanges", "Échanges", <FaComments key="e" />],
               ] as [Onglet, string, React.ReactNode][]
@@ -238,7 +294,7 @@ export default function MaCommissionPage() {
               <FaFloppyDisk /> Enregistrer
             </button>
             <button
-              onClick={() => imprimer(htmlDossier(d, slug))}
+              onClick={() => imprimer(htmlDossier(d, slug, resume))}
               className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-5 py-2.5 rounded-xl font-bold hover:bg-[#0F7C55]/5 transition"
             >
               <FaPrint /> Imprimer / PDF rempli
@@ -326,6 +382,34 @@ export default function MaCommissionPage() {
           {/* ── Saisie ──────────────────────────────────────────────────── */}
           {onglet === "dossier" && (
           <div className="space-y-5 max-w-4xl no-print">
+            {resume && (ecritures.length > 0 || resume.activites || resume.aides) && (
+              <section className="rounded-2xl border border-[#D4AF37]/35 bg-[#D4AF37]/[.08] p-5">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#B8860B]">
+                  Repris automatiquement dans le rapport
+                </p>
+                <p className="mt-2 text-sm text-[#082F22] leading-6">
+                  Caisse : solde <b className="tabular-nums">{fcfa(resume.solde)}</b> ·{" "}
+                  {fcfa(resume.entrees)} entrés · {fcfa(resume.sorties)} sortis
+                  {resume.activites && (
+                    <>
+                      <br />
+                      Activités : {resume.activites.lots} lot(s) · marge{" "}
+                      <b className="tabular-nums">{fcfa(resume.activites.marge)}</b>
+                    </>
+                  )}
+                  {resume.aides && (
+                    <>
+                      <br />
+                      Aides : {resume.aides.nombre} · {fcfa(resume.aides.total)}
+                    </>
+                  )}
+                </p>
+                <p className="mt-2 text-xs text-[#5C7268]">
+                  Ces chiffres partent avec le rapport — rien à recopier.
+                </p>
+              </section>
+            )}
+
             <Carte n={1} titre="Identification">
               <div className="grid sm:grid-cols-3 gap-4">
                 <Champ label="Responsable">
@@ -449,6 +533,18 @@ export default function MaCommissionPage() {
                 signature={signature}
                 pret={!!user}
               />
+            </div>
+          )}
+
+          {onglet === "activites" && aModuleSocial(slug) && (
+            <div className="max-w-4xl">
+              <ActivitesCommission slug={slug} signature={signature} pret={!!user} />
+            </div>
+          )}
+
+          {onglet === "aides" && aModuleSocial(slug) && (
+            <div className="max-w-4xl">
+              <AidesCommission slug={slug} signature={signature} pret={!!user} />
             </div>
           )}
 
