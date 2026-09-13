@@ -65,6 +65,11 @@ export default function Navbar() {
           description: "Fondation 2021, jalons clés, valeurs",
         },
         {
+          label: "Règlement & Statuts",
+          href: "/reglement-interieur",
+          description: "Le texte officiel adopté le 11 mai 2025",
+        },
+        {
           label: "Événements & Calendrier",
           href: "/evenements",
           description: "Dates de l'Hégire, fêtes, Magal",

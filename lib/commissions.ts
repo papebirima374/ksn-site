@@ -12,6 +12,13 @@ export type Commission = {
   nom: string;
   mission: string;
   emoji: string;
+  /** Responsable de la commission, d'apres le Bureau (voir lib/bureau.ts).
+   *  Le NOM est public — il figure au document officiel du Bureau. Le NUMERO,
+   *  lui, ne doit jamais arriver ici : ce fichier est importe par des pages
+   *  publiques, donc tout ce qu'il contient part dans le JavaScript envoye a
+   *  n'importe quel visiteur. Les numeros vivent cote serveur, dans
+   *  app/api/commission-contacts/route.ts. */
+  responsable?: string;
   /** Le releve du bisub Salaatu 'Alaa Nabii ne concerne qu'une commission :
    *  Education et Culture en a la charge. Ailleurs, la section n'est pas
    *  masquee « au cas ou » — elle n'existe pas du tout, pour ne pas faire
@@ -26,6 +33,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Renforcer le lien spirituel des membres à travers le Coran, les Khassidas, le Salaatu quotidien, les conférences et l'éducation islamique.",
     emoji: "📚",
+    responsable: "Serigne Mame Cheikh Anta Sall",
     bilanSalaatu: true,
   },
   {
@@ -34,6 +42,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Gestion transparente des cotisations, des dons, de la comptabilité et du financement des activités du Dahira.",
     emoji: "💰",
+    responsable: "Serigne Massamba Mbaye",
   },
   {
     slug: "social-developpement",
@@ -41,6 +50,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Solidarité communautaire, assistance aux membres, projets sociaux et actions de développement.",
     emoji: "🤝",
+    responsable: "Serigne Cheikhouna Sock",
   },
   {
     slug: "organisation",
@@ -48,6 +58,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Coordination des événements, logistique, journées spirituelles, rencontres et activités du Dahira.",
     emoji: "🏛️",
+    responsable: "Serigne Assane Samb",
   },
   {
     slug: "communication",
@@ -55,6 +66,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Annonces officielles, réseaux sociaux, médias, publications et rayonnement numérique du Dahira.",
     emoji: "📢",
+    responsable: "Serigne Birima Gueye",
   },
   {
     slug: "secretariat-administratif",
@@ -62,6 +74,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Comptes-rendus, organisation des réunions, archivage, correspondance officielle, démarches institutionnelles et suivi des dossiers.",
     emoji: "📝",
+    responsable: "Sokhna Khady Ndiaye",
   },
 ];
 

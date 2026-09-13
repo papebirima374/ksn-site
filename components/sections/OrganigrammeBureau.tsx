@@ -1,161 +1,119 @@
 "use client";
 
-import { FaUserTie, FaUsers, FaFileSignature, FaCoins } from "react-icons/fa6";
+import { FaCrown, FaUserTie, FaArrowRightLong } from "react-icons/fa6";
+import { PRESIDENCE, SECRETARIATS, type Poste } from "@/lib/bureau";
 import { useT } from "@/lib/i18n/context";
 
-type MemberRole = {
-  titleKey: string;
-  name?: string;
-  nameKey?: string;
-  icon: React.ReactNode;
-  descKey: string;
-};
-
-const DIRECTION: MemberRole[] = [
-  {
-    titleKey: "presidence.p1_role",
-    name: "Serigne Bassirou Touré",
-    icon: <FaUserTie className="text-xl" />,
-    descKey: "organigramme.dir1_desc",
-  },
-  {
-    titleKey: "presidence.p2_role",
-    name: "Serigne Birima Gueye",
-    icon: <FaUserTie className="text-xl" />,
-    descKey: "organigramme.dir2_desc",
-  },
-];
-
-const SECRETARIAT: MemberRole[] = [
-  { titleKey: "organigramme.sec1_title", nameKey: "organigramme.vacant", icon: <FaFileSignature className="text-lg" />, descKey: "organigramme.sec1_desc" },
-  { titleKey: "organigramme.sec2_title", nameKey: "organigramme.vacant", icon: <FaFileSignature className="text-lg" />, descKey: "organigramme.sec2_desc" },
-  { titleKey: "organigramme.sec3_title", nameKey: "organigramme.vacant", icon: <FaCoins className="text-lg" />, descKey: "organigramme.sec3_desc" },
-  { titleKey: "organigramme.sec4_title", nameKey: "organigramme.vacant", icon: <FaCoins className="text-lg" />, descKey: "organigramme.sec4_desc" },
-];
-
-const COMMISSIONS: MemberRole[] = [
-  { titleKey: "organigramme.com1_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com1_desc" },
-  { titleKey: "organigramme.com2_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com2_desc" },
-  { titleKey: "organigramme.com3_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com3_desc" },
-  { titleKey: "organigramme.com4_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com4_desc" },
-  { titleKey: "organigramme.com5_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com5_desc" },
-  { titleKey: "organigramme.com6_title", nameKey: "organigramme.commission_chief", icon: <FaUsers className="text-lg" />, descKey: "organigramme.com6_desc" },
-];
+/** Initiales, pour la pastille qui tient lieu de portrait tant que le Dahira
+ *  n'a pas fourni de photos. « Serigne » et « Sokhna » sont des titres, pas
+ *  des prenoms : on les ignore pour ne pas obtenir « SB » partout. */
+function initiales(nom: string): string {
+  const mots = nom
+    .split(/\s+/)
+    .filter((m) => !/^(serigne|sokhna|el|elhadji|mame)$/i.test(m));
+  return mots.slice(0, 2).map((m) => m[0]?.toUpperCase() ?? "").join("");
+}
 
 export default function OrganigrammeBureau() {
   const { t } = useT();
+
   return (
     <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28">
-      <div className="bg-white rounded-[28px] sm:rounded-[40px] p-6 sm:p-12 shadow-[0_20px_80px_rgba(0,0,0,0.08)]">
-        <div className="text-center mb-12 sm:mb-16">
-          <span className="text-[#B8860B] uppercase tracking-[0.2em] sm:tracking-[0.25em] font-semibold text-xs sm:text-sm">
-            {t("organigramme.overline")}
-          </span>
-          <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F7C55]">
-            {t("organigramme.title")}
-          </h2>
-          <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            {t("organigramme.intro")}
-          </p>
-        </div>
+      <div className="text-center mb-10 sm:mb-14">
+        <span className="text-[#D4AF37] uppercase tracking-[0.25em] font-semibold text-xs sm:text-sm">
+          {t("organigramme.overline")}
+        </span>
+        <h2 className="font-display mt-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
+          {t("organigramme.title")}
+        </h2>
+        <p className="mt-5 text-white/65 max-w-2xl mx-auto leading-8">
+          Composition officielle du Bureau, avec les attributions définies à
+          l&apos;article&nbsp;3 du Règlement Intérieur.
+        </p>
+      </div>
 
-        {/* NIVEAU 1 : DIRECTION SPIRITUELLE */}
-        <div className="space-y-6">
-          <h3 className="text-center font-display text-xs sm:text-sm font-bold uppercase tracking-widest text-[#B8860B] mb-6 flex items-center justify-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-            {t("organigramme.level1")}
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-          </h3>
-          <div className="grid md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto">
-            {DIRECTION.map((role) => (
-              <div
-                key={role.titleKey}
-                className="bg-[#F8F5EF] rounded-2xl p-6 border border-[#0F7C55]/10 hover:border-[#D4AF37]/40 hover:shadow-md transition duration-300 flex items-start gap-4"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#0F7C55] text-[#D4AF37] flex items-center justify-center flex-shrink-0">
-                  {role.icon}
-                </div>
-                <div>
-                  <h4 className="font-display font-bold text-sm text-[#B8860B] uppercase tracking-wider">
-                    {t(role.titleKey)}
-                  </h4>
-                  <p className="font-display text-lg font-bold text-[#0F7C55] mt-1">
-                    {role.nameKey ? t(role.nameKey) : role.name}
-                  </p>
-                  <p className="text-gray-600 text-xs sm:text-sm mt-1.5 leading-relaxed">
-                    {t(role.descKey)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* NIVEAU 2 : SECRETARIAT & TRESORERIE */}
-        <div className="mt-12 sm:mt-16 space-y-6">
-          <h3 className="text-center font-display text-xs sm:text-sm font-bold uppercase tracking-widest text-[#B8860B] mb-6 flex items-center justify-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-            {t("organigramme.level2")}
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {SECRETARIAT.map((role) => (
-              <div
-                key={role.titleKey}
-                className="bg-white rounded-2xl p-5 border border-gray-100 hover:border-[#0F7C55]/20 hover:shadow-md transition duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-9 h-9 rounded-lg bg-[#0F7C55]/10 text-[#0F7C55] flex items-center justify-center mb-3">
-                    {role.icon}
-                  </div>
-                  <h4 className="font-display font-bold text-xs text-gray-400 uppercase tracking-wider">
-                    {t(role.titleKey)}
-                  </h4>
-                  <p className="font-display text-base font-bold text-[#0F7C55] mt-1">
-                    {role.nameKey ? t(role.nameKey) : role.name}
-                  </p>
-                </div>
-                <p className="text-gray-600 text-xs mt-3 leading-relaxed border-t border-gray-50 pt-3">
-                  {t(role.descKey)}
+      {/* ── Présidence ────────────────────────────────────────────────── */}
+      <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mb-6">
+        {PRESIDENCE.map((p) => (
+          <article
+            key={p.titre}
+            className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-[#0A3A27] to-[#0F7C55] border border-[#D4AF37]/30 p-7 sm:p-8"
+          >
+            <div className="absolute -top-16 -right-16 w-52 h-52 rounded-full bg-[#D4AF37]/12 blur-3xl" />
+            <div className="relative flex items-start gap-5">
+              <span className="flex-none w-16 h-16 rounded-2xl bg-gradient-to-br from-[#B8860B] to-[#D4AF37] text-[#082F22] font-display text-xl font-black flex items-center justify-center shadow-lg">
+                {initiales(p.titulaire)}
+              </span>
+              <div className="min-w-0">
+                <p className="inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.2em] text-[#E8CE72]">
+                  <FaCrown className="text-xs" /> {p.titre}
                 </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* NIVEAU 3 : LES COMMISSIONS SPECIFIQUE */}
-        <div className="mt-12 sm:mt-16 space-y-6">
-          <h3 className="text-center font-display text-xs sm:text-sm font-bold uppercase tracking-widest text-[#B8860B] mb-6 flex items-center justify-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-            {t("organigramme.level3")}
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B8860B]/40" />
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {COMMISSIONS.map((role) => (
-              <div
-                key={role.titleKey}
-                className="bg-[#FAF8F3]/50 rounded-2xl p-5 border border-[#0F7C55]/5 hover:border-[#0F7C55]/15 hover:shadow-md transition duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="w-9 h-9 rounded-lg bg-[#B8860B]/10 text-[#B8860B] flex items-center justify-center mb-3">
-                    {role.icon}
-                  </div>
-                  <h4 className="font-display font-bold text-xs text-[#B8860B] uppercase tracking-wider">
-                    {t(role.titleKey)}
-                  </h4>
-                  <p className="font-display text-base font-bold text-[#0F7C55] mt-1">
-                    {role.nameKey ? t(role.nameKey) : role.name}
+                <h3 className="font-display mt-2 text-2xl font-bold text-white leading-tight">
+                  {p.titulaire}
+                </h3>
+                <p className="mt-3 text-sm text-white/70 leading-7">{p.role}</p>
+                {p.adjoints.map((a) => (
+                  <p key={a} className="mt-3 text-xs text-[#D4AF37]">
+                    {a}
                   </p>
-                </div>
-                <p className="text-gray-600 text-xs mt-3 leading-relaxed border-t border-gray-100/50 pt-3">
-                  {t(role.descKey)}
-                </p>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          </article>
+        ))}
+      </div>
 
+      {/* ── Secrétariats ──────────────────────────────────────────────── */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {SECRETARIATS.map((s) => (
+          <CartePoste key={s.titre} poste={s} />
+        ))}
       </div>
     </section>
+  );
+}
+
+function CartePoste({ poste }: { poste: Poste }) {
+  return (
+    <article className="rounded-[24px] bg-white/[.05] border border-white/10 p-6 flex flex-col hover:border-[#D4AF37]/35 transition">
+      <div className="flex items-start gap-4">
+        <span className="flex-none w-12 h-12 rounded-xl bg-[#0F7C55] text-[#E8CE72] font-bold text-sm flex items-center justify-center">
+          {initiales(poste.titulaire)}
+        </span>
+        <div className="min-w-0">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#D4AF37] leading-4">
+            {poste.titre}
+          </p>
+          <h3 className="mt-1.5 font-bold text-white leading-snug">{poste.titulaire}</h3>
+        </div>
+      </div>
+
+      {poste.succede && (
+        <p className="mt-4 flex items-start gap-2 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 px-3 py-2 text-[11px] text-[#F1E7C9] leading-5">
+          <FaArrowRightLong className="flex-none mt-1 text-[#D4AF37]" />
+          <span>
+            Succède à <b>{poste.succede}</b>, démissionnaire.
+          </span>
+        </p>
+      )}
+
+      <p className="mt-4 text-sm text-white/60 leading-7 flex-1">{poste.role}</p>
+
+      {poste.adjoints.length > 0 && (
+        <div className="mt-5 pt-4 border-t border-white/10">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/35 mb-2">
+            Adjoints
+          </p>
+          <ul className="space-y-1.5">
+            {poste.adjoints.map((a) => (
+              <li key={a} className="flex items-start gap-2 text-xs text-white/70">
+                <FaUserTie className="flex-none mt-0.5 text-[#D4AF37]/60 text-[10px]" />
+                {a}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </article>
   );
 }

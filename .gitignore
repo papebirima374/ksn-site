@@ -52,3 +52,7 @@ next-env.d.ts
 /docs/membres-import.json
 
 .vercel
+
+# journaux de l'emulateur Firebase (tests de regles)
+firestore-debug.log
+firebase-debug.log
