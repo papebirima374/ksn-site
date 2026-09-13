@@ -1,6 +1,6 @@
 "use client";
 
-import { FaCrown, FaUserTie, FaArrowRightLong } from "react-icons/fa6";
+import { FaCrown, FaUserTie } from "react-icons/fa6";
 import { PRESIDENCE, SECRETARIATS, type Poste } from "@/lib/bureau";
 import { useT } from "@/lib/i18n/context";
 
@@ -87,15 +87,6 @@ function CartePoste({ poste }: { poste: Poste }) {
           <h3 className="mt-1.5 font-bold text-white leading-snug">{poste.titulaire}</h3>
         </div>
       </div>
-
-      {poste.succede && (
-        <p className="mt-4 flex items-start gap-2 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 px-3 py-2 text-[11px] text-[#F1E7C9] leading-5">
-          <FaArrowRightLong className="flex-none mt-1 text-[#D4AF37]" />
-          <span>
-            Succède à <b>{poste.succede}</b>, démissionnaire.
-          </span>
-        </p>
-      )}
 
       <p className="mt-4 text-sm text-white/60 leading-7 flex-1">{poste.role}</p>
 
