@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Fiches de commission — Assemblée Générale du 19 septembre 2026 · KSN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#0F7C55; --green-dark:#082F22; --green-deep:#06291D;
+    --gold:#D4AF37; --gold-dark:#B8860B; --gold-light:#E8CE72;
+    --ink:#12231C; --muted:#5C7268; --rule:#B9C9C1;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif; color:var(--ink);
+    background:#33443D; -webkit-font-smoothing:antialiased;
+  }
+
+  /* ── Barre d'outils (écran uniquement) ─────────────────────────────── */
+  .toolbar{
+    position:sticky; top:0; z-index:50; background:var(--green-deep);
+    border-bottom:1px solid rgba(212,175,55,.35); padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .toolbar h1{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);font-weight:800}
+  .toolbar p{font-size:12.5px;color:#A9C4B8;margin-top:3px}
+  .btn{
+    cursor:pointer;border:0;font-family:'Inter';font-weight:800;font-size:13.5px;
+    padding:12px 22px;border-radius:11px;
+    background:linear-gradient(90deg,var(--gold-dark),var(--gold));
+    color:var(--green-dark); display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover{filter:brightness(1.08)}
+
+  /* ── Page A4 ───────────────────────────────────────────────────────── */
+  .fiche{
+    width:210mm; height:296.5mm; margin:22px auto; background:#fff;
+    position:relative; overflow:hidden; display:flex; flex-direction:column;
+    box-shadow:0 18px 50px rgba(0,0,0,.4);
+  }
+
+  /* ── Entête ────────────────────────────────────────────────────────── */
+  .head{
+    position:relative; background:linear-gradient(160deg,var(--green-deep) 0%,var(--green-dark) 45%,#0C5B3E 100%);
+    padding:11mm 14mm 16mm; text-align:center; color:#fff;
+  }
+  /* arc doré inférieur, comme sur l'affiche officielle */
+  .head:after{
+    content:""; position:absolute; left:-8%; right:-8%; bottom:-14mm; height:26mm;
+    background:#fff; border-radius:50% 50% 0 0; border-top:1.6mm solid var(--gold);
+  }
+  .head .halo{
+    position:absolute; width:70mm; height:70mm; border-radius:50%;
+    background:radial-gradient(circle,rgba(212,175,55,.22),transparent 70%);
+  }
+  .halo.l{top:-24mm;left:-18mm} .halo.r{bottom:-16mm;right:-18mm}
+
+  .crest{position:relative;z-index:2;width:26mm;height:26mm;margin:0 auto;display:block}
+  .kicker{
+    position:relative;z-index:2;margin-top:4mm;font-size:10px;font-weight:800;
+    letter-spacing:.34em;text-transform:uppercase;color:var(--gold-light);
+  }
+  .head h2{
+    position:relative;z-index:2;font-family:'Playfair Display',serif;font-weight:900;
+    font-size:30px;line-height:1.08;margin-top:2.5mm;
+    background:linear-gradient(90deg,var(--gold-dark),var(--gold-light),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .wolof{
+    position:relative;z-index:2;margin-top:2mm;font-size:13.5px;font-weight:700;
+    color:#EAF5EF;letter-spacing:.02em;
+  }
+  .meta{
+    position:relative;z-index:2;margin-top:4mm;display:flex;justify-content:center;
+    gap:6mm;flex-wrap:wrap;font-size:11px;color:#CFE4D9;
+  }
+  .meta b{color:#fff;font-weight:700}
+
+  /* ── Bandeau commission ────────────────────────────────────────────── */
+  .ribbon{
+    position:relative;z-index:3;margin:-4mm 14mm 0;padding:5mm 8mm;text-align:center;
+    background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-dark));
+    border-radius:3mm;box-shadow:0 3mm 8mm rgba(8,47,34,.22);
+  }
+  .ribbon small{
+    display:block;font-size:9px;font-weight:800;letter-spacing:.3em;
+    text-transform:uppercase;color:rgba(8,47,34,.72);
+  }
+  .ribbon strong{
+    display:block;font-family:'Playfair Display',serif;font-size:22px;font-weight:900;
+    color:var(--green-deep);line-height:1.15;margin-top:1mm;
+  }
+
+  /* ── Corps ─────────────────────────────────────────────────────────── */
+  .body{flex:1;min-height:0;overflow:hidden;padding:7mm 14mm 0;display:flex;flex-direction:column}
+
+  .ident{display:flex;gap:5mm;margin-bottom:5mm}
+  .ident .f{flex:1}
+  .ident .f span{
+    display:block;font-size:8.5px;font-weight:800;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:1.5mm;
+  }
+  .ident .f i{display:block;border-bottom:.4mm dotted var(--rule);height:7mm}
+
+  .sec{margin-bottom:4mm}
+  .sec-t{display:flex;align-items:center;gap:3mm;margin-bottom:2.5mm}
+  .sec-t .n{
+    flex:none;width:6.5mm;height:6.5mm;border-radius:50%;background:var(--green);
+    color:var(--gold-light);font-size:11px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sec-t h3{font-size:12.5px;font-weight:800;color:var(--green-dark);letter-spacing:.01em}
+  .sec-t h3 em{font-style:normal;font-weight:600;color:var(--muted);font-size:11px}
+  .sec-t .bar{flex:1;height:.4mm;background:linear-gradient(90deg,var(--gold),transparent)}
+
+  /* lignes d'écriture */
+  .lines{
+    background-image:repeating-linear-gradient(
+      to bottom, transparent 0, transparent 7.6mm, var(--rule) 7.6mm, var(--rule) 7.75mm);
+  }
+
+  /* encadré Salaatu */
+  .tally{
+    border:.5mm solid var(--green);border-radius:3mm;padding:4mm 5mm;
+    background:linear-gradient(135deg,rgba(15,124,85,.06),rgba(212,175,55,.08));
+    display:flex;align-items:center;gap:6mm;
+  }
+  .tally .lbl{flex:1;font-size:11px;color:var(--green-dark);font-weight:600;line-height:1.5}
+  .tally .lbl b{display:block;font-size:12.5px;font-weight:800;margin-bottom:1mm}
+  .tally .box{
+    flex:none;width:62mm;height:16mm;background:#fff;border:.5mm solid var(--gold);
+    border-radius:2mm;display:flex;align-items:flex-end;justify-content:center;padding-bottom:2mm;
+  }
+  .tally .box span{font-size:8.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+
+  /* ── Signatures + pied ─────────────────────────────────────────────── */
+  .signs{display:flex;gap:10mm;margin-top:auto;padding-top:4mm}
+  .signs .s{flex:1;text-align:center}
+  .signs .s i{display:block;border-top:.4mm solid var(--rule);margin-bottom:1.5mm}
+  .signs .s span{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+  .foot{
+    flex:none;margin-top:5mm;background:var(--green-deep);color:#9FBFB1;
+    padding:3.5mm 14mm;display:flex;justify-content:space-between;
+    align-items:center;gap:4mm;font-size:9px;flex-wrap:wrap;
+  }
+  .foot b{color:var(--gold);font-weight:700}
+
+  /* ── Page de garde : ordre du jour ─────────────────────────────────── */
+  .odj{padding:9mm 14mm 0}
+  .odj-item{
+    display:flex;gap:5mm;align-items:flex-start;
+    padding:5mm 6mm;margin-bottom:4mm;border-radius:3mm;
+    background:linear-gradient(135deg,rgba(15,124,85,.05),rgba(212,175,55,.06));
+    border-left:1.4mm solid var(--gold);
+  }
+  .odj-item .n{
+    flex:none;width:9mm;height:9mm;border-radius:50%;background:var(--green);color:var(--gold-light);
+    font-family:'Playfair Display',serif;font-size:15px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .odj-item h4{font-size:14px;font-weight:800;color:var(--green-dark);line-height:1.3}
+  .odj-item p{font-size:11px;color:var(--muted);margin-top:1mm;line-height:1.55}
+
+  .clist{margin:2mm 14mm 0;padding:6mm 7mm;border:.4mm dashed var(--rule);border-radius:3mm}
+  .clist h4{
+    font-size:9.5px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:3.5mm;
+  }
+  .clist ol{columns:2;column-gap:9mm;list-style:none;counter-reset:c}
+  .clist li{
+    counter-increment:c;font-size:11.5px;font-weight:600;color:var(--green-dark);
+    padding:1.8mm 0 1.8mm 8mm;position:relative;break-inside:avoid;
+  }
+  .clist li:before{
+    content:counter(c);position:absolute;left:0;top:1.6mm;
+    width:5.5mm;height:5.5mm;border-radius:50%;background:var(--gold);color:var(--green-deep);
+    font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ── Impression ────────────────────────────────────────────────────── */
+  @page{size:A4 portrait;margin:0}
+  @media print{
+    body{background:#fff}
+    .toolbar{display:none}
+    .fiche{margin:0;box-shadow:none;break-after:page;page-break-after:always}
+    .fiche:last-child{break-after:auto;page-break-after:auto}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div>
+    <h1>Fiches de commission — Assemblée Générale</h1>
+    <p>19 septembre 2026 · Tuuba Saam Kër Sëriñ Basiiru Ture · 9 pages A4</p>
+  </div>
+  <button class="btn" onclick="window.print()">🖨️ Imprimer / Enregistrer en PDF</button>
+</div>
+
+<main id="out"></main>
+
+<script>
+  const AG = {
+    date: "19 septembre 2026",
+    lieu: "Tuuba Saam Kër Sëriñ Basiiru Ture",
+    tel: "+221 76 725 72 72",
+    wolof: "Waccaayu bisub Salaatu ’Alaa Nabi",
+  };
+
+  const COMMISSIONS = [
+    ["Éducation & Culture",     "Coran, Khassidas, Salaatu quotidien, conférences et éducation islamique"],
+    ["Finances",                "Cotisations, dons, comptabilité et financement des activités"],
+    ["Sociale & Développement", "Solidarité, assistance aux membres et projets sociaux"],
+    ["Organisation",            "Événements, logistique, journées spirituelles et rencontres"],
+    ["Communication",           "Annonces officielles, réseaux sociaux, médias et publications"],
+    ["Relations Extérieures",   "Partenariats, représentation institutionnelle et ouverture internationale"],
+    ["Administratif",           "Gestion administrative, démarches institutionnelles et suivi des dossiers"],
+    ["Secrétariat",             "Comptes-rendus, réunions, archivage et correspondance officielle"],
+    ["", ""], // fiche vierge (cellule ou commission non listée)
+  ];
+
+  const head = (titre) => `
+    <div class="head">
+      <div class="halo l"></div><div class="halo r"></div>
+      <img class="crest" src="/logo/ksn-logo.png" alt="Sceau KIPPAANGOG Salaatu ’Alaa Nabii" />
+      <div class="kicker">Dahira Kippangog Salaatu ’Alaa Nabii</div>
+      <h2>${titre}</h2>
+      <div class="wolof">${AG.wolof}</div>
+      <div class="meta">
+        <span>📅 <b>${AG.date}</b></span>
+        <span>📍 <b>${AG.lieu}</b></span>
+        <span>📞 <b>${AG.tel}</b></span>
+      </div>
+    </div>`;
+
+  const foot = (txt) => `
+    <div class="foot">
+      <span>KSN — Kippangog Salaatu ’Alaa Nabii · <b>salaatualaanabii.com</b></span>
+      <span>${txt}</span>
+    </div>`;
+
+  const secTitle = (n, titre, sous) => `
+    <div class="sec-t">
+      <div class="n">${n}</div>
+      <h3>${titre}${sous ? ` <em>— ${sous}</em>` : ""}</h3>
+      <div class="bar"></div>
+    </div>`;
+
+  /* ── Page de garde : ordre du jour ─────────────────────────────────── */
+  const ODJ = [
+    ["Compte rendu des commissions",
+     "Chaque commission présente le bilan de ses activités depuis la dernière assemblée."],
+    ["Bilan provisoire des commissions <em style='font-weight:600;color:#5C7268'>(bisub Salaatu ’Alaa Nabii)</em>",
+     "Relevé provisoire des Salaatu réalisés par chaque commission, à consolider pour le compteur collectif."],
+    ["Mise au point sur les cellules",
+     "État des lieux des cellules, effectifs, animation et besoins remontés du terrain."],
+    ["Divers",
+     "Questions diverses, annonces et points soulevés par les membres."],
+  ];
+
+  const garde = `
+    <section class="fiche">
+      ${head("Assemblée Générale")}
+      <div class="body">
+        <div class="odj">
+          <div class="sec-t" style="margin-bottom:5mm">
+            <div class="n">≡</div><h3>Ordre du jour</h3><div class="bar"></div>
+          </div>
+          ${ODJ.map(([t, d], i) => `
+            <div class="odj-item">
+              <div class="n">${i + 1}</div>
+              <div><h4>${t}</h4><p>${d}</p></div>
+            </div>`).join("")}
+        </div>
+        <div class="clist">
+          <h4>Commissions appelées à présenter</h4>
+          <ol>${COMMISSIONS.filter(c => c[0]).map(c => `<li>${c[0]}</li>`).join("")}</ol>
+        </div>
+        <div class="signs">
+          <div class="s"><i></i><span>Le Président</span></div>
+          <div class="s"><i></i><span>Le Secrétaire Général</span></div>
+        </div>
+      </div>
+      ${foot("Page de garde")}
+    </section>`;
+
+  /* ── Fiche d'une commission ────────────────────────────────────────── */
+  const fiche = ([nom, desc], i, total) => `
+    <section class="fiche">
+      ${head("Fiche de Commission")}
+      <div class="ribbon">
+        <small>Commission</small>
+        <strong>${nom || "&nbsp;"}</strong>
+      </div>
+      <div class="body">
+        ${desc ? `<p style="font-size:10.5px;color:var(--muted);text-align:center;margin:-1mm 0 4mm">${desc}</p>` : ""}
+
+        <div class="ident">
+          <div class="f"><span>Responsable</span><i></i></div>
+          <div class="f"><span>Membres présents</span><i></i></div>
+          <div class="f"><span>Date</span><i></i></div>
+        </div>
+
+        <div class="sec">
+          ${secTitle(1, "Compte rendu de la commission")}
+          <div class="lines" style="height:45.6mm"></div>
+        </div>
+
+        <div class="sec">
+          ${secTitle(2, "Bilan provisoire", "bisub Salaatu ’Alaa Nabii")}
+          <div class="tally">
+            <div class="lbl">
+              <b>Total des Salaatu de la commission</b>
+              Nombre relevé depuis la dernière assemblée, à reporter au compteur collectif.
+            </div>
+            <div class="box"><span>Nombre de Salaatu</span></div>
+          </div>
+        </div>
+
+        <div class="sec">
+          ${secTitle(3, "Mise au point sur les cellules")}
+          <div class="lines" style="height:30.4mm"></div>
+        </div>
+
+        <div class="sec">
+          ${secTitle(4, "Divers")}
+          <div class="lines" style="height:22.8mm"></div>
+        </div>
+
+        <div class="signs">
+          <div class="s"><i></i><span>Responsable de la commission</span></div>
+          <div class="s"><i></i><span>Secrétariat Général</span></div>
+        </div>
+      </div>
+      ${foot(`Fiche ${i + 1} / ${total}`)}
+    </section>`;
+
+  document.getElementById("out").innerHTML =
+    garde + COMMISSIONS.map((c, i) => fiche(c, i, COMMISSIONS.length)).join("");
+</script>
+</body>
+</html>
