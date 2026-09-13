@@ -18,9 +18,22 @@ import { doc, onSnapshot, setDoc, collection, query, getDocs } from "firebase/fi
  *  une ligne au milieu sans decaler les autres. */
 export type Ligne = { id: string; texte: string };
 
-export type Cellule = { id: string; nom: string; effectif: string; etat: string };
-
 export type Proposition = { id: string; titre: string; detail: string; moyens: string };
+
+/** Parcours d'un dossier :
+ *   brouillon  — la commission y travaille, personne d'autre n'a a le lire
+ *   transmis   — la commission l'a envoye au Secretariat
+ *   valide     — le Secretariat l'a transmis au President
+ *  Le dossier reste modifiable apres transmission : l'assemblee passee, la
+ *  commission continue de s'en servir pour echanger. Un retour en arriere est
+ *  donc possible, ce n'est pas un circuit a sens unique. */
+export type StatutDossier = "brouillon" | "transmis" | "valide";
+
+export const LIBELLE_STATUT: Record<StatutDossier, string> = {
+  brouillon: "Brouillon — visible de la commission seule",
+  transmis: "Transmis au Secrétariat",
+  valide: "Transmis au Président par le Secrétariat",
+};
 
 export type Dossier = {
   commission: string;
@@ -31,9 +44,16 @@ export type Dossier = {
   difficultes: Ligne[];
   salaatu: string;
   salaatuPrecisions: string;
-  cellules: Cellule[];
+  /** Les cellules ne sont pas un recensement : c'est un point a DISCUTER en
+   *  assemblee. Une seule colonne, ou chacun dit ce qu'il en pense. */
+  cellules: Ligne[];
   propositions: Proposition[];
   divers: Ligne[];
+  statut: StatutDossier;
+  transmisAt: number | null;
+  transmisPar: string;
+  valideAt: number | null;
+  validePar: string;
   updatedAt: number | null;
   updatedBy: string;
 };
@@ -52,9 +72,14 @@ export function dossierVide(commission: string): Dossier {
     difficultes: [{ id: nouvelId(), texte: "" }],
     salaatu: "",
     salaatuPrecisions: "",
-    cellules: [{ id: nouvelId(), nom: "", effectif: "", etat: "" }],
+    cellules: [{ id: nouvelId(), texte: "" }],
     propositions: [{ id: nouvelId(), titre: "", detail: "", moyens: "" }],
     divers: [{ id: nouvelId(), texte: "" }],
+    statut: "brouillon",
+    transmisAt: null,
+    transmisPar: "",
+    valideAt: null,
+    validePar: "",
     updatedAt: null,
     updatedBy: "",
   };
@@ -80,6 +105,11 @@ function normaliser(commission: string, d: Partial<Dossier> | undefined): Dossie
     cellules: liste(d.cellules, base.cellules),
     propositions: liste(d.propositions, base.propositions),
     divers: liste(d.divers, base.divers),
+    statut: d.statut ?? "brouillon",
+    transmisAt: d.transmisAt ?? null,
+    transmisPar: d.transmisPar ?? "",
+    valideAt: d.valideAt ?? null,
+    validePar: d.validePar ?? "",
     updatedAt: d.updatedAt ?? null,
     updatedBy: d.updatedBy ?? "",
   };
@@ -130,3 +160,52 @@ export async function lireTousLesDossiers(): Promise<Dossier[]> {
 
 /** Une ligne vide ne doit pas partir a l'impression ni au decompte. */
 export const nonVide = (t: string) => t.trim().length > 0;
+
+/** La commission envoie son dossier au Secretariat. */
+export async function transmettreDossier(slug: string, parQui: string): Promise<void> {
+  const db = getDb();
+  await setDoc(
+    doc(db, "commissionDossiers", slug),
+    { statut: "transmis", transmisAt: Date.now(), transmisPar: parQui.slice(0, 120) },
+    { merge: true }
+  );
+}
+
+/** Le Secretariat fait suivre au President. */
+export async function validerDossier(slug: string, parQui: string): Promise<void> {
+  const db = getDb();
+  await setDoc(
+    doc(db, "commissionDossiers", slug),
+    { statut: "valide", valideAt: Date.now(), validePar: parQui.slice(0, 120) },
+    { merge: true }
+  );
+}
+
+/** Retour en brouillon : le Secretariat renvoie le dossier a la commission
+ *  pour complement. */
+export async function renvoyerDossier(slug: string, parQui: string): Promise<void> {
+  const db = getDb();
+  await setDoc(
+    doc(db, "commissionDossiers", slug),
+    { statut: "brouillon", transmisAt: null, transmisPar: parQui.slice(0, 120) },
+    { merge: true }
+  );
+}
+
+/** Tous les dossiers en temps reel (Secretariat / administrateur). */
+export function subscribeTousLesDossiers(
+  cb: (l: Dossier[]) => void
+): () => void {
+  let db;
+  try {
+    db = getDb();
+  } catch {
+    cb([]);
+    return () => {};
+  }
+  return onSnapshot(
+    collection(db, "commissionDossiers"),
+    (snap) => cb(snap.docs.map((x) => normaliser(x.id, x.data() as Partial<Dossier>))),
+    () => cb([])
+  );
+}

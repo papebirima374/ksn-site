@@ -14,6 +14,7 @@ import {
   supprimerCompteRendu,
   nouvelId,
 } from "@/lib/ag-reunion";
+import { htmlCompteRendu, imprimer } from "@/lib/impression";
 import {
   FaPlus,
   FaTrash,
@@ -100,15 +101,6 @@ export default function CompteRenduPage() {
 
   return (
     <AdminShell>
-      <style>{`
-        @media print {
-          body * { visibility: hidden !important; }
-          #cr-impression, #cr-impression * { visibility: visible !important; }
-          #cr-impression { position: absolute; inset: 0; width: 100%; }
-          @page { size: A4 portrait; margin: 16mm; }
-        }
-      `}</style>
-
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#082F22] flex items-center gap-3">
@@ -224,7 +216,7 @@ export default function CompteRenduPage() {
               </button>
             )}
             <button
-              onClick={() => window.print()}
+              onClick={() => imprimer(htmlCompteRendu(cr))}
               className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-5 py-2.5 rounded-xl font-bold hover:bg-[#0F7C55]/5 transition"
             >
               <FaPrint /> Imprimer / PDF
@@ -353,64 +345,6 @@ export default function CompteRenduPage() {
             </section>
           </div>
 
-          {/* ── Version imprimable ──────────────────────────────────────── */}
-          <div id="cr-impression" className="hidden print:block text-[#12231C]">
-            <header className="text-center border-b-2 border-[#D4AF37] pb-4 mb-6">
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#B8860B]">
-                Dahira Kippangog Salaatu &apos;Alaa Nabii
-              </p>
-              <h1 className="text-2xl font-bold mt-2">{cr.titre}</h1>
-              <p className="text-sm mt-1">
-                {cr.date} — {cr.lieu}
-              </p>
-            </header>
-
-            <table className="w-full text-sm mb-5">
-              <tbody>
-                <Ligne k="Présidée par" v={cr.presidence} />
-                <Ligne k="Secrétaire de séance" v={cr.secretaire} />
-                <Ligne k="Présents" v={cr.presents} />
-                <Ligne k="Excusés / absents" v={cr.excuses} />
-              </tbody>
-            </table>
-
-            {cr.points.map((pt, i) => (
-              <section key={pt.id} className="mb-5">
-                <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-                  {i + 1}. {pt.titre || "—"}
-                </h2>
-                {pt.resume.trim() && <p className="text-sm whitespace-pre-wrap">{pt.resume}</p>}
-                {pt.decisions.trim() && (
-                  <p className="text-sm mt-2">
-                    <b>Décisions : </b>
-                    <span className="whitespace-pre-wrap">{pt.decisions}</span>
-                  </p>
-                )}
-                {(pt.responsable.trim() || pt.echeance.trim()) && (
-                  <p className="text-sm mt-1 text-[#5C7268]">
-                    Suivi : {pt.responsable || "—"}
-                    {pt.echeance && ` · Échéance : ${pt.echeance}`}
-                  </p>
-                )}
-              </section>
-            ))}
-
-            {cr.divers.trim() && (
-              <section className="mb-5">
-                <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-                  Observations générales
-                </h2>
-                <p className="text-sm whitespace-pre-wrap">{cr.divers}</p>
-              </section>
-            )}
-
-            <footer className="mt-12 flex justify-between text-xs pt-10">
-              <span className="border-t border-[#9BB0A6] pt-1 w-56 text-center">Le Président</span>
-              <span className="border-t border-[#9BB0A6] pt-1 w-56 text-center">
-                Le Secrétaire de séance
-              </span>
-            </footer>
-          </div>
         </>
       )}
     </AdminShell>
@@ -423,15 +357,5 @@ function L({ label, children }: { label: string; children: React.ReactNode }) {
       <span className="block text-sm font-semibold text-[#082F22] mb-1.5">{label}</span>
       {children}
     </label>
-  );
-}
-
-function Ligne({ k, v }: { k: string; v: string }) {
-  if (!v?.trim()) return null;
-  return (
-    <tr>
-      <td className="align-top py-1 pr-4 font-semibold w-48">{k}</td>
-      <td className="align-top py-1 whitespace-pre-wrap">{v}</td>
-    </tr>
   );
 }

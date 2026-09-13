@@ -268,25 +268,15 @@ export default function ReportForm({ commission }: { commission: Commission }) {
           </Bloc>
         )}
 
-        <Bloc n={n()} titre="Mise au point sur les cellules">
-          <Champ label="Nombre de cellules actives">
-            <input
-              type="text"
-              inputMode="numeric"
-              value={f.cellulesActives}
-              onChange={set("cellulesActives")}
-              className={INPUT}
-              placeholder="Ex. 4"
-            />
-          </Champ>
-          <Champ label="État des cellules de la commission">
+        <Bloc n={n()} titre="Cellules" sous="point à discuter en assemblée">
+          <Champ label="Ce que la commission pense des cellules">
             <textarea
               value={f.cellules}
               onChange={set("cellules")}
               maxLength={MAX.long}
               rows={5}
               className={INPUT}
-              placeholder="Effectifs, animation, cellules à créer ou à redynamiser, besoins remontés du terrain…"
+              placeholder="Votre avis, vos remarques, ce que vous souhaitez voir discuté…"
             />
           </Champ>
         </Bloc>

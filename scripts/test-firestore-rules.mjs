@@ -20,6 +20,8 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "comptesRendus/cr-brouillon"), { titre: "Brouillon", publie: false, date: "2026-09-19" });
   await setDoc(doc(db, "comptesRendus/cr-publie"), { titre: "Publié", publie: true, date: "2026-09-19" });
   await setDoc(doc(db, "commissionReports/r1"), { commission: "finances", responsable: "Z", createdAt: 1 });
+  await setDoc(doc(db, "commissionMessages/m-fin"), { commission: "finances", auteur: "A", role: "commission", texte: "Bonjour", createdAt: 1 });
+  await setDoc(doc(db, "commissionMessages/m-com"), { commission: "communication", auteur: "B", role: "commission", texte: "Salut", createdAt: 1 });
 });
 
 const as = (uid) => env.authenticatedContext(uid).firestore();
@@ -71,6 +73,26 @@ await t("Une commission lit un compte rendu PUBLIÉ", assertSucceeds(getDoc(doc(
 await t("Une commission NE LIT PAS un brouillon", assertFails(getDoc(doc(as("fin1"), "comptesRendus/cr-brouillon"))));
 await t("Une commission N'ÉCRIT PAS de compte rendu", assertFails(setDoc(doc(as("fin1"), "comptesRendus/cr-publie"), { titre: "pirate" }, { merge: true })));
 await t("Un visiteur anonyme ne lit aucun compte rendu", assertFails(getDoc(doc(anon(), "comptesRendus/cr-publie"))));
+
+console.log("\n── Fil de discussion ──");
+const msg = (commission, texte = "Un message") => ({ commission, auteur: "Moi", role: "commission", texte, createdAt: Date.now() });
+await t("Finances lit SON fil", assertSucceeds(getDoc(doc(as("fin1"), "commissionMessages/m-fin"))));
+await t("Finances NE LIT PAS le fil de Communication", assertFails(getDoc(doc(as("fin1"), "commissionMessages/m-com"))));
+await t("Finances écrit dans SON fil", assertSucceeds(addDoc(collection(as("fin1"), "commissionMessages"), msg("finances"))));
+await t("Finances N'ÉCRIT PAS dans le fil de Communication", assertFails(addDoc(collection(as("fin1"), "commissionMessages"), msg("communication"))));
+await t("Le Secrétariat lit le fil de Finances", assertSucceeds(getDoc(doc(as("sec1"), "commissionMessages/m-fin"))));
+await t("Le Secrétariat répond dans le fil de Finances", assertSucceeds(addDoc(collection(as("sec1"), "commissionMessages"), { ...msg("finances"), role: "secretariat" })));
+await t("Message vide refusé", assertFails(addDoc(collection(as("fin1"), "commissionMessages"), msg("finances", ""))));
+await t("Message de plus de 2000 caractères refusé", assertFails(addDoc(collection(as("fin1"), "commissionMessages"), msg("finances", "x".repeat(2001)))));
+await t("Un message ne peut pas être réécrit", assertFails(setDoc(doc(as("fin1"), "commissionMessages/m-fin"), { texte: "modifié" }, { merge: true })));
+await t("Un visiteur anonyme ne lit aucun fil", assertFails(getDoc(doc(anon(), "commissionMessages/m-fin"))));
+
+console.log("\n── Circuit de transmission ──");
+await t("Finances transmet SON dossier", assertSucceeds(setDoc(doc(as("fin1"), "commissionDossiers/finances"), { statut: "transmis", transmisAt: Date.now() }, { merge: true })));
+await t("Le Secrétariat fait suivre au Président", assertSucceeds(setDoc(doc(as("sec1"), "commissionDossiers/finances"), { statut: "valide", valideAt: Date.now() }, { merge: true })));
+await t("Communication ne transmet pas le dossier de Finances", assertFails(setDoc(doc(as("fin1"), "commissionDossiers/communication"), { statut: "transmis" }, { merge: true })));
+await t("Le Secrétariat NE RÉÉCRIT PAS le contenu du dossier", assertFails(setDoc(doc(as("sec1"), "commissionDossiers/finances"), { responsable: "réécrit par le secrétariat" }, { merge: true })));
+await t("Le Secrétariat renvoie le dossier pour complément", assertSucceeds(setDoc(doc(as("sec1"), "commissionDossiers/finances"), { statut: "brouillon", transmisAt: null }, { merge: true })));
 
 console.log(`\n═══ ${ok} réussis, ${ko} échoués ═══`);
 await env.cleanup();

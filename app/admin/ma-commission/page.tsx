@@ -1,19 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
+import { COMMISSIONS, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
 import {
   type Dossier,
   type Ligne,
-  type Cellule,
   type Proposition,
   nouvelId,
-  nonVide,
   subscribeDossier,
   enregistrerDossier,
+  transmettreDossier,
+  LIBELLE_STATUT,
 } from "@/lib/commission-dossier";
+import FilCommission from "@/components/admin/FilCommission";
+import { htmlDossier, imprimer, AG } from "@/lib/impression";
 import {
   FaPlus,
   FaTrash,
@@ -22,9 +24,9 @@ import {
   FaFilePdf,
   FaCircleCheck,
   FaTriangleExclamation,
+  FaPaperPlane,
+  FaLock,
 } from "react-icons/fa6";
-
-const AG = { date: "19 septembre 2026", lieu: "Tuuba Saam Kër Sëriñ Basiiru Ture" };
 
 export default function MaCommissionPage() {
   const { user } = useAuth();
@@ -35,6 +37,13 @@ export default function MaCommissionPage() {
   // veut consulter. Un responsable est rattache a la sienne, sans choix.
   const [slugChoisi, setSlugChoisi] = useState<string | null>(null);
   const slug = estAdmin ? slugChoisi ?? COMMISSIONS[0].slug : slugDuCompte;
+
+  const monRole = estAdmin
+    ? "presidence"
+    : slugDuCompte === "secretariat-administratif"
+      ? "secretariat"
+      : "commission";
+  const signature = user?.displayName || user?.email || "";
 
   const [d, setD] = useState<Dossier | null>(null);
   const [etat, setEtat] = useState<"charge" | "modifie" | "enregistre" | "erreur">("charge");
@@ -77,6 +86,26 @@ export default function MaCommissionPage() {
     }
   }
 
+  async function transmettre() {
+    if (!d) return;
+    if (etat === "modifie") {
+      setMessage("Enregistrez vos modifications avant de transmettre.");
+      return;
+    }
+    if (
+      !confirm(
+        "Transmettre ce dossier au Secrétariat ?\n\nIl restera modifiable : vous pourrez le compléter et le transmettre à nouveau."
+      )
+    )
+      return;
+    try {
+      await transmettreDossier(d.commission, signature);
+      setMessage("");
+    } catch {
+      setMessage("Transmission impossible. Vérifiez votre connexion.");
+    }
+  }
+
   // ── Aucun rattachement : on le dit clairement plutot que d'afficher un
   //    dossier vide qui ne s'enregistrera jamais. ───────────────────────────
   if (!slug) {
@@ -99,15 +128,6 @@ export default function MaCommissionPage() {
 
   return (
     <AdminShell>
-      <style>{`
-        @media print {
-          body * { visibility: hidden !important; }
-          #impression, #impression * { visibility: visible !important; }
-          #impression { position: absolute; inset: 0; width: 100%; padding: 0; }
-          @page { size: A4 portrait; margin: 14mm; }
-        }
-      `}</style>
-
       {/* ── Entete ─────────────────────────────────────────────────────── */}
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4 no-print">
         <div>
@@ -161,10 +181,16 @@ export default function MaCommissionPage() {
               <FaFloppyDisk /> Enregistrer
             </button>
             <button
-              onClick={() => window.print()}
+              onClick={() => imprimer(htmlDossier(d, slug))}
               className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-5 py-2.5 rounded-xl font-bold hover:bg-[#0F7C55]/5 transition"
             >
               <FaPrint /> Imprimer / PDF rempli
+            </button>
+            <button
+              onClick={transmettre}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#082F22] px-5 py-2.5 rounded-xl font-bold hover:brightness-105 transition"
+            >
+              <FaPaperPlane /> Transmettre au Secrétariat
             </button>
             <a
               href="/fiches-ag-2026.html"
@@ -197,6 +223,45 @@ export default function MaCommissionPage() {
                 </span>
               )}
             </span>
+          </div>
+
+          {/* ── Ou en est le dossier ────────────────────────────────────── */}
+          <div
+            className={`mb-6 rounded-2xl border px-5 py-4 flex flex-wrap items-center gap-3 no-print ${
+              d.statut === "valide"
+                ? "bg-[#0F7C55]/8 border-[#0F7C55]/30"
+                : d.statut === "transmis"
+                  ? "bg-[#D4AF37]/12 border-[#D4AF37]/35"
+                  : "bg-[#F8F5EF] border-[#0F7C55]/12"
+            }`}
+          >
+            {d.statut === "brouillon" ? (
+              <FaLock className="text-[#9BB0A6]" />
+            ) : (
+              <FaCircleCheck className={d.statut === "valide" ? "text-[#0F7C55]" : "text-[#B8860B]"} />
+            )}
+            <span className="text-sm font-semibold text-[#082F22]">
+              {LIBELLE_STATUT[d.statut]}
+            </span>
+            {d.transmisAt && d.statut !== "brouillon" && (
+              <span className="text-xs text-[#5C7268]">
+                le{" "}
+                {new Date(d.transmisAt).toLocaleDateString("fr-FR", {
+                  day: "2-digit",
+                  month: "long",
+                })}
+                {d.transmisPar && ` par ${d.transmisPar}`}
+              </span>
+            )}
+            {d.valideAt && d.statut === "valide" && (
+              <span className="text-xs text-[#0F7C55] font-semibold">
+                · remis au Président le{" "}
+                {new Date(d.valideAt).toLocaleDateString("fr-FR", {
+                  day: "2-digit",
+                  month: "long",
+                })}
+              </span>
+            )}
           </div>
 
           {/* ── Saisie ──────────────────────────────────────────────────── */}
@@ -273,8 +338,17 @@ export default function MaCommissionPage() {
             </Carte>
             )}
 
-            <Carte n={4} titre="Mise au point sur les cellules">
-              <Cellules cellules={d.cellules} onChange={(cellules) => maj({ cellules })} />
+            <Carte n={4} titre="Cellules — point à discuter">
+              <p className="-mt-2 mb-4 text-sm text-[#5C7268] leading-6">
+                Ce n&apos;est pas un recensement : chacun dit ici ce qu&apos;il pense des
+                cellules, pour nourrir la discussion en assemblée.
+              </p>
+              <Lignes
+                lignes={d.cellules}
+                onChange={(cellules) => maj({ cellules })}
+                placeholder="Ce que la commission en pense…"
+                ajouter="Ajouter un avis"
+              />
             </Carte>
 
             <Carte n={5} titre="Propositions pour la Journée Salaatu 'Alaa Nabii" accent>
@@ -292,9 +366,15 @@ export default function MaCommissionPage() {
                 ajouter="Ajouter un point"
               />
             </Carte>
+
+            <FilCommission
+              slug={slug}
+              auteur={signature}
+              role={monRole}
+              peutSupprimer={estAdmin}
+            />
           </div>
 
-          <ApercuImpression d={d} slug={slug} />
         </>
       )}
     </AdminShell>
@@ -344,61 +424,6 @@ function Lignes({
       <BoutonAjouter
         label={ajouter}
         onClick={() => onChange([...lignes, { id: nouvelId(), texte: "" }])}
-      />
-    </div>
-  );
-}
-
-function Cellules({
-  cellules,
-  onChange,
-}: {
-  cellules: Cellule[];
-  onChange: (c: Cellule[]) => void;
-}) {
-  const set = (id: string, patch: Partial<Cellule>) =>
-    onChange(cellules.map((c) => (c.id === id ? { ...c, ...patch } : c)));
-  return (
-    <div className="space-y-3">
-      {cellules.map((c) => (
-        <div key={c.id} className="flex items-start gap-2">
-          <div className="flex-1 grid sm:grid-cols-[1fr_7rem_1.4fr] gap-2">
-            <input
-              className={INPUT}
-              value={c.nom}
-              placeholder="Nom de la cellule"
-              onChange={(e) => set(c.id, { nom: e.target.value })}
-            />
-            <input
-              className={INPUT}
-              inputMode="numeric"
-              value={c.effectif}
-              placeholder="Effectif"
-              onChange={(e) => set(c.id, { effectif: e.target.value })}
-            />
-            <input
-              className={INPUT}
-              value={c.etat}
-              placeholder="État / besoins"
-              onChange={(e) => set(c.id, { etat: e.target.value })}
-            />
-          </div>
-          <BoutonSupprimer
-            onClick={() =>
-              onChange(
-                cellules.length > 1
-                  ? cellules.filter((x) => x.id !== c.id)
-                  : [{ id: nouvelId(), nom: "", effectif: "", etat: "" }]
-              )
-            }
-          />
-        </div>
-      ))}
-      <BoutonAjouter
-        label="Ajouter une cellule"
-        onClick={() =>
-          onChange([...cellules, { id: nouvelId(), nom: "", effectif: "", etat: "" }])
-        }
       />
     </div>
   );
@@ -462,121 +487,6 @@ function Propositions({
         }
       />
     </div>
-  );
-}
-
-/* ═══ Apercu imprimable (masque a l'ecran) ══════════════════════════════ */
-
-function ApercuImpression({ d, slug }: { d: Dossier; slug: string }) {
-  const props = useMemo(() => d.propositions.filter((p) => nonVide(p.titre)), [d.propositions]);
-  const cellules = useMemo(() => d.cellules.filter((c) => nonVide(c.nom)), [d.cellules]);
-
-  return (
-    <div id="impression" className="hidden print:block text-[#12231C]">
-      <header className="text-center border-b-2 border-[#D4AF37] pb-4 mb-6">
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#B8860B]">
-          Dahira Kippangog Salaatu &apos;Alaa Nabii
-        </p>
-        <h1 className="text-2xl font-bold mt-2">Commission {commissionNom(slug)}</h1>
-        <p className="text-sm mt-1">
-          Assemblée Générale du {AG.date} — {AG.lieu}
-        </p>
-        <p className="text-xs mt-2 text-[#5C7268]">
-          Responsable : <b>{d.responsable || "—"}</b> · Téléphone : {d.telephone || "—"} ·
-          Membres : {d.membres || "—"}
-        </p>
-      </header>
-
-      <BlocImpr titre="1. Compte rendu des activités" items={d.activites.filter((l) => nonVide(l.texte)).map((l) => l.texte)} />
-      <BlocImpr titre="Difficultés rencontrées" items={d.difficultes.filter((l) => nonVide(l.texte)).map((l) => l.texte)} />
-
-      {aBilanSalaatu(slug) && (
-        <section className="mb-5">
-          <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-            2. Bilan provisoire — bisub Salaatu &apos;Alaa Nabii
-          </h2>
-          <p className="text-lg font-bold tabular-nums">{d.salaatu || "—"} Salaatu</p>
-          {nonVide(d.salaatuPrecisions) && <p className="text-sm mt-1">{d.salaatuPrecisions}</p>}
-        </section>
-      )}
-
-      <section className="mb-5">
-        <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-          3. Mise au point sur les cellules
-        </h2>
-        {cellules.length === 0 ? (
-          <p className="text-sm text-[#5C7268]">—</p>
-        ) : (
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="text-left">
-                <th className="border-b py-1">Cellule</th>
-                <th className="border-b py-1 w-24">Effectif</th>
-                <th className="border-b py-1">État / besoins</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cellules.map((c) => (
-                <tr key={c.id}>
-                  <td className="border-b py-1">{c.nom}</td>
-                  <td className="border-b py-1 tabular-nums">{c.effectif || "—"}</td>
-                  <td className="border-b py-1">{c.etat || "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
-
-      <section className="mb-5">
-        <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">
-          4. Propositions pour la Journée Salaatu &apos;Alaa Nabii
-        </h2>
-        {props.length === 0 ? (
-          <p className="text-sm text-[#5C7268]">—</p>
-        ) : (
-          <ol className="list-decimal ml-5 space-y-2 text-sm">
-            {props.map((p) => (
-              <li key={p.id}>
-                <b>{p.titre}</b>
-                {nonVide(p.detail) && <span> — {p.detail}</span>}
-                {nonVide(p.moyens) && (
-                  <span className="block text-[#5C7268]">Moyens : {p.moyens}</span>
-                )}
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-
-      <BlocImpr titre="5. Divers" items={d.divers.filter((l) => nonVide(l.texte)).map((l) => l.texte)} />
-
-      <footer className="mt-10 flex justify-between text-xs pt-10">
-        <span className="border-t border-[#9BB0A6] pt-1 w-56 text-center">
-          Responsable de la commission
-        </span>
-        <span className="border-t border-[#9BB0A6] pt-1 w-56 text-center">
-          Secrétariat Général
-        </span>
-      </footer>
-    </div>
-  );
-}
-
-function BlocImpr({ titre, items }: { titre: string; items: string[] }) {
-  return (
-    <section className="mb-5">
-      <h2 className="font-bold text-[#082F22] border-b border-[#D4AF37]/50 pb-1 mb-2">{titre}</h2>
-      {items.length === 0 ? (
-        <p className="text-sm text-[#5C7268]">—</p>
-      ) : (
-        <ul className="list-disc ml-5 space-y-1 text-sm">
-          {items.map((t, i) => (
-            <li key={i}>{t}</li>
-          ))}
-        </ul>
-      )}
-    </section>
   );
 }
 

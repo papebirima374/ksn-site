@@ -11,6 +11,9 @@ import {
   FaCircleCheck,
   FaCircleXmark,
   FaWhatsapp,
+  FaFolderOpen,
+  FaArrowRightLong,
+  FaArrowRotateLeft,
 } from "react-icons/fa6";
 import { COMMISSIONS, commissionNom, aBilanSalaatu } from "@/lib/commissions";
 import { authHeader } from "@/lib/client-auth-header";
@@ -20,6 +23,13 @@ import {
   type CommissionReport,
 } from "@/lib/commission-reports";
 import { subscribeRelances, marquerRelance, type Relance } from "@/lib/ag-reunion";
+import {
+  type Dossier,
+  LIBELLE_STATUT,
+  subscribeTousLesDossiers,
+  validerDossier,
+  renvoyerDossier,
+} from "@/lib/commission-dossier";
 import { useAuth } from "@/lib/auth-context";
 import { SITE } from "@/lib/constants";
 
@@ -42,11 +52,13 @@ export default function AdminRapportsPage() {
   /** Numeros des responsables : servis par /api/commission-contacts apres
    *  verification du jeton, jamais embarques dans le JavaScript public. */
   const [contacts, setContacts] = useState<Record<string, string>>({});
+  const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [filtre, setFiltre] = useState<string>("");
   const [ouvert, setOuvert] = useState<string | null>(null);
 
   useEffect(() => subscribeCommissionReports(setRapports), []);
   useEffect(() => subscribeRelances(setRelances), []);
+  useEffect(() => subscribeTousLesDossiers(setDossiers), []);
 
   useEffect(() => {
     let annule = false;
@@ -213,6 +225,66 @@ export default function AdminRapportsPage() {
             <b className="text-lg tabular-nums text-[#0F7C55]">{fmt(salaatuCulture.total)}</b>
           </p>
         )}
+      </div>
+
+      {/* ── Circuit des dossiers ──────────────────────────────────────── */}
+      <div className="bg-white rounded-2xl border border-[#0F7C55]/12 p-5 sm:p-6 mb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <FaFolderOpen className="text-[#0F7C55]" />
+          <h2 className="font-bold text-[#082F22]">Dossiers transmis par les commissions</h2>
+        </div>
+        <p className="text-sm text-[#5C7268] mb-5 leading-6">
+          Une commission transmet son dossier au Secrétariat. Le Secrétariat le lit,
+          puis le <b>fait suivre au Président</b> — ou le renvoie à la commission pour
+          complément.
+        </p>
+
+        <div className="space-y-2.5">
+          {COMMISSIONS.map((c) => {
+            const dos = dossiers.find((x) => x.commission === c.slug);
+            const statut = dos?.statut ?? "brouillon";
+            return (
+              <div
+                key={c.slug}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-[#0F7C55]/12 px-4 py-3"
+              >
+                <span className="font-semibold text-sm text-[#082F22] min-w-[12rem] flex-1">
+                  {c.nom}
+                </span>
+                <span
+                  className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                    statut === "valide"
+                      ? "bg-[#0F7C55]/12 text-[#0F7C55]"
+                      : statut === "transmis"
+                        ? "bg-[#D4AF37]/18 text-[#8A6A08]"
+                        : "bg-[#F8F5EF] text-[#9BB0A6]"
+                  }`}
+                >
+                  {LIBELLE_STATUT[statut]}
+                </span>
+                {statut === "transmis" && (
+                  <>
+                    <button
+                      onClick={() => validerDossier(c.slug, user?.displayName || user?.email || "")}
+                      className="inline-flex items-center gap-1.5 bg-[#0F7C55] text-white px-3.5 py-2 rounded-lg text-xs font-bold hover:bg-[#0c6444] transition"
+                    >
+                      <FaArrowRightLong /> Transmettre au Président
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!confirm(`Renvoyer le dossier de « ${c.nom} » pour complément ?`)) return;
+                        renvoyerDossier(c.slug, user?.displayName || user?.email || "");
+                      }}
+                      className="inline-flex items-center gap-1.5 border border-[#0F7C55]/30 text-[#0F7C55] px-3.5 py-2 rounded-lg text-xs font-bold hover:bg-[#0F7C55]/5 transition"
+                    >
+                      <FaArrowRotateLeft /> Renvoyer
+                    </button>
+                  </>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* ── Liste des rapports ────────────────────────────────────────── */}

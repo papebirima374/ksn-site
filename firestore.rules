@@ -333,12 +333,44 @@ service cloud.firestore {
     match /commissionDossiers/{slug} {
       allow read: if isAdmin() || estSecretariat() || monSlug() == slug;
       allow write: if isAdmin() || monSlug() == slug;
+
+      // Le Secretariat fait suivre le dossier au President, ou le renvoie a la
+      // commission pour complement. Il agit donc sur le CIRCUIT — et sur lui
+      // seul : la liste des champs autorises l'empeche de recrire une ligne de
+      // ce que la commission a redige.
+      allow update: if estSecretariat()
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(["statut", "transmisAt", "transmisPar",
+                                   "valideAt", "validePar", "updatedAt"]);
     }
 
     // ─── Relances envoyees aux commissions ──────────────────────────────
     // Trace de la derniere relance (date + auteur). L'envoi lui-meme passe
     // par WhatsApp, hors du site. Une commission peut voir qu'elle a ete
     // relancee, mais pas relancer qui que ce soit.
+    // ─── Fil de discussion des commissions ──────────────────────────────
+    // La continuite apres l'assemblee : chaque commission echange ici avec le
+    // Secretariat et la Presidence. Un message porte le slug de sa commission.
+    //   - lecture : la commission concernee, le Secretariat, l'administrateur
+    //   - ecriture : les memes — une commission ne peut pas poster dans le fil
+    //     d'une autre, la regle verifie le champ commission a la creation
+    //   - modification : impossible, un message ne se reecrit pas
+    //   - suppression : administrateur seul
+    match /commissionMessages/{id} {
+      allow read: if isAdmin() || estSecretariat() || resource.data.commission == monSlug();
+      allow create: if (isAdmin() || estSecretariat()
+                        || request.resource.data.commission == monSlug())
+                    && request.resource.data.commission is string
+                    && request.resource.data.texte is string
+                    && request.resource.data.texte.size() > 0
+                    && request.resource.data.texte.size() <= 2000
+                    && request.resource.data.auteur is string
+                    && request.resource.data.auteur.size() <= 120
+                    && request.resource.data.createdAt is number;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
     match /agRelances/{slug} {
       allow read: if isAdmin() || estSecretariat() || monSlug() == slug;
       allow write: if isAdmin() || estSecretariat();
