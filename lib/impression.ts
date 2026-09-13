@@ -130,6 +130,30 @@ const STYLE = `
     display:flex;justify-content:space-between;font-size:8.5px}
   .foot b{color:#D4AF37}
 
+  /* ── Fiche vierge : zones a remplir a la main ────────────────────── */
+  .champs{display:flex;gap:6mm;margin-bottom:6mm}
+  .champs div{flex:1}
+  .champs span{display:block;font-size:8px;font-weight:800;letter-spacing:.16em;
+    text-transform:uppercase;color:#5C7268;margin-bottom:1.5mm}
+  .champs i{display:block;border-bottom:.35mm dotted #B9C9C1;height:7mm}
+  .lignes{background-image:repeating-linear-gradient(to bottom,
+    transparent 0, transparent 7.6mm, #B9C9C1 7.6mm, #B9C9C1 7.75mm)}
+  .boite{border:.4mm solid #D4AF37;border-radius:2mm;height:15mm;
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:2mm}
+  .boite span{font-size:8px;font-weight:800;letter-spacing:.18em;
+    text-transform:uppercase;color:#5C7268}
+
+  /* Une fiche vierge doit tenir sur UNE feuille : hauteur verrouillee un
+     poil sous 297mm (les arrondis suffisent a declencher une 2e page),
+     corps qui rogne plutot que de pousser, pied epingle en bas. */
+  .page.fiche{height:296.5mm;min-height:0;padding:0;overflow:hidden;
+    display:flex;flex-direction:column}
+  .page.fiche .head{padding:9mm 14mm 13mm}
+  .page.fiche .body{flex:1;min-height:0;overflow:hidden;padding:6mm 14mm 0}
+  .page.fiche .sec{margin-bottom:4mm}
+  .page.fiche .signs{margin-top:auto;padding-top:4mm}
+  .page.fiche .foot{flex:none;margin-top:4mm}
+
   @media screen{ body{background:#33443D;padding:20px} .page{box-shadow:0 14px 40px rgba(0,0,0,.35)} }
 `;
 
@@ -163,10 +187,10 @@ const liste = (items: string[]) =>
     ? `<ul>${items.map((t) => `<li>${multi(t)}</li>`).join("")}</ul>`
     : `<p class="rien">Rien de signalé.</p>`;
 
-function document(titre: string, contenu: string): string {
+function document(titre: string, contenu: string, classe = ""): string {
   return `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
 <title>${e(titre)}</title><style>${STYLE}</style></head>
-<body><div class="page">${contenu}</div></body></html>`;
+<body><div class="page ${classe}">${contenu}</div></body></html>`;
 }
 
 /* ═══ Dossier d'une commission ═════════════════════════════════════════ */
@@ -251,6 +275,73 @@ export function htmlDossier(d: Dossier, slug: string): string {
   ${pied(`Établi le ${new Date().toLocaleDateString("fr-FR")}`)}`;
 
   return document(`Rapport — ${nom}`, contenu);
+}
+
+/* ═══ Fiche vierge d'une commission ════════════════════════════════════ */
+
+/** Une seule page A4, a remplir a la main, pour LA commission concernee.
+ *  Une commission n'a pas a imprimer le jeu complet des six fiches : elle
+ *  n'y trouverait que du papier perdu. Le jeu complet reste accessible au
+ *  Secretariat, via /fiches-ag-2026.html. */
+export function htmlFicheVierge(slug: string): string {
+  const nom = commissionNom(slug);
+  const bilan = aBilanSalaatu(slug);
+  let n = 0;
+  const num = () => ++n;
+
+  // Hauteurs d'ecriture : la place liberee quand il n'y a pas de bilan
+  // Salaatu revient aux zones de texte.
+  const h = bilan
+    ? { rendu: "38", cellules: "30.4", props: "30.4", divers: "22.8" }
+    : { rendu: "53.2", cellules: "38", props: "38", divers: "22.8" };
+
+  const contenu = `
+  ${enTete("Fiche de Commission", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Commission</small><strong>${e(nom)}</strong></div>
+  <div class="body">
+    <div class="champs">
+      <div><span>Responsable</span><i></i></div>
+      <div><span>Membres présents</span><i></i></div>
+      <div><span>Date</span><i></i></div>
+    </div>
+
+    <div class="sec">
+      ${titreSection(num(), "Compte rendu de la commission")}
+      <div class="lignes" style="height:${h.rendu}mm"></div>
+    </div>
+
+    ${
+      bilan
+        ? `<div class="sec">
+      ${titreSection(num(), "Bilan provisoire", "bisub Salaatu ’Alaa Nabii")}
+      <div class="boite"><span>Nombre de Salaatu</span></div>
+    </div>`
+        : ""
+    }
+
+    <div class="sec">
+      ${titreSection(num(), "Cellules", "point à discuter")}
+      <div class="lignes" style="height:${h.cellules}mm"></div>
+    </div>
+
+    <div class="sec">
+      ${titreSection(num(), "Propositions pour la Journée Salaatu ’Alaa Nabii")}
+      <div class="lignes" style="height:${h.props}mm"></div>
+    </div>
+
+    <div class="sec">
+      ${titreSection(num(), "Divers")}
+      <div class="lignes" style="height:${h.divers}mm"></div>
+    </div>
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Responsable de la commission</span></div>
+    <div><i></i><span>Secrétariat Général</span></div>
+  </div>
+  ${pied("Brouillon à remplir")}`;
+
+  return document(`Fiche vierge — ${nom}`, contenu, "fiche");
 }
 
 /* ═══ Compte rendu de reunion ══════════════════════════════════════════ */

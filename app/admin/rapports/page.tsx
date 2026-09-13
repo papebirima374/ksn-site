@@ -239,6 +239,19 @@ export default function AdminRapportsPage() {
           complément.
         </p>
 
+        <p className="text-sm text-[#5C7268] mb-5 -mt-3">
+          Besoin des fiches papier pour toute l&apos;assemblée ?{" "}
+          <a
+            href="/fiches-ag-2026.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-[#0F7C55] hover:underline"
+          >
+            Imprimer le jeu complet des six fiches
+          </a>{" "}
+          — chaque commission, elle, n&apos;imprime que la sienne depuis son espace.
+        </p>
+
         <div className="space-y-2.5">
           {COMMISSIONS.map((c) => {
             const dos = dossiers.find((x) => x.commission === c.slug);
