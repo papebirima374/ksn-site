@@ -13,6 +13,7 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "users/admin1"), { role: "admin", permissions: [] });
   await setDoc(doc(db, "users/sec1"), { role: "commission", commission: "Secrétariat et Administratif", permissions: [] });
   await setDoc(doc(db, "users/fin1"), { role: "commission", commission: "Finances", permissions: [] });
+  await setDoc(doc(db, "users/org1"), { role: "commission", commission: "Organisation", permissions: [] });
   await setDoc(doc(db, "users/anc1"), { role: "commission", commission: "Secrétariat", permissions: [] }); // ancien libelle
   await setDoc(doc(db, "users/membre1"), { role: "member", permissions: [] });
   await setDoc(doc(db, "commissionDossiers/finances"), { commission: "finances", responsable: "X" });
@@ -22,6 +23,10 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "commissionReports/r1"), { commission: "finances", responsable: "Z", createdAt: 1 });
   await setDoc(doc(db, "commissionMessages/m-fin"), { commission: "finances", auteur: "A", role: "commission", texte: "Bonjour", createdAt: 1 });
   await setDoc(doc(db, "commissionMessages/m-com"), { commission: "communication", auteur: "B", role: "commission", texte: "Salut", createdAt: 1 });
+  await setDoc(doc(db, "commissionCaisse/c-fin"), { commission: "finances", sens: "entree", montant: 5000, motif: "Cotisation", date: "2026-09-01", createdAt: 1, createdBy: "X" });
+  await setDoc(doc(db, "commissionCaisse/c-org"), { commission: "organisation", sens: "entree", montant: 3000, motif: "Cotisation", date: "2026-09-01", createdAt: 1, createdBy: "Y" });
+  await setDoc(doc(db, "commissionMembres/organisation_M001"), { commission: "organisation", matricule: "M001", nom: "A B", telephone: "+221770000000", role: "membre", ajouteLe: 1 });
+  await setDoc(doc(db, "commissionReunions/r-org"), { commission: "organisation", titre: "Préparation", date: "2026-09-20", createdAt: 1 });
 });
 
 const as = (uid) => env.authenticatedContext(uid).firestore();
@@ -113,6 +118,32 @@ await t("Secrétariat liste les rapports transmis", assertSucceeds(getDocs(colle
 await t("Secrétariat liste tous les dossiers", assertSucceeds(getDocs(collection(as("sec1"), "commissionDossiers"))));
 await t("Une commission REFUSÉE sur la liste des dossiers",
   assertFails(getDocs(collection(as("fin1"), "commissionDossiers"))));
+
+console.log("\n── Caisse de commission (séparée des finances nationales) ──");
+const ecriture = (commission, extra = {}) => ({
+  commission, sens: "entree", montant: 2000, motif: "Cotisation",
+  date: "2026-09-15", createdAt: Date.now(), createdBy: "Moi", annuleId: "", ...extra });
+await t("Finances écrit dans SA caisse", assertSucceeds(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances"))));
+await t("Finances lit SA caisse", assertSucceeds(getDocs(query(collection(as("fin1"), "commissionCaisse"), where("commission", "==", "finances")))));
+await t("Finances N'ÉCRIT PAS dans la caisse d'Organisation", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("organisation"))));
+await t("Finances NE LIT PAS la caisse d'Organisation", assertFails(getDoc(doc(as("fin1"), "commissionCaisse/c-org"))));
+await t("Une écriture ne se modifie jamais", assertFails(setDoc(doc(as("fin1"), "commissionCaisse/c-fin"), { montant: 999999 }, { merge: true })));
+await t("Une écriture ne s'efface pas (on l'annule)", assertFails(deleteDoc(doc(as("fin1"), "commissionCaisse/c-fin"))));
+await t("Montant nul refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { montant: 0 }))));
+await t("Montant négatif refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { montant: -500 }))));
+await t("Sens inventé refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { sens: "cadeau" }))));
+await t("Le Secrétariat lit la caisse d'une commission", assertSucceeds(getDoc(doc(as("sec1"), "commissionCaisse/c-fin"))));
+await t("Le Secrétariat N'ÉCRIT PAS dans une caisse", assertFails(addDoc(collection(as("sec1"), "commissionCaisse"), ecriture("finances"))));
+await t("Un visiteur anonyme ne voit aucune caisse", assertFails(getDoc(doc(anon(), "commissionCaisse/c-fin"))));
+
+console.log("\n── Membres de commission et convocations ──");
+await t("Organisation ajoute un membre", assertSucceeds(setDoc(doc(as("org1"), "commissionMembres/organisation_M002"), { commission: "organisation", matricule: "M002", nom: "C D", telephone: "+221770000001", role: "membre", ajouteLe: Date.now() })));
+await t("Finances N'AJOUTE PAS un membre à Organisation", assertFails(setDoc(doc(as("fin1"), "commissionMembres/organisation_M003"), { commission: "organisation", matricule: "M003", nom: "E F", telephone: "", role: "membre", ajouteLe: Date.now() })));
+await t("Finances NE LIT PAS les membres d'Organisation", assertFails(getDoc(doc(as("fin1"), "commissionMembres/organisation_M001"))));
+await t("Organisation crée une réunion", assertSucceeds(addDoc(collection(as("org1"), "commissionReunions"), { commission: "organisation", titre: "Point caisse", date: "2026-09-25", createdAt: Date.now() })));
+await t("Finances crée aussi ses réunions (toutes les commissions)", assertSucceeds(addDoc(collection(as("fin1"), "commissionReunions"), { commission: "finances", titre: "Point", date: "2026-09-25", createdAt: Date.now() })));
+await t("Finances NE CRÉE PAS de réunion pour Organisation", assertFails(addDoc(collection(as("fin1"), "commissionReunions"), { commission: "organisation", titre: "Pirate", date: "2026-09-25", createdAt: Date.now() })));
+await t("Le Secrétariat lit les réunions d'une commission", assertSucceeds(getDoc(doc(as("sec1"), "commissionReunions/r-org"))));
 
 console.log(`\n═══ ${ok} réussis, ${ko} échoués ═══`);
 await env.cleanup();

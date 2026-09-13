@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { COMMISSIONS, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
+import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu } from "@/lib/commissions";
 import {
   type Dossier,
   type Ligne,
@@ -15,6 +15,13 @@ import {
   LIBELLE_STATUT,
 } from "@/lib/commission-dossier";
 import FilCommission from "@/components/admin/FilCommission";
+import CaisseCommission from "@/components/admin/CaisseCommission";
+import MembresCommission from "@/components/admin/MembresCommission";
+import ReunionsCommission from "@/components/admin/ReunionsCommission";
+import {
+  type MembreCommission,
+  subscribeMembresCommission,
+} from "@/lib/commission-membres";
 import { htmlDossier, htmlFicheVierge, imprimer, AG } from "@/lib/impression";
 import {
   FaPlus,
@@ -26,6 +33,11 @@ import {
   FaTriangleExclamation,
   FaPaperPlane,
   FaLock,
+  FaFileLines,
+  FaUsers,
+  FaWallet,
+  FaCalendarDays,
+  FaComments,
 } from "react-icons/fa6";
 
 export default function MaCommissionPage() {
@@ -45,6 +57,14 @@ export default function MaCommissionPage() {
       : "commission";
   const signature = user?.displayName || user?.email || "";
 
+  type Onglet = "dossier" | "membres" | "caisse" | "reunions" | "echanges";
+  const [onglet, setOnglet] = useState<Onglet>("dossier");
+
+  // La liste des membres sert a trois onglets (caisse, membres, reunions) :
+  // un seul abonnement, partage.
+  const [membres, setMembres] = useState<MembreCommission[]>([]);
+  const [erreurMembres, setErreurMembres] = useState("");
+
   const [d, setD] = useState<Dossier | null>(null);
   const [etat, setEtat] = useState<"charge" | "modifie" | "enregistre" | "erreur">("charge");
   const [message, setMessage] = useState<string>("");
@@ -62,6 +82,17 @@ export default function MaCommissionPage() {
             ? "Accès refusé par le serveur. Les règles Firestore doivent être publiées."
             : e.message
         )
+    );
+  }, [slug, user]);
+
+  useEffect(() => {
+    if (!slug || !user) return;
+    return subscribeMembresCommission(slug, setMembres, (e) =>
+      setErreurMembres(
+        /permission/i.test(e.message)
+          ? "Accès refusé. Vérifiez que les règles Firestore publiées sont à jour."
+          : "Liste indisponible pour le moment."
+      )
     );
   }, [slug, user]);
 
@@ -172,7 +203,33 @@ export default function MaCommissionPage() {
         <p className="text-[#5C7268]">Chargement du dossier…</p>
       ) : (
         <>
-          {/* ── Barre d'actions ─────────────────────────────────────────── */}
+          {/* ── Onglets ─────────────────────────────────────────────────── */}
+          <div className="mb-6 flex flex-wrap gap-1.5 p-1.5 rounded-2xl bg-white border border-[#0F7C55]/12 no-print">
+            {(
+              [
+                ["dossier", "Dossier AG", <FaFileLines key="a" />],
+                ["membres", "Membres", <FaUsers key="b" />],
+                ["caisse", "Caisse", <FaWallet key="c" />],
+                ["reunions", "Réunions", <FaCalendarDays key="d" />],
+                ["echanges", "Échanges", <FaComments key="e" />],
+              ] as [Onglet, string, React.ReactNode][]
+            ).map(([cle, label, icone]) => (
+              <button
+                key={cle}
+                onClick={() => setOnglet(cle)}
+                className={`flex-1 min-w-[7.5rem] inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold transition ${
+                  onglet === cle
+                    ? "bg-[#0F7C55] text-white"
+                    : "text-[#5C7268] hover:bg-[#0F7C55]/6"
+                }`}
+              >
+                {icone} {label}
+              </button>
+            ))}
+          </div>
+
+          {/* ── Barre d'actions (dossier uniquement) ────────────────────── */}
+          {onglet === "dossier" && (
           <div className="sticky top-0 z-20 -mx-4 px-4 py-3 mb-6 bg-[#F8F5EF]/95 backdrop-blur border-b border-[#0F7C55]/10 flex flex-wrap items-center gap-3 no-print">
             <button
               onClick={enregistrer}
@@ -222,8 +279,10 @@ export default function MaCommissionPage() {
               )}
             </span>
           </div>
+          )}
 
           {/* ── Ou en est le dossier ────────────────────────────────────── */}
+          {onglet === "dossier" && (
           <div
             className={`mb-6 rounded-2xl border px-5 py-4 flex flex-wrap items-center gap-3 no-print ${
               d.statut === "valide"
@@ -262,7 +321,10 @@ export default function MaCommissionPage() {
             )}
           </div>
 
+          )}
+
           {/* ── Saisie ──────────────────────────────────────────────────── */}
+          {onglet === "dossier" && (
           <div className="space-y-5 max-w-4xl no-print">
             <Carte n={1} titre="Identification">
               <div className="grid sm:grid-cols-3 gap-4">
@@ -364,15 +426,55 @@ export default function MaCommissionPage() {
                 ajouter="Ajouter un point"
               />
             </Carte>
-
-            <FilCommission
-              slug={slug}
-              auteur={signature}
-              role={monRole}
-              peutSupprimer={estAdmin}
-              pret={!!user}
-            />
           </div>
+          )}
+
+          {onglet === "membres" && (
+            <div className="max-w-4xl">
+              <MembresCommission
+                slug={slug}
+                membres={membres}
+                signature={signature}
+                erreur={erreurMembres}
+              />
+            </div>
+          )}
+
+          {onglet === "caisse" && (
+            <div className="max-w-4xl">
+              <CaisseCommission
+                slug={slug}
+                nomCommission={commissionNom(slug)}
+                membres={membres}
+                signature={signature}
+                pret={!!user}
+              />
+            </div>
+          )}
+
+          {onglet === "reunions" && (
+            <div className="max-w-4xl">
+              <ReunionsCommission
+                slug={slug}
+                nomCommission={commissionNom(slug)}
+                membres={membres}
+                signature={signature}
+                pret={!!user}
+              />
+            </div>
+          )}
+
+          {onglet === "echanges" && (
+            <div className="max-w-4xl">
+              <FilCommission
+                slug={slug}
+                auteur={signature}
+                role={monRole}
+                peutSupprimer={estAdmin}
+                pret={!!user}
+              />
+            </div>
+          )}
 
         </>
       )}
