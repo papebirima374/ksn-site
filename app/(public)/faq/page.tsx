@@ -35,11 +35,15 @@ const FAQ_CATEGORIES_SEO = [
     questions: [
       {
         q: "Comment devenir membre officiel du Dahira ?",
-        a: `Trois étapes : (1) remplir le formulaire d'inscription sur la page /inscription, (2) payer la cotisation annuelle de 1 000 FCFA via Wave, Orange Money ou UBA, (3) accéder à votre espace membre avec votre carte CR-80 imprimable et votre matricule officiel.`,
+        a: `Trois étapes : remplir le formulaire sur la page /inscription, régler votre carte de membre (1 000 FCFA) via Wave, puis accéder à votre espace membre avec votre matricule officiel et votre carte imprimable.`,
       },
       {
-        q: "Quel est le montant de la cotisation annuelle ?",
-        a: `1 000 FCFA par an (environ 1,50 €). Cette modeste contribution finance les activités du Dahira (organisation de la Journée Salaatu, frais d'hébergement des invités, communication, etc.). Des dons supplémentaires sont toujours bienvenus pour soutenir nos projets.`,
+        // Le site annoncait « 1 000 FCFA par an », ce que le Reglement
+        // Interieur contredit : les 1 000 FCFA sont la CARTE DE MEMBRE, reglee
+        // une fois. Deux montants differents dans deux documents officiels du
+        // meme Dahira — on s'en tient a ce que dit le Reglement.
+        q: "Combien coûte l'adhésion ?",
+        a: `La carte de membre coûte 1 000 FCFA, réglée une seule fois à l'inscription. S'y ajoutent une cotisation mensuelle de 500 FCFA et un renouvellement annuel de 500 FCFA, fixés par le Règlement Intérieur.`,
       },
       {
         q: "Comment recevoir ma carte de membre ?",

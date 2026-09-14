@@ -83,7 +83,7 @@ export default function VerifierCartePage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-600 font-bold">•</span>
-                    <span>Pour les membres en attente, le paiement de la cotisation de 1000 FCFA doit être fait pour activer le profil.</span>
+                    <span>Pour les membres en attente, la carte de membre (1 000 FCFA) doit être réglée pour activer le profil.</span>
                   </li>
                 </ul>
               </div>

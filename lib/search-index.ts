@@ -106,7 +106,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   // ─── ESPACE MEMBRE ───────────────────────────────────────────────
   {
     title: "Devenir membre",
-    description: "Formulaire d'inscription au Dahira KSN — cotisation 1 000 FCFA/an.",
+    description: "Formulaire d'inscription au Dahira KSN — carte de membre 1 000 FCFA.",
     url: "/inscription",
     category: "Espace membre",
     keywords: ["inscription", "adhésion", "rejoindre", "membre", "cotisation", "1000 fcfa"],
@@ -136,7 +136,7 @@ export const SEARCH_INDEX: SearchEntry[] = [
   },
   {
     title: "Combien coûte la cotisation ?",
-    description: "1 000 FCFA par an (environ 1,50 €).",
+    description: "Carte de membre 1 000 FCFA, puis 500 FCFA par mois.",
     url: "/faq#adhésion-et-espace-membre",
     category: "FAQ",
     keywords: ["prix", "coût", "tarif", "combien", "cotisation", "montant"],

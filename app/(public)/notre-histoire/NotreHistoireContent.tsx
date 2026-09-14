@@ -11,10 +11,12 @@ import {
   FaBookOpen,
   FaTimeline,
   FaGem,
+  FaQuoteLeft,
 } from "react-icons/fa6";
 import PageHero from "@/components/layout/PageHero";
 import ShareButton from "@/components/ui/ShareButton";
 import SectionTabs from "@/components/ui/SectionTabs";
+import Temoignages from "@/components/sections/Temoignages";
 import { LINKS, SITE } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
@@ -47,6 +49,10 @@ const TABS = [
   { id: "origines", labelKey: "tabs.origines", icon: <FaBookOpen /> },
   { id: "jalons", labelKey: "tabs.jalons", icon: <FaTimeline /> },
   { id: "valeurs", labelKey: "tabs.valeurs", icon: <FaGem /> },
+  // Les temoignages n'existaient que sur la page d'accueil, qu'ils allongeaient
+  // de 277 lignes. Leur place est ici : l'histoire du Dahira racontee par ceux
+  // qui la vivent.
+  { id: "temoignages", labelKey: "tabs.temoignages", icon: <FaQuoteLeft /> },
 ];
 
 export default function NotreHistoireContent() {
@@ -218,6 +224,7 @@ export default function NotreHistoireContent() {
                 </section>
               </>
             )}
+            {id === "temoignages" && <Temoignages />}
           </>
         )}
       />
