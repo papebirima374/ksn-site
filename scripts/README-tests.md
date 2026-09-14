@@ -56,3 +56,10 @@ node scripts/generer-reglement-pdf.mjs build-reglement
 ```
 
 Produit `reglement-ksn.html` et `reglement-ksn.pdf` (8 pages A4).
+
+La **pagination est mesurée**, non devinée : le script compose d'abord tous les
+articles à la largeur exacte du document, relève leur hauteur dans le
+navigateur, puis remplit les feuilles jusqu'à la place réellement disponible —
+et équilibre la répartition. L'ancienne version coupait tous les 4 articles
+sans rien vérifier : rallonger un texte suffisait à faire déborder une page, en
+silence. Le script signale désormais toute page qui dépasse 297 mm.
