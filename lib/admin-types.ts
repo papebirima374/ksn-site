@@ -9,8 +9,7 @@ export type Permission =
   | "users.write"
   | "members.write"
   | "finances.write"
-  | "boutique.write"
-  | "education.write";
+  | "boutique.write";
 
 export const ALL_PERMISSIONS: Permission[] = [
   "gallery.write",
@@ -22,7 +21,6 @@ export const ALL_PERMISSIONS: Permission[] = [
   "members.write",
   "finances.write",
   "boutique.write",
-  "education.write",
 ];
 
 /** Commissions officielles du Dahira KSN.
@@ -46,7 +44,6 @@ export const PERMISSION_LABELS: Record<Permission, string> = {
   "members.write": "Membres du Dahira (gérer + cartes)",
   "finances.write": "Finances du Dahira (commission finance)",
   "boutique.write": "Boutique (produits + commandes)",
-  "education.write": "Éducation & Culture (Tazawwud, leçons, audio)",
 };
 
 export type AppUser = {
@@ -70,7 +67,6 @@ export type AppUser = {
    *  Indépendant du statut membre KSN (chacun paie sa biblio). */
   premiumAccess?: {
     salaatuLibrary?: PremiumUnlock;
-    // futures sections premium à ajouter ici :
     // tazawwudAudio?: PremiumUnlock;
     // ...
   };
@@ -145,156 +141,6 @@ export type PremiumPurchase = {
 };
 
 // ════════════════════════════════════════════════════════════════════
-//   ÉDUCATION & CULTURE — Tazawwud et autres ouvrages
-// ════════════════════════════════════════════════════════════════════
-
-export type EducationLanguage = "fr" | "en" | "ar" | "it" | "es" | "wo";
-
-export type EducationPublishStatus = "draft" | "preview" | "published";
-
-/** Module éducatif (chapitre du Tazawwud par exemple). */
-export type EducationModule = {
-  id: string;
-  /** Slug court pour URL : "fondements", "tahara", ... */
-  slug: string;
-  /** Titre par langue. FR est toujours rempli. */
-  title: Partial<Record<EducationLanguage, string>>;
-  /** Titre arabe (calligraphie) — affiché en hero du module. */
-  titleArabic?: string;
-  /** Description courte (1-2 phrases). */
-  description: Partial<Record<EducationLanguage, string>>;
-  /** Icône emoji ou clé sémantique : "seedling", "water", "salat"... */
-  iconKey?: string;
-  /** Ordre d'affichage (1, 2, 3, ...). */
-  order: number;
-  publishStatus: EducationPublishStatus;
-  /** Œuvre source : "tazawwud", "massalik", "custom", ... */
-  sourceWork: string;
-  createdAt: number;
-  updatedAt?: number;
-};
-
-/** Audio attaché à une leçon, par langue + provider. */
-export type EducationLessonAudio = {
-  /** URL publique Firebase Storage. */
-  url: string;
-  /** Path dans Storage pour suppression. */
-  storagePath: string;
-  /** Hash du contenu texte au moment de la génération. Permet de
-   *  détecter si le texte a changé et qu'il faut régénérer. */
-  contentHash: string;
-  voiceId: string;
-  provider: "google" | "edge" | "manual_upload";
-  durationSec: number;
-  sizeBytes: number;
-  generatedAt: number;
-};
-
-export type QuizOption = {
-  id: string; // Ex: "A", "B", "C", "D"
-  text: Partial<Record<EducationLanguage, string>>;
-};
-
-export type QuizQuestion = {
-  id: string;
-  question: Partial<Record<EducationLanguage, string>>;
-  options: QuizOption[];
-  correctOptionId: string;
-  explanation?: Partial<Record<EducationLanguage, string>>;
-};
-
-export type EducationLessonQuiz = {
-  questions: QuizQuestion[];
-};
-
-/** Leçon individuelle (sous un module). */
-export type EducationLesson = {
-  id: string;
-  moduleId: string;
-  slug: string;
-  /** Numéro affiché : 1.1, 1.2, 2.3, etc. */
-  reference: string;
-  /** Ordre dans le module (1, 2, 3, ...). */
-  order: number;
-  title: Partial<Record<EducationLanguage, string>>;
-  titleArabic?: string;
-  /** Intention spirituelle (Niya) — court paragraphe avant la leçon. */
-  intention?: Partial<Record<EducationLanguage, string>>;
-  /** Corps principal de la leçon, format Markdown. */
-  content: Partial<Record<EducationLanguage, string>>;
-  /** Citation centrale (verset / hadith / Serigne Touba). */
-  citation?: {
-    author?: string;
-    sourceRef?: string; // ex: "Coran 33:56"
-    arabic?: string;
-    translations?: Partial<Record<EducationLanguage, string>>;
-  };
-  /** Application pratique dans la vie quotidienne. */
-  application?: Partial<Record<EducationLanguage, string>>;
-  /** Rappel à mémoriser (1 phrase). */
-  reminder?: Partial<Record<EducationLanguage, string>>;
-  /** Audio par langue. */
-  audio?: Partial<Record<EducationLanguage, EducationLessonAudio>>;
-  /** Illustrations uploadées (images pédagogiques). */
-  illustrations?: Array<{
-    url: string;
-    storagePath: string;
-    caption?: string;
-    alt?: string;
-    order?: number;
-  }>;
-  /** Temps de lecture estimé en minutes. */
-  readingTimeMin?: number;
-  quiz?: EducationLessonQuiz;
-  publishStatus: EducationPublishStatus;
-  /** Vue gratuite pour tous (true) ou réservée membres actifs. */
-  publicAccess: boolean;
-  createdAt: number;
-  updatedAt?: number;
-};
-
-// ════════════════════════════════════════════════════════════════════
-//   CERTIFICATION TAZAWWUD — validation orale obligatoire par la
-//   Commission Éducation avant délivrance du certificat PDF.
-// ════════════════════════════════════════════════════════════════════
-
-export type EducationCertificationStatus =
-  | "pending_review" // Demande déposée, en attente de l'entretien oral
-  | "scheduled"      // Entretien planifié
-  | "oral_passed"    // Validé — certificat téléchargeable
-  | "rejected";      // Refusé après entretien (à reprendre)
-
-/** Demande de certification après complétion intégrale du Tazawwud.
- *  Stockée dans la collection Firestore "educationCertifications". */
-export type EducationCertification = {
-  id: string;
-  /** Identité de l'apprenant — saisie au moment de la demande. */
-  fullName: string;
-  phone: string;
-  email?: string;
-  city?: string;
-  country?: string;
-  /** Disponibilités pour l'entretien (texte libre). */
-  availability?: string;
-  /** Statut courant de la demande. */
-  status: EducationCertificationStatus;
-  /** Examinateur (membre de la Commission Éducation). */
-  examinerName?: string;
-  examinerUid?: string;
-  /** Date de l'entretien (ISO YYYY-MM-DD) une fois passé. */
-  oralExamDate?: string;
-  /** Notes de la Commission après entretien. */
-  examinerNotes?: string;
-  /** Numéro de certificat — généré à la validation. */
-  certificateNumber?: string;
-  /** Référence locale anonyme côté apprenant (localStorage). */
-  applicantLocalRef?: string;
-  createdAt: number;
-  updatedAt?: number;
-  validatedAt?: number;
-};
-
-// ════════════════════════════════════════════════════════════════════
 //   NOTIFICATIONS — Centre in-app temps réel
 // ════════════════════════════════════════════════════════════════════
 
@@ -305,10 +151,6 @@ export type NotificationType =
   | "premium_request_new"      // user → admins : nouvelle demande déposée
   | "premium_request_approved" // admin → user : demande validée
   | "premium_request_rejected" // admin → user : demande refusée
-  // Certification Tazawwud
-  | "certification_request_new"
-  | "certification_approved"
-  | "certification_rejected"
   // Commissions — versements entre caisses de commission
   | "transfert_envoye"   // Finances → commission : un versement vous attend
   | "transfert_recu"     // commission → Finances : reception accusee
@@ -328,7 +170,6 @@ export type NotificationChannel =
 /** Catégories d'événements regroupés pour les préférences. */
 export type NotificationCategory =
   | "premium"        // demandes/validations premium
-  | "education"      // certifications Tazawwud
   | "admin_alerts"   // alertes admin (broadcast)
   | "commission"     // vie des commissions (versements, circuit des dossiers)
   | "system";        // info/success/warning
@@ -352,9 +193,6 @@ export const NOTIFICATION_TYPE_CATEGORY: Record<
   premium_request_new: "admin_alerts",
   premium_request_approved: "premium",
   premium_request_rejected: "premium",
-  certification_request_new: "admin_alerts",
-  certification_approved: "education",
-  certification_rejected: "education",
   transfert_envoye: "commission",
   transfert_recu: "commission",
   dossier_circuit: "commission",

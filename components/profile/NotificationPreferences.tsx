@@ -50,11 +50,6 @@ const CATEGORIES: {
     desc: "Confirmations de paiement, validations, refus.",
   },
   {
-    id: "education",
-    label: "Mon parcours éducation",
-    desc: "Avancée Tazawwud, certificat, entretiens oraux.",
-  },
-  {
     id: "admin_alerts",
     label: "Alertes admin",
     desc: "Si vous avez un rôle admin/commission : nouvelles demandes à traiter.",

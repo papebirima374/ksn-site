@@ -37,7 +37,6 @@ const SCENES = [
   { n: "16", slug: "media-reseaux",           path: "/media",           title: "Média — réseaux sociaux", scroll: "Suivez KSN Partout" },
   { n: "17", slug: "boutique",                path: "/boutique",        title: "Boutique officielle" },
   { n: "18", slug: "blog",                    path: "/blog",            title: "Blog & actualités" },
-  { n: "19", slug: "education",               path: "/education",       title: "Éducation — académie KSN" },
   { n: "20", slug: "don",                     path: "/don",             title: "Faire un don" },
   { n: "21", slug: "inscription-formulaire",  path: "/inscription",     title: "Rejoindre — formulaire d'intégration", scroll: "Demande d'intégration" },
   { n: "22", slug: "accueil-arabe",           path: "/",                title: "Multilingue — accueil en arabe (RTL)", locale: "ar" },

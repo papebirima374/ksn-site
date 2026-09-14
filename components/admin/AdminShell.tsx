@@ -19,7 +19,6 @@ import {
   FaCalendarDays,
   FaCommentDots,
   FaFilePdf,
-  FaGraduationCap,
   FaCrown,
   FaBullseye,
   FaClipboardList,
@@ -97,7 +96,6 @@ const GROUPES: {
     titre: "Éducation et Culture",
     slug: "education-culture",
     items: [
-      { href: "/admin/education", label: "Éducation & Culture", Icon: FaGraduationCap, perm: "education.write" },
       { href: "/admin/bibliotheque", label: "Bibliothèque Salaats", Icon: FaBookOpen, perm: "library.write" },
       { href: "/admin/salaatu", label: "Salaatu du jour", Icon: FaHandsPraying, perm: "salaatu.write" },
     ],

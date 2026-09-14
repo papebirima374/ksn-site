@@ -158,20 +158,6 @@ service cloud.firestore {
       allow write: if hasPerm("articles.write");
     }
 
-    // ─── Éducation & Culture — Modules (Tazawwud, etc.) ─────────────────
-    match /education_modules/{id} {
-      allow read: if true;  // public peut voir la structure
-      allow write: if hasPerm("education.write");
-    }
-
-    // ─── Éducation & Culture — Leçons ───────────────────────────────────
-    match /education_lessons/{id} {
-      // Public peut lire les leçons published; admin/edu voient tout
-      allow read: if resource.data.publishStatus == "published"
-                  || hasPerm("education.write");
-      allow create, update, delete: if hasPerm("education.write");
-    }
-
     // ─── Notifications in-app (centre temps réel) ─────────────────────
     // Lecture : seulement les notifications destinées à l'utilisateur courant
     // Création : tout user connecté peut créer (création de demande premium
@@ -208,14 +194,6 @@ service cloud.firestore {
       );
       // Seul un admin avec users.write peut approuver / refuser
       allow update, delete: if hasPerm("users.write");
-    }
-
-    // ─── Éducation & Culture — Certifications (validation orale) ───────
-    // Toute personne peut déposer une demande de certificat après avoir
-    // complété le Tazawwud. Seule la Commission Éducation lit/met à jour.
-    match /educationCertifications/{id} {
-      allow create: if true;
-      allow read, update, delete: if hasPerm("education.write");
     }
 
     // ─── Bibliothèque Salaatu ───────────────────────────────────────────
