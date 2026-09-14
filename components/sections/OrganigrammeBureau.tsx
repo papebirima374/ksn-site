@@ -1,7 +1,7 @@
 "use client";
 
 import { FaCrown, FaUserTie } from "react-icons/fa6";
-import { PRESIDENCE, SECRETARIATS, type Poste } from "@/lib/bureau";
+import { PRESIDENCE, SECRETARIATS, COMMISSIONS_BUREAU, type Poste } from "@/lib/bureau";
 import { useT } from "@/lib/i18n/context";
 
 /** Initiales, pour la pastille qui tient lieu de portrait tant que le Dahira
@@ -63,13 +63,35 @@ export default function OrganigrammeBureau() {
         ))}
       </div>
 
-      {/* ── Secrétariats ──────────────────────────────────────────────── */}
+      {/* ── Secrétariat ───────────────────────────────────────────────── */}
+      <Intertitre>Secrétariat</Intertitre>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {SECRETARIATS.map((s) => (
           <CartePoste key={s.titre} poste={s} />
         ))}
       </div>
+
+      {/* ── Les commissions ───────────────────────────────────────────── */}
+      {/* Le renouvellement de septembre 2026 organise le Bureau par
+          commission : sans ce bloc, la page n'en montrerait aucune. */}
+      <Intertitre>Les commissions</Intertitre>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {COMMISSIONS_BUREAU.map((c) => (
+          <CartePoste key={c.titre} poste={c} />
+        ))}
+      </div>
     </section>
+  );
+}
+
+function Intertitre({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-4 mt-12 mb-5">
+      <span className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#D4AF37]">
+        {children}
+      </span>
+      <span className="flex-1 h-px bg-gradient-to-r from-[#D4AF37]/50 to-transparent" />
+    </div>
   );
 }
 

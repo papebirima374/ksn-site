@@ -48,7 +48,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Renforcer le lien spirituel des membres à travers le Coran, les Khassidas, le Salaatu quotidien, les conférences et l'éducation islamique.",
     emoji: "📚",
-    responsable: "Serigne Mame Cheikh Anta Sall",
+    responsable: "Mame Cheikh Anta Sall",
     bilanSalaatu: true,
   },
   {
@@ -75,7 +75,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Coordination des événements, logistique, journées spirituelles, rencontres et activités du Dahira.",
     emoji: "🏛️",
-    responsable: "Serigne Assane Samb",
+    responsable: "Serigne Saliou Lô",
     modulePreparation: true,
   },
   {
@@ -84,7 +84,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Annonces officielles, réseaux sociaux, médias, publications et rayonnement numérique du Dahira.",
     emoji: "📢",
-    responsable: "Serigne Birima Gueye",
+    responsable: "Modou Thiaré",
   },
   {
     slug: "secretariat-administratif",
@@ -92,7 +92,7 @@ export const COMMISSIONS: Commission[] = [
     mission:
       "Comptes-rendus, organisation des réunions, archivage, correspondance officielle, démarches institutionnelles et suivi des dossiers.",
     emoji: "📝",
-    responsable: "Sokhna Khady Ndiaye",
+    responsable: "El Hadji Malick Mbaye",
   },
 ];
 

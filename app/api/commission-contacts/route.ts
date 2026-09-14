@@ -18,14 +18,25 @@ import { verifyRequest } from "@/lib/server/verify-auth";
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
-/** Numeros transmis par la Presidence (septembre 2026). */
+/** Numeros transmis par la Presidence.
+ *
+ *  ATTENTION : un numero ne vaut que pour la personne a qui il appartient.
+ *  Le renouvellement du bureau (septembre 2026) a change trois responsables —
+ *  Organisation, Communication et Secretariat. Leurs anciens numeros ont ete
+ *  RETIRES plutot que conserves : garder un numero perime, c'est envoyer la
+ *  relance du Dahira a quelqu'un qui n'est plus en charge, et croire l'avoir
+ *  prevenu. Sans numero, le bouton ouvre WhatsApp sans destinataire — genant,
+ *  mais honnete.
+ *
+ *  Des que la Presidence transmet les trois nouveaux numeros, on les ajoute
+ *  ici, et nulle part ailleurs. */
 const CONTACTS: Record<string, string> = {
-  "education-culture": "+221 76 438 28 84",
-  finances: "+221 77 670 54 86",
-  "social-developpement": "+221 76 010 09 58",
-  organisation: "+221 76 528 59 11",
-  communication: "+221 77 335 14 14",
-  "secretariat-administratif": "+221 77 838 07 68",
+  "education-culture": "+221 76 438 28 84", // Mame Cheikh Anta Sall — inchangé
+  finances: "+221 77 670 54 86", // Serigne Massamba Mbaye — inchangé
+  "social-developpement": "+221 76 010 09 58", // Serigne Cheikhouna Sock — inchangé
+  // organisation : Serigne Saliou Lô — numéro à transmettre
+  // communication : Modou Thiaré — numéro à transmettre
+  // secretariat-administratif : El Hadji Malick Mbaye — numéro à transmettre
 };
 
 /** Libelles de commission acceptes, anciens compris (cf. lib/commissions.ts). */
