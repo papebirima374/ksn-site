@@ -21,6 +21,13 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "commissionAides/a-soc"), { commission: "social-developpement", membreNom: "X Y", montant: 10000, motif: "Maladie", date: "2026-09-01", createdAt: 1 });
   await setDoc(doc(db, "users/anc1"), { role: "commission", commission: "Secrétariat", permissions: [] }); // ancien libelle
   await setDoc(doc(db, "users/membre1"), { role: "member", permissions: [] });
+  // La Communication redige la lettre d'information : c'est elle qui lit la
+  // liste des inscrits. Le compte org1, lui, ne la lit pas.
+  await setDoc(doc(db, "users/com1"), { role: "commission", commission: "Communication", permissions: ["articles.write"] });
+  // sec1 n'a aucune permission : c'est volontaire ailleurs dans ce fichier.
+  // Le Secretariat qui tient reellement le fichier des membres en a une.
+  await setDoc(doc(db, "users/sec2"), { role: "commission", commission: "Secrétariat et Administratif", permissions: ["members.write"] });
+  await setDoc(doc(db, "newsletter/insc1"), { email: "deja@inscrit.sn", source: "pied de page", subscribedAt: 1 });
   await setDoc(doc(db, "commissionDossiers/finances"), { commission: "finances", responsable: "X" });
   await setDoc(doc(db, "commissionDossiers/communication"), { commission: "communication", responsable: "Y" });
   await setDoc(doc(db, "comptesRendus/cr-brouillon"), { titre: "Brouillon", publie: false, date: "2026-09-19" });
@@ -393,6 +400,33 @@ await t("L'administrateur enregistre le lien du direct",
   assertSucceeds(setDoc(doc(as("admin1"), "config/streaming"), { url: "https://youtu.be/xyz", updatedAt: Date.now() })));
 await t("N'importe qui s'inscrit à la newsletter depuis le pied de page",
   assertSucceeds(addDoc(collection(anon(), "newsletter"), { email: "a@b.sn", source: "pied de page", subscribedAt: Date.now() })));
+// La collection est ouverte en ecriture a des inconnus : c'est le seul
+// endroit du site ou c'est le cas. On verifie donc qu'elle ne peut servir
+// qu'a ca — une inscription, et rien d'autre.
+await t("… mais pas avec un champ inventé",
+  assertFails(addDoc(collection(anon(), "newsletter"), { email: "a@b.sn", source: "pied de page", subscribedAt: Date.now(), payload: "<script>" })));
+await t("… ni avec une adresse qui n'en est pas une",
+  assertFails(addDoc(collection(anon(), "newsletter"), { email: "pas-une-adresse", source: "pied de page", subscribedAt: Date.now() })));
+await t("… ni avec une adresse démesurée",
+  assertFails(addDoc(collection(anon(), "newsletter"), { email: "a".repeat(300) + "@b.sn", source: "pied de page", subscribedAt: Date.now() })));
+await t("… ni avec une origine démesurée",
+  assertFails(addDoc(collection(anon(), "newsletter"), { email: "a@b.sn", source: "x".repeat(200), subscribedAt: Date.now() })));
+await t("… ni sans la date d'inscription",
+  assertFails(addDoc(collection(anon(), "newsletter"), { email: "a@b.sn", source: "pied de page" })));
+await t("Un visiteur NE LIT PAS la liste des inscrits",
+  assertFails(getDocs(collection(anon(), "newsletter"))));
+await t("Une commission sans droit non plus",
+  assertFails(getDocs(collection(as("org1"), "newsletter"))));
+await t("La Communication lit la liste des inscrits",
+  assertSucceeds(getDocs(collection(as("com1"), "newsletter"))));
+await t("Le Secrétariat, qui tient le fichier des membres, aussi",
+  assertSucceeds(getDocs(collection(as("sec2"), "newsletter"))));
+await t("Personne ne MODIFIE une adresse déjà inscrite",
+  assertFails(updateDoc(doc(as("com1"), "newsletter/insc1"), { email: "usurpe@ailleurs.sn" })));
+await t("La Communication désinscrit une adresse",
+  assertSucceeds(deleteDoc(doc(as("com1"), "newsletter/insc1"))));
+await t("Un visiteur ne désinscrit personne",
+  assertFails(deleteDoc(doc(anon(), "newsletter/insc1"))));
 
 console.log("\n── Notifications adressées à une commission ──");
 await t("Organisation lit la notification adressée à sa commission", assertSucceeds(getDoc(doc(as("org1"), "notifications/n-org"))));

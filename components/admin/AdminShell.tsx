@@ -24,6 +24,7 @@ import {
   FaClipboardList,
   FaFolderOpen,
   FaFileLines,
+  FaEnvelopeOpenText,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import NotificationBell from "@/components/layout/NotificationBell";
@@ -107,6 +108,7 @@ const GROUPES: {
       { href: "/admin/articles", label: "Articles", Icon: FaNewspaper, perm: "articles.write" },
       { href: "/admin/temoignages", label: "Témoignages", Icon: FaCommentDots, perm: "articles.write" },
       { href: "/admin/galerie", label: "Galerie", Icon: FaImages, perm: "gallery.write" },
+      { href: "/admin/newsletter", label: "Lettre d'information", Icon: FaEnvelopeOpenText, perm: "articles.write" },
     ],
   },
   {
