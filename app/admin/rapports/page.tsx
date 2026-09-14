@@ -14,6 +14,8 @@ import {
   FaFolderOpen,
   FaArrowRightLong,
   FaArrowRotateLeft,
+  FaMoneyBillTransfer,
+  FaCircleInfo,
 } from "react-icons/fa6";
 import { COMMISSIONS, commissionNom, aBilanSalaatu } from "@/lib/commissions";
 import { authHeader } from "@/lib/client-auth-header";
@@ -30,10 +32,27 @@ import {
   validerDossier,
   renvoyerDossier,
 } from "@/lib/commission-dossier";
+import {
+  type Transfert,
+  subscribeTousLesVersements,
+  bilanVersements,
+  LIBELLE_TRANSFERT,
+} from "@/lib/commission-transferts";
+import { fcfa } from "@/lib/commission-caisse";
+import {
+  imprimer,
+  htmlRapport,
+  htmlSuivi,
+  htmlVersements,
+  type LigneSuivi,
+} from "@/lib/impression";
 import { useAuth } from "@/lib/auth-context";
 import { SITE } from "@/lib/constants";
 
 const fmt = (n: number) => new Intl.NumberFormat("fr-FR").format(n);
+
+const dateCourte = (d: string) =>
+  d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" }) : "—";
 
 function dateFr(ts: number): string {
   return new Date(ts).toLocaleString("fr-FR", {
@@ -53,6 +72,7 @@ export default function AdminRapportsPage() {
    *  verification du jeton, jamais embarques dans le JavaScript public. */
   const [contacts, setContacts] = useState<Record<string, string>>({});
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
+  const [versements, setVersements] = useState<Transfert[]>([]);
   const [filtre, setFiltre] = useState<string>("");
   const [ouvert, setOuvert] = useState<string | null>(null);
 
@@ -62,6 +82,7 @@ export default function AdminRapportsPage() {
   useEffect(() => (user ? subscribeCommissionReports(setRapports) : undefined), [user]);
   useEffect(() => (user ? subscribeRelances(setRelances) : undefined), [user]);
   useEffect(() => (user ? subscribeTousLesDossiers(setDossiers) : undefined), [user]);
+  useEffect(() => (user ? subscribeTousLesVersements(setVersements) : undefined), [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -103,6 +124,24 @@ export default function AdminRapportsPage() {
     const c = COMMISSIONS.find((x) => aBilanSalaatu(x.slug));
     return c ? { nom: c.nom, total: dernierPar.get(c.slug)?.salaatu ?? null } : null;
   }, [dernierPar]);
+
+  /** Ce que le Secretariat emporte sur papier : une ligne par commission,
+   *  avec le retour recu, la relance envoyee et l'etat du dossier. */
+  const lignesSuivi = useMemo<LigneSuivi[]>(
+    () =>
+      COMMISSIONS.map((c) => ({
+        slug: c.slug,
+        nom: c.nom,
+        responsable: c.responsable ?? "",
+        recuAt: dernierPar.get(c.slug)?.createdAt ?? 0,
+        relanceAt: relances[c.slug]?.at ?? 0,
+        statut: dossiers.find((x) => x.commission === c.slug)?.statut ?? "brouillon",
+        salaatu: aBilanSalaatu(c.slug) ? (dernierPar.get(c.slug)?.salaatu ?? null) : null,
+      })),
+    [dernierPar, relances, dossiers]
+  );
+
+  const bilanV = useMemo(() => bilanVersements(versements), [versements]);
 
   /** Relance d'une commission. L'envoi passe par WhatsApp — le canal reel du
    *  Dahira — et on enregistre la date pour savoir qui a deja ete relance.
@@ -158,9 +197,17 @@ export default function AdminRapportsPage() {
       <div className="bg-white rounded-2xl border border-[#0F7C55]/12 p-5 sm:p-6 mb-6">
         <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
           <h2 className="font-bold text-[#082F22]">Suivi des retours</h2>
-          <span className="text-sm text-[#5C7268]">
-            {dernierPar.size} / {COMMISSIONS.length} commissions ont répondu
-          </span>
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-[#5C7268]">
+              {dernierPar.size} / {COMMISSIONS.length} commissions ont répondu
+            </span>
+            <button
+              onClick={() => imprimer(htmlSuivi(lignesSuivi))}
+              className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0F7C55]/5 transition"
+            >
+              <FaPrint /> Imprimer le suivi
+            </button>
+          </div>
         </div>
         <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
           {COMMISSIONS.map((c) => {
@@ -304,6 +351,91 @@ export default function AdminRapportsPage() {
         </div>
       </div>
 
+      {/* ── Tracabilite des versements ────────────────────────────────── */}
+      <div className="bg-white rounded-2xl border border-[#0F7C55]/12 p-5 sm:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-2">
+          <div className="flex items-center gap-3">
+            <FaMoneyBillTransfer className="text-[#0F7C55]" />
+            <h2 className="font-bold text-[#082F22]">
+              Versements de la commission Finances
+            </h2>
+          </div>
+          <button
+            onClick={() => imprimer(htmlVersements(versements, "Toutes les commissions"))}
+            className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0F7C55]/5 transition"
+          >
+            <FaPrint /> Imprimer le registre
+          </button>
+        </div>
+        <p className="text-sm text-[#5C7268] mb-5 leading-6">
+          Sommes remises par la commission Finances aux autres commissions pour la
+          Journée Salaatu. Chaque versement n&apos;est considéré comme arrivé
+          qu&apos;une fois la <b>réception accusée</b> par la responsable de la
+          commission destinataire.
+        </p>
+
+        <div className="grid sm:grid-cols-3 gap-3 mb-5">
+          {[
+            ["Total versé", fcfa(bilanV.verse), "text-[#0F7C55]"],
+            ["Réception accusée", fcfa(bilanV.recu), "text-[#0F7C55]"],
+            ["En attente d'accusé", fcfa(bilanV.attente), "text-[#B8860B]"],
+          ].map(([label, valeur, couleur]) => (
+            <div key={label} className="rounded-xl border border-[#0F7C55]/12 bg-[#F8F5EF] px-4 py-3">
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#5C7268]">
+                {label}
+              </p>
+              <p className={`mt-1 font-bold text-lg tabular-nums ${couleur}`}>{valeur}</p>
+            </div>
+          ))}
+        </div>
+
+        {versements.length === 0 ? (
+          <p className="flex items-start gap-2 text-sm text-[#5C7268] italic">
+            <FaCircleInfo className="flex-none mt-0.5" />
+            Aucun versement enregistré pour l&apos;instant.
+          </p>
+        ) : (
+          <div className="divide-y divide-[#0F7C55]/8">
+            {versements.map((t) => (
+              <div key={t.id} className="py-3.5 flex flex-wrap items-start gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-[#082F22]">
+                    {commissionNom(t.de)} <FaArrowRightLong className="inline text-xs text-[#9BB0A6] mx-1" />{" "}
+                    {commissionNom(t.vers)}
+                  </p>
+                  <p className="text-xs text-[#5C7268] mt-0.5">
+                    {t.motif || "Sans motif précisé"}
+                    {t.moyen && ` · ${t.moyen}`}
+                    {t.reference && ` · ${t.reference}`}
+                  </p>
+                  <p className="text-xs text-[#9BB0A6] mt-0.5">
+                    Remis le {dateCourte(t.date)}
+                    {t.envoyePar && ` par ${t.envoyePar}`}
+                    {t.statut === "recu" && t.recuAt > 0 && (
+                      <> · reçu le {dateFr(t.recuAt)}{t.recuPar && ` par ${t.recuPar}`}</>
+                    )}
+                  </p>
+                </div>
+                <span
+                  className={`flex-none text-xs font-bold px-2.5 py-1 rounded-lg ${
+                    t.statut === "recu"
+                      ? "bg-[#0F7C55]/12 text-[#0F7C55]"
+                      : t.statut === "annule"
+                        ? "bg-[#F8F5EF] text-[#9BB0A6]"
+                        : "bg-[#D4AF37]/18 text-[#8A6A08]"
+                  }`}
+                >
+                  {LIBELLE_TRANSFERT[t.statut]}
+                </span>
+                <p className="flex-none text-sm font-bold text-[#082F22] tabular-nums w-28 text-right">
+                  {fcfa(t.montant)}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* ── Liste des rapports ────────────────────────────────────────── */}
       {filtre && (
         <button
@@ -393,7 +525,7 @@ export default function AdminRapportsPage() {
                     <Section titre="Divers" texte={r.divers} />
 
                     <button
-                      onClick={() => window.print()}
+                      onClick={() => imprimer(htmlRapport(r))}
                       className="inline-flex items-center gap-2 text-sm font-semibold text-[#0F7C55] hover:underline"
                     >
                       <FaPrint /> Imprimer ce rapport

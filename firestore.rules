@@ -38,18 +38,25 @@ service cloud.firestore {
     // projet), pas le slug : la correspondance se fait donc ici. Les anciens
     // libelles (avant la fusion Secretariat + Administratif) sont acceptes,
     // sinon les comptes deja crees perdraient l'acces a leur dossier.
+    // maCommission() lit le champ SANS planter quand il est absent (un simple
+    // membre n'a pas de commission) : `.get(champ, defaut)` plutot que l'acces
+    // direct, qui fait echouer toute la regle sur une cle manquante.
+    function maCommission() {
+      return isSignedIn() ? userDoc().get("commission", "") : "";
+    }
+
     function monSlug() {
       return !isSignedIn() ? ""
-        : userDoc().commission == "Éducation et Culture" ? "education-culture"
-        : userDoc().commission == "Éducation & Culture" ? "education-culture"
-        : userDoc().commission == "Finances" ? "finances"
-        : userDoc().commission == "Social et Développement" ? "social-developpement"
-        : userDoc().commission == "Sociale & Développement" ? "social-developpement"
-        : userDoc().commission == "Organisation" ? "organisation"
-        : userDoc().commission == "Communication" ? "communication"
-        : userDoc().commission == "Secrétariat et Administratif" ? "secretariat-administratif"
-        : userDoc().commission == "Secrétariat" ? "secretariat-administratif"
-        : userDoc().commission == "Administratif" ? "secretariat-administratif"
+        : maCommission() == "Éducation et Culture" ? "education-culture"
+        : maCommission() == "Éducation & Culture" ? "education-culture"
+        : maCommission() == "Finances" ? "finances"
+        : maCommission() == "Social et Développement" ? "social-developpement"
+        : maCommission() == "Sociale & Développement" ? "social-developpement"
+        : maCommission() == "Organisation" ? "organisation"
+        : maCommission() == "Communication" ? "communication"
+        : maCommission() == "Secrétariat et Administratif" ? "secretariat-administratif"
+        : maCommission() == "Secrétariat" ? "secretariat-administratif"
+        : maCommission() == "Administratif" ? "secretariat-administratif"
         : "";
     }
 
@@ -172,13 +179,21 @@ service cloud.firestore {
     //   reste safe car le doc créé est marqué `recipientUid` et n'a
     //   pas de "pouvoir" intrinsèque.
     // Update : seul le destinataire peut marquer comme lu
+    // Une notification peut aussi viser une COMMISSION (champ
+    // recipientCommission = slug) plutot qu'une personne : un responsable ne
+    // peut pas lire users/*, donc il ne connait pas l'uid de son homologue.
+    // Adresser la commission resout le probleme et survit au changement de
+    // responsable. L'ordre des conditions compte : le cas nominatif, le plus
+    // frequent, court-circuite avant d'aller lire le profil.
     match /notifications/{id} {
+      function pourMoi() {
+        return resource.data.recipientUid == request.auth.uid
+               || (resource.data.get("recipientCommission", "") != ""
+                   && resource.data.get("recipientCommission", "") == monSlug());
+      }
       allow create: if isSignedIn();
-      allow read, update: if isSignedIn()
-                          && resource.data.recipientUid == request.auth.uid;
-      allow delete: if isSignedIn()
-                    && (resource.data.recipientUid == request.auth.uid
-                        || isAdmin());
+      allow read, update: if isSignedIn() && pourMoi();
+      allow delete: if isSignedIn() && (pourMoi() || isAdmin());
     }
 
     // ─── Premium — Achats validés manuellement par admin ──────────────
@@ -421,6 +436,90 @@ service cloud.firestore {
                     && request.resource.data.date is string
                     && request.resource.data.date.size() == 10;
       allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // ─── Versements entre caisses de commission ─────────────────────────
+    // La commission Finances verse a une autre commission ; la commission
+    // destinataire accuse reception. Deux ecritures de caisse encadrent le
+    // versement : la sortie chez l'emettrice au depart, l'entree chez la
+    // destinataire a l'accuse — chacune ecrite par la commission concernee,
+    // jamais par l'autre.
+    //
+    // AUCUN rapport avec les finances nationales (collection `finances`).
+    //
+    // Qui peut quoi :
+    //   - creer   : la commission emettrice uniquement, et elle seule figure
+    //               au champ `de` (sans quoi n'importe qui pourrait inventer
+    //               un versement au nom de la Finances)
+    //   - accuser : la commission destinataire uniquement, et seulement sur
+    //               un versement encore en attente
+    //   - annuler : la commission emettrice, et seulement tant que la
+    //               reception n'est pas accusee
+    //   - lire    : les deux commissions concernees, le Secretariat, l'admin
+    //
+    // Rien ne se reecrit : les deux `update` autorises sont bornes aux champs
+    // de l'accuse ou de l'annulation, et le montant ne bouge jamais.
+    match /commissionTransferts/{id} {
+      function estDestinataire() {
+        return monSlug() == resource.data.vers;
+      }
+      function estEmettrice() {
+        return monSlug() == resource.data.de;
+      }
+      function change(champs) {
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(champs);
+      }
+
+      allow read: if isAdmin() || estSecretariat()
+                  || monSlug() == resource.data.de
+                  || monSlug() == resource.data.vers;
+
+      allow create: if (isAdmin() || request.resource.data.de == monSlug())
+                    && request.resource.data.de == "finances"
+                    && request.resource.data.vers in [
+                         "education-culture",
+                         "social-developpement",
+                         "organisation",
+                         "communication",
+                         "secretariat-administratif"
+                       ]
+                    && request.resource.data.vers != request.resource.data.de
+                    && request.resource.data.montant is number
+                    && request.resource.data.montant > 0
+                    && request.resource.data.montant <= 100000000
+                    && request.resource.data.statut == "envoye"
+                    && request.resource.data.motif is string
+                    && request.resource.data.motif.size() <= 300
+                    && request.resource.data.moyen is string
+                    && request.resource.data.moyen.size() <= 40
+                    && request.resource.data.reference is string
+                    && request.resource.data.reference.size() <= 80
+                    && request.resource.data.date is string
+                    && request.resource.data.date.size() == 10
+                    && request.resource.data.envoyeAt is number
+                    && request.resource.data.recuPar == ""
+                    && request.resource.data.recuAt == 0;
+
+      // Accuse de reception : le destinataire, sur un versement en attente.
+      allow update: if (isAdmin() || estDestinataire())
+                    && resource.data.statut == "envoye"
+                    && request.resource.data.statut == "recu"
+                    && change(["statut", "recuPar", "recuAt", "observation",
+                               "ecritureDestinataire"])
+                    && request.resource.data.observation is string
+                    && request.resource.data.observation.size() <= 300
+                    && request.resource.data.recuAt is number;
+
+      // Annulation : l'emettrice, tant que la reception n'est pas accusee.
+      allow update: if (isAdmin() || estEmettrice())
+                    && resource.data.statut == "envoye"
+                    && request.resource.data.statut == "annule"
+                    && change(["statut", "annulePar", "annuleAt", "motifAnnulation"])
+                    && request.resource.data.motifAnnulation is string
+                    && request.resource.data.motifAnnulation.size() <= 300
+                    && request.resource.data.annuleAt is number;
+
       allow delete: if isAdmin();
     }
 

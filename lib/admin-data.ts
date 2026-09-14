@@ -1802,6 +1802,44 @@ export async function createNotification(data: {
   return ref.id;
 }
 
+/** Notifie une COMMISSION plutot qu'une personne.
+ *
+ *  POURQUOI CE SECOND CHEMIN ?
+ *  createNotification() a besoin de l'identifiant du destinataire, et de lire
+ *  ses preferences. Or un responsable de commission n'a pas le droit de lire
+ *  users/* : il ne peut donc ni connaitre l'uid de son homologue, ni consulter
+ *  ses preferences. Adresser la commission — par son slug — leve les deux
+ *  obstacles, et la notification survit au changement de responsable.
+ *
+ *  Ces messages sont operationnels (un versement attend un accuse de
+ *  reception), pas promotionnels : ils ne passent pas par le filtre des
+ *  preferences, qu'on ne pourrait de toute facon pas lire.
+ */
+export async function notifierCommission(data: {
+  /** SLUG de la commission destinataire (cf. lib/commissions.ts). */
+  commission: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  link?: string;
+  meta?: Record<string, string | number | boolean>;
+}): Promise<string | null> {
+  const { commission, ...reste } = data;
+  if (!commission) return null;
+  const db = getDb();
+  const ref = await addDoc(
+    collection(db, NOTIF_COLLECTION),
+    stripUndefinedDeep({
+      ...reste,
+      recipientUid: "",
+      recipientCommission: commission,
+      read: false,
+      createdAt: Date.now(),
+    })
+  );
+  return ref.id;
+}
+
 /** Fan-out d'une notification vers tous les utilisateurs ayant une
  *  permission donnée (ex: notifier tous les "users.write" qu'une
  *  nouvelle demande premium est arrivée).
@@ -1865,22 +1903,32 @@ export async function markNotificationRead(id: string): Promise<void> {
 }
 
 export async function markAllNotificationsRead(
-  recipientUid: string
+  recipientUid: string,
+  /** Slug de la commission du compte, pour ne pas laisser derriere soi les
+   *  notifications adressees a la commission (un versement a accuser). */
+  recipientCommission?: string | null
 ): Promise<number> {
   const db = getDb();
-  const snap = await getDocs(
+  const lots = [
     query(
       collection(db, NOTIF_COLLECTION),
       where("recipientUid", "==", recipientUid),
       where("read", "==", false)
-    )
-  );
-  await Promise.all(
-    snap.docs.map((d) =>
-      updateDoc(d.ref, { read: true, readAt: Date.now() })
-    )
-  );
-  return snap.size;
+    ),
+    ...(recipientCommission
+      ? [
+          query(
+            collection(db, NOTIF_COLLECTION),
+            where("recipientCommission", "==", recipientCommission),
+            where("read", "==", false)
+          ),
+        ]
+      : []),
+  ];
+  const snaps = await Promise.all(lots.map((q) => getDocs(q)));
+  const docs = snaps.flatMap((s) => s.docs);
+  await Promise.all(docs.map((d) => updateDoc(d.ref, { read: true, readAt: Date.now() })));
+  return docs.length;
 }
 
 // ============ PREMIUM — Achats avec validation manuelle ============

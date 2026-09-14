@@ -12,8 +12,35 @@ npx firebase emulators:exec --only firestore --project ksn-rules-test \
   "node scripts/test-firestore-rules.mjs"
 ```
 
-Sortie attendue : `82 réussis, 0 échoués`. Un échec signifie qu'une règle
+Sortie attendue : `115 réussis, 0 échoués`. Un échec signifie qu'une règle
 laisse passer — ou bloque — quelque chose qu'elle ne devrait pas.
+
+La suite teste aussi les **requêtes de collection**, et pas seulement la
+lecture d'un document : Firestore évalue la règle sur chaque document candidat
+et refuse la requête entière dès qu'un seul échoue. Une règle qui laisse
+passer un `getDoc` peut donc refuser la liste — c'est comme cela que les pages
+tombent en « Accès refusé » alors que tout semblait correct.
+
+# Vérification des documents imprimables
+
+`verifier-impression.mjs` rend chaque document de `lib/impression.ts` en PDF
+avec Chromium et contrôle ce qui ne se voit pas à l'écran : le nombre de
+feuilles, le chargement du sceau, la présence de l'en-tête officielle, et
+surtout qu'**aucune section n'est coupée** par le rognage.
+
+Ce dernier point est le piège de l'impression : une fiche tient sur une feuille
+grâce à `overflow:hidden`, et quand le contenu déborde, la dernière section
+disparaît sans un mot. Le compteur de pages, lui, continue d'afficher 1. Seule
+une mesure du contenu réel face à la place disponible le révèle — avant d'avoir
+imprimé six exemplaires.
+
+```bash
+npm install --no-save puppeteer-core
+node scripts/verifier-impression.mjs build-impression
+```
+
+Sortie attendue : `47 contrôles réussis, 0 échoués`. Les PDF produits restent
+dans le dossier de sortie, à relire à l'œil si besoin.
 
 # Présentation PDF du Règlement
 

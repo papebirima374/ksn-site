@@ -20,6 +20,7 @@ import MembresCommission from "@/components/admin/MembresCommission";
 import ReunionsCommission from "@/components/admin/ReunionsCommission";
 import ActivitesCommission from "@/components/admin/ActivitesCommission";
 import AidesCommission from "@/components/admin/AidesCommission";
+import VersementsCommission from "@/components/admin/VersementsCommission";
 import {
   type MembreCommission,
   subscribeMembresCommission,
@@ -51,6 +52,7 @@ import {
   FaComments,
   FaMugSaucer,
   FaHandHoldingHeart,
+  FaMoneyBillTransfer,
 } from "react-icons/fa6";
 
 export default function MaCommissionPage() {
@@ -74,6 +76,7 @@ export default function MaCommissionPage() {
     | "dossier"
     | "membres"
     | "caisse"
+    | "versements"
     | "activites"
     | "aides"
     | "reunions"
@@ -260,6 +263,7 @@ export default function MaCommissionPage() {
                 ["dossier", "Dossier AG", <FaFileLines key="a" />],
                 ["membres", "Membres", <FaUsers key="b" />],
                 ["caisse", "Caisse", <FaWallet key="c" />],
+                ["versements", "Versements", <FaMoneyBillTransfer key="h" />],
                 ...(aModuleSocial(slug)
                   ? ([
                       ["activites", "Activités", <FaMugSaucer key="f" />],
@@ -533,6 +537,12 @@ export default function MaCommissionPage() {
                 signature={signature}
                 pret={!!user}
               />
+            </div>
+          )}
+
+          {onglet === "versements" && (
+            <div className="max-w-4xl">
+              <VersementsCommission slug={slug} signature={signature} pret={!!user} />
             </div>
           )}
 

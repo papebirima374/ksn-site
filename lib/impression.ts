@@ -12,8 +12,11 @@
 // meme que sur les fiches papier, et le rendu est verifiable hors navigateur
 // (scripts/test-impression.mjs).
 
-import type { Dossier } from "./commission-dossier";
+import type { Dossier, StatutDossier } from "./commission-dossier";
 import type { CompteRendu } from "./ag-reunion";
+import type { CommissionReport } from "./commission-reports";
+import type { Transfert } from "./commission-transferts";
+import { bilanVersements, LIBELLE_TRANSFERT } from "./commission-transferts";
 import { commissionNom, aBilanSalaatu } from "./commissions";
 
 export const AG = {
@@ -130,6 +133,28 @@ const STYLE = `
     display:flex;justify-content:space-between;font-size:8.5px}
   .foot b{color:#D4AF37}
 
+  /* ── Registre : tableau de suivi, releve de versements ──────── */
+  table.reg{width:100%;border-collapse:collapse;font-size:9.5px;margin-top:1mm}
+  table.reg th{background:#082F22;color:#E8CE72;font-size:8px;font-weight:800;
+    letter-spacing:.12em;text-transform:uppercase;padding:2.2mm 2.5mm;text-align:left}
+  table.reg td{padding:2mm 2.5mm;border-bottom:.25mm solid #E2E9E5;vertical-align:top}
+  table.reg tr:nth-child(even) td{background:#F8F5EF}
+  table.reg td.n{width:26mm;text-align:right;font-weight:700;white-space:nowrap}
+  table.reg tfoot td{background:#0F7C55;color:#fff;font-weight:800;border:0}
+  .etat{display:inline-block;padding:.5mm 2mm;border-radius:1.5mm;font-size:8px;
+    font-weight:800;letter-spacing:.04em;white-space:nowrap}
+  .etat.ok{background:rgba(15,124,85,.15);color:#0A5C3F}
+  .etat.att{background:rgba(212,175,55,.25);color:#7A5B06}
+  .etat.non{background:#EDF1EF;color:#5C7268}
+
+  /* Compteurs en bandeau, au-dessus d'un registre. */
+  .cartes{display:flex;gap:4mm;margin-bottom:5mm}
+  .cartes div{flex:1;border:.3mm solid #E2E9E5;border-radius:2.5mm;padding:3mm 4mm;
+    background:linear-gradient(135deg,rgba(15,124,85,.05),rgba(212,175,55,.07))}
+  .cartes span{display:block;font-size:7.5px;font-weight:800;letter-spacing:.14em;
+    text-transform:uppercase;color:#5C7268}
+  .cartes b{display:block;margin-top:1mm;font-size:16px;font-weight:900;color:#0F7C55}
+
   /* ── Fiche vierge : zones a remplir a la main ────────────────────── */
   .champs{display:flex;gap:6mm;margin-bottom:6mm}
   .champs div{flex:1}
@@ -144,14 +169,26 @@ const STYLE = `
     text-transform:uppercase;color:#5C7268}
 
   /* Une fiche vierge doit tenir sur UNE feuille : hauteur verrouillee un
-     poil sous 297mm (les arrondis suffisent a declencher une 2e page),
-     corps qui rogne plutot que de pousser, pied epingle en bas. */
+     poil sous 297mm (les arrondis suffisent a declencher une 2e page), pied
+     epingle en bas.
+
+     Les zones d'ecriture n'ont PAS de hauteur fixe : elles se PARTAGENT la
+     place restante, chacune selon son poids. Avec des hauteurs figees, il
+     fallait refaire le calcul a chaque section ajoutee — et quand la somme
+     depassait, overflow:hidden coupait la derniere section EN SILENCE : la
+     fiche sortait sans son cadre « Divers », et cela ne se voyait qu'une fois
+     la feuille en main. Avec flex, il n'y a plus rien a calculer. */
   .page.fiche{height:296.5mm;min-height:0;padding:0;overflow:hidden;
     display:flex;flex-direction:column}
   .page.fiche .head{padding:9mm 14mm 13mm}
-  .page.fiche .body{flex:1;min-height:0;overflow:hidden;padding:6mm 14mm 0}
-  .page.fiche .sec{margin-bottom:4mm}
-  .page.fiche .signs{margin-top:auto;padding-top:4mm}
+  .page.fiche .body{flex:1;min-height:0;padding:6mm 14mm 0;
+    display:flex;flex-direction:column}
+  .page.fiche .sec{flex:none;margin-bottom:4mm}
+  /* Zone a remplir : elle s'etire, et ses lignes avec elle. */
+  .page.fiche .sec.libre{display:flex;flex-direction:column;min-height:0;
+    flex-shrink:0}
+  .page.fiche .sec.libre .lignes{flex:1;min-height:9mm}
+  .page.fiche .signs{flex:none;margin-top:4mm;padding-top:0}
   .page.fiche .foot{flex:none;margin-top:4mm}
 
   @media screen{ body{background:#33443D;padding:20px} .page{box-shadow:0 14px 40px rgba(0,0,0,.35)} }
@@ -328,11 +365,12 @@ export function htmlFicheVierge(slug: string): string {
   let n = 0;
   const num = () => ++n;
 
-  // Hauteurs d'ecriture : la place liberee quand il n'y a pas de bilan
-  // Salaatu revient aux zones de texte.
-  const h = bilan
-    ? { rendu: "38", cellules: "30.4", props: "30.4", divers: "22.8" }
-    : { rendu: "53.2", cellules: "38", props: "38", divers: "22.8" };
+  // Poids des zones d'ecriture, et non des hauteurs : elles se partagent la
+  // place qui reste. Le compte rendu en recoit le plus — c'est la qu'on ecrit
+  // le plus —, les divers le moins. Quand la commission ne tient pas le
+  // decompte des Salaatu, la place du cadre revient d'elle-meme aux autres
+  // zones : il n'y a aucun second jeu de valeurs a maintenir.
+  const poids = { rendu: 3, cellules: 2, props: 2, divers: 1.4 };
 
   const contenu = `
   ${enTete("Fiche de Commission", "Waccaayu bisub Salaatu ’Alaa Nabi")}
@@ -344,9 +382,9 @@ export function htmlFicheVierge(slug: string): string {
       <div><span>Date</span><i></i></div>
     </div>
 
-    <div class="sec">
+    <div class="sec libre" style="flex-grow:${poids.rendu}">
       ${titreSection(num(), "Compte rendu de la commission")}
-      <div class="lignes" style="height:${h.rendu}mm"></div>
+      <div class="lignes"></div>
     </div>
 
     ${
@@ -358,19 +396,19 @@ export function htmlFicheVierge(slug: string): string {
         : ""
     }
 
-    <div class="sec">
+    <div class="sec libre" style="flex-grow:${poids.cellules}">
       ${titreSection(num(), "Cellules", "point à discuter")}
-      <div class="lignes" style="height:${h.cellules}mm"></div>
+      <div class="lignes"></div>
     </div>
 
-    <div class="sec">
+    <div class="sec libre" style="flex-grow:${poids.props}">
       ${titreSection(num(), "Propositions pour la Journée Salaatu ’Alaa Nabii")}
-      <div class="lignes" style="height:${h.props}mm"></div>
+      <div class="lignes"></div>
     </div>
 
-    <div class="sec">
+    <div class="sec libre" style="flex-grow:${poids.divers}">
       ${titreSection(num(), "Divers")}
-      <div class="lignes" style="height:${h.divers}mm"></div>
+      <div class="lignes"></div>
     </div>
   </div>
 
@@ -439,6 +477,300 @@ export function htmlCompteRendu(cr: CompteRendu): string {
   ${pied(`Établi le ${new Date().toLocaleDateString("fr-FR")}`)}`;
 
   return document(cr.titre || "Compte rendu", contenu);
+}
+
+/* ═══ Rapport recu d'une commission ════════════════════════════════════ */
+
+const jour = (ts: number) =>
+  ts
+    ? new Date(ts).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })
+    : "—";
+
+const jourCourt = (ts: number) =>
+  ts ? new Date(ts).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—";
+
+const dateIso = (d: string) =>
+  d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "2-digit" }) : "—";
+
+/** Un rapport arrive par le formulaire public (/commissions/<slug>) et
+ *  s'affiche au Secretariat. Sur papier, il doit ressembler aux autres pieces
+ *  de l'assemblee — d'ou la meme en-tete officielle. */
+export function htmlRapport(r: CommissionReport): string {
+  const nom = commissionNom(r.commission);
+  const bilan = aBilanSalaatu(r.commission);
+  let n = 0;
+  const num = () => ++n;
+
+  const bloc = (titre: string, texte: string, sous?: string) =>
+    vide(texte)
+      ? ""
+      : `<div class="sec">${titreSection(num(), titre, sous)}
+         <p class="txt">${multi(texte)}</p></div>`;
+
+  const contenu = `
+  ${enTete("Rapport de Commission", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Commission</small><strong>${e(nom)}</strong></div>
+  <div class="body">
+    <div class="ident">
+      <div><span>Responsable</span><b>${e(r.responsable) || "—"}</b></div>
+      <div><span>Téléphone</span><b>${e(r.telephone) || "—"}</b></div>
+      <div><span>Membres</span><b>${r.membres != null ? e(r.membres) : "—"}</b></div>
+      <div><span>Reçu le</span><b>${e(jour(r.createdAt))}</b></div>
+    </div>
+
+    ${bloc("Compte rendu des activités", r.activites)}
+    ${bloc("Difficultés rencontrées", r.difficultes)}
+
+    ${
+      bilan && r.salaatu != null
+        ? `<div class="sec">
+      ${titreSection(num(), "Bilan provisoire", "bisub Salaatu ’Alaa Nabii")}
+      <div class="tally">
+        <span>Total des Salaatu relevés par la commission</span>
+        <b>${e(new Intl.NumberFormat("fr-FR").format(r.salaatu))}</b>
+      </div>
+      ${!vide(r.salaatuPrecisions) ? `<p class="txt" style="margin-top:2.5mm">${multi(r.salaatuPrecisions)}</p>` : ""}
+    </div>`
+        : ""
+    }
+
+    ${bloc(
+      `Cellules${r.cellulesActives != null ? ` (${r.cellulesActives} actives)` : ""}`,
+      r.cellules,
+      "point à discuter en assemblée"
+    )}
+    ${bloc("Propositions pour la Journée Salaatu ’Alaa Nabii", r.propositions)}
+    ${bloc("Moyens nécessaires", r.moyens)}
+    ${bloc("Divers", r.divers)}
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Responsable de la commission</span></div>
+    <div><i></i><span>Secrétariat Général</span></div>
+  </div>
+  ${pied(`Reçu le ${jour(r.createdAt)}`)}`;
+
+  return document(`Rapport reçu — ${nom}`, contenu);
+}
+
+/* ═══ Suivi des retours (Secretariat) ══════════════════════════════════ */
+
+export type LigneSuivi = {
+  slug: string;
+  nom: string;
+  responsable: string;
+  /** Date du dernier rapport recu, 0 si rien n'est arrive. */
+  recuAt: number;
+  /** Date de la derniere relance, 0 si la commission n'a pas ete relancee. */
+  relanceAt: number;
+  statut: StatutDossier;
+  /** Renseigne pour la seule commission qui tient le decompte. */
+  salaatu: number | null;
+};
+
+const ETAT_DOSSIER: Record<StatutDossier, [string, string]> = {
+  brouillon: ["non", "Brouillon"],
+  transmis: ["att", "Transmis au Secrétariat"],
+  valide: ["ok", "Remis au Président"],
+};
+
+/** Le tableau de bord du Secretariat, sur papier : qui a repondu, qui reste a
+ *  relancer, ou en est chaque dossier. C'est la piece qu'on pose sur la table
+ *  au debut de l'assemblee. */
+export function htmlSuivi(lignes: LigneSuivi[]): string {
+  const repondu = lignes.filter((l) => l.recuAt > 0).length;
+  const transmis = lignes.filter((l) => l.statut !== "brouillon").length;
+  const salaatu = lignes.find((l) => l.salaatu != null)?.salaatu ?? null;
+
+  const contenu = `
+  ${enTete("Suivi des Commissions", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Secrétariat Général</small><strong>État des retours</strong></div>
+  <div class="body">
+    <div class="cartes">
+      <div><span>Commissions</span><b>${lignes.length}</b></div>
+      <div><span>Rapports reçus</span><b>${repondu} / ${lignes.length}</b></div>
+      <div><span>Dossiers transmis</span><b>${transmis} / ${lignes.length}</b></div>
+      ${
+        salaatu != null
+          ? `<div><span>Salaatu déclarés</span><b>${e(new Intl.NumberFormat("fr-FR").format(salaatu))}</b></div>`
+          : ""
+      }
+    </div>
+
+    <div class="sec">
+      ${titreSection(1, "Retour de chaque commission")}
+      <table class="reg">
+        <thead><tr>
+          <th>Commission</th><th>Responsable</th><th>Rapport reçu</th>
+          <th>Relance</th><th>Dossier</th>
+        </tr></thead>
+        <tbody>
+          ${lignes
+            .map(
+              (l) => `<tr>
+            <td><b>${e(l.nom)}</b></td>
+            <td>${e(l.responsable) || "—"}</td>
+            <td>${
+              l.recuAt
+                ? `<span class="etat ok">Reçu le ${e(jourCourt(l.recuAt))}</span>`
+                : `<span class="etat non">En attente</span>`
+            }</td>
+            <td>${l.relanceAt ? e(jourCourt(l.relanceAt)) : "—"}</td>
+            <td><span class="etat ${ETAT_DOSSIER[l.statut][0]}">${e(ETAT_DOSSIER[l.statut][1])}</span></td>
+          </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sec">
+      ${titreSection(2, "Observations du Secrétariat")}
+      <div class="lignes" style="height:38mm"></div>
+    </div>
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Le Secrétaire Général</span></div>
+    <div><i></i><span>Le Président</span></div>
+  </div>
+  ${pied(`Arrêté le ${new Date().toLocaleDateString("fr-FR")}`)}`;
+
+  return document("Suivi des commissions", contenu);
+}
+
+/* ═══ Registre des versements ══════════════════════════════════════════ */
+
+/** Releve des sommes versees par la commission Finances aux autres
+ *  commissions, avec l'etat de l'accuse de reception.
+ *
+ *  C'est la piece de tracabilite : elle dit qui a recu quoi, quand, par quel
+ *  moyen, et qui l'a confirme. Un versement qui n'a jamais ete accuse y
+ *  apparait en clair — c'est precisement ce qu'on veut voir. */
+export function htmlVersements(
+  transferts: Transfert[],
+  /** Titre du bandeau : « Versements émis », « Versements reçus »… */
+  intitule: string
+): string {
+  const b = bilanVersements(transferts);
+
+  const contenu = `
+  ${enTete("Registre des Versements", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Caisses de commission</small><strong>${e(intitule)}</strong></div>
+  <div class="body">
+    <div class="cartes">
+      <div><span>Total versé</span><b>${e(fr(b.verse))}</b></div>
+      <div><span>Réception accusée</span><b>${e(fr(b.recu))}</b></div>
+      <div><span>En attente d’accusé</span><b>${e(fr(b.attente))}</b></div>
+    </div>
+
+    <div class="sec">
+      ${titreSection(1, "Détail des versements")}
+      ${
+        transferts.length === 0
+          ? `<p class="rien">Aucun versement enregistré.</p>`
+          : `<table class="reg">
+        <thead><tr>
+          <th>Date</th><th>De</th><th>Vers</th><th>Motif</th>
+          <th>Moyen / réf.</th><th class="n">Montant</th><th>Accusé de réception</th>
+        </tr></thead>
+        <tbody>
+          ${transferts
+            .map(
+              (t) => `<tr>
+            <td>${e(dateIso(t.date))}</td>
+            <td>${e(commissionNom(t.de))}</td>
+            <td><b>${e(commissionNom(t.vers))}</b></td>
+            <td>${e(t.motif) || "—"}</td>
+            <td>${e(t.moyen) || "—"}${t.reference ? `<br>${e(t.reference)}` : ""}</td>
+            <td class="n">${e(fr(t.montant))}</td>
+            <td>${
+              t.statut === "recu"
+                ? `<span class="etat ok">Reçu le ${e(jourCourt(t.recuAt))}</span>` +
+                  (t.recuPar ? `<br>${e(t.recuPar)}` : "") +
+                  (t.observation ? `<br>${e(t.observation)}` : "")
+                : t.statut === "annule"
+                  ? `<span class="etat non">Annulé</span>` +
+                    (t.motifAnnulation ? `<br>${e(t.motifAnnulation)}` : "")
+                  : `<span class="etat att">${e(LIBELLE_TRANSFERT.envoye)}</span>`
+            }</td>
+          </tr>`
+            )
+            .join("")}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="5">Total des versements (hors annulations)</td>
+          <td class="n">${e(fr(b.verse))}</td>
+          <td>${b.nombreAttente} en attente</td>
+        </tr></tfoot>
+      </table>`
+      }
+    </div>
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Commission Finances</span></div>
+    <div><i></i><span>Secrétariat Général</span></div>
+  </div>
+  ${pied(`Arrêté le ${new Date().toLocaleDateString("fr-FR")}`)}`;
+
+  return document(`Registre des versements — ${intitule}`, contenu);
+}
+
+/** Recu individuel d'un versement : une piece a signer et a classer.
+ *  Une seule feuille, le pied epingle en bas comme sur la fiche vierge. */
+export function htmlRecuVersement(t: Transfert): string {
+  const contenu = `
+  ${enTete("Reçu de Versement", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Versé à la commission</small><strong>${e(commissionNom(t.vers))}</strong></div>
+  <div class="body">
+    <div class="tally" style="margin-bottom:6mm">
+      <span>Montant versé par la commission ${e(commissionNom(t.de))}</span>
+      <b>${e(fr(t.montant))}</b>
+    </div>
+
+    <div class="sec">
+      ${titreSection(1, "Détail de la remise")}
+      <table>
+        <tr><td class="k">Date de la remise</td><td>${e(dateIso(t.date))}</td></tr>
+        <tr><td class="k">Moyen</td><td>${e(t.moyen) || "—"}</td></tr>
+        <tr><td class="k">Référence</td><td>${e(t.reference) || "—"}</td></tr>
+        <tr><td class="k">Motif</td><td>${e(t.motif) || "—"}</td></tr>
+        <tr><td class="k">Remis par</td><td>${e(t.envoyePar) || "—"}</td></tr>
+      </table>
+    </div>
+
+    <div class="sec">
+      ${titreSection(2, "Accusé de réception")}
+      ${
+        t.statut === "recu"
+          ? `<table>
+        <tr><td class="k">Reçu le</td><td><b>${e(jour(t.recuAt))}</b></td></tr>
+        <tr><td class="k">Par</td><td>${e(t.recuPar) || "—"}</td></tr>
+        ${t.observation ? `<tr><td class="k">Observation</td><td>${multi(t.observation)}</td></tr>` : ""}
+      </table>`
+          : t.statut === "annule"
+            ? `<p class="txt">Versement annulé le ${e(jour(t.annuleAt))}${
+                t.annulePar ? ` par ${e(t.annulePar)}` : ""
+              }.${t.motifAnnulation ? ` ${e(t.motifAnnulation)}` : ""}</p>`
+            : `<p class="txt" style="margin-bottom:3mm">La réception reste à confirmer par la
+               responsable de la commission destinataire.</p>
+         <div class="champs">
+           <div><span>Reçu par</span><i></i></div>
+           <div><span>Le</span><i></i></div>
+           <div><span>Signature</span><i></i></div>
+         </div>`
+      }
+    </div>
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Commission Finances</span></div>
+    <div><i></i><span>Commission ${e(commissionNom(t.vers))}</span></div>
+  </div>
+  ${pied(`Établi le ${new Date().toLocaleDateString("fr-FR")}`)}`;
+
+  return document(`Reçu — ${commissionNom(t.vers)}`, contenu, "fiche");
 }
 
 /* ═══ Ouverture ════════════════════════════════════════════════════════ */

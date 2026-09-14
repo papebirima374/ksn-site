@@ -106,7 +106,14 @@
   }
   .ident .f i{display:block;border-bottom:.4mm dotted var(--rule);height:7mm}
 
-  .sec{margin-bottom:4mm}
+  .sec{flex:none;margin-bottom:4mm}
+  /* Zone a remplir : elle s'etire pour occuper la place qui reste, et ses
+     lignes avec elle. Des hauteurs figees obligeaient a refaire le calcul a
+     chaque changement — et quand la somme depassait, overflow:hidden coupait
+     la derniere section EN SILENCE : la fiche sortait de l'imprimante sans
+     son cadre « Divers ». Avec flex, il n'y a plus rien a calculer. */
+  .sec.libre{display:flex;flex-direction:column;min-height:0;flex-shrink:0}
+  .sec.libre .lines{flex:1;min-height:9mm}
   .sec-t{display:flex;align-items:center;gap:3mm;margin-bottom:2.5mm}
   .sec-t .n{
     flex:none;width:6.5mm;height:6.5mm;border-radius:50%;background:var(--green);
@@ -291,7 +298,8 @@
   /* ── Fiche d'une commission ────────────────────────────────────────── */
   // Le releve du bisub Salaatu 'Alaa Nabii n'incombe qu'a Education et
   // Culture : sur les autres fiches la section n'est pas imprimee, et la
-  // place liberee revient aux zones d'ecriture.
+  // place liberee revient d'elle-meme aux zones d'ecriture — elles se
+  // partagent ce qui reste, il n'y a pas de second jeu de hauteurs a tenir.
   const fiche = ([nom, desc, bilan], i, total) => {
     let k = 0;
     const n = () => ++k;
@@ -311,9 +319,9 @@
           <div class="f"><span>Date</span><i></i></div>
         </div>
 
-        <div class="sec">
+        <div class="sec libre" style="flex-grow:3">
           ${secTitle(n(), "Compte rendu de la commission")}
-          <div class="lines" style="height:${bilan ? "45.6" : "60.8"}mm"></div>
+          <div class="lines"></div>
         </div>
 
         ${bilan ? `
@@ -328,14 +336,14 @@
           </div>
         </div>` : ""}
 
-        <div class="sec">
+        <div class="sec libre" style="flex-grow:2">
           ${secTitle(n(), "Cellules", "point à discuter")}
-          <div class="lines" style="height:${bilan ? "30.4" : "38"}mm"></div>
+          <div class="lines"></div>
         </div>
 
-        <div class="sec">
+        <div class="sec libre" style="flex-grow:1.4">
           ${secTitle(n(), "Divers")}
-          <div class="lines" style="height:${bilan ? "22.8" : "30.4"}mm"></div>
+          <div class="lines"></div>
         </div>
 
         <div class="signs">
