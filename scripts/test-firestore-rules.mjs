@@ -1,5 +1,5 @@
 import { initializeTestEnvironment, assertSucceeds, assertFails } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc, getDocs, query, where, orderBy } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc, getDocs, query, where, orderBy, writeBatch } from "firebase/firestore";
 import fs from "node:fs";
 
 const env = await initializeTestEnvironment({
@@ -15,6 +15,9 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "users/fin1"), { role: "commission", commission: "Finances", permissions: [] });
   await setDoc(doc(db, "users/org1"), { role: "commission", commission: "Organisation", permissions: [] });
   await setDoc(doc(db, "users/soc1"), { role: "commission", commission: "Social et Développement", permissions: [] });
+  // Le tresorier : rattache a Finances ET porteur de finances.write. Le second
+  // est le meme compte SANS la permission — l'oubli le plus probable.
+  await setDoc(doc(db, "users/tres1"), { role: "commission", commission: "Finances", permissions: ["finances.write"] });
   await setDoc(doc(db, "commissionAides/a-soc"), { commission: "social-developpement", membreNom: "X Y", montant: 10000, motif: "Maladie", date: "2026-09-01", createdAt: 1 });
   await setDoc(doc(db, "users/anc1"), { role: "commission", commission: "Secrétariat", permissions: [] }); // ancien libelle
   await setDoc(doc(db, "users/membre1"), { role: "member", permissions: [] });
@@ -323,6 +326,73 @@ await t("Sociale annule SA vente", assertSucceeds(updateDoc(doc(as("soc1"), "com
 await t("Une vente déjà annulée ne se ré-annule pas", assertFails(updateDoc(doc(as("soc1"), "commissionVentes/v-annulee"), annulerV)));
 await t("Une vente ne s'efface pas", assertFails(deleteDoc(doc(as("soc1"), "commissionVentes/v-soc2"))));
 await t("L'administrateur peut supprimer en dernier recours", assertSucceeds(deleteDoc(doc(as("admin1"), "commissionVentes/v-soc2"))));
+
+console.log("\n── La chaîne complète d'un versement ──");
+// Les tests ci-dessus verifient chaque regle isolement. Celui-ci suit l'argent
+// d'un bout a l'autre, avec les DEUX documents que l'application envoie
+// ensemble — c'est la seule facon de voir si la chaine tient.
+const lotVersement = (uid, idT, idE) => {
+  const db = as(uid);
+  const lot = writeBatch(db);
+  lot.set(doc(db, "finances", idE), {
+    type: "expense", category: "Versement à une commission", amount: 150000,
+    description: "Versement — Organisation — Dotation", reference: "TX-1",
+    date: "2026-09-14", method: "Wave", recordedBy: "Trésorier", recordedAt: Date.now(),
+  });
+  lot.set(doc(db, "commissionTransferts", idT), {
+    de: "finances", vers: "organisation", montant: 150000, motif: "Dotation",
+    moyen: "Wave", reference: "TX-1", date: "2026-09-14", statut: "envoye",
+    envoyePar: "Trésorier", envoyeAt: Date.now(), ecritureEmetteur: idE,
+    recuPar: "", recuAt: 0, observation: "", ecritureDestinataire: "",
+    annulePar: "", annuleAt: 0, motifAnnulation: "",
+  });
+  return lot.commit();
+};
+
+await t("1 · Le trésorier verse : dépense nationale + versement, en un seul lot",
+  assertSucceeds(lotVersement("tres1", "ch-v1", "ch-e1")));
+await t("2 · La dépense figure au compte principal",
+  assertSucceeds(getDoc(doc(as("tres1"), "finances/ch-e1"))));
+await t("3 · Sans finances.write, TOUT le lot est refusé",
+  assertFails(lotVersement("fin1", "ch-v2", "ch-e2")));
+await t("4 · Rien n'a été écrit à moitié — le lot est atomique",
+  env.withSecurityRulesDisabled(async (c) => {
+    const db = c.firestore();
+    const v = await getDoc(doc(db, "commissionTransferts/ch-v2"));
+    const e = await getDoc(doc(db, "finances/ch-e2"));
+    if (v.exists() || e.exists())
+      throw new Error(`écriture partielle : versement=${v.exists()} dépense=${e.exists()}`);
+  }));
+await t("5 · La commission accuse réception et sa caisse est créditée du même coup",
+  assertSucceeds((() => {
+    const db = as("org1");
+    const lot = writeBatch(db);
+    lot.set(doc(db, "commissionCaisse", "ch-ec1"), {
+      commission: "organisation", sens: "entree", montant: 150000,
+      motif: "Versement reçu — Dotation", membreMatricule: "", membreNom: "",
+      date: "2026-09-15", createdAt: Date.now(), createdBy: "Resp. Org", annuleId: "",
+    });
+    lot.update(doc(db, "commissionTransferts", "ch-v1"), {
+      statut: "recu", recuPar: "Resp. Org", recuAt: Date.now(),
+      observation: "Reçu en espèces", ecritureDestinataire: "ch-ec1",
+    });
+    return lot.commit();
+  })()));
+await t("6 · La somme est bien entrée dans SA caisse",
+  assertSucceeds(getDoc(doc(as("org1"), "commissionCaisse/ch-ec1"))));
+
+console.log("\n── Lien du direct et newsletter ──");
+// Ces deux collections n'avaient AUCUNE regle : Firestore refuse par defaut.
+await t("Le lien du direct se lit sans être connecté (page publique)",
+  assertSucceeds(getDoc(doc(anon(), "config/streaming"))));
+await t("Un visiteur N'ÉCRIT PAS le lien du direct",
+  assertFails(setDoc(doc(anon(), "config/streaming"), { url: "https://pirate", updatedAt: 1 })));
+await t("Une commission sans droit non plus",
+  assertFails(setDoc(doc(as("org1"), "config/streaming"), { url: "https://pirate", updatedAt: 1 })));
+await t("L'administrateur enregistre le lien du direct",
+  assertSucceeds(setDoc(doc(as("admin1"), "config/streaming"), { url: "https://youtu.be/xyz", updatedAt: Date.now() })));
+await t("N'importe qui s'inscrit à la newsletter depuis le pied de page",
+  assertSucceeds(addDoc(collection(anon(), "newsletter"), { email: "a@b.sn", source: "pied de page", subscribedAt: Date.now() })));
 
 console.log("\n── Notifications adressées à une commission ──");
 await t("Organisation lit la notification adressée à sa commission", assertSucceeds(getDoc(doc(as("org1"), "notifications/n-org"))));

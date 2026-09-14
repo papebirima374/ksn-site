@@ -263,8 +263,16 @@ function Verser({
       setMotif("");
       setReference("");
       onErreur("");
-    } catch {
-      onErreur("Versement impossible. Vérifiez votre connexion.");
+    } catch (err) {
+      // Un versement écrit dans la trésorerie nationale : sans la permission
+      // « finances.write », il est refusé. Dire « vérifiez votre connexion »
+      // enverrait chercher la panne du mauvais côté.
+      onErreur(
+        err instanceof Error && /permission|insufficient/i.test(err.message)
+          ? "Versement refusé : ce compte n'a pas le droit d'écrire dans la trésorerie. " +
+            "L'administrateur doit lui accorder la permission « finances.write » dans Utilisateurs."
+          : "Versement impossible. Vérifiez votre connexion."
+      );
     } finally {
       setEnvoi(false);
     }
