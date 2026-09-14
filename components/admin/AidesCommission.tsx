@@ -24,6 +24,12 @@ const INPUT =
 
 const aujourdhui = () => new Date().toISOString().slice(0, 10);
 
+/** Recherche insensible a la casse ET aux accents : on tape « Sene », on
+ *  trouve « Sène ». Sans cela, la moitie des noms du Dahira sont introuvables
+ *  a moins de connaitre l'accent exact. */
+const sansAccent = (v: string) =>
+  (v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 const dateFr = (d: string) =>
   d ? new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" }) : "—";
 
@@ -66,24 +72,43 @@ export default function AidesCommission({
     );
   }, [slug, pret]);
 
-  async function chargerAnnuaire() {
-    if (tous) return;
-    try {
-      setTous(await listMembers());
-    } catch {
-      setErreur("Impossible de charger la liste des membres du Dahira.");
-    }
-  }
+  // L'annuaire se charge des l'ouverture de l'onglet, et non au premier clic
+  // dans le champ : on veut savoir tout de suite s'il est la, pas decouvrir
+  // qu'il manque au moment ou l'on cherche quelqu'un.
+  useEffect(() => {
+    if (!pret) return;
+    let annule = false;
+    listMembers()
+      .then((m) => !annule && setTous(m))
+      .catch((e: unknown) => {
+        if (annule) return;
+        setTous([]); // charge, mais vide : on cesse d'afficher « chargement »
+        setErreur(
+          e instanceof Error && /permission/i.test(e.message)
+            ? "Accès refusé à l'annuaire des membres. Vérifiez les règles Firestore publiées."
+            : "Impossible de charger la liste des membres du Dahira."
+        );
+      });
+    return () => {
+      annule = true;
+    };
+  }, [pret]);
 
   const resultats = useMemo(() => {
-    const q = recherche.trim().toLowerCase();
-    if (!tous || q.length < 2) return [];
+    const q = sansAccent(recherche.trim());
+    if (!tous) return [];
+    // Avant d'avoir tape quoi que ce soit, on montre quand meme quelques noms :
+    // c'est la preuve visible que l'annuaire est charge.
+    if (q.length < 2) return tous.slice(0, 6);
     return tous
-      .filter((m) => `${m.prenom} ${m.nom} ${m.matricule}`.toLowerCase().includes(q))
+      .filter((m) => sansAccent(`${m.prenom} ${m.nom} ${m.matricule} ${m.telephone ?? ""}`).includes(q))
       .slice(0, 10);
   }, [tous, recherche]);
 
   const total = useMemo(() => totalAides(aides), [aides]);
+  // L'etat de chargement se deduit : tant que l'annuaire n'est pas revenu, il
+  // charge. Le stocker en plus, c'est deux verites a tenir d'accord.
+  const chargement = tous === null;
 
   async function verser(e: React.FormEvent) {
     e.preventDefault();
@@ -150,12 +175,29 @@ export default function AidesCommission({
               <FaMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9BB0A6] text-sm" />
               <input
                 value={recherche}
-                onFocus={chargerAnnuaire}
                 onChange={(e) => setRecherche(e.target.value)}
                 className={`${INPUT} pl-10`}
-                placeholder="Nom du membre…"
+                placeholder="Nom, matricule ou téléphone…"
               />
             </div>
+
+            {/* Dire où en est l'annuaire : chargé, vide, ou introuvable. Un
+                champ qui ne renvoie rien sans expliquer pourquoi laisse croire
+                que le membre n'existe pas. */}
+            <p className="mt-2 text-xs text-[#9BB0A6]">
+              {chargement
+                ? "Chargement de l'annuaire du Dahira…"
+                : !tous
+                  ? "Annuaire indisponible."
+                  : tous.length === 0
+                    ? "Aucun membre n'est encore enregistré dans le Dahira."
+                    : recherche.trim().length >= 2 && resultats.length === 0
+                      ? `Aucun membre ne correspond à « ${recherche.trim()} » sur ${tous.length} inscrits.`
+                      : `${tous.length} membre(s) dans l'annuaire${
+                          recherche.trim().length < 2 ? " — tapez un nom pour filtrer" : ""
+                        }`}
+            </p>
+
             <div className="mt-3 space-y-2">
               {resultats.map((m) => (
                 <button
@@ -174,9 +216,9 @@ export default function AidesCommission({
                     <span className="block text-sm font-semibold text-[#082F22] truncate">
                       {m.prenom} {m.nom}
                     </span>
-                    {m.telephone && (
-                      <span className="block text-xs text-[#9BB0A6]">{m.telephone}</span>
-                    )}
+                    <span className="block text-xs text-[#9BB0A6]">
+                      {[m.matricule, m.telephone].filter(Boolean).join(" · ") || "—"}
+                    </span>
                   </span>
                 </button>
               ))}

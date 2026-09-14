@@ -385,13 +385,28 @@ export async function nextMatricule(): Promise<string> {
 
 export async function listMembers(): Promise<Member[]> {
   const db = getDb();
-  const snap = await getDocs(
-    query(collection(db, "members"), orderBy("matricule", "asc"))
-  );
-  return snap.docs.map((d) => ({
-    id: d.id,
-    ...(d.data() as Omit<Member, "id">),
-  }));
+  // PAS d'orderBy sur `matricule`.
+  //
+  // Firestore EXCLUT d'une requête triée tout document auquel le champ de tri
+  // manque. Un membre saisi sans matricule — ou importé d'ailleurs — n'était
+  // donc pas « mal classé » : il n'existait pas. Silencieusement, sans erreur,
+  // partout où cette fonction sert : l'annuaire, le tableau de bord, le choix
+  // du bénéficiaire d'une aide, et jusqu'à la détection des doublons, qui
+  // laissait passer les doublons qu'elle ne voyait pas.
+  //
+  // Le tri se fait donc en mémoire, et les membres sans matricule ferment la
+  // marche au lieu de disparaître.
+  const snap = await getDocs(collection(db, "members"));
+  return snap.docs
+    .map((d) => ({ id: d.id, ...(d.data() as Omit<Member, "id">) }))
+    .sort((a, b) => {
+      const ma = (a.matricule ?? "").trim();
+      const mb = (b.matricule ?? "").trim();
+      if (!ma && !mb) return `${a.prenom} ${a.nom}`.localeCompare(`${b.prenom} ${b.nom}`, "fr");
+      if (!ma) return 1;
+      if (!mb) return -1;
+      return ma.localeCompare(mb, "fr", { numeric: true });
+    });
 }
 
 export async function getMember(id: string): Promise<Member | null> {
