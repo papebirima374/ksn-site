@@ -309,6 +309,9 @@ export type NotificationType =
   | "certification_request_new"
   | "certification_approved"
   | "certification_rejected"
+  // Commissions — versements entre caisses de commission
+  | "transfert_envoye"   // Finances → commission : un versement vous attend
+  | "transfert_recu"     // commission → Finances : reception accusee
   // Générique
   | "info"
   | "success"
@@ -326,6 +329,7 @@ export type NotificationCategory =
   | "premium"        // demandes/validations premium
   | "education"      // certifications Tazawwud
   | "admin_alerts"   // alertes admin (broadcast)
+  | "commission"     // vie des commissions (versements, circuit des dossiers)
   | "system";        // info/success/warning
 
 /** Préférences de notification d'un utilisateur. Tout ce qui n'est
@@ -350,6 +354,8 @@ export const NOTIFICATION_TYPE_CATEGORY: Record<
   certification_request_new: "admin_alerts",
   certification_approved: "education",
   certification_rejected: "education",
+  transfert_envoye: "commission",
+  transfert_recu: "commission",
   info: "system",
   success: "system",
   warning: "system",
@@ -361,7 +367,17 @@ export const NOTIFICATION_TYPE_CATEGORY: Record<
  *  simple à indexer (queries `where("recipientUid", "==", uid)`). */
 export type AppNotification = {
   id: string;
+  /** Destinataire nominatif. Vide quand la notification s'adresse a une
+   *  commission plutot qu'a une personne (voir recipientCommission). */
   recipientUid: string;
+  /** Destinataire collectif : le SLUG d'une commission. Tout compte rattache
+   *  a cette commission la voit.
+   *
+   *  Pourquoi : un responsable de commission ne peut pas lire users/* — les
+   *  regles le lui interdisent — donc il ne peut pas connaitre l'identifiant
+   *  du responsable qu'il veut prevenir. Adresser la commission, et non la
+   *  personne, resout le probleme et survit aux changements de responsable. */
+  recipientCommission?: string;
   type: NotificationType;
   title: string;
   body: string;

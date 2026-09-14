@@ -2,11 +2,21 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { FaXmark, FaCircleCheck, FaCircleInfo, FaCircleXmark, FaCrown, FaGraduationCap } from "react-icons/fa6";
+import {
+  FaXmark,
+  FaCircleCheck,
+  FaCircleInfo,
+  FaCircleXmark,
+  FaCrown,
+  FaGraduationCap,
+  FaMoneyBillTransfer,
+  FaHandshake,
+} from "react-icons/fa6";
 import { AnimatePresence, motion } from "framer-motion";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useAuth } from "@/lib/auth-context";
-import { getDb, isFirebaseConfigured } from "@/lib/firebase";
+import { isFirebaseConfigured } from "@/lib/firebase";
+import { slugFromNom } from "@/lib/commissions";
+import { subscribeMesNotifications } from "@/lib/notifications-flux";
 import type { AppNotification, NotificationType } from "@/lib/admin-types";
 
 const ICON_BY_TYPE: Record<NotificationType, React.ReactNode> = {
@@ -16,6 +26,8 @@ const ICON_BY_TYPE: Record<NotificationType, React.ReactNode> = {
   certification_request_new: <FaGraduationCap />,
   certification_approved: <FaCircleCheck />,
   certification_rejected: <FaCircleXmark />,
+  transfert_envoye: <FaMoneyBillTransfer />,
+  transfert_recu: <FaHandshake />,
   info: <FaCircleInfo />,
   success: <FaCircleCheck />,
   warning: <FaCircleInfo />,
@@ -28,6 +40,8 @@ const ACCENT_BY_TYPE: Record<NotificationType, string> = {
   certification_request_new: "from-[#0F7C55] to-[#0A3D24]",
   certification_approved: "from-emerald-500 to-emerald-600",
   certification_rejected: "from-red-500 to-red-600",
+  transfert_envoye: "from-[#B8860B] to-[#D4AF37]",
+  transfert_recu: "from-emerald-500 to-emerald-600",
   info: "from-blue-500 to-blue-600",
   success: "from-emerald-500 to-emerald-600",
   warning: "from-amber-500 to-amber-600",
@@ -60,33 +74,26 @@ export default function NotificationToast() {
   const askedPermissionRef = useRef<boolean>(false);
 
   // ─── Listener Firestore temps réel ─────────────────────────────────
+  //  Deux adresses possibles : l'utilisateur lui-même, ou sa commission.
+  const maCommission = slugFromNom(user?.commission);
   useEffect(() => {
     if (!isFirebaseConfigured() || !firebaseUser) return;
     const since = Date.now(); // capture stable
     mountedAtRef.current = since;
+    // Une notification déjà affichée ne doit pas revenir à chaque fusion des
+    // deux flux : on garde la trace de ce qui est passé à l'écran.
+    const vues = new Set<string>();
 
-    const db = getDb();
-    const q = query(
-      collection(db, "notifications"),
-      where("recipientUid", "==", firebaseUser.uid)
-    );
-
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
+    return subscribeMesNotifications(
+      firebaseUser.uid,
+      maCommission,
+      (toutes) => {
         // Filtre : uniquement les notifs créées APRÈS le mount,
         // pas encore lues, et non déjà affichées
-        const fresh = snap
-          .docChanges()
-          .filter((c) => c.type === "added")
-          .map(
-            (c) =>
-              ({
-                id: c.doc.id,
-                ...(c.doc.data() as Omit<AppNotification, "id">),
-              } as AppNotification)
-          )
-          .filter((n) => (n.createdAt ?? 0) > since && !n.read);
+        const fresh = toutes.filter(
+          (n) => (n.createdAt ?? 0) > since && !n.read && !vues.has(n.id)
+        );
+        for (const n of fresh) vues.add(n.id);
 
         if (fresh.length === 0) return;
 
@@ -140,8 +147,7 @@ export default function NotificationToast() {
       },
       (err) => console.warn("toast snapshot error", err)
     );
-    return unsub;
-  }, [firebaseUser]);
+  }, [firebaseUser, maCommission]);
 
   // ─── Auto-dismiss ──────────────────────────────────────────────────
   useEffect(() => {

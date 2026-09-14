@@ -20,6 +20,10 @@
 # production
 /build
 
+# sorties des scripts de verification (documents imprimables rendus en PDF)
+/build-impression/
+/build-reglement/
+
 # misc
 .DS_Store
 *.pem

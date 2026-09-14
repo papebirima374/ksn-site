@@ -8,8 +8,10 @@
 // s'execute que sur le serveur : les numeros ne sortent qu'apres verification
 // du jeton de l'appelant.
 //
-// Acces : administrateur, ou responsable du Secretariat (c'est lui qui
-// relance les commissions).
+// Acces : administrateur, responsable du Secretariat (c'est lui qui relance
+// les commissions), ou responsable des Finances (c'est elle qui verse aux
+// autres commissions et doit pouvoir les prevenir). Pas les autres : un
+// carnet d'adresses ne s'ouvre qu'a qui en a l'usage.
 
 import { NextResponse } from "next/server";
 import { verifyRequest } from "@/lib/server/verify-auth";
@@ -26,8 +28,13 @@ const CONTACTS: Record<string, string> = {
   "secretariat-administratif": "+221 77 838 07 68",
 };
 
-/** Libelles de commission acceptes pour le Secretariat, anciens compris. */
-const SECRETARIAT = ["Secrétariat et Administratif", "Secrétariat", "Administratif"];
+/** Libelles de commission acceptes, anciens compris (cf. lib/commissions.ts). */
+const AUTORISEES = [
+  "Secrétariat et Administratif",
+  "Secrétariat",
+  "Administratif",
+  "Finances",
+];
 
 /** Lit users/<uid> via Firestore REST en passant le jeton de l'appelant : les
  *  regles Firestore s'appliquent, aucune cle de service n'est necessaire. */
@@ -44,7 +51,7 @@ async function estAutorise(req: Request): Promise<boolean> {
     if (!res.ok) return false;
     const fields = (await res.json())?.fields ?? {};
     if (fields.role?.stringValue === "admin") return true;
-    return SECRETARIAT.includes(fields.commission?.stringValue ?? "");
+    return AUTORISEES.includes(fields.commission?.stringValue ?? "");
   } catch {
     return false;
   }

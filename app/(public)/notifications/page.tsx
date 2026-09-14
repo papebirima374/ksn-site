@@ -13,10 +13,14 @@ import {
   FaTrash,
   FaCheckDouble,
   FaGear,
+  FaMoneyBillTransfer,
+  FaHandshake,
 } from "react-icons/fa6";
-import { collection, onSnapshot, query, where, deleteDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/lib/auth-context";
 import { getDb, isFirebaseConfigured } from "@/lib/firebase";
+import { slugFromNom } from "@/lib/commissions";
+import { subscribeMesNotifications } from "@/lib/notifications-flux";
 import { markAllNotificationsRead } from "@/lib/admin-data";
 import type { AppNotification, NotificationType, NotificationCategory } from "@/lib/admin-types";
 import { NOTIFICATION_TYPE_CATEGORY } from "@/lib/admin-types";
@@ -28,6 +32,8 @@ const ICON_BY_TYPE: Record<NotificationType, React.ReactNode> = {
   certification_request_new: <FaGraduationCap />,
   certification_approved: <FaCircleCheck />,
   certification_rejected: <FaCircleXmark />,
+  transfert_envoye: <FaMoneyBillTransfer />,
+  transfert_recu: <FaHandshake />,
   info: <FaCircleInfo />,
   success: <FaCircleCheck />,
   warning: <FaCircleInfo />,
@@ -40,6 +46,8 @@ const ACCENT_BY_TYPE: Record<NotificationType, string> = {
   certification_request_new: "bg-[#0F7C55]/10 text-[#0F7C55]",
   certification_approved: "bg-emerald-100 text-emerald-700",
   certification_rejected: "bg-red-100 text-red-700",
+  transfert_envoye: "bg-[#D4AF37]/15 text-[#B8860B]",
+  transfert_recu: "bg-emerald-100 text-emerald-700",
   info: "bg-blue-100 text-blue-700",
   success: "bg-emerald-100 text-emerald-700",
   warning: "bg-amber-100 text-amber-700",
@@ -49,6 +57,7 @@ const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   premium: "Premium",
   education: "Éducation",
   admin_alerts: "Alertes admin",
+  commission: "Commissions",
   system: "Système",
 };
 
@@ -60,6 +69,7 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: "premium", label: "Premium" },
   { id: "education", label: "Éducation" },
   { id: "admin_alerts", label: "Alertes admin" },
+  { id: "commission", label: "Commissions" },
   { id: "system", label: "Système" },
 ];
 
@@ -97,31 +107,14 @@ export default function NotificationsPage() {
   }, [authLoading, user, router]);
 
   // ── Listener temps réel ─────────────────────────────────────────────
+  //  Notifications nominatives + celles adressées à sa commission.
+  const maCommission = slugFromNom(user?.commission);
   useEffect(() => {
     if (!isFirebaseConfigured() || !firebaseUser) return;
-    const db = getDb();
-    const q = query(
-      collection(db, "notifications"),
-      where("recipientUid", "==", firebaseUser.uid)
+    return subscribeMesNotifications(firebaseUser.uid, maCommission, setItems, (err) =>
+      console.warn("notif page snapshot error", err)
     );
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const arr = snap.docs
-          .map(
-            (d) =>
-              ({
-                id: d.id,
-                ...(d.data() as Omit<AppNotification, "id">),
-              } as AppNotification)
-          )
-          .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
-        setItems(arr);
-      },
-      (err) => console.warn("notif page snapshot error", err)
-    );
-    return unsub;
-  }, [firebaseUser]);
+  }, [firebaseUser, maCommission]);
 
   const filtered = useMemo(() => {
     if (filter === "all") return items;
@@ -158,7 +151,7 @@ export default function NotificationsPage() {
     if (!user) return;
     setActing(true);
     try {
-      await markAllNotificationsRead(user.uid);
+      await markAllNotificationsRead(user.uid, maCommission);
     } finally {
       setActing(false);
     }

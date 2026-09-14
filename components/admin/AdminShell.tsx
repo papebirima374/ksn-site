@@ -50,6 +50,8 @@ const GROUPES: {
     perm: Permission | null;
     adminOnly?: boolean;
     secretariat?: boolean;
+    /** Ouvert a cette commission meme sans la permission indiquee. */
+    commission?: string;
   }[];
 }[] = [
   {
@@ -76,8 +78,18 @@ const GROUPES: {
     slug: "finances",
     items: [
       { href: "/admin/finances", label: "Finances", Icon: FaCoins, perm: "finances.write" },
-      { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write" },
       { href: "/admin/premium/paiements", label: "Premium · Paiements", Icon: FaCrown, perm: "users.write" },
+    ],
+  },
+  {
+    // La boutique est l'activite de la commission Sociale : c'est elle qui
+    // tient le comptoir, encaisse et facture. Elle y accede donc sans avoir
+    // besoin de la permission boutique.write, qui reste ce qui commande le
+    // catalogue et les commandes en ligne.
+    titre: "Social et Développement",
+    slug: "social-developpement",
+    items: [
+      { href: "/admin/boutique", label: "Boutique", Icon: FaBagShopping, perm: "boutique.write", commission: "social-developpement" },
     ],
   },
   {
@@ -151,12 +163,21 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const estAdmin = user?.role === "admin";
   const maCommission = slugFromNom(user?.commission);
 
-  const itemVisible = (item: { href: string; perm: Permission | null; adminOnly?: boolean; secretariat?: boolean }) => {
+  const itemVisible = (item: {
+    href: string;
+    perm: Permission | null;
+    adminOnly?: boolean;
+    secretariat?: boolean;
+    commission?: string;
+  }) => {
     // Reserve a l'administrateur principal
     if (item.adminOnly) return estAdmin;
     // Reserve a l'administrateur et au Secretariat : celui-ci depouille les
     // rapports de TOUTES les commissions, c'est son role a l'assemblee.
     if (item.secretariat) return estAdmin || maCommission === "secretariat-administratif";
+    // Outil rattache a une commission : elle y entre de plein droit, meme sans
+    // la permission — c'est son metier. Les autres passent par la permission.
+    if (item.commission && maCommission === item.commission) return true;
     // Membres : accessible avec members.write OU finances.write
     if (item.href === "/admin/membres") {
       return hasPermission(user, "members.write") || hasPermission(user, "finances.write");

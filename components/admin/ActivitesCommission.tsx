@@ -7,6 +7,7 @@ import {
   FaMugSaucer,
   FaCartShopping,
   FaTriangleExclamation,
+  FaCircleInfo,
 } from "react-icons/fa6";
 import {
   type Lot,
@@ -97,6 +98,21 @@ export default function ActivitesCommission({
 
   return (
     <div className="space-y-5">
+      {/* Produire n'est pas vendre : les lots suivent ce qu'on engage et ce
+          qu'il reste, la vente au détail se fait au comptoir de la Boutique.
+          Le dire ici évite de chercher la caisse au mauvais endroit. */}
+      <p className="flex items-start gap-2 rounded-xl border border-[#D4AF37]/35 bg-[#D4AF37]/[.08] px-4 py-3 text-sm text-[#082F22] leading-6">
+        <FaCircleInfo className="flex-none mt-1 text-[#B8860B]" />
+        <span>
+          Cet onglet suit la <b>production</b> : ce que coûte un lot, ce qu&apos;il en
+          reste. La <b>vente au détail et les factures</b> se font au comptoir —{" "}
+          <a href="/admin/boutique" className="font-bold text-[#0F7C55] hover:underline">
+            Boutique › Ventes
+          </a>
+          .
+        </span>
+      </p>
+
       {/* ── Bilan ───────────────────────────────────────────────────── */}
       <section className="rounded-2xl border border-[#0F7C55]/15 bg-gradient-to-br from-[#0F7C55]/[.07] to-[#D4AF37]/[.10] p-6">
         <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#5C7268] text-center">

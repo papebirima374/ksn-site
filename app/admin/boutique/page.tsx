@@ -10,9 +10,14 @@ import {
   FaBagShopping,
   FaCheck,
   FaXmark,
+  FaCashRegister,
+  FaFileInvoice,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import VentesBoutique from "@/components/admin/VentesBoutique";
 import { useAuth } from "@/lib/auth-context";
+import { slugFromNom, aModuleSocial, commissionNom } from "@/lib/commissions";
+import { imprimer, htmlFacture, factureDeCommande } from "@/lib/impression";
 import {
   hasPermission,
   Order,
@@ -38,7 +43,18 @@ function fmt(n: number) {
 export default function AdminBoutiquePage() {
   const { user } = useAuth();
   const canEdit = hasPermission(user, "boutique.write");
-  const [tab, setTab] = useState<"products" | "orders">("products");
+
+  // La boutique est l'activité de la commission Sociale : c'est elle qui tient
+  // le comptoir. L'onglet Ventes n'apparaît donc que pour elle — et pour
+  // l'administrateur, qui voit tout. Une autre commission n'a rien à encaisser
+  // ici, et un onglet vide ne ferait que poser des questions.
+  const monSlug = slugFromNom(user?.commission);
+  const slugVentes = user?.role === "admin" ? "social-developpement" : monSlug;
+  const peutVendre = !!slugVentes && aModuleSocial(slugVentes);
+
+  const [tab, setTab] = useState<"ventes" | "products" | "orders">(
+    peutVendre ? "ventes" : "products"
+  );
 
   return (
     <AdminShell>
@@ -49,9 +65,24 @@ export default function AdminBoutiquePage() {
         <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
           Boutique KSN
         </h1>
+        {peutVendre && (
+          <p className="mt-2 text-sm text-[#5C7268]">
+            Comptoir tenu par la commission {commissionNom(slugVentes!)} — les ventes
+            entrent dans sa caisse et sortent en facture.
+          </p>
+        )}
       </header>
 
-      <div className="grid grid-cols-2 gap-2 bg-[#F8F5EF] rounded-2xl p-1.5 mb-6 max-w-md">
+      <div
+        className={`grid gap-2 bg-[#F8F5EF] rounded-2xl p-1.5 mb-6 ${
+          peutVendre ? "grid-cols-3 max-w-2xl" : "grid-cols-2 max-w-md"
+        }`}
+      >
+        {peutVendre && (
+          <TabButton active={tab === "ventes"} onClick={() => setTab("ventes")}>
+            <FaCashRegister className="mr-2 inline" /> Ventes
+          </TabButton>
+        )}
         <TabButton active={tab === "products"} onClick={() => setTab("products")}>
           <FaBoxOpen className="mr-2 inline" /> Produits
         </TabButton>
@@ -60,6 +91,13 @@ export default function AdminBoutiquePage() {
         </TabButton>
       </div>
 
+      {tab === "ventes" && peutVendre && (
+        <VentesBoutique
+          slug={slugVentes!}
+          signature={user?.displayName || user?.email || ""}
+          pret={!!user}
+        />
+      )}
       {tab === "products" && <ProductsTab canEdit={canEdit} />}
       {tab === "orders" && <OrdersTab canEdit={canEdit} />}
     </AdminShell>
@@ -552,10 +590,19 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
                 ))}
               </ul>
 
-              <p className="mt-3 text-xs text-gray-500">
-                Paiement : <span className="font-semibold uppercase">{o.paymentMethod}</span>
-                {o.transactionId && ` • Tx ${o.transactionId.slice(0, 12)}`}
-              </p>
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-gray-500">
+                  Paiement : <span className="font-semibold uppercase">{o.paymentMethod}</span>
+                  {o.transactionId && ` • Tx ${o.transactionId.slice(0, 12)}`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => imprimer(htmlFacture(factureDeCommande(o)))}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0F7C55] hover:underline"
+                >
+                  <FaFileInvoice /> Imprimer la facture
+                </button>
+              </div>
 
               {canEdit && o.status === "pending" && (
                 <div className="mt-3 flex gap-2">
