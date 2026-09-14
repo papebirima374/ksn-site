@@ -28,34 +28,31 @@ export const metadata: Metadata = {
   },
   alternates: { canonical: "https://salaatualaanabii.com" },
 };
-import Commissions from "@/components/sections/Commissions";
 import CompteurSalaatu from "@/components/sections/CompteurSalaatu";
 import Contact from "@/components/sections/Contact";
 import Hero from "@/components/sections/Hero";
 import JourneeBanner from "@/components/sections/JourneeBanner";
 import LeDahira from "@/components/sections/LeDahira";
-import Media from "@/components/sections/Media";
-import Presidence from "@/components/sections/Presidence";
 import ReseauxSociaux from "@/components/sections/ReseauxSociaux";
-import Spiritualite from "@/components/sections/Spiritualite";
 import Stats from "@/components/sections/Stats";
-import Temoignages from "@/components/sections/Temoignages";
 
 export default function Home() {
   return (
+    /* L'accueil dit qui nous sommes, ce que nous comptons, ce qui vient, et
+       comment nous rejoindre. Le reste a sa page dans la navigation :
+         Présidence, Commissions, Organigramme → /dahira
+         Témoignages                           → /notre-histoire
+         Média                                 → /media
+         Spiritualité                          → /spiritualite
+       Les y répéter n'ajoutait rien : cela ne faisait qu'allonger la page. */
     <>
       <Hero />
       <CompteurSalaatu />
       <JourneeBanner />
       <Stats />
-      <Presidence />
       <LeDahira />
-      <Commissions />
-      <Temoignages />
-      <Media />
       <AppKSN />
       <ReseauxSociaux />
-      <Spiritualite />
       <Contact />
     </>
   );

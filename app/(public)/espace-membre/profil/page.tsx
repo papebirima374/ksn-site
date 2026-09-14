@@ -387,7 +387,7 @@ function PendingDashboard({
   async function handleSelfActivate() {
     if (
       !confirm(
-        "Confirmer que vous avez payé 1 000 FCFA via Wave ?\n\nVotre compte sera activé immédiatement et un matricule officiel vous sera attribué.\n\nL'administration vérifiera le paiement sur le tableau de bord Wave."
+        "Confirmer que vous avez payé votre carte de membre (1 000 FCFA) via Wave ?\n\nVotre compte sera activé immédiatement et un matricule officiel vous sera attribué.\n\nL'administration vérifiera le paiement sur le tableau de bord Wave."
       )
     )
       return;
@@ -424,9 +424,9 @@ function PendingDashboard({
         </h2>
         <p className="mt-3 text-white/90 leading-7 text-sm sm:text-base">
           Vos informations sont enregistrées. Pour activer votre compte et
-          recevoir votre matricule officiel + carte de membre, payez la
-          cotisation annuelle de <strong>1 000 FCFA</strong> via Wave en deux
-          étapes ci-dessous.
+          recevoir votre matricule officiel, réglez votre{" "}
+          <strong>carte de membre — 1 000 FCFA</strong> via Wave, en deux étapes
+          ci-dessous.
         </p>
       </div>
 
@@ -610,7 +610,8 @@ function VisitorDashboard({
         </h3>
         <p className="mt-3 text-emerald-700 leading-7 text-sm sm:text-base max-w-lg mx-auto">
           Votre demande est en attente de validation. Réglez votre cotisation de
-          1 000 FCFA via le lien Wave qui apparaît maintenant sur cette page.
+          votre carte de membre (1 000 FCFA) via le lien Wave qui apparaît
+          maintenant sur cette page.
         </p>
       </div>
     );
@@ -748,7 +749,7 @@ function VisitorDashboard({
             {submitting ? "Envoi…" : "Soumettre ma demande →"}
           </button>
           <p className="text-xs text-gray-500 text-center">
-            Vous réglerez la cotisation Wave 1 000 FCFA à l&apos;étape suivante.
+            Vous réglerez votre carte de membre (1 000 FCFA) à l&apos;étape suivante.
           </p>
         </form>
       )}

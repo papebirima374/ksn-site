@@ -50,7 +50,7 @@ export default function CGU() {
       <ul>
         <li><strong>Visiteur (inactif) :</strong> accès libre aux contenus publics et au Salaatu du jour + 2 premiers Salaats</li>
         <li><strong>En attente :</strong> a soumis sa demande d&apos;adhésion et complété son profil — attend le règlement de la cotisation</li>
-        <li><strong>Membre actif :</strong> cotisation 1 000 FCFA réglée — accès complet à la bibliothèque, carte de membre officielle avec matricule</li>
+        <li><strong>Membre actif :</strong> carte de membre (1 000 FCFA) réglée — accès complet à la bibliothèque, carte officielle avec matricule</li>
         <li><strong>Commission :</strong> responsable d&apos;une commission officielle avec permissions admin spécifiques</li>
         <li><strong>Administrateur :</strong> contrôle total du site (Bureau du Dahira)</li>
       </ul>
