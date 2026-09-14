@@ -19,6 +19,13 @@ export type Commission = {
    *  n'importe quel visiteur. Les numeros vivent cote serveur, dans
    *  app/api/commission-contacts/route.ts. */
   responsable?: string;
+  /** La commission tient la caisse NATIONALE du Dahira — elle n'a donc pas de
+   *  caisse a elle. Le Dahira n'a qu'un seul compte, le compte principal
+   *  (collection `finances`) : donner une seconde caisse a la Finance
+   *  reviendrait a ouvrir un deuxieme compte a cote du vrai, et plus personne
+   *  ne saurait lequel fait foi. Les versements aux autres commissions y sont
+   *  donc puises, et se gerent depuis /admin/finances. */
+  gereCaisseNationale?: boolean;
   /** Active l'onglet Preparation : la feuille de route d'une journee (qui fait
    *  quoi, pour quand, avec quel budget). Reserve a l'Organisation : c'est elle
    *  qui monte les tentes, loue la sonorisation et ramene les invites. */
@@ -51,6 +58,7 @@ export const COMMISSIONS: Commission[] = [
       "Gestion transparente des cotisations, des dons, de la comptabilité et du financement des activités du Dahira.",
     emoji: "💰",
     responsable: "Serigne Massamba Mbaye",
+    gereCaisseNationale: true,
   },
   {
     slug: "social-developpement",
@@ -100,6 +108,17 @@ export function aBilanSalaatu(slug: string): boolean {
 /** La commission tient-elle des activites economiques et des aides ? */
 export function aModuleSocial(slug: string): boolean {
   return getCommission(slug)?.moduleSocial === true;
+}
+
+/** La commission a-t-elle une caisse a elle ?
+ *  Toutes, sauf celle qui tient deja la caisse nationale. */
+export function aCaissePropre(slug: string): boolean {
+  return getCommission(slug)?.gereCaisseNationale !== true;
+}
+
+/** La commission tient-elle la caisse nationale du Dahira ? */
+export function tientCaisseNationale(slug: string): boolean {
+  return getCommission(slug)?.gereCaisseNationale === true;
 }
 
 /** La commission prepare-t-elle les journees (feuille de route) ? */

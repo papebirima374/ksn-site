@@ -357,19 +357,19 @@ export default function AdminRapportsPage() {
           <div className="flex items-center gap-3">
             <FaMoneyBillTransfer className="text-[#0F7C55]" />
             <h2 className="font-bold text-[#082F22]">
-              Versements de la commission Finances
+              Versements de la trésorerie du Dahira
             </h2>
           </div>
           <button
-            onClick={() => imprimer(htmlVersements(versements, "Toutes les commissions"))}
+            onClick={() => imprimer(htmlVersements(versements, "Versements aux commissions"))}
             className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0F7C55]/5 transition"
           >
             <FaPrint /> Imprimer le registre
           </button>
         </div>
         <p className="text-sm text-[#5C7268] mb-5 leading-6">
-          Sommes remises par la commission Finances aux autres commissions pour la
-          Journée Salaatu. Chaque versement n&apos;est considéré comme arrivé
+          Sommes puisées sur le <b>compte principal</b> du Dahira et remises aux
+          commissions. Chaque versement n&apos;est considéré comme arrivé
           qu&apos;une fois la <b>réception accusée</b> par la responsable de la
           commission destinataire.
         </p>
@@ -400,7 +400,8 @@ export default function AdminRapportsPage() {
               <div key={t.id} className="py-3.5 flex flex-wrap items-start gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-semibold text-[#082F22]">
-                    {commissionNom(t.de)} <FaArrowRightLong className="inline text-xs text-[#9BB0A6] mx-1" />{" "}
+                    Compte principal{" "}
+                    <FaArrowRightLong className="inline text-xs text-[#9BB0A6] mx-1" />{" "}
                     {commissionNom(t.vers)}
                   </p>
                   <p className="text-xs text-[#5C7268] mt-0.5">

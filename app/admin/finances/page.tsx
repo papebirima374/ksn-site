@@ -8,8 +8,11 @@ import {
   FaTrash,
   FaScaleBalanced,
   FaXmark,
+  FaMoneyBillTransfer,
+  FaCoins,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import VersementsFinances from "@/components/admin/VersementsFinances";
 import { useAuth } from "@/lib/auth-context";
 import {
   hasPermission,
@@ -43,6 +46,7 @@ export default function AdminFinancesPage() {
   const [fCat, setFCat] = useState("all");
   const [fFrom, setFFrom] = useState("");
   const [fTo, setFTo] = useState("");
+  const [vue, setVue] = useState<"tresorerie" | "versements">("tresorerie");
 
   async function reload() {
     setLoading(true);
@@ -101,7 +105,7 @@ export default function AdminFinancesPage() {
             {entries.length} transaction{entries.length > 1 ? "s" : ""} enregistrée{entries.length > 1 ? "s" : ""}.
           </p>
         </div>
-        {canEdit && (
+        {canEdit && vue === "tresorerie" && (
           <button
             type="button"
             onClick={() => setShowForm(true)}
@@ -112,6 +116,38 @@ export default function AdminFinancesPage() {
         )}
       </header>
 
+      {/* Le Dahira n'a qu'un compte : celui-ci. Les versements aux commissions
+          y sont puisés, d'où leur place ici et non dans une caisse à part. */}
+      <div className="grid grid-cols-2 gap-2 bg-[#F8F5EF] rounded-2xl p-1.5 mb-6 max-w-md">
+        {(
+          [
+            ["tresorerie", "Trésorerie", <FaCoins key="a" />],
+            ["versements", "Versements", <FaMoneyBillTransfer key="b" />],
+          ] as ["tresorerie" | "versements", string, React.ReactNode][]
+        ).map(([cle, label, icone]) => (
+          <button
+            key={cle}
+            type="button"
+            onClick={() => setVue(cle)}
+            className={`inline-flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition ${
+              vue === cle ? "bg-[#0F7C55] text-white shadow-md" : "text-[#0F7C55] hover:bg-white"
+            }`}
+          >
+            {icone} {label}
+          </button>
+        ))}
+      </div>
+
+      {vue === "versements" && (
+        <VersementsFinances
+          signature={user?.displayName || user?.email || ""}
+          peutVerser={canEdit}
+          pret={!!user}
+        />
+      )}
+
+      {vue === "tresorerie" && (
+      <>
       {/* GLOBAL STATS */}
       <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <StatCard
@@ -285,6 +321,8 @@ export default function AdminFinancesPage() {
             await reload();
           }}
         />
+      )}
+      </>
       )}
     </AdminShell>
   );

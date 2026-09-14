@@ -158,18 +158,23 @@ console.log("\n── Caisse de commission (séparée des finances nationales) �
 const ecriture = (commission, extra = {}) => ({
   commission, sens: "entree", montant: 2000, motif: "Cotisation",
   date: "2026-09-15", createdAt: Date.now(), createdBy: "Moi", annuleId: "", ...extra });
-await t("Finances écrit dans SA caisse", assertSucceeds(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances"))));
-await t("Finances lit SA caisse", assertSucceeds(getDocs(query(collection(as("fin1"), "commissionCaisse"), where("commission", "==", "finances")))));
-await t("Finances N'ÉCRIT PAS dans la caisse d'Organisation", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("organisation"))));
-await t("Finances NE LIT PAS la caisse d'Organisation", assertFails(getDoc(doc(as("fin1"), "commissionCaisse/c-org"))));
-await t("Une écriture ne se modifie jamais", assertFails(setDoc(doc(as("fin1"), "commissionCaisse/c-fin"), { montant: 999999 }, { merge: true })));
-await t("Une écriture ne s'efface pas (on l'annule)", assertFails(deleteDoc(doc(as("fin1"), "commissionCaisse/c-fin"))));
-await t("Montant nul refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { montant: 0 }))));
-await t("Montant négatif refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { montant: -500 }))));
-await t("Sens inventé refusé", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances", { sens: "cadeau" }))));
-await t("Le Secrétariat lit la caisse d'une commission", assertSucceeds(getDoc(doc(as("sec1"), "commissionCaisse/c-fin"))));
-await t("Le Secrétariat N'ÉCRIT PAS dans une caisse", assertFails(addDoc(collection(as("sec1"), "commissionCaisse"), ecriture("finances"))));
-await t("Un visiteur anonyme ne voit aucune caisse", assertFails(getDoc(doc(anon(), "commissionCaisse/c-fin"))));
+await t("Organisation écrit dans SA caisse", assertSucceeds(addDoc(collection(as("org1"), "commissionCaisse"), ecriture("organisation"))));
+await t("Organisation lit SA caisse", assertSucceeds(getDocs(query(collection(as("org1"), "commissionCaisse"), where("commission", "==", "organisation")))));
+await t("Organisation N'ÉCRIT PAS dans la caisse de Sociale", assertFails(addDoc(collection(as("org1"), "commissionCaisse"), ecriture("social-developpement"))));
+await t("Organisation NE LIT PAS la caisse de Finances", assertFails(getDoc(doc(as("org1"), "commissionCaisse/c-fin"))));
+await t("Une écriture ne se modifie jamais", assertFails(setDoc(doc(as("org1"), "commissionCaisse/c-org"), { montant: 999999 }, { merge: true })));
+await t("Une écriture ne s'efface pas (on l'annule)", assertFails(deleteDoc(doc(as("org1"), "commissionCaisse/c-org"))));
+await t("Montant nul refusé", assertFails(addDoc(collection(as("org1"), "commissionCaisse"), ecriture("organisation", { montant: 0 }))));
+await t("Montant négatif refusé", assertFails(addDoc(collection(as("org1"), "commissionCaisse"), ecriture("organisation", { montant: -500 }))));
+await t("Sens inventé refusé", assertFails(addDoc(collection(as("org1"), "commissionCaisse"), ecriture("organisation", { sens: "cadeau" }))));
+await t("Le Secrétariat lit la caisse d'une commission", assertSucceeds(getDoc(doc(as("sec1"), "commissionCaisse/c-org"))));
+await t("Le Secrétariat N'ÉCRIT PAS dans une caisse", assertFails(addDoc(collection(as("sec1"), "commissionCaisse"), ecriture("organisation"))));
+await t("Un visiteur anonyme ne voit aucune caisse", assertFails(getDoc(doc(anon(), "commissionCaisse/c-org"))));
+
+// Le Dahira n'a qu'un compte : le compte principal, tenu par la Finance.
+// Lui ouvrir une caisse de commission a cote, c'est tenir deux registres.
+await t("La Finance N'A PAS de caisse de commission", assertFails(addDoc(collection(as("fin1"), "commissionCaisse"), ecriture("finances"))));
+await t("L'administrateur non plus n'en ouvre pas", assertFails(addDoc(collection(as("admin1"), "commissionCaisse"), ecriture("finances"))));
 
 console.log("\n── Membres de commission et convocations ──");
 await t("Organisation ajoute un membre", assertSucceeds(setDoc(doc(as("org1"), "commissionMembres/organisation_M002"), { commission: "organisation", matricule: "M002", nom: "C D", telephone: "+221770000001", role: "membre", ajouteLe: Date.now() })));

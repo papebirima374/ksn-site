@@ -698,8 +698,13 @@ export function htmlSuivi(lignes: LigneSuivi[]): string {
 
 /* ═══ Registre des versements ══════════════════════════════════════════ */
 
-/** Releve des sommes versees par la commission Finances aux autres
- *  commissions, avec l'etat de l'accuse de reception.
+/** D'ou part l'argent, tel qu'on l'ecrit sur les pieces. Le Dahira n'a qu'un
+ *  compte : la Finance ne verse pas « depuis sa caisse », elle verse depuis
+ *  celle du Dahira, qu'elle tient. */
+const NOM_EMETTEUR = "Trésorerie du Dahira";
+
+/** Releve des sommes versees par la tresorerie du Dahira aux commissions,
+ *  avec l'etat de l'accuse de reception.
  *
  *  C'est la piece de tracabilite : elle dit qui a recu quoi, quand, par quel
  *  moyen, et qui l'a confirme. Un versement qui n'a jamais ete accuse y
@@ -713,7 +718,7 @@ export function htmlVersements(
 
   const contenu = `
   ${enTete("Registre des Versements", "Waccaayu bisub Salaatu ’Alaa Nabi")}
-  <div class="ribbon"><small>Caisses de commission</small><strong>${e(intitule)}</strong></div>
+  <div class="ribbon"><small>Compte principal du Dahira</small><strong>${e(intitule)}</strong></div>
   <div class="body">
     <div class="cartes">
       <div><span>Total versé</span><b>${e(fr(b.verse))}</b></div>
@@ -736,7 +741,7 @@ export function htmlVersements(
             .map(
               (t) => `<tr>
             <td>${e(dateIso(t.date))}</td>
-            <td>${e(commissionNom(t.de))}</td>
+            <td>${e(NOM_EMETTEUR)}</td>
             <td><b>${e(commissionNom(t.vers))}</b></td>
             <td>${e(t.motif) || "—"}</td>
             <td>${e(t.moyen) || "—"}${t.reference ? `<br>${e(t.reference)}` : ""}</td>
@@ -766,8 +771,8 @@ export function htmlVersements(
   </div>
 
   <div class="signs">
-    <div><i></i><span>Commission Finances</span></div>
-    <div><i></i><span>Secrétariat Général</span></div>
+    <div><i></i><span>Le Trésorier</span></div>
+    <div><i></i><span>Le Président</span></div>
   </div>
   ${pied(`Arrêté le ${new Date().toLocaleDateString("fr-FR")}`)}`;
 
@@ -782,7 +787,7 @@ export function htmlRecuVersement(t: Transfert): string {
   <div class="ribbon"><small>Versé à la commission</small><strong>${e(commissionNom(t.vers))}</strong></div>
   <div class="body">
     <div class="tally" style="margin-bottom:6mm">
-      <span>Montant versé par la commission ${e(commissionNom(t.de))}</span>
+      <span>Montant versé par la ${e(NOM_EMETTEUR)} — compte principal</span>
       <b>${e(fr(t.montant))}</b>
     </div>
 
@@ -822,7 +827,7 @@ export function htmlRecuVersement(t: Transfert): string {
   </div>
 
   <div class="signs">
-    <div><i></i><span>Commission Finances</span></div>
+    <div><i></i><span>Le Trésorier</span></div>
     <div><i></i><span>Commission ${e(commissionNom(t.vers))}</span></div>
   </div>
   ${pied(`Établi le ${new Date().toLocaleDateString("fr-FR")}`)}`;

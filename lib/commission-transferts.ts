@@ -1,8 +1,14 @@
 // Versements de la commission Finances vers les autres commissions.
 //
 // LE CIRCUIT, EN UNE PHRASE
-//   Finances verse → la somme sort de SA caisse → la commission destinataire
-//   accuse reception → la somme entre dans SA caisse.
+//   Finances verse → la somme sort de la CAISSE NATIONALE → la commission
+//   destinataire accuse reception → la somme entre dans SA caisse a elle.
+//
+// D'OU SORT L'ARGENT ?
+// Du compte principal du Dahira (collection `finances`), et de nulle part
+// ailleurs. La commission Finances n'a pas de caisse a elle : elle tient celle
+// du Dahira. Lui en donner une seconde reviendrait a ouvrir un compte a cote
+// du vrai, et plus personne ne saurait lequel fait foi.
 //
 // POURQUOI L'ACCUSE DE RECEPTION ?
 // Parce que l'argent circule de la main a la main, en dehors du site. Tant que
@@ -32,6 +38,12 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { commissionNom } from "./commissions";
+
+/** Categories portees a la caisse nationale. Elles doivent exister dans
+ *  FINANCE_CATEGORIES (lib/admin-types.ts), sinon l'ecriture n'apparaitrait
+ *  sous aucun filtre de la page Tresorerie. */
+const CATEGORIE_SORTIE = "Versement à une commission";
+const CATEGORIE_RETOUR = "Annulation de versement";
 
 /** Seule la commission Finances verse. Le slug est fige ici pour que la
  *  regle Firestore et le code disent la meme chose. */
@@ -66,7 +78,7 @@ export type Transfert = {
 
   envoyePar: string;
   envoyeAt: number;
-  /** Ecriture de sortie creee dans la caisse de l'emettrice. */
+  /** Ecriture de sortie creee dans la caisse NATIONALE (collection finances). */
   ecritureEmetteur: string;
 
   /** Renseignes a l'accuse de reception. */
@@ -176,9 +188,9 @@ const coupe = (v: string, n: number) => (v ?? "").trim().slice(0, n);
 
 /** Verse une somme a une autre commission.
  *
- *  Le versement ET la sortie de caisse partent dans le meme lot : soit les
- *  deux passent, soit aucun. Un versement enregistre sans sortie de caisse
- *  ferait mentir le solde de la commission Finances. */
+ *  Le versement ET la sortie de la caisse nationale partent dans le meme lot :
+ *  soit les deux passent, soit aucun. Un versement enregistre sans sortie
+ *  ferait mentir le solde du Dahira. */
 export async function verser(
   de: string,
   v: {
@@ -197,19 +209,20 @@ export async function verser(
   const lot = writeBatch(db);
 
   const refTransfert = doc(collection(db, "commissionTransferts"));
-  const refEcriture = doc(collection(db, "commissionCaisse"));
+  // La sortie est portee au compte principal du Dahira, pas a une caisse de
+  // commission : c'est de la que l'argent part reellement.
+  const refEcriture = doc(collection(db, "finances"));
 
   lot.set(refEcriture, {
-    commission: de,
-    sens: "sortie",
-    montant,
-    motif: `Versement — ${commissionNom(v.vers)}${v.motif ? ` — ${v.motif}` : ""}`.slice(0, 160),
-    membreMatricule: "",
-    membreNom: "",
+    type: "expense",
+    category: CATEGORIE_SORTIE,
+    amount: montant,
+    description: `Versement — ${commissionNom(v.vers)}${v.motif ? ` — ${v.motif}` : ""}`.slice(0, 300),
+    reference: coupe(v.reference, 80),
     date: v.date,
-    createdAt: Date.now(),
-    createdBy: coupe(parQui, 120),
-    annuleId: "",
+    method: coupe(v.moyen, 40),
+    recordedBy: coupe(parQui, 120),
+    recordedAt: Date.now(),
   });
 
   lot.set(refTransfert, {
@@ -275,8 +288,8 @@ export async function accuserReception(
 
 /** Annule un versement que le destinataire n'a jamais accuse.
  *
- *  Rien n'est efface : le versement reste au registre, marque « annule », et
- *  la sortie de caisse est compensee par une entree du meme montant. Un
+ *  Rien n'est efface : le versement reste au registre, marque « annule », et la
+ *  sortie du compte principal est compensee par une entree du meme montant. Un
  *  registre dont on peut faire disparaitre une ligne ne vaut rien devant
  *  l'assemblee. */
 export async function annulerVersement(
@@ -289,17 +302,19 @@ export async function annulerVersement(
   const db = getDb();
   const lot = writeBatch(db);
 
-  lot.set(doc(collection(db, "commissionCaisse")), {
-    commission: t.de,
-    sens: "entree",
-    montant: t.montant,
-    motif: `Annulation du versement — ${commissionNom(t.vers)}`.slice(0, 160),
-    membreMatricule: "",
-    membreNom: "",
+  // La somme revient au compte principal, d'ou elle etait partie.
+  lot.set(doc(collection(db, "finances")), {
+    type: "income",
+    category: CATEGORIE_RETOUR,
+    amount: t.montant,
+    description: `Annulation du versement — ${commissionNom(t.vers)}${
+      motifAnnulation ? ` — ${motifAnnulation}` : ""
+    }`.slice(0, 300),
+    reference: t.ecritureEmetteur,
     date: new Date().toISOString().slice(0, 10),
-    createdAt: Date.now(),
-    createdBy: coupe(parQui, 120),
-    annuleId: t.ecritureEmetteur,
+    method: coupe(t.moyen, 40),
+    recordedBy: coupe(parQui, 120),
+    recordedAt: Date.now(),
   });
 
   lot.update(doc(db, "commissionTransferts", t.id), {
