@@ -48,6 +48,9 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  // La barre comptait NEUF entrees — longue a lire, et longue a derouler sur
+  // un telephone. Aucune page n'a ete renommee ni supprimee : elles sont
+  // simplement regroupees par sujet. Six entrees desormais.
   const navItems: NavEntry[] = [
     { kind: "link", label: t("nav.home"), href: "/" },
     {
@@ -71,12 +74,46 @@ export default function Navbar() {
         },
       ],
     },
-    { kind: "link", label: t("nav.spiritualite"), href: "/spiritualite" },
-    { kind: "link", label: t("nav.media"), href: "/media" },
-    { kind: "link", label: "Challenge", href: "/challenge" },
-    { kind: "link", label: "Journée", href: "/journee-salaatu" },
+    {
+      // Trois pages qui parlent de la meme chose — la pratique du Salaatu —
+      // et qui occupaient trois entrees de la barre.
+      kind: "group",
+      label: t("nav.vie_spirituelle"),
+      children: [
+        {
+          label: t("nav.spiritualite"),
+          href: "/spiritualite",
+          description: "Salaatu du jour, bibliothèque et ressources",
+        },
+        {
+          label: "Challenge",
+          href: "/challenge",
+          description: "Le compteur collectif de Salaatu",
+        },
+        {
+          label: "Journée Salaatu",
+          href: "/journee-salaatu",
+          description: "La grande journée annuelle du Dahira",
+        },
+      ],
+    },
+    {
+      kind: "group",
+      label: t("nav.actualites"),
+      children: [
+        {
+          label: t("nav.media"),
+          href: "/media",
+          description: "Photos, vidéos et archives du Dahira",
+        },
+        {
+          label: t("nav.blog"),
+          href: "/blog",
+          description: "Articles, études et publications",
+        },
+      ],
+    },
     { kind: "link", label: t("nav.boutique"), href: "/boutique" },
-    { kind: "link", label: t("nav.blog"), href: "/blog" },
     { kind: "link", label: t("nav.contact"), href: "/contact" },
   ];
 
