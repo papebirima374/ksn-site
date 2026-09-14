@@ -259,6 +259,19 @@ service cloud.firestore {
       allow read, write: if hasPerm("finances.write");
     }
 
+    // ─── Configuration de la Journee (lien du direct YouTube) ───────────
+    // Cette collection n'avait AUCUNE regle : Firestore refuse par defaut ce
+    // qui n'est pas explicitement autorise. Le lien du direct ne pouvait donc
+    // pas etre enregistre — et l'echec ne se voyait nulle part, l'erreur
+    // partant dans la console du navigateur.
+    //
+    // Lecture publique : le lien s'affiche sur la page de la Journee, pour des
+    // visiteurs qui ne sont pas connectes.
+    match /config/{id} {
+      allow read: if true;
+      allow write: if hasPerm("salaatu.write");
+    }
+
     // ─── Settings divers (live stream, theme, etc.) ─────────────────────
     match /settings/{id} {
       allow read: if true;

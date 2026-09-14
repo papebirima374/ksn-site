@@ -12,7 +12,7 @@ npx firebase emulators:exec --only firestore --project ksn-rules-test \
   "node scripts/test-firestore-rules.mjs"
 ```
 
-Sortie attendue : `149 réussis, 0 échoués`. Un échec signifie qu'une règle
+Sortie attendue : `160 réussis, 0 échoués`. Un échec signifie qu'une règle
 laisse passer — ou bloque — quelque chose qu'elle ne devrait pas.
 
 La suite teste aussi les **requêtes de collection**, et pas seulement la

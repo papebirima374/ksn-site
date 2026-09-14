@@ -13,6 +13,11 @@
 
 import { getDb } from "./firebase";
 import { doc, onSnapshot, setDoc, collection, query, getDocs } from "firebase/firestore";
+import { commissionNom } from "./commissions";
+import { notifierCommission } from "./admin-data";
+
+/** Slug du Secretariat, destinataire de tous les dossiers transmis. */
+const SECRETARIAT = "secretariat-administratif";
 
 /** Une ligne de liste. L'identifiant sert de cle React et permet de supprimer
  *  une ligne au milieu sans decaler les autres. */
@@ -161,6 +166,34 @@ export async function lireTousLesDossiers(): Promise<Dossier[]> {
 /** Une ligne vide ne doit pas partir a l'impression ni au decompte. */
 export const nonVide = (t: string) => t.trim().length > 0;
 
+/** Prevenir sans jamais bloquer.
+ *
+ *  Le circuit etait MUET : une commission transmettait son dossier sans que le
+ *  Secretariat en sache rien, et surtout, le Secretariat le renvoyait pour
+ *  complement sans que la commission l'apprenne. Son dossier redevenait un
+ *  brouillon, et le travail s'arretait la, faute d'avoir ete prevenu.
+ *
+ *  La notification ne fait pas partie du circuit : si elle echoue, le
+ *  changement d'etat reste valable — il se voit dans les deux espaces. */
+async function prevenir(
+  commission: string,
+  titre: string,
+  corps: string,
+  lien: string
+): Promise<void> {
+  try {
+    await notifierCommission({
+      commission,
+      type: "dossier_circuit",
+      title: titre,
+      body: corps,
+      link: lien,
+    });
+  } catch {
+    /* sans effet sur le circuit */
+  }
+}
+
 /** La commission envoie son dossier au Secretariat. */
 export async function transmettreDossier(slug: string, parQui: string): Promise<void> {
   const db = getDb();
@@ -168,6 +201,12 @@ export async function transmettreDossier(slug: string, parQui: string): Promise<
     doc(db, "commissionDossiers", slug),
     { statut: "transmis", transmisAt: Date.now(), transmisPar: parQui.slice(0, 120) },
     { merge: true }
+  );
+  await prevenir(
+    SECRETARIAT,
+    `Dossier reçu — ${commissionNom(slug)}`,
+    `${commissionNom(slug)} vient de transmettre son dossier${parQui ? ` (${parQui})` : ""}.`,
+    "/admin/rapports"
   );
 }
 
@@ -179,6 +218,12 @@ export async function validerDossier(slug: string, parQui: string): Promise<void
     { statut: "valide", valideAt: Date.now(), validePar: parQui.slice(0, 120) },
     { merge: true }
   );
+  await prevenir(
+    slug,
+    "Votre dossier est remis au Président",
+    `Le Secrétariat a fait suivre votre dossier${parQui ? ` (${parQui})` : ""}.`,
+    "/admin/ma-commission"
+  );
 }
 
 /** Retour en brouillon : le Secretariat renvoie le dossier a la commission
@@ -189,6 +234,14 @@ export async function renvoyerDossier(slug: string, parQui: string): Promise<voi
     doc(db, "commissionDossiers", slug),
     { statut: "brouillon", transmisAt: null, transmisPar: parQui.slice(0, 120) },
     { merge: true }
+  );
+  await prevenir(
+    slug,
+    "Votre dossier vous est renvoyé",
+    `Le Secrétariat demande un complément avant de le faire suivre au Président${
+      parQui ? ` (${parQui})` : ""
+    }. Reprenez-le, puis transmettez-le à nouveau.`,
+    "/admin/ma-commission"
   );
 }
 

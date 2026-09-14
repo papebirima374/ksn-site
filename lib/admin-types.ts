@@ -312,6 +312,7 @@ export type NotificationType =
   // Commissions — versements entre caisses de commission
   | "transfert_envoye"   // Finances → commission : un versement vous attend
   | "transfert_recu"     // commission → Finances : reception accusee
+  | "dossier_circuit"    // le dossier avance, ou revient pour complement
   // Générique
   | "info"
   | "success"
@@ -356,6 +357,7 @@ export const NOTIFICATION_TYPE_CATEGORY: Record<
   certification_rejected: "education",
   transfert_envoye: "commission",
   transfert_recu: "commission",
+  dossier_circuit: "commission",
   info: "system",
   success: "system",
   warning: "system",

@@ -11,6 +11,7 @@ import {
   FaGraduationCap,
   FaMoneyBillTransfer,
   FaHandshake,
+  FaFolderOpen,
 } from "react-icons/fa6";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
@@ -28,6 +29,7 @@ const ICON_BY_TYPE: Record<NotificationType, React.ReactNode> = {
   certification_rejected: <FaCircleXmark />,
   transfert_envoye: <FaMoneyBillTransfer />,
   transfert_recu: <FaHandshake />,
+  dossier_circuit: <FaFolderOpen />,
   info: <FaCircleInfo />,
   success: <FaCircleCheck />,
   warning: <FaCircleInfo />,
@@ -42,6 +44,7 @@ const ACCENT_BY_TYPE: Record<NotificationType, string> = {
   certification_rejected: "from-red-500 to-red-600",
   transfert_envoye: "from-[#B8860B] to-[#D4AF37]",
   transfert_recu: "from-emerald-500 to-emerald-600",
+  dossier_circuit: "from-[#0F7C55] to-[#0A3D24]",
   info: "from-blue-500 to-blue-600",
   success: "from-emerald-500 to-emerald-600",
   warning: "from-amber-500 to-amber-600",

@@ -42,8 +42,14 @@ export default function Footer() {
 
     try {
       const db = getDb();
-      await addDoc(collection(db, "newsletter_subscribers"), {
+      // Collection « newsletter », et non « newsletter_subscribers » : cette
+      // seconde n'a jamais eu de regle Firestore, donc chaque inscription
+      // depuis le pied de page etait refusee. Et le formulaire de la page
+      // Education ecrivait deja dans « newsletter » : les inscrits se
+      // retrouvaient repartis entre deux endroits dont l'un n'existait pas.
+      await addDoc(collection(db, "newsletter"), {
         email: newsletterEmail.trim().toLowerCase(),
+        source: "pied de page",
         subscribedAt: Date.now(),
       });
       setNewsletterStatus("success");
