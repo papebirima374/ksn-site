@@ -575,6 +575,29 @@ service cloud.firestore {
       allow delete: if isAdmin() || resource.data.commission == monSlug();
     }
 
+    // ─── Feuille de route d'une journee ─────────────────────────────────
+    // Qui fait quoi, pour quand, avec quel budget. Le budget porte ici est
+    // PREVISIONNEL : il ne touche pas la caisse, qui reste la seule a dire ce
+    // qui est reellement sorti. Une tache se reprend autant de fois qu'il faut
+    // — un plan qu'on ne peut pas corriger ne sert a rien — mais elle ne peut
+    // pas changer de commission en route.
+    match /commissionTaches/{id} {
+      allow read: if isAdmin() || estSecretariat()
+                  || resource.data.commission == monSlug();
+      allow create, update: if (isAdmin() || request.resource.data.commission == monSlug())
+                    && request.resource.data.libelle is string
+                    && request.resource.data.libelle.size() > 0
+                    && request.resource.data.libelle.size() <= 160
+                    && request.resource.data.statut in ["a_faire", "en_cours", "fait", "bloque"]
+                    && request.resource.data.budget is number
+                    && request.resource.data.budget >= 0
+                    && request.resource.data.budget <= 100000000
+                    && request.resource.data.depense is number
+                    && request.resource.data.depense >= 0
+                    && request.resource.data.depense <= 100000000;
+      allow delete: if isAdmin() || resource.data.commission == monSlug();
+    }
+
     // ─── Reunions et convocations ───────────────────────────────────────
     // Toutes les commissions, pas seulement l'Organisation.
     match /commissionReunions/{id} {

@@ -12,7 +12,7 @@ npx firebase emulators:exec --only firestore --project ksn-rules-test \
   "node scripts/test-firestore-rules.mjs"
 ```
 
-Sortie attendue : `132 réussis, 0 échoués`. Un échec signifie qu'une règle
+Sortie attendue : `143 réussis, 0 échoués`. Un échec signifie qu'une règle
 laisse passer — ou bloque — quelque chose qu'elle ne devrait pas.
 
 La suite teste aussi les **requêtes de collection**, et pas seulement la
@@ -41,7 +41,7 @@ npm install --no-save puppeteer-core
 node scripts/verifier-impression.mjs build-impression
 ```
 
-Sortie attendue : `82 contrôles réussis, 0 échoués`. Les PDF produits restent
+Sortie attendue : `87 contrôles réussis, 0 échoués`. Les PDF produits restent
 dans le dossier de sortie, à relire à l'œil si besoin.
 
 # Présentation PDF du Règlement

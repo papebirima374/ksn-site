@@ -27,6 +27,7 @@ import {
   FaFileLines,
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
+import NotificationBell from "@/components/layout/NotificationBell";
 import { hasPermission, type Permission } from "@/lib/admin-types";
 import { slugFromNom } from "@/lib/commissions";
 
@@ -287,14 +288,21 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             </p>
           </div>
           
-          <button
-            type="button"
-            onClick={toggleDarkMode}
-            className="px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-700 dark:text-[#D4AF37] transition hover:scale-105"
-            title="Basculer le thème"
-          >
-            {darkMode ? "☀️ Mode Clair" : "🌙 Mode Sombre"}
-          </button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Un versement a accuser, un dossier renvoye : la nouvelle arrive
+                ici, ou le responsable travaille. Sans cette cloche, seul un
+                bandeau fugace la signalait — invisible pour qui se connecte
+                apres coup. */}
+            <NotificationBell fond="clair" />
+            <button
+              type="button"
+              onClick={toggleDarkMode}
+              className="px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-700 dark:text-[#D4AF37] transition hover:scale-105"
+              title="Basculer le thème"
+            >
+              {darkMode ? "☀️ Mode Clair" : "🌙 Mode Sombre"}
+            </button>
+          </div>
         </header>
 
         <main

@@ -288,7 +288,7 @@ function Accuser({
           body: `${commissionNom(t.vers)} confirme avoir reçu ${fcfa(t.montant)}${
             signature ? ` (${signature})` : ""
           }.`,
-          link: "/admin/ma-commission",
+          link: "/admin/ma-commission?onglet=versements",
           meta: { transfert: t.id, montant: t.montant },
         });
       } catch {
@@ -368,7 +368,7 @@ function Verser({
           type: "transfert_envoye",
           title: `Versement de ${fcfa(n)} — commission Finances`,
           body: `${motif || "Versement"} · ${moyen}. Merci d'accuser réception depuis l'onglet Versements.`,
-          link: "/admin/ma-commission",
+          link: "/admin/ma-commission?onglet=versements",
           meta: { montant: n, de: EMETTRICE },
         });
       } catch {

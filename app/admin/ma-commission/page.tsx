@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
-import { COMMISSIONS, commissionNom, slugFromNom, aBilanSalaatu, aModuleSocial } from "@/lib/commissions";
+import {
+  COMMISSIONS,
+  commissionNom,
+  slugFromNom,
+  aBilanSalaatu,
+  aModuleSocial,
+  aModulePreparation,
+} from "@/lib/commissions";
 import {
   type Dossier,
   type Ligne,
@@ -21,6 +29,7 @@ import ReunionsCommission from "@/components/admin/ReunionsCommission";
 import ActivitesCommission from "@/components/admin/ActivitesCommission";
 import AidesCommission from "@/components/admin/AidesCommission";
 import VersementsCommission from "@/components/admin/VersementsCommission";
+import PreparationCommission from "@/components/admin/PreparationCommission";
 import {
   type MembreCommission,
   subscribeMembresCommission,
@@ -53,9 +62,30 @@ import {
   FaMugSaucer,
   FaHandHoldingHeart,
   FaMoneyBillTransfer,
+  FaListCheck,
 } from "react-icons/fa6";
 
+/** useSearchParams() force le rendu cote client de tout ce qui l'entoure
+ *  jusqu'a la frontiere Suspense la plus proche (cf. la documentation de
+ *  Next 16). Sans cette frontiere, la compilation echoue au prerendu. */
 export default function MaCommissionPage() {
+  return (
+    <Suspense fallback={<Patientez />}>
+      <EspaceCommission />
+    </Suspense>
+  );
+}
+
+function Patientez() {
+  return (
+    <div className="min-h-screen bg-[#082F22] flex flex-col items-center justify-center text-white gap-4">
+      <div className="w-12 h-12 border-4 border-white/20 border-t-[#D4AF37] rounded-full animate-spin" />
+      <p className="text-white/80 text-sm">Ouverture de votre espace…</p>
+    </div>
+  );
+}
+
+function EspaceCommission() {
   const { user } = useAuth();
   const estAdmin = user?.role === "admin";
   const slugDuCompte = slugFromNom(user?.commission);
@@ -77,11 +107,18 @@ export default function MaCommissionPage() {
     | "membres"
     | "caisse"
     | "versements"
+    | "preparation"
     | "activites"
     | "aides"
     | "reunions"
     | "echanges";
-  const [onglet, setOnglet] = useState<Onglet>("dossier");
+  // Une notification renvoie vers l'onglet concerne (?onglet=versements) :
+  // atterrir sur le dossier alors qu'on vient d'etre prevenu d'un versement
+  // obligerait a chercher, et c'est exactement ce qu'une notification doit
+  // eviter.
+  const params = useSearchParams();
+  const ongletDemande = params.get("onglet") as Onglet | null;
+  const [onglet, setOnglet] = useState<Onglet>(ongletDemande ?? "dossier");
 
   // La liste des membres sert a trois onglets (caisse, membres, reunions) :
   // un seul abonnement, partage.
@@ -264,6 +301,13 @@ export default function MaCommissionPage() {
                 ["membres", "Membres", <FaUsers key="b" />],
                 ["caisse", "Caisse", <FaWallet key="c" />],
                 ["versements", "Versements", <FaMoneyBillTransfer key="h" />],
+                ...(aModulePreparation(slug)
+                  ? ([["preparation", "Préparation", <FaListCheck key="i" />]] as [
+                      Onglet,
+                      string,
+                      React.ReactNode,
+                    ][])
+                  : []),
                 ...(aModuleSocial(slug)
                   ? ([
                       ["activites", "Activités", <FaMugSaucer key="f" />],
@@ -543,6 +587,18 @@ export default function MaCommissionPage() {
           {onglet === "versements" && (
             <div className="max-w-4xl">
               <VersementsCommission slug={slug} signature={signature} pret={!!user} />
+            </div>
+          )}
+
+          {onglet === "preparation" && aModulePreparation(slug) && (
+            <div className="max-w-4xl">
+              <PreparationCommission
+                slug={slug}
+                nomCommission={commissionNom(slug)}
+                membres={membres}
+                signature={signature}
+                pret={!!user}
+              />
             </div>
           )}
 
