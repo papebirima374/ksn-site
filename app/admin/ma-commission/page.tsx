@@ -11,6 +11,8 @@ import {
   aBilanSalaatu,
   aModuleSocial,
   aModulePreparation,
+  aCaissePropre,
+  tientCaisseNationale,
 } from "@/lib/commissions";
 import {
   type Dossier,
@@ -120,6 +122,18 @@ function EspaceCommission() {
   const ongletDemande = params.get("onglet") as Onglet | null;
   const [onglet, setOnglet] = useState<Onglet>(ongletDemande ?? "dossier");
 
+  // Un onglet absent pour cette commission (la Finance n'a pas de caisse) ne
+  // doit pas laisser une page vide : on revient au dossier.
+  const ongletDisponible = (o: Onglet, s: string): boolean =>
+    o === "caisse" || o === "versements"
+      ? aCaissePropre(s)
+      : o === "activites" || o === "aides"
+        ? aModuleSocial(s)
+        : o === "preparation"
+          ? aModulePreparation(s)
+          : true;
+  const ongletActif: Onglet = slug && ongletDisponible(onglet, slug) ? onglet : "dossier";
+
   // La liste des membres sert a trois onglets (caisse, membres, reunions) :
   // un seul abonnement, partage.
   const [membres, setMembres] = useState<MembreCommission[]>([]);
@@ -163,7 +177,7 @@ function EspaceCommission() {
   }, [slug, user]);
 
   useEffect(() => {
-    if (!slug || !user) return;
+    if (!slug || !user || !aCaissePropre(slug)) return;
     return subscribeCaisse(slug, setEcritures);
   }, [slug, user]);
 
@@ -173,9 +187,13 @@ function EspaceCommission() {
     return () => stop.forEach((f) => f());
   }, [slug, user]);
 
-  /** Ce que le rapport emportera avec lui. */
+  /** Ce que le rapport emportera avec lui.
+   *
+   *  Rien pour la commission qui tient la caisse nationale : ses chiffres sont
+   *  ceux du Dahira, ils vivent a la Tresorerie et n'ont pas a etre recopies
+   *  dans un rapport de commission comme s'il s'agissait d'une caisse a part. */
   const resume = useMemo(() => {
-    if (!slug) return undefined;
+    if (!slug || !aCaissePropre(slug)) return undefined;
     const b = bilanActivites(lots);
     return {
       solde: soldeDe(ecritures),
@@ -299,8 +317,12 @@ function EspaceCommission() {
               [
                 ["dossier", "Dossier AG", <FaFileLines key="a" />],
                 ["membres", "Membres", <FaUsers key="b" />],
-                ["caisse", "Caisse", <FaWallet key="c" />],
-                ["versements", "Versements", <FaMoneyBillTransfer key="h" />],
+                ...(aCaissePropre(slug)
+                  ? ([
+                      ["caisse", "Caisse", <FaWallet key="c" />],
+                      ["versements", "Versements", <FaMoneyBillTransfer key="h" />],
+                    ] as [Onglet, string, React.ReactNode][])
+                  : []),
                 ...(aModulePreparation(slug)
                   ? ([["preparation", "Préparation", <FaListCheck key="i" />]] as [
                       Onglet,
@@ -322,7 +344,7 @@ function EspaceCommission() {
                 key={cle}
                 onClick={() => setOnglet(cle)}
                 className={`flex-1 min-w-[7.5rem] inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold transition ${
-                  onglet === cle
+                  ongletActif === cle
                     ? "bg-[#0F7C55] text-white"
                     : "text-[#5C7268] hover:bg-[#0F7C55]/6"
                 }`}
@@ -333,7 +355,7 @@ function EspaceCommission() {
           </div>
 
           {/* ── Barre d'actions (dossier uniquement) ────────────────────── */}
-          {onglet === "dossier" && (
+          {ongletActif === "dossier" && (
           <div className="sticky top-0 z-20 -mx-4 px-4 py-3 mb-6 bg-[#F8F5EF]/95 backdrop-blur border-b border-[#0F7C55]/10 flex flex-wrap items-center gap-3 no-print">
             <button
               onClick={enregistrer}
@@ -386,7 +408,7 @@ function EspaceCommission() {
           )}
 
           {/* ── Ou en est le dossier ────────────────────────────────────── */}
-          {onglet === "dossier" && (
+          {ongletActif === "dossier" && (
           <div
             className={`mb-6 rounded-2xl border px-5 py-4 flex flex-wrap items-center gap-3 no-print ${
               d.statut === "valide"
@@ -428,8 +450,24 @@ function EspaceCommission() {
           )}
 
           {/* ── Saisie ──────────────────────────────────────────────────── */}
-          {onglet === "dossier" && (
+          {ongletActif === "dossier" && (
           <div className="space-y-5 max-w-4xl no-print">
+            {tientCaisseNationale(slug) && (
+              <section className="rounded-2xl border border-[#D4AF37]/35 bg-[#D4AF37]/[.08] p-5">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#B8860B]">
+                  Cette commission n&apos;a pas de caisse à elle
+                </p>
+                <p className="mt-2 text-sm text-[#082F22] leading-6">
+                  Le Dahira n&apos;a qu&apos;un seul compte : le <b>compte principal</b>.
+                  C&apos;est vous qui le tenez. Les entrées, les dépenses et les
+                  versements aux autres commissions se gèrent depuis la{" "}
+                  <a href="/admin/finances" className="font-bold text-[#0F7C55] hover:underline">
+                    Trésorerie du Dahira
+                  </a>
+                  .
+                </p>
+              </section>
+            )}
             {resume && (ecritures.length > 0 || resume.activites || resume.aides) && (
               <section className="rounded-2xl border border-[#D4AF37]/35 bg-[#D4AF37]/[.08] p-5">
                 <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#B8860B]">
@@ -561,7 +599,7 @@ function EspaceCommission() {
           </div>
           )}
 
-          {onglet === "membres" && (
+          {ongletActif === "membres" && (
             <div className="max-w-4xl">
               <MembresCommission
                 slug={slug}
@@ -572,7 +610,7 @@ function EspaceCommission() {
             </div>
           )}
 
-          {onglet === "caisse" && (
+          {ongletActif === "caisse" && aCaissePropre(slug) && (
             <div className="max-w-4xl">
               <CaisseCommission
                 slug={slug}
@@ -584,13 +622,13 @@ function EspaceCommission() {
             </div>
           )}
 
-          {onglet === "versements" && (
+          {ongletActif === "versements" && aCaissePropre(slug) && (
             <div className="max-w-4xl">
               <VersementsCommission slug={slug} signature={signature} pret={!!user} />
             </div>
           )}
 
-          {onglet === "preparation" && aModulePreparation(slug) && (
+          {ongletActif === "preparation" && aModulePreparation(slug) && (
             <div className="max-w-4xl">
               <PreparationCommission
                 slug={slug}
@@ -602,19 +640,19 @@ function EspaceCommission() {
             </div>
           )}
 
-          {onglet === "activites" && aModuleSocial(slug) && (
+          {ongletActif === "activites" && aModuleSocial(slug) && (
             <div className="max-w-4xl">
               <ActivitesCommission slug={slug} signature={signature} pret={!!user} />
             </div>
           )}
 
-          {onglet === "aides" && aModuleSocial(slug) && (
+          {ongletActif === "aides" && aModuleSocial(slug) && (
             <div className="max-w-4xl">
               <AidesCommission slug={slug} signature={signature} pret={!!user} />
             </div>
           )}
 
-          {onglet === "reunions" && (
+          {ongletActif === "reunions" && (
             <div className="max-w-4xl">
               <ReunionsCommission
                 slug={slug}
@@ -626,7 +664,7 @@ function EspaceCommission() {
             </div>
           )}
 
-          {onglet === "echanges" && (
+          {ongletActif === "echanges" && (
             <div className="max-w-4xl">
               <FilCommission
                 slug={slug}

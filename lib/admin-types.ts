@@ -619,10 +619,16 @@ export const FINANCE_CATEGORIES: Record<FinanceType, string[]> = {
     "Don événement",
     "Vente / Boutique",
     "Subvention",
+    // Un versement annule revient au compte principal : il faut une categorie
+    // pour le dire, sinon la somme rentre sans qu'on sache d'ou.
+    "Annulation de versement",
     "Autres recettes",
   ],
   expense: [
     "Événement / Gamou",
+    // Somme remise a une commission pour qu'elle mene son travail. Elle sort
+    // du compte principal — le Dahira n'en a qu'un.
+    "Versement à une commission",
     "Aide sociale",
     "Achat fournitures",
     "Transport",

@@ -182,7 +182,7 @@ const DOCUMENTS = [
   ["fiche-vierge-sans-salaatu", I.htmlFicheVierge("organisation"), { exact: 1 }],
   ["rapport-recu", I.htmlRapport(rapport), { max: 2 }],
   ["suivi-commissions", I.htmlSuivi(suivi), { exact: 1 }],
-  ["registre-versements", I.htmlVersements(versements, "Toutes les commissions"), { exact: 1 }],
+  ["registre-versements", I.htmlVersements(versements, "Versements aux commissions"), { exact: 1 }],
   ["recu-versement-en-attente", I.htmlRecuVersement(versements[1]), { exact: 1 }],
   ["recu-versement-accuse", I.htmlRecuVersement(versements[0]), { exact: 1 }],
   ["facture-vente", I.htmlFacture(I.factureDeVente(ventes[0], "Commission Social et Développement")), { exact: 1 }],

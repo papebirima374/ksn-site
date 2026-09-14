@@ -376,10 +376,17 @@ service cloud.firestore {
     // Ecrivent : tous les comptes rattaches a la commission. Pour donner la
     // main au tresorier, l'administrateur lui cree un compte rattache a la
     // meme commission — le champ createdBy garde qui a saisi quoi.
+    //
+    // SAUF LA FINANCE. Elle tient deja la caisse NATIONALE (collection
+    // `finances`) : le Dahira n'a qu'un compte, le compte principal. Lui
+    // ouvrir une caisse de commission a cote reviendrait a tenir deux
+    // registres, et plus personne ne saurait lequel fait foi. La regle le
+    // refuse donc, et pas seulement l'interface.
     match /commissionCaisse/{id} {
       allow read: if isAdmin() || estSecretariat()
                   || resource.data.commission == monSlug();
       allow create: if (isAdmin() || request.resource.data.commission == monSlug())
+                    && request.resource.data.commission != "finances"
                     && request.resource.data.sens in ["entree", "sortie"]
                     && request.resource.data.montant is number
                     && request.resource.data.montant > 0
@@ -481,13 +488,14 @@ service cloud.firestore {
     }
 
     // ─── Versements entre caisses de commission ─────────────────────────
-    // La commission Finances verse a une autre commission ; la commission
-    // destinataire accuse reception. Deux ecritures de caisse encadrent le
-    // versement : la sortie chez l'emettrice au depart, l'entree chez la
-    // destinataire a l'accuse — chacune ecrite par la commission concernee,
-    // jamais par l'autre.
-    //
-    // AUCUN rapport avec les finances nationales (collection `finances`).
+    // La Finance verse a une commission depuis la caisse NATIONALE ; la
+    // commission destinataire accuse reception. Deux ecritures encadrent le
+    // versement :
+    //   - au depart : une DEPENSE au compte principal (collection `finances`),
+    //     ecrite par le tresorier, qui a la permission finances.write
+    //   - a l'accuse : une ENTREE dans la caisse de la commission destinataire,
+    //     ecrite par elle seule
+    // Chacune par celui que cela regarde, jamais par l'autre.
     //
     // Qui peut quoi :
     //   - creer   : la commission emettrice uniquement, et elle seule figure
