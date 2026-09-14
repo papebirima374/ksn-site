@@ -103,6 +103,49 @@ const versements = [
   versement("social-developpement", "recu", { montant: 75000, recuPar: "Serigne Cheikhouna Sock", recuAt: Date.now() }),
 ];
 
+const ventes = [
+  {
+    id: "v1", commission: "social-developpement", numero: "FA-2026-0007",
+    date: "2026-09-12", clientNom: "Sokhna Aminata Fall", clientTelephone: "+221 77 123 45 67",
+    lignes: [
+      { designation: "Café Touba moulu — sachet 250 g", quantite: 12, prixUnitaire: 2500 },
+      { designation: "Thé Kinkeliba — boîte", quantite: 3, prixUnitaire: 4000 },
+      { designation: "Khassida relié (grand format)", quantite: 1, prixUnitaire: 15000 },
+    ],
+    total: 57000, moyen: "Wave", note: "Livraison prévue lundi à Tuuba Saam.",
+    createdAt: Date.now(), createdBy: "Boutique KSN", ecritureId: "e1",
+    annulee: false, annuleePar: "", annuleeAt: 0, motifAnnulation: "",
+  },
+  {
+    id: "v2", commission: "social-developpement", numero: "FA-2026-0008",
+    date: "2026-09-13", clientNom: "", clientTelephone: "",
+    lignes: [{ designation: "Café Touba — tasse", quantite: 40, prixUnitaire: 200 }],
+    total: 8000, moyen: "Espèces", note: "",
+    createdAt: Date.now(), createdBy: "Boutique KSN", ecritureId: "e2",
+    annulee: false, annuleePar: "", annuleeAt: 0, motifAnnulation: "",
+  },
+  {
+    id: "v3", commission: "social-developpement", numero: "FA-2026-0009",
+    date: "2026-09-13", clientNom: "Serigne Modou", clientTelephone: "",
+    lignes: [{ designation: "Tissu brodé", quantite: 1, prixUnitaire: 25000 }],
+    total: 25000, moyen: "Orange Money", note: "",
+    createdAt: Date.now(), createdBy: "Boutique KSN", ecritureId: "e3",
+    annulee: true, annuleePar: "Responsable", annuleeAt: Date.now(),
+    motifAnnulation: "Article rendu par le client",
+  },
+];
+
+const commande = {
+  id: "a1b2c3d4e5f6", customerName: "Ibrahima Diop", customerPhone: "+221 76 000 00 00",
+  customerEmail: "", deliveryAddress: "Quartier Darou Khoudoss, Touba",
+  paymentMethod: "wave", transactionId: "TXN-99182736", total: 31000, status: "pending",
+  createdAt: Date.now(),
+  items: [
+    { productId: "p1", title: "Recueil de Khassidas", category: "book", price: 15000, quantity: 1 },
+    { productId: "p2", title: "Café Touba — sachet 250 g", category: "physical", price: 2000, quantity: 8 },
+  ],
+};
+
 const compteRendu = {
   id: "cr", titre: "Assemblée Générale du 19 septembre 2026",
   date: "19 septembre 2026", lieu: "Tuuba Saam Kër Sëriñ Basiiru Ture",
@@ -129,8 +172,36 @@ const DOCUMENTS = [
   ["registre-versements", I.htmlVersements(versements, "Toutes les commissions"), { exact: 1 }],
   ["recu-versement-en-attente", I.htmlRecuVersement(versements[1]), { exact: 1 }],
   ["recu-versement-accuse", I.htmlRecuVersement(versements[0]), { exact: 1 }],
+  ["facture-vente", I.htmlFacture(I.factureDeVente(ventes[0], "Commission Social et Développement")), { exact: 1 }],
+  ["facture-annulee", I.htmlFacture(I.factureDeVente(ventes[2], "Commission Social et Développement")), { exact: 1 }],
+  ["facture-commande", I.htmlFacture(I.factureDeCommande(commande)), { exact: 1 }],
+  ["journal-ventes", I.htmlJournalVentes(ventes, "Social et Développement"), { exact: 1 }],
   ["compte-rendu", I.htmlCompteRendu(compteRendu), { max: 2 }],
 ];
+
+let ok = 0, ko = 0;
+const dit = (bon, texte) => (bon ? (ok++, console.log("  ✅", texte)) : (ko++, console.log("  ❌", texte)));
+
+/* ── Le montant en toutes lettres ─────────────────────────────────────── */
+// Une facture porte la somme en chiffres ET en lettres. Une erreur ici passe
+// inapercue a la relecture — personne ne verifie « quatre-vingts » a l'oeil.
+{
+  const { enLettres } = await import(path.join(tmp, "montant-lettres.mjs"));
+  const attendus = [
+    [0, "zéro"], [1, "un"], [21, "vingt-et-un"], [71, "soixante-et-onze"],
+    [80, "quatre-vingts"], [81, "quatre-vingt-un"], [91, "quatre-vingt-onze"],
+    [100, "cent"], [200, "deux cents"], [203, "deux cent trois"],
+    [1000, "mille"], [2000, "deux mille"],
+    [57000, "cinquante-sept mille"],
+    [375000, "trois cent soixante-quinze mille"],
+    [1250000, "un million deux cent cinquante mille"],
+  ];
+  console.log("\nMontants en toutes lettres");
+  for (const [n, mot] of attendus) {
+    const rendu = enLettres(n);
+    dit(rendu === mot, `${n} → ${rendu}${rendu === mot ? "" : ` (attendu : ${mot})`}`);
+  }
+}
 
 /* ── Rendu ────────────────────────────────────────────────────────────── */
 fs.mkdirSync(SORTIE, { recursive: true });
@@ -166,9 +237,6 @@ function pages(pdf) {
   const comptes = [...octets.matchAll(/\/Count\s+(\d+)/g)].map((m) => +m[1]);
   return comptes.length ? Math.max(...comptes) : 0;
 }
-
-let ok = 0, ko = 0;
-const dit = (bon, texte) => (bon ? (ok++, console.log("  ✅", texte)) : (ko++, console.log("  ❌", texte)));
 
 for (const [nom, , attendu] of DOCUMENTS) {
   const page = await navigateur.newPage();

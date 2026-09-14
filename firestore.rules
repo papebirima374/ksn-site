@@ -439,6 +439,47 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ─── Ventes au comptoir de la boutique ──────────────────────────────
+    // La commission Sociale tient la boutique : chaque vente s'inscrit ici et
+    // entre dans SA caisse, en une seule operation (cf. lib/commission-ventes).
+    // Le total est fige a l'enregistrement — une facture deja remise au client
+    // ne se recalcule pas.
+    //
+    // Une vente ne se reecrit pas. Pour corriger, on l'annule : elle reste au
+    // registre, barree, et la caisse est compensee par une sortie. Le seul
+    // `update` autorise est donc celui de l'annulation, borne a ses champs.
+    match /commissionVentes/{id} {
+      allow read: if isAdmin() || estSecretariat()
+                  || resource.data.commission == monSlug();
+
+      allow create: if (isAdmin() || request.resource.data.commission == monSlug())
+                    && request.resource.data.numero is string
+                    && request.resource.data.numero.size() > 0
+                    && request.resource.data.numero.size() <= 40
+                    && request.resource.data.total is number
+                    && request.resource.data.total > 0
+                    && request.resource.data.total <= 100000000
+                    && request.resource.data.lignes is list
+                    && request.resource.data.lignes.size() > 0
+                    && request.resource.data.lignes.size() <= 50
+                    && request.resource.data.date is string
+                    && request.resource.data.date.size() == 10
+                    && request.resource.data.createdAt is number
+                    && request.resource.data.annulee == false;
+
+      // Annulation, et rien d'autre : ni le total, ni les lignes, ni le numero.
+      allow update: if (isAdmin() || resource.data.commission == monSlug())
+                    && resource.data.annulee == false
+                    && request.resource.data.annulee == true
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(["annulee", "annuleePar", "annuleeAt", "motifAnnulation"])
+                    && request.resource.data.motifAnnulation is string
+                    && request.resource.data.motifAnnulation.size() <= 300
+                    && request.resource.data.annuleeAt is number;
+
+      allow delete: if isAdmin();
+    }
+
     // ─── Versements entre caisses de commission ─────────────────────────
     // La commission Finances verse a une autre commission ; la commission
     // destinataire accuse reception. Deux ecritures de caisse encadrent le

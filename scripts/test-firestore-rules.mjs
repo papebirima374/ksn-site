@@ -42,6 +42,18 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "commissionTransferts/v-attente3"), { ...versementBase, vers: "organisation", statut: "envoye", recuPar: "", recuAt: 0 });
   await setDoc(doc(db, "commissionTransferts/v-recu"), { ...versementBase, vers: "communication", statut: "recu", recuPar: "Responsable", recuAt: 2, ecritureDestinataire: "c-com" });
 
+  // Ventes au comptoir : une vivante, une deja annulee.
+  const venteBase = {
+    commission: "social-developpement", date: "2026-09-12",
+    clientNom: "Aminata Fall", clientTelephone: "", moyen: "Espèces", note: "",
+    lignes: [{ designation: "Café Touba 250g", quantite: 2, prixUnitaire: 2500 }],
+    total: 5000, createdAt: 1, createdBy: "Boutique", ecritureId: "e1",
+    annuleePar: "", annuleeAt: 0, motifAnnulation: "",
+  };
+  await setDoc(doc(db, "commissionVentes/v-soc"), { ...venteBase, numero: "FA-2026-0001", annulee: false });
+  await setDoc(doc(db, "commissionVentes/v-soc2"), { ...venteBase, numero: "FA-2026-0002", annulee: false });
+  await setDoc(doc(db, "commissionVentes/v-annulee"), { ...venteBase, numero: "FA-2026-0003", annulee: true, annuleePar: "X", annuleeAt: 2, motifAnnulation: "Erreur" });
+
   // Notifications : une nominative, une adressée à une commission.
   await setDoc(doc(db, "notifications/n-org"), { recipientUid: "", recipientCommission: "organisation", type: "transfert_envoye", title: "Versement", body: "150 000 F", read: false, createdAt: 1 });
   await setDoc(doc(db, "notifications/n-fin"), { recipientUid: "fin1", type: "info", title: "Bonjour", body: "…", read: false, createdAt: 1 });
@@ -227,6 +239,35 @@ await t("Finances annule un versement jamais accusé", assertSucceeds(updateDoc(
 await t("Finances N'ANNULE PAS un versement déjà accusé", assertFails(updateDoc(doc(as("fin1"), "commissionTransferts/v-recu"), annule)));
 await t("Un versement ne s'efface pas", assertFails(deleteDoc(doc(as("fin1"), "commissionTransferts/v-attente3"))));
 await t("L'administrateur peut supprimer en dernier recours", assertSucceeds(deleteDoc(doc(as("admin1"), "commissionTransferts/v-attente3"))));
+
+console.log("\n── Ventes au comptoir de la boutique ──");
+const vente = (extra = {}) => ({
+  commission: "social-developpement", numero: "FA-2026-0100", date: "2026-09-14",
+  clientNom: "Client", clientTelephone: "", moyen: "Espèces", note: "",
+  lignes: [{ designation: "Café Touba", quantite: 3, prixUnitaire: 2000 }],
+  total: 6000, createdAt: Date.now(), createdBy: "Moi", ecritureId: "e",
+  annulee: false, annuleePar: "", annuleeAt: 0, motifAnnulation: "", ...extra });
+
+await t("Sociale enregistre une vente", assertSucceeds(addDoc(collection(as("soc1"), "commissionVentes"), vente())));
+await t("Organisation N'ENREGISTRE PAS une vente pour Sociale", assertFails(addDoc(collection(as("org1"), "commissionVentes"), vente())));
+await t("Vente sans ligne refusée", assertFails(addDoc(collection(as("soc1"), "commissionVentes"), vente({ lignes: [] }))));
+await t("Vente à total nul refusée", assertFails(addDoc(collection(as("soc1"), "commissionVentes"), vente({ total: 0 }))));
+await t("Vente sans numéro de facture refusée", assertFails(addDoc(collection(as("soc1"), "commissionVentes"), vente({ numero: "" }))));
+await t("Vente créée déjà annulée refusée", assertFails(addDoc(collection(as("soc1"), "commissionVentes"), vente({ annulee: true }))));
+
+await t("Sociale liste SES ventes", assertSucceeds(getDocs(query(collection(as("soc1"), "commissionVentes"), where("commission", "==", "social-developpement")))));
+await t("Le Secrétariat lit les ventes", assertSucceeds(getDoc(doc(as("sec1"), "commissionVentes/v-soc"))));
+await t("Organisation NE LIT PAS les ventes de Sociale", assertFails(getDoc(doc(as("org1"), "commissionVentes/v-soc"))));
+await t("Un visiteur anonyme ne lit aucune vente", assertFails(getDoc(doc(anon(), "commissionVentes/v-soc"))));
+
+const annulerV = { annulee: true, annuleePar: "Responsable", annuleeAt: Date.now(), motifAnnulation: "Erreur de saisie" };
+await t("Une facture ne se réécrit pas (total)", assertFails(updateDoc(doc(as("soc1"), "commissionVentes/v-soc"), { total: 1 })));
+await t("Une facture ne se réécrit pas (lignes)", assertFails(updateDoc(doc(as("soc1"), "commissionVentes/v-soc"), { ...annulerV, lignes: [] })));
+await t("Organisation N'ANNULE PAS une vente de Sociale", assertFails(updateDoc(doc(as("org1"), "commissionVentes/v-soc"), annulerV)));
+await t("Sociale annule SA vente", assertSucceeds(updateDoc(doc(as("soc1"), "commissionVentes/v-soc"), annulerV)));
+await t("Une vente déjà annulée ne se ré-annule pas", assertFails(updateDoc(doc(as("soc1"), "commissionVentes/v-annulee"), annulerV)));
+await t("Une vente ne s'efface pas", assertFails(deleteDoc(doc(as("soc1"), "commissionVentes/v-soc2"))));
+await t("L'administrateur peut supprimer en dernier recours", assertSucceeds(deleteDoc(doc(as("admin1"), "commissionVentes/v-soc2"))));
 
 console.log("\n── Notifications adressées à une commission ──");
 await t("Organisation lit la notification adressée à sa commission", assertSucceeds(getDoc(doc(as("org1"), "notifications/n-org"))));
