@@ -42,6 +42,10 @@ export type MembreCommission = {
   id: string;
   commission: string;
   matricule: string;
+  /** Identifiant de la fiche members/<id> d'ou vient la personne. Il sert de
+   *  cle de secours quand le matricule manque — tous les membres du Dahira
+   *  n'en ont pas. */
+  refMembre: string;
   nom: string;
   telephone: string;
   role: RoleCommission;
@@ -49,10 +53,19 @@ export type MembreCommission = {
   ajoutePar: string;
 };
 
-/** L'identifiant combine la commission et le matricule : ajouter deux fois la
- *  meme personne ecrase la premiere entree au lieu de la dupliquer. */
-const idMembre = (slug: string, matricule: string) =>
-  `${slug}_${matricule}`.replace(/[^A-Za-z0-9_-]/g, "-");
+/** L'identifiant combine la commission et la cle de la personne : ajouter deux
+ *  fois la meme ecrase la premiere entree au lieu de la dupliquer.
+ *
+ *  La cle est le matricule quand il existe — c'est le numero que tout le monde
+ *  connait — et, a defaut, l'identifiant de sa fiche. Sans ce repli, TOUS les
+ *  membres sans matricule partageaient la meme cle « slug_ » : le deuxieme
+ *  ajoute effacait le premier, en silence. */
+const idMembre = (slug: string, cle: string) =>
+  `${slug}_${cle}`.replace(/[^A-Za-z0-9_-]/g, "-");
+
+/** Cle d'identite d'une personne dans une commission. */
+export const cleMembre = (m: { matricule?: string; refMembre?: string }) =>
+  (m.matricule ?? "").trim() || (m.refMembre ?? "").trim();
 
 export function subscribeMembresCommission(
   slug: string,
@@ -80,13 +93,23 @@ export function subscribeMembresCommission(
 
 export async function ajouterMembre(
   slug: string,
-  m: { matricule: string; nom: string; telephone: string; role?: RoleCommission },
+  m: {
+    matricule: string;
+    /** Identifiant de la fiche members/<id> : cle de secours sans matricule. */
+    refMembre?: string;
+    nom: string;
+    telephone: string;
+    role?: RoleCommission;
+  },
   parQui: string
 ): Promise<void> {
+  const cle = cleMembre(m);
+  if (!cle) throw new Error("Ce membre n'a ni matricule ni fiche : impossible de l'identifier.");
   const db = getDb();
-  await setDoc(doc(db, "commissionMembres", idMembre(slug, m.matricule)), {
+  await setDoc(doc(db, "commissionMembres", idMembre(slug, cle)), {
     commission: slug,
     matricule: m.matricule.slice(0, 60),
+    refMembre: (m.refMembre ?? "").slice(0, 60),
     nom: m.nom.slice(0, 120),
     telephone: (m.telephone ?? "").slice(0, 40),
     role: m.role ?? "membre",

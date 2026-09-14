@@ -1,5 +1,5 @@
 import { initializeTestEnvironment, assertSucceeds, assertFails } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc, getDocs, query, where } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc, getDocs, query, where, orderBy } from "firebase/firestore";
 import fs from "node:fs";
 
 const env = await initializeTestEnvironment({
@@ -41,6 +41,12 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "commissionTransferts/v-attente2"), { ...versementBase, vers: "organisation", statut: "envoye", recuPar: "", recuAt: 0 });
   await setDoc(doc(db, "commissionTransferts/v-attente3"), { ...versementBase, vers: "organisation", statut: "envoye", recuPar: "", recuAt: 0 });
   await setDoc(doc(db, "commissionTransferts/v-recu"), { ...versementBase, vers: "communication", statut: "recu", recuPar: "Responsable", recuAt: 2, ecritureDestinataire: "c-com" });
+
+  // Annuaire : un membre complet, un SANS matricule, un avec matricule vide.
+  // C'est le cas reel du Dahira, et le piege qu'il a fait tomber.
+  await setDoc(doc(db, "members/m1"), { matricule: "KSN-001", prenom: "Aminata", nom: "Fall", telephone: "+221770000001", status: "actif", createdAt: 1 });
+  await setDoc(doc(db, "members/m2"), { prenom: "Moussa", nom: "Diop", telephone: "+221770000002", status: "actif", createdAt: 2 });
+  await setDoc(doc(db, "members/m3"), { matricule: "", prenom: "Fatou", nom: "Sène", telephone: "+221770000003", status: "actif", createdAt: 3 });
 
   await setDoc(doc(db, "commissionTaches/t-org"), { commission: "organisation", libelle: "Louer la sonorisation", detail: "", responsable: "A B", responsableTelephone: "", echeance: "2026-09-17", budget: 75000, depense: 0, statut: "a_faire", createdAt: 1, createdBy: "X", updatedAt: 1 });
 
@@ -246,6 +252,29 @@ await t("Finances annule un versement jamais accusé", assertSucceeds(updateDoc(
 await t("Finances N'ANNULE PAS un versement déjà accusé", assertFails(updateDoc(doc(as("fin1"), "commissionTransferts/v-recu"), annule)));
 await t("Un versement ne s'efface pas", assertFails(deleteDoc(doc(as("fin1"), "commissionTransferts/v-attente3"))));
 await t("L'administrateur peut supprimer en dernier recours", assertSucceeds(deleteDoc(doc(as("admin1"), "commissionTransferts/v-attente3"))));
+
+console.log("\n── Annuaire des membres ──");
+// PIEGE FIRESTORE : une requete triee EXCLUT les documents auxquels le champ
+// de tri manque. listMembers() triait sur `matricule` : tout membre saisi sans
+// matricule etait absent de l'annuaire, du tableau de bord, du choix du
+// beneficiaire d'une aide — et de la detection des doublons. Sans erreur.
+await t("Une commission lit l'annuaire du Dahira",
+  assertSucceeds(getDocs(collection(as("soc1"), "members"))));
+{
+  const avecTri = await getDocs(query(collection(as("soc1"), "members"), orderBy("matricule", "asc")));
+  const sansTri = await getDocs(collection(as("soc1"), "members"));
+  await t(`Le tri sur « matricule » perd des membres (${avecTri.size} au lieu de ${sansTri.size}) — d'où le tri en mémoire`,
+    avecTri.size < sansTri.size ? Promise.resolve() : Promise.reject(new Error("le piège ne se reproduit plus : vérifier le jeu d'essai")));
+  await t("Sans tri, tout le monde est là", sansTri.size === 3 ? Promise.resolve() : Promise.reject(new Error(`${sansTri.size} au lieu de 3`)));
+}
+
+// Deux personnes sans matricule partageaient la cle « slug_ » : la seconde
+// ajoutee effacait la premiere. La cle de repli est l'identifiant de la fiche.
+await t("Deux membres sans matricule tiennent chacun leur place",
+  assertSucceeds(Promise.all([
+    setDoc(doc(as("org1"), "commissionMembres/organisation_m2"), { commission: "organisation", matricule: "", refMembre: "m2", nom: "Moussa Diop", telephone: "", role: "membre", ajouteLe: Date.now() }),
+    setDoc(doc(as("org1"), "commissionMembres/organisation_m3"), { commission: "organisation", matricule: "", refMembre: "m3", nom: "Fatou Sène", telephone: "", role: "membre", ajouteLe: Date.now() }),
+  ])));
 
 console.log("\n── Feuille de route (Organisation) ──");
 const tache = (extra = {}) => ({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FaMagnifyingGlass,
   FaPlus,
@@ -17,8 +17,14 @@ import {
   changerRole,
   retirerMembre,
 } from "@/lib/commission-membres";
+import { cleMembre } from "@/lib/commission-membres";
 import { listMembers } from "@/lib/admin-data";
 import type { Member } from "@/lib/admin-types";
+
+/** Recherche insensible a la casse ET aux accents : on tape « Sene », on
+ *  trouve « Sène ». */
+const sansAccent = (v: string) =>
+  (v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -40,31 +46,48 @@ export default function MembresCommission({
 }) {
   const [tous, setTous] = useState<Member[] | null>(null);
   const [recherche, setRecherche] = useState("");
-  const [chargement, setChargement] = useState(false);
   const [msg, setMsg] = useState("");
 
-  const dejaLa = useMemo(() => new Set(membres.map((m) => m.matricule)), [membres]);
+  // On compare sur la meme cle que celle qui sert d'identifiant : sans cela,
+  // deux personnes sans matricule se ressemblaient comme deux gouttes d'eau.
+  // L'etat de chargement se deduit plutot que de se stocker.
+  const chargement = tous === null;
 
-  async function chargerAnnuaire() {
-    if (tous || chargement) return;
-    setChargement(true);
-    try {
-      setTous(await listMembers());
-      setMsg("");
-    } catch {
-      setMsg("Impossible de charger la liste des membres du Dahira.");
-    } finally {
-      setChargement(false);
-    }
-  }
+  const dejaLa = useMemo(() => new Set(membres.map((m) => cleMembre(m))), [membres]);
+
+  // L'annuaire se charge a l'ouverture de l'onglet, pas au premier clic : on
+  // veut savoir tout de suite s'il repond.
+  useEffect(() => {
+    let annule = false;
+    listMembers()
+      .then((m) => {
+        if (annule) return;
+        setTous(m);
+        setMsg("");
+      })
+      .catch((e: unknown) => {
+        if (annule) return;
+        setTous([]); // charge, mais vide : on cesse d'afficher « chargement »
+        setMsg(
+          e instanceof Error && /permission/i.test(e.message)
+            ? "Accès refusé à l'annuaire des membres. Vérifiez les règles Firestore publiées."
+            : "Impossible de charger la liste des membres du Dahira."
+        );
+      });
+    return () => {
+      annule = true;
+    };
+  }, []);
 
   const resultats = useMemo(() => {
-    const q = recherche.trim().toLowerCase();
-    if (!tous || q.length < 2) return [];
-    return tous
-      .filter((m) => !dejaLa.has(m.matricule))
+    const q = sansAccent(recherche.trim());
+    if (!tous) return [];
+    const libres = tous.filter((m) => !dejaLa.has(cleMembre({ matricule: m.matricule, refMembre: m.id })));
+    // Avant la moindre frappe, quelques noms : la preuve que l'annuaire est la.
+    if (q.length < 2) return libres.slice(0, 6);
+    return libres
       .filter((m) =>
-        `${m.prenom} ${m.nom} ${m.matricule}`.toLowerCase().includes(q)
+        sansAccent(`${m.prenom} ${m.nom} ${m.matricule} ${m.telephone ?? ""}`).includes(q)
       )
       .slice(0, 12);
   }, [tous, recherche, dejaLa]);
@@ -84,10 +107,9 @@ export default function MembresCommission({
           <FaMagnifyingGlass className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9BB0A6] text-sm" />
           <input
             value={recherche}
-            onFocus={chargerAnnuaire}
             onChange={(e) => setRecherche(e.target.value)}
             className={`${INPUT} pl-10`}
-            placeholder="Chercher par nom ou matricule…"
+            placeholder="Nom, matricule ou téléphone…"
           />
         </div>
 
@@ -99,8 +121,16 @@ export default function MembresCommission({
           </p>
         )}
 
-        {recherche.trim().length >= 2 && tous && resultats.length === 0 && (
-          <p className="mt-3 text-sm text-[#9BB0A6] italic">Aucun membre trouvé.</p>
+        {!chargement && tous && (
+          <p className="mt-3 text-xs text-[#9BB0A6]">
+            {tous.length === 0
+              ? "Aucun membre n'est encore enregistré dans le Dahira."
+              : recherche.trim().length >= 2 && resultats.length === 0
+                ? `Aucun membre disponible ne correspond à « ${recherche.trim()} » sur ${tous.length} inscrits.`
+                : `${tous.length} membre(s) dans l'annuaire${
+                    recherche.trim().length < 2 ? " — tapez un nom pour filtrer" : ""
+                  }`}
+          </p>
         )}
 
         <div className="mt-3 space-y-2">
@@ -124,7 +154,8 @@ export default function MembresCommission({
                     await ajouterMembre(
                       slug,
                       {
-                        matricule: m.matricule,
+                        matricule: m.matricule ?? "",
+                        refMembre: m.id,
                         nom: `${m.prenom} ${m.nom}`.trim(),
                         telephone: m.telephone ?? "",
                       },
