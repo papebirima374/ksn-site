@@ -18,6 +18,8 @@ import type { CommissionReport } from "./commission-reports";
 import type { Transfert } from "./commission-transferts";
 import { bilanVersements, LIBELLE_TRANSFERT } from "./commission-transferts";
 import type { Vente } from "./commission-ventes";
+import type { Tache } from "./commission-taches";
+import { LIBELLE_TACHE, bilanPreparation, estEnRetard } from "./commission-taches";
 import type { Order } from "./admin-types";
 import { montantEnLettres } from "./montant-lettres";
 import { commissionNom, aBilanSalaatu } from "./commissions";
@@ -152,6 +154,8 @@ const STYLE = `
   table.fact th.n,table.fact td.n{text-align:right;white-space:nowrap}
   table.fact td{padding:2.4mm 3mm;border-bottom:.25mm solid #E2E9E5}
   table.fact tr:nth-child(even) td{background:#FAF8F4}
+  table.fact thead{display:table-header-group}
+  table.fact tr{break-inside:avoid}
   table.fact td.n{font-weight:700}
   table.fact tfoot td{border:0;padding-top:3mm;font-size:11px}
   table.fact tfoot tr.tot td{background:#0F7C55;color:#fff;font-size:13px;font-weight:900;
@@ -174,6 +178,11 @@ const STYLE = `
     letter-spacing:.12em;text-transform:uppercase;padding:2.2mm 2.5mm;text-align:left}
   table.reg td{padding:2mm 2.5mm;border-bottom:.25mm solid #E2E9E5;vertical-align:top}
   table.reg tr:nth-child(even) td{background:#F8F5EF}
+  /* Quand le registre passe sur une 2e feuille, les titres de colonnes la
+     suivent, et aucune ligne n'est coupee en deux : sans cela, la seconde
+     page est une suite de chiffres dont on ne sait plus ce qu'ils designent. */
+  table.reg thead{display:table-header-group}
+  table.reg tr{break-inside:avoid}
   table.reg td.n{width:26mm;text-align:right;font-weight:700;white-space:nowrap}
   table.reg tfoot td{background:#0F7C55;color:#fff;font-weight:800;border:0}
   .etat{display:inline-block;padding:.5mm 2mm;border-radius:1.5mm;font-size:8px;
@@ -1022,6 +1031,83 @@ export function htmlJournalVentes(ventes: Vente[], intitule: string): string {
   ${pied(`Arrêté le ${new Date().toLocaleDateString("fr-FR")}`)}`;
 
   return document(`Journal des ventes — ${intitule}`, contenu);
+}
+
+/* ═══ Feuille de route d'une journée ═══════════════════════════════════ */
+
+/** Ce que la commission emporte sur le terrain : qui fait quoi, pour quand,
+ *  avec quel budget. Une case a cocher en bout de ligne — le jour J, on n'ouvre
+ *  pas un telephone, on raye sur le papier. */
+export function htmlPreparation(taches: Tache[], nomCommission: string): string {
+  const b = bilanPreparation(taches);
+
+  const contenu = `
+  ${enTete("Feuille de Route", "Waccaayu bisub Salaatu ’Alaa Nabi")}
+  <div class="ribbon"><small>Préparation — Commission</small><strong>${e(nomCommission)}</strong></div>
+  <div class="body">
+    <div class="cartes">
+      <div><span>Avancement</span><b>${b.avancement} %</b></div>
+      <div><span>Tâches</span><b>${b.faites} / ${b.total}</b></div>
+      <div><span>Budget prévu</span><b>${e(fr(b.budget))}</b></div>
+      <div><span>Déjà dépensé</span><b>${e(fr(b.depense))}</b></div>
+    </div>
+
+    <div class="sec">
+      ${titreSection(1, "Ce qu’il reste à faire")}
+      ${
+        taches.length === 0
+          ? `<p class="rien">Aucune tâche inscrite.</p>`
+          : `<table class="reg">
+        <thead><tr>
+          <th style="width:8mm">✓</th><th>Tâche</th><th>Responsable</th>
+          <th>Échéance</th><th class="n">Budget</th><th>État</th>
+        </tr></thead>
+        <tbody>
+          ${taches
+            .map(
+              (t) => `<tr>
+            <td style="font-size:13px;color:#B9C9C1">☐</td>
+            <td><b>${e(t.libelle)}</b>${t.detail ? `<br><span style="color:#5C7268">${e(t.detail)}</span>` : ""}</td>
+            <td>${e(t.responsable) || "—"}${
+              t.responsableTelephone ? `<br>${e(t.responsableTelephone)}` : ""
+            }</td>
+            <td>${
+              t.echeance
+                ? `${e(dateIso(t.echeance))}${estEnRetard(t) ? `<br><span class="etat att">dépassée</span>` : ""}`
+                : "—"
+            }</td>
+            <td class="n">${t.budget ? e(fr(t.budget)) : "—"}${
+              t.depense ? `<br><span style="font-weight:400;color:#5C7268">dépensé ${e(fr(t.depense))}</span>` : ""
+            }</td>
+            <td><span class="etat ${
+              t.statut === "fait" ? "ok" : t.statut === "bloque" ? "att" : "non"
+            }">${e(LIBELLE_TACHE[t.statut])}</span></td>
+          </tr>`
+            )
+            .join("")}
+        </tbody>
+        <tfoot><tr>
+          <td colspan="4">Budget total prévu${b.depense ? ` · dépensé ${e(fr(b.depense))}` : ""}</td>
+          <td class="n">${e(fr(b.budget))}</td>
+          <td>${b.bloquees ? `${b.bloquees} bloquée(s)` : "—"}</td>
+        </tr></tfoot>
+      </table>`
+      }
+    </div>
+
+    <div class="sec">
+      ${titreSection(2, "Notes de dernière minute")}
+      <div class="lignes" style="height:16mm"></div>
+    </div>
+  </div>
+
+  <div class="signs">
+    <div><i></i><span>Responsable de la commission</span></div>
+    <div><i></i><span>Secrétariat Général</span></div>
+  </div>
+  ${pied(`Arrêtée le ${new Date().toLocaleDateString("fr-FR")}`)}`;
+
+  return document(`Feuille de route — ${nomCommission}`, contenu);
 }
 
 /* ═══ Ouverture ════════════════════════════════════════════════════════ */

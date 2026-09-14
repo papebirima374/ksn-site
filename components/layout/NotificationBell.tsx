@@ -64,7 +64,14 @@ function timeAgo(ts: number): string {
   });
 }
 
-export default function NotificationBell() {
+/** La cloche vit sur deux fonds : la barre publique, vert sombre, et l'en-tete
+ *  de l'espace admin, blanc. Seul le bouton change — le panneau deroulant reste
+ *  le meme, il flotte au-dessus de la page. */
+export default function NotificationBell({
+  fond = "sombre",
+}: {
+  fond?: "sombre" | "clair";
+} = {}) {
   const { user, firebaseUser } = useAuth();
   const [items, setItems] = useState<AppNotification[]>([]);
   const [open, setOpen] = useState(false);
@@ -147,11 +154,15 @@ export default function NotificationBell() {
             ? `Notifications (${unread} non lue${unread > 1 ? "s" : ""})`
             : "Notifications"
         }
-        className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center justify-center transition"
+        className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl border flex items-center justify-center transition ${
+          fond === "clair"
+            ? "bg-gray-100 hover:bg-gray-200 border-gray-200 text-[#0F7C55]"
+            : "bg-white/10 hover:bg-white/20 border-white/10 text-white"
+        }`}
       >
         <FaBell className="text-sm" />
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#D4AF37] text-[#0F7C55] text-[10px] font-black flex items-center justify-center shadow-md border border-[#0A3D24] tabular-nums">
+          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#D4AF37] text-[#0F7C55] text-[10px] font-black flex items-center justify-center shadow-md border border-white tabular-nums">
             {unread > 9 ? "9+" : unread}
           </span>
         )}

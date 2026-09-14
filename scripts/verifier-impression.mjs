@@ -146,6 +146,19 @@ const commande = {
   ],
 };
 
+const taches = [
+  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 76 528 59 11", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
+  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 11 22", "2026-09-18", 40000, 0, "en_cours", ""],
+  ["Transport des invités depuis Dakar", "Cheikh Fall", "", "2026-09-18", 120000, 60000, "en_cours", "Deux cars réservés"],
+  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 76 333 44 55", "2026-09-19", 250000, 0, "a_faire", ""],
+  ["Groupe électrogène de secours", "Ibrahima Ndoye", "", "2026-09-10", 60000, 0, "bloque", "Le loueur n'a pas confirmé"],
+  ["Affiches et banderole d'accueil", "Serigne Birima Gueye", "", "", 30000, 28500, "fait", ""],
+].map(([libelle, responsable, responsableTelephone, echeance, budget, depense, statut, detail], i) => ({
+  id: `t${i}`, commission: "organisation", libelle, detail, responsable,
+  responsableTelephone, echeance, budget, depense, statut,
+  createdAt: Date.now() - i * 1000, createdBy: "Organisation", updatedAt: Date.now(),
+}));
+
 const compteRendu = {
   id: "cr", titre: "Assemblée Générale du 19 septembre 2026",
   date: "19 septembre 2026", lieu: "Tuuba Saam Kër Sëriñ Basiiru Ture",
@@ -176,6 +189,10 @@ const DOCUMENTS = [
   ["facture-annulee", I.htmlFacture(I.factureDeVente(ventes[2], "Commission Social et Développement")), { exact: 1 }],
   ["facture-commande", I.htmlFacture(I.factureDeCommande(commande)), { exact: 1 }],
   ["journal-ventes", I.htmlJournalVentes(ventes, "Social et Développement"), { exact: 1 }],
+  // Une feuille de route s'allonge avec la journee qu'elle prepare : elle a le
+  // droit de courir sur deux feuilles, a condition que les titres de colonnes
+  // suivent (cf. table.reg thead dans lib/impression.ts).
+  ["feuille-de-route", I.htmlPreparation(taches, "Organisation"), { max: 2 }],
   ["compte-rendu", I.htmlCompteRendu(compteRendu), { max: 2 }],
 ];
 

@@ -19,6 +19,10 @@ export type Commission = {
    *  n'importe quel visiteur. Les numeros vivent cote serveur, dans
    *  app/api/commission-contacts/route.ts. */
   responsable?: string;
+  /** Active l'onglet Preparation : la feuille de route d'une journee (qui fait
+   *  quoi, pour quand, avec quel budget). Reserve a l'Organisation : c'est elle
+   *  qui monte les tentes, loue la sonorisation et ramene les invites. */
+  modulePreparation?: boolean;
   /** Active les onglets Activites (production, revente) et Aides sociales.
    *  Reserve a Social et Developpement : ce sont eux qui produisent, vendent
    *  et puisent dans leur caisse pour aider un membre. */
@@ -64,6 +68,7 @@ export const COMMISSIONS: Commission[] = [
       "Coordination des événements, logistique, journées spirituelles, rencontres et activités du Dahira.",
     emoji: "🏛️",
     responsable: "Serigne Assane Samb",
+    modulePreparation: true,
   },
   {
     slug: "communication",
@@ -95,6 +100,11 @@ export function aBilanSalaatu(slug: string): boolean {
 /** La commission tient-elle des activites economiques et des aides ? */
 export function aModuleSocial(slug: string): boolean {
   return getCommission(slug)?.moduleSocial === true;
+}
+
+/** La commission prepare-t-elle les journees (feuille de route) ? */
+export function aModulePreparation(slug: string): boolean {
+  return getCommission(slug)?.modulePreparation === true;
 }
 
 export function commissionNom(slug: string): string {

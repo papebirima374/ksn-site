@@ -42,6 +42,8 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db, "commissionTransferts/v-attente3"), { ...versementBase, vers: "organisation", statut: "envoye", recuPar: "", recuAt: 0 });
   await setDoc(doc(db, "commissionTransferts/v-recu"), { ...versementBase, vers: "communication", statut: "recu", recuPar: "Responsable", recuAt: 2, ecritureDestinataire: "c-com" });
 
+  await setDoc(doc(db, "commissionTaches/t-org"), { commission: "organisation", libelle: "Louer la sonorisation", detail: "", responsable: "A B", responsableTelephone: "", echeance: "2026-09-17", budget: 75000, depense: 0, statut: "a_faire", createdAt: 1, createdBy: "X", updatedAt: 1 });
+
   // Ventes au comptoir : une vivante, une deja annulee.
   const venteBase = {
     commission: "social-developpement", date: "2026-09-12",
@@ -239,6 +241,25 @@ await t("Finances annule un versement jamais accusé", assertSucceeds(updateDoc(
 await t("Finances N'ANNULE PAS un versement déjà accusé", assertFails(updateDoc(doc(as("fin1"), "commissionTransferts/v-recu"), annule)));
 await t("Un versement ne s'efface pas", assertFails(deleteDoc(doc(as("fin1"), "commissionTransferts/v-attente3"))));
 await t("L'administrateur peut supprimer en dernier recours", assertSucceeds(deleteDoc(doc(as("admin1"), "commissionTransferts/v-attente3"))));
+
+console.log("\n── Feuille de route (Organisation) ──");
+const tache = (extra = {}) => ({
+  commission: "organisation", libelle: "Monter les tentes", detail: "",
+  responsable: "C D", responsableTelephone: "", echeance: "2026-09-18",
+  budget: 40000, depense: 0, statut: "a_faire",
+  createdAt: Date.now(), createdBy: "Moi", updatedAt: Date.now(), ...extra });
+
+await t("Organisation inscrit une tâche", assertSucceeds(addDoc(collection(as("org1"), "commissionTaches"), tache())));
+await t("Finances N'INSCRIT PAS une tâche pour Organisation", assertFails(addDoc(collection(as("fin1"), "commissionTaches"), tache())));
+await t("Tâche sans intitulé refusée", assertFails(addDoc(collection(as("org1"), "commissionTaches"), tache({ libelle: "" }))));
+await t("État de tâche inventé refusé", assertFails(addDoc(collection(as("org1"), "commissionTaches"), tache({ statut: "peut-être" }))));
+await t("Budget négatif refusé", assertFails(addDoc(collection(as("org1"), "commissionTaches"), tache({ budget: -1 }))));
+await t("Organisation met à jour SA tâche", assertSucceeds(updateDoc(doc(as("org1"), "commissionTaches/t-org"), { statut: "fait", depense: 72000, updatedAt: Date.now() })));
+await t("Finances NE MODIFIE PAS une tâche d'Organisation", assertFails(updateDoc(doc(as("fin1"), "commissionTaches/t-org"), { statut: "fait" })));
+await t("Organisation liste SES tâches", assertSucceeds(getDocs(query(collection(as("org1"), "commissionTaches"), where("commission", "==", "organisation")))));
+await t("Le Secrétariat lit la feuille de route", assertSucceeds(getDoc(doc(as("sec1"), "commissionTaches/t-org"))));
+await t("Finances NE LIT PAS la feuille de route d'Organisation", assertFails(getDoc(doc(as("fin1"), "commissionTaches/t-org"))));
+await t("Un visiteur anonyme ne lit aucune feuille de route", assertFails(getDoc(doc(anon(), "commissionTaches/t-org"))));
 
 console.log("\n── Ventes au comptoir de la boutique ──");
 const vente = (extra = {}) => ({
