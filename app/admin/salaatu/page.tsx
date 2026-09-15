@@ -44,6 +44,7 @@ export default function AdminSalaatuPage() {
   const [streamingUrl, setStreamingUrl] = useState("");
   const [savingStream, setSavingStream] = useState(false);
   const [streamMsg, setStreamMsg] = useState("");
+  const [streamErreur, setStreamErreur] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -352,11 +353,19 @@ export default function AdminSalaatuPage() {
               if (!canEdit) return;
               setSavingStream(true);
               setStreamMsg("");
+              setStreamErreur("");
               try {
                 await saveStreamingLink(streamingUrl);
                 setStreamMsg("Lien de streaming mis à jour avec succès.");
               } catch (err) {
+                // L'echec n'etait annonce QUE dans la console du navigateur :
+                // le bouton s'arretait de tourner, aucun message n'arrivait,
+                // et on repartait en croyant le lien enregistre. Le jour du
+                // direct, personne ne l'aurait su.
                 console.error("Save stream url failed:", err);
+                setStreamErreur(
+                  "Le lien n'a PAS été enregistré. Vérifiez que ce compte est administrateur et que les règles Firestore publiées autorisent la collection « config », puis réessayez."
+                );
               } finally {
                 setSavingStream(false);
               }
@@ -386,6 +395,11 @@ export default function AdminSalaatuPage() {
             {streamMsg && (
               <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
                 {streamMsg}
+              </p>
+            )}
+            {streamErreur && (
+              <p className="text-sm text-red-700 bg-red-50 rounded-xl p-3 border border-red-200">
+                {streamErreur}
               </p>
             )}
 
