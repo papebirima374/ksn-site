@@ -38,7 +38,7 @@ import {
 } from "@/lib/commission-membres";
 import { htmlDossier, htmlFicheVierge, imprimer, AG } from "@/lib/impression";
 import BoutonEnvoyer from "@/components/admin/BoutonEnvoyer";
-import { type Ecriture, fcfa, soldeDe, totalPar, subscribeCaisse } from "@/lib/commission-caisse";
+import { type Ecriture, fcfa, soldeDe, totalPar, vivantes, subscribeCaisse } from "@/lib/commission-caisse";
 import {
   type Lot,
   type Aide,
@@ -198,10 +198,13 @@ function EspaceCommission() {
   const resume = useMemo(() => {
     if (!slug || !aCaissePropre(slug)) return undefined;
     const b = bilanActivites(lots);
+    // Les memes chiffres que l'onglet Caisse : une erreur annulee ne gonfle
+    // ni les entrees ni les sorties du rapport.
+    const reelles = vivantes(ecritures);
     return {
       solde: soldeDe(ecritures),
-      entrees: totalPar(ecritures, "entree"),
-      sorties: totalPar(ecritures, "sortie"),
+      entrees: totalPar(reelles, "entree"),
+      sorties: totalPar(reelles, "sortie"),
       activites: aModuleSocial(slug) && b.lots > 0 ? b : undefined,
       aides: aides.length ? { total: totalAides(aides), nombre: aides.length } : undefined,
     };

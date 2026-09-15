@@ -6,6 +6,8 @@ import {
   FaArrowUp,
   FaBan,
   FaCircleInfo,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa6";
 import {
   type Ecriture,
@@ -15,6 +17,8 @@ import {
   soldeDe,
   totalPar,
   annulees,
+  estAnnulation,
+  vivantes,
   subscribeCaisse,
   ajouterEcriture,
   annulerEcriture,
@@ -55,6 +59,7 @@ export default function CaisseCommission({
   const [date, setDate] = useState(aujourdhui);
   const [matricule, setMatricule] = useState("");
   const [envoi, setEnvoi] = useState(false);
+  const [masquerAnnulees, setMasquerAnnulees] = useState(false);
 
   useEffect(() => {
     if (!pret) return;
@@ -64,9 +69,19 @@ export default function CaisseCommission({
   }, [slug, pret]);
 
   const solde = useMemo(() => soldeDe(ecritures), [ecritures]);
-  const entrees = useMemo(() => totalPar(ecritures, "entree"), [ecritures]);
-  const sorties = useMemo(() => totalPar(ecritures, "sortie"), [ecritures]);
   const dejaAnnulees = useMemo(() => annulees(ecritures), [ecritures]);
+  // « Entrés » et « sortis » comptent l'argent qui a vraiment bougé. Une
+  // erreur annulée ne doit gonfler ni l'un ni l'autre.
+  const reelles = useMemo(() => vivantes(ecritures), [ecritures]);
+  const entrees = useMemo(() => totalPar(reelles, "entree"), [reelles]);
+  const sorties = useMemo(() => totalPar(reelles, "sortie"), [reelles]);
+  const visibles = useMemo(
+    () =>
+      masquerAnnulees
+        ? ecritures.filter((e) => !estAnnulation(e) && !dejaAnnulees.has(e.id))
+        : ecritures,
+    [ecritures, masquerAnnulees, dejaAnnulees]
+  );
 
   async function enregistrer(e: React.FormEvent) {
     e.preventDefault();
@@ -117,6 +132,16 @@ export default function CaisseCommission({
             <FaArrowUp className="inline mb-0.5" /> {fcfa(sorties)} sortis
           </span>
         </div>
+        {dejaAnnulees.size > 0 && (
+          <p className="mt-3 text-[12px] font-semibold text-[#5C7268]">
+            {dejaAnnulees.size} opération{dejaAnnulees.size > 1 ? "s" : ""} annulée
+            {dejaAnnulees.size > 1 ? "s" : ""} — elle{dejaAnnulees.size > 1 ? "s" : ""} rest
+            {dejaAnnulees.size > 1 ? "ent" : "e"} visible{dejaAnnulees.size > 1 ? "s" : ""} dans
+            l&apos;historique, barrée{dejaAnnulees.size > 1 ? "s" : ""}, mais ne compte
+            {dejaAnnulees.size > 1 ? "nt" : ""} pas dans le solde.
+          </p>
+        )}
+
         <p className="mt-4 inline-flex items-start gap-2 text-[11px] text-[#5C7268] leading-5 max-w-md">
           <FaCircleInfo className="flex-none mt-0.5" />
           Cette caisse est propre à la commission. Elle n&apos;entre dans aucun compte
@@ -205,18 +230,35 @@ export default function CaisseCommission({
 
       {/* ── Historique ──────────────────────────────────────────────── */}
       <section className="rounded-2xl border border-[#0F7C55]/12 bg-white p-5 sm:p-6">
-        <h3 className="font-bold text-[#082F22] mb-1">Historique</h3>
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-1">
+          <h3 className="font-bold text-[#082F22]">Historique</h3>
+          {dejaAnnulees.size > 0 && (
+            <button
+              type="button"
+              onClick={() => setMasquerAnnulees((v) => !v)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#0F7C55]/25 px-2.5 py-1.5 text-[11px] font-bold text-[#0F7C55] hover:bg-[#0F7C55]/5 transition"
+            >
+              {masquerAnnulees ? <FaEye /> : <FaEyeSlash />}
+              {masquerAnnulees ? "Tout afficher" : "Masquer les annulées"}
+            </button>
+          )}
+        </div>
         <p className="text-xs text-[#5C7268] mb-4 leading-5">
           Une erreur ne s&apos;efface pas : on l&apos;annule, et les deux lignes restent
           visibles. C&apos;est ce qui rend la caisse vérifiable.
         </p>
 
-        {ecritures.length === 0 ? (
-          <p className="text-sm text-[#9BB0A6] italic py-4">Aucune écriture pour l&apos;instant.</p>
+        {visibles.length === 0 ? (
+          <p className="text-sm text-[#9BB0A6] italic py-4">
+            {ecritures.length === 0
+              ? "Aucune écriture pour l'instant."
+              : "Toutes les écritures sont annulées. Cliquez sur « Tout afficher » pour les revoir."}
+          </p>
         ) : (
           <div className="divide-y divide-[#0F7C55]/8">
-            {ecritures.map((e) => {
+            {visibles.map((e) => {
               const morte = dejaAnnulees.has(e.id);
+              const inverse = estAnnulation(e);
               return (
                 <div key={e.id} className="py-3 flex items-start gap-3">
                   <span
@@ -236,6 +278,17 @@ export default function CaisseCommission({
                     >
                       {e.motif}
                     </p>
+                    {(morte || inverse) && (
+                      <span
+                        className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wide ${
+                          morte
+                            ? "bg-red-50 text-red-700"
+                            : "bg-[#0F7C55]/10 text-[#0F7C55]"
+                        }`}
+                      >
+                        {morte ? "Annulée — ne compte pas" : "Écriture d'annulation"}
+                      </span>
+                    )}
                     <p className="text-xs text-[#9BB0A6] mt-0.5">
                       {dateFr(e.date)}
                       {e.membreNom && ` · ${e.membreNom}`}
@@ -265,8 +318,10 @@ export default function CaisseCommission({
                             // n'aboutit pas et une qui aboutit se ressemblent :
                             // dans les deux cas, on regarde une liste.
                             setErreur("");
-                            setConfirmation(`« ${e.motif} » a été annulée. L'écriture inverse apparaît ci-dessous.`);
-                            setTimeout(() => setConfirmation(""), 6000);
+                            setConfirmation(
+                              `« ${e.motif} » a été annulée. La ligne d'origine est barrée et l'écriture inverse, datée d'aujourd'hui, apparaît en haut de l'historique. Le solde ci-dessus est à jour.`
+                            );
+                            setTimeout(() => setConfirmation(""), 10000);
                           } catch (err) {
                             setConfirmation("");
                             setErreur(messageEcriture(err, "l'annulation"));
