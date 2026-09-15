@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState, useSyncExternalStore } from "react";
 import {
   FaImages,
   FaNewspaper,
@@ -124,6 +124,18 @@ const GROUPES: {
   },
 ];
 
+/** Previent React quand la classe « dark » de <html> change. Un observateur
+ *  plutot qu'un evenement : la classe peut etre posee par le script du layout
+ *  comme par le bouton, et l'observateur voit les deux. */
+function ecouterTheme(prevenir: () => void): () => void {
+  const observateur = new MutationObserver(prevenir);
+  observateur.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => observateur.disconnect();
+}
+
 type Outil = (typeof GROUPES)[number]["items"][number];
 
 /** Un outil est-il ouvert a ce compte ?
@@ -174,17 +186,26 @@ export default function AdminShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const isDark = localStorage.getItem("admin-theme") === "dark";
-    setDarkMode(isDark);
-  }, []);
+  // Le theme vit sur <html>, pose par le script du layout avant la peinture.
+  // React ne le POSSEDE donc pas : il l'observe. C'est le role exact de
+  // useSyncExternalStore — lire un etat exterieur sans le dupliquer, avec une
+  // valeur de repli pour le rendu serveur. Le lire dans un effet, comme avant,
+  // obligeait a une mise a jour d'etat apres le premier rendu.
+  const darkMode = useSyncExternalStore(
+    ecouterTheme,
+    () => document.documentElement.classList.contains("dark"),
+    () => false // le serveur ne connait pas le choix du navigateur
+  );
 
   const toggleDarkMode = () => {
     const next = !darkMode;
-    setDarkMode(next);
-    localStorage.setItem("admin-theme", next ? "dark" : "light");
+    document.documentElement.classList.toggle("dark", next);
+    try {
+      localStorage.setItem("admin-theme", next ? "dark" : "light");
+    } catch {
+      // Navigation privee : le theme s'applique quand meme, il ne survivra
+      // simplement pas au rechargement.
+    }
   };
 
   useEffect(() => {
@@ -214,7 +235,10 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     .filter((g) => g.items.length > 0);
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ${darkMode ? "bg-[#082F22] text-white dark" : "bg-[#F8F5EF] text-[#1A1A1A]"}`}>
+    // Les couleurs viennent de globals.css (.cadre-admin / .dark .cadre-admin)
+    // et non d'une classe calculee ici : sinon le fond repasserait par React,
+    // donc apres le premier rendu, et l'eclair reviendrait.
+    <div className="cadre-admin min-h-screen flex transition-colors duration-300">
       {/* SIDEBAR */}
       <aside
         className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#082F22] text-white transform transition-transform lg:translate-x-0 flex flex-col ${
