@@ -22,6 +22,7 @@ import { notifierCommission } from "@/lib/admin-data";
 import { imprimer, htmlVersements, htmlRecuVersement } from "@/lib/impression";
 import BoutonEnvoyer from "@/components/admin/BoutonEnvoyer";
 import { Message } from "./Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -260,8 +261,10 @@ function Accuser({
         /* sans effet sur l'accusé */
       }
       onErreur("");
-    } catch {
-      onErreur("Impossible d'enregistrer l'accusé de réception. Vérifiez votre connexion.");
+    } catch (err) {
+      // Un accuse qui echoue sans le dire, c'est une somme qui n'entre jamais
+      // dans la caisse de la commission alors que la tresorerie l'a remise.
+      onErreur(messageEcriture(err, "l'accusé de réception"));
     } finally {
       setEnvoi(false);
     }

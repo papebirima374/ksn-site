@@ -26,6 +26,7 @@ import { notifierCommission } from "@/lib/admin-data";
 import { authHeader } from "@/lib/client-auth-header";
 import { imprimer, htmlVersements, htmlRecuVersement } from "@/lib/impression";
 import { Message } from "./Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -197,8 +198,8 @@ export default function VersementsFinances({
                           if (raison === null) return;
                           try {
                             await annulerVersement(t, raison, signature);
-                          } catch {
-                            setErreur("Annulation impossible. Vérifiez votre connexion.");
+                          } catch (err) {
+                            setErreur(messageEcriture(err, "l'annulation"));
                           }
                         }}
                         className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:underline"
@@ -268,7 +269,7 @@ function Verser({
         err instanceof Error && /permission|insufficient/i.test(err.message)
           ? "Versement refusé : ce compte n'a pas le droit d'écrire dans la trésorerie. " +
             "L'administrateur doit lui accorder la permission « finances.write » dans Utilisateurs."
-          : "Versement impossible. Vérifiez votre connexion."
+          : messageEcriture(err, "le versement")
       );
     } finally {
       setEnvoi(false);

@@ -20,6 +20,7 @@ import { cleMembre } from "@/lib/commission-membres";
 import { listMembers } from "@/lib/admin-data";
 import type { Member } from "@/lib/admin-types";
 import { Message } from "./Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 /** Recherche insensible a la casse ET aux accents : on tape « Sene », on
  *  trouve « Sène ». */
@@ -159,8 +160,8 @@ export default function MembresCommission({
                       signature
                     );
                     setRecherche("");
-                  } catch {
-                    setMsg("Ajout impossible. Vérifiez votre connexion.");
+                  } catch (err) {
+                    setMsg(messageEcriture(err, "l'ajout du membre"));
                   }
                 }}
                 className="flex-none inline-flex items-center gap-1.5 bg-[#0F7C55] text-white px-3.5 py-2 rounded-lg text-xs font-bold hover:bg-[#0c6444] transition"
