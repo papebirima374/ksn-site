@@ -365,16 +365,44 @@ function padMatricule(n: number): string {
   return "KSN-" + String(n).padStart(4, "0");
 }
 
+/** Le prochain numero de membre libre.
+ *
+ *  PAS D'orderBy("matricule"), et c'est la tout le sujet. L'ancienne version
+ *  demandait a Firestore le plus grand matricule, trie a l'envers, limite a
+ *  un. Deux pieges s'y sont refermes :
+ *
+ *  1. Un membre en attente porte le matricule litteral « PENDING » — il ne
+ *     brule pas un numero tant qu'il n'est pas valide. Or « PENDING » se
+ *     classe APRES « KSN-… » dans l'ordre des chaines (P vient apres K).
+ *     La requete renvoyait donc ce membre-la, « PENDING » ne contenait aucun
+ *     chiffre, et le compte repartait de KSN-0001 — deja attribue. Verifie
+ *     sur l'emulateur : avec KSN-0042 en base, la fonction rendait KSN-0001.
+ *     Tant qu'une seule adhesion restait en attente, CHAQUE validation
+ *     fabriquait un doublon sur une carte de membre officielle.
+ *
+ *  2. Une requete ordonnee EXCLUT les documents auxquels le champ manque.
+ *     C'est le meme piege que listMembers() plus bas, corrige la et reste
+ *     ici : sur quatre membres dont un sans matricule, la requete n'en voyait
+ *     que trois.
+ *
+ *  On lit donc tout et on cherche le maximum en memoire, en ne retenant que
+ *  ce qui porte reellement un numero. Un fichier de membres de Dahira tient
+ *  largement dans une lecture — listMembers() fait deja de meme.
+ *
+ *  RESTE UNE LIMITE, a savoir : deux validations simultanees peuvent obtenir
+ *  le meme numero. Le cas est peu probable a la main, mais il existe ; le
+ *  supprimer demanderait une transaction sur un compteur dedie. */
 export async function nextMatricule(): Promise<string> {
   const db = getDb();
-  const snap = await getDocs(
-    query(collection(db, "members"), orderBy("matricule", "desc"), limit(1))
-  );
-  if (snap.empty) return padMatricule(1);
-  const top = snap.docs[0].data() as Member;
-  const raw = (top.matricule ?? "").replace(/\D/g, "");
-  const n = parseInt(raw || "0", 10);
-  return padMatricule(Number.isFinite(n) ? n + 1 : 1);
+  const snap = await getDocs(collection(db, "members"));
+  let max = 0;
+  for (const d of snap.docs) {
+    const brut = ((d.data() as Member).matricule ?? "").replace(/\D/g, "");
+    if (!brut) continue; // « PENDING », vide, ou champ absent
+    const n = parseInt(brut, 10);
+    if (Number.isFinite(n) && n > max) max = n;
+  }
+  return padMatricule(max + 1);
 }
 
 export async function listMembers(): Promise<Member[]> {
