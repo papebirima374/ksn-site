@@ -52,6 +52,23 @@ export function annulees(ecritures: Ecriture[]): Set<string> {
   return new Set(ecritures.map((e) => e.annuleId).filter(Boolean));
 }
 
+/** Une ecriture d'annulation : celle qui compense une autre. */
+export const estAnnulation = (e: Ecriture) => Boolean(e.annuleId);
+
+/** Les ecritures qui comptent vraiment : ni annulees, ni annulations.
+ *
+ *  Le solde est le meme qu'on les retire ou non — une paire s'annule. Mais les
+ *  totaux « entres » et « sortis », eux, mentiraient : une entree de 3 000 F
+ *  saisie par erreur puis annulee afficherait 3 000 entres ET 3 000 sortis,
+ *  pour un mouvement qui n'a jamais eu lieu. */
+export function vivantes(ecritures: Ecriture[]): Ecriture[] {
+  const mortes = annulees(ecritures);
+  return ecritures.filter((e) => !estAnnulation(e) && !mortes.has(e.id));
+}
+
+/** Nombre d'operations annulees — les paires, pas les lignes. */
+export const nombreAnnulees = (ecritures: Ecriture[]) => annulees(ecritures).size;
+
 export const fcfa = (n: number) => new Intl.NumberFormat("fr-FR").format(Math.round(n)) + " F";
 
 export function subscribeCaisse(
