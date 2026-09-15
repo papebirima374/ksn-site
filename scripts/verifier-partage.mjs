@@ -152,12 +152,20 @@ const serveur = http.createServer((req, res) => {
 await new Promise((r) => serveur.listen(0, "127.0.0.1", r));
 const BASE = `http://127.0.0.1:${serveur.address().port}`;
 
+// AVERTISSEMENT — LES NUMEROS DE CE FICHIER SONT FICTIFS.
+// Ils ont la forme +221 77 000 00 0X, qu'aucune ligne reelle ne porte. Deux
+// vrais numeros de responsables avaient servi de donnees d'essai ici, dont
+// l'un attribue au mauvais nom. Un jeu d'essai n'a aucun besoin d'un numero
+// qui sonne quelque part : il lui faut la bonne FORME, pas la bonne personne.
+// Les vrais numeros vivent a un seul endroit, cote serveur :
+// app/api/commission-contacts/route.ts
+
 /* ── Le jeu d'essai : un dossier rempli, pas un squelette ──────────────── */
 const ligne = (t) => ({ id: Math.random().toString(36).slice(2), texte: t });
 const dossier = {
   commission: "education-culture",
   responsable: "Mame Cheikh Anta Sall",
-  telephone: "+221 76 438 28 84",
+  telephone: "+221 77 000 00 01",
   membres: "18",
   activites: [ligne("Récitation collective du Salaatu chaque vendredi, suivie d'un enseignement sur les Khassidas."), ligne("Deux conférences publiques"), ligne("Cours du samedi matin")],
   difficultes: [ligne("Manque de salles"), ligne("Transport des intervenants")],
@@ -184,10 +192,10 @@ const versement = {
 };
 
 const taches = [
-  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 76 528 59 11", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
-  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 11 22", "2026-09-18", 40000, 0, "en_cours", ""],
+  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 77 000 00 02", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
+  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 00 05", "2026-09-18", 40000, 0, "en_cours", ""],
   ["Transport des invités depuis Dakar", "Cheikh Fall", "", "2026-09-18", 120000, 60000, "en_cours", "Deux cars réservés"],
-  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 76 333 44 55", "2026-09-19", 250000, 0, "a_faire", ""],
+  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 77 000 00 06", "2026-09-19", 250000, 0, "a_faire", ""],
   ["Groupe électrogène de secours", "Ibrahima Ndoye", "", "2026-09-10", 60000, 0, "bloque", "Le loueur n'a pas confirmé"],
   ["Affiches et banderole d'accueil", "Serigne Birima Gueye", "", "", 30000, 28500, "fait", ""],
 ].map(([libelle, responsable, responsableTelephone, echeance, budget, depense, statut, detail], i) => ({
