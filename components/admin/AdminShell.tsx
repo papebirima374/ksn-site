@@ -28,7 +28,7 @@ import {
 } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth-context";
 import NotificationBell from "@/components/layout/NotificationBell";
-import { hasPermission, type Permission } from "@/lib/admin-types";
+import { hasPermission, type AppUser, type Permission } from "@/lib/admin-types";
 import { slugFromNom } from "@/lib/commissions";
 
 /** Le menu est regroupe par commission : chaque responsable retrouve ses
@@ -121,6 +121,47 @@ const GROUPES: {
   },
 ];
 
+type Outil = (typeof GROUPES)[number]["items"][number];
+
+/** Un outil est-il ouvert a ce compte ?
+ *
+ *  Cette regle servait uniquement a dessiner le menu. Elle est sortie du
+ *  composant pour que le tableau de bord montre EXACTEMENT les memes outils
+ *  que le menu : deux listes ecrites separement finissent toujours par
+ *  diverger, et l'ecart se voit le jour ou un responsable cherche un outil
+ *  qu'on lui a promis a un endroit et refuse a l'autre. */
+export function outilVisible(user: AppUser | null, item: Outil): boolean {
+  const estAdmin = user?.role === "admin";
+  const maCommission = slugFromNom(user?.commission);
+
+  // Reserve a l'administrateur principal
+  if (item.adminOnly) return estAdmin;
+  // Reserve a l'administrateur et au Secretariat : celui-ci depouille les
+  // rapports de TOUTES les commissions, c'est son role a l'assemblee.
+  if (item.secretariat) return estAdmin || maCommission === "secretariat-administratif";
+  // Outil rattache a une commission : elle y entre de plein droit, meme sans
+  // la permission — c'est son metier. Les autres passent par la permission.
+  if (item.commission && maCommission === item.commission) return true;
+  // Membres : accessible avec members.write OU finances.write
+  if (item.href === "/admin/membres") {
+    return hasPermission(user, "members.write") || hasPermission(user, "finances.write");
+  }
+  return !item.perm ? true : hasPermission(user, item.perm);
+}
+
+/** Les outils du groupe de SA commission, pour le tableau de bord. On ecarte
+ *  « Vue d'ensemble », qui n'appartient a personne en particulier. */
+export function outilsDeMaCommission(
+  user: AppUser | null
+): { href: string; label: string }[] {
+  const slug = slugFromNom(user?.commission);
+  if (!slug) return [];
+  return GROUPES.filter((g) => g.slug === slug)
+    .flatMap((g) => g.items)
+    .filter((i) => outilVisible(user, i))
+    .map(({ href, label }) => ({ href, label }));
+}
+
 export default function AdminShell({ children }: { children: ReactNode }) {
   const { user, signOut, configured, loading } = useAuth();
   const router = useRouter();
@@ -161,33 +202,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const estAdmin = user?.role === "admin";
-  const maCommission = slugFromNom(user?.commission);
-
-  const itemVisible = (item: {
-    href: string;
-    perm: Permission | null;
-    adminOnly?: boolean;
-    secretariat?: boolean;
-    commission?: string;
-  }) => {
-    // Reserve a l'administrateur principal
-    if (item.adminOnly) return estAdmin;
-    // Reserve a l'administrateur et au Secretariat : celui-ci depouille les
-    // rapports de TOUTES les commissions, c'est son role a l'assemblee.
-    if (item.secretariat) return estAdmin || maCommission === "secretariat-administratif";
-    // Outil rattache a une commission : elle y entre de plein droit, meme sans
-    // la permission — c'est son metier. Les autres passent par la permission.
-    if (item.commission && maCommission === item.commission) return true;
-    // Membres : accessible avec members.write OU finances.write
-    if (item.href === "/admin/membres") {
-      return hasPermission(user, "members.write") || hasPermission(user, "finances.write");
-    }
-    return !item.perm ? true : hasPermission(user, item.perm);
-  };
-
   const groupesVisibles = GROUPES
-    .map((g) => ({ ...g, items: g.items.filter(itemVisible) }))
+    .map((g) => ({ ...g, items: g.items.filter((i) => outilVisible(user, i)) }))
     .filter((g) => g.items.length > 0);
 
   return (
