@@ -13,6 +13,13 @@ import {
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { Chargement, Message } from "@/components/admin/Etats";
+import {
+  CATEGORIE_COTISATION,
+  MOIS,
+  anneeCourante,
+  descriptionCotisation,
+  moisCourant,
+} from "@/lib/cotisations";
 import VersementsFinances from "@/components/admin/VersementsFinances";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -374,6 +381,11 @@ function NewEntryModal({
   const [memberName, setMemberName] = useState("");
   const [memberMatricule, setMemberMatricule] = useState("");
   const [memberId, setMemberId] = useState("");
+  // Pour une cotisation, la periode n'est pas une note libre : c'est elle qui
+  // dit si le membre est a jour. Elle se choisit, et la description s'ecrit
+  // toute seule (cf. lib/cotisations.ts).
+  const [moisCotisation, setMoisCotisation] = useState<string>(moisCourant());
+  const [anneeCotisation, setAnneeCotisation] = useState(anneeCourante());
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -410,7 +422,9 @@ function NewEntryModal({
       const n = parseInt(amount.replace(/\D/g, ""), 10);
       if (!Number.isFinite(n) || n <= 0) throw new Error("Montant invalide");
 
-      const entryData: any = {
+      // Le type attendu par createFinanceEntry : une faute de frappe sur un
+      // champ se voyait a l'execution, pas a la compilation.
+      const entryData: Omit<FinanceEntry, "id" | "recordedAt"> = {
         type,
         category,
         amount: n,
@@ -419,7 +433,15 @@ function NewEntryModal({
         recordedBy: user.uid,
       };
 
-      if (description.trim()) entryData.description = description.trim();
+      // Une cotisation porte TOUJOURS la description normalisee : c'est elle
+      // que relit l'ecran des membres pour dire qui est a jour. Une note libre
+      // ne serait jamais reconnue, et l'argent aurait ete encaisse sans que
+      // le membre cesse d'apparaitre comme redevable.
+      if (type === "income" && category === CATEGORIE_COTISATION) {
+        entryData.description = descriptionCotisation(moisCotisation, anneeCotisation);
+      } else if (description.trim()) {
+        entryData.description = description.trim();
+      }
       if (reference.trim()) entryData.reference = reference.trim();
       if (memberId) entryData.memberId = memberId;
       if (memberName.trim()) entryData.memberName = memberName.trim();
@@ -662,18 +684,50 @@ function NewEntryModal({
           </div>
         )}
 
-        <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-            Description / Note
-          </label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Optionnel"
-            className={selectClass + " w-full"}
-          />
-        </div>
+        {type === "income" && category === CATEGORIE_COTISATION ? (
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Période de la cotisation
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <select
+                value={moisCotisation}
+                onChange={(e) => setMoisCotisation(e.target.value)}
+                className={selectClass + " w-full"}
+              >
+                {MOIS.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+              <select
+                value={anneeCotisation}
+                onChange={(e) => setAnneeCotisation(Number(e.target.value))}
+                className={selectClass + " w-full"}
+              >
+                {[anneeCourante() - 1, anneeCourante(), anneeCourante() + 1].map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+            </div>
+            <p className="mt-1.5 text-xs text-gray-500">
+              Enregistré comme «&nbsp;{descriptionCotisation(moisCotisation, anneeCotisation)}&nbsp;».
+              C&apos;est cette mention qui fait passer le membre en « à jour ».
+            </p>
+          </div>
+        ) : (
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Description / Note
+            </label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Optionnel"
+              className={selectClass + " w-full"}
+            />
+          </div>
+        )}
 
         <div>
           <label className="block text-xs font-semibold text-gray-600 mb-1.5">
