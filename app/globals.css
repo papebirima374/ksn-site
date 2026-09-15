@@ -362,6 +362,41 @@ html, body {
 /* ==========================================
    DARK MODE OVERRIDES FOR ADMIN DASHBOARD
    ========================================== */
+
+/* Le cadre de l'espace d'administration. Ses couleurs sont ICI et non dans
+   une classe calculee par React : la classe .dark est posee sur <html> par un
+   script du layout avant la peinture, donc le fond est juste des le premier
+   pixel. Calcule dans le composant, il arrivait un rendu trop tard — et
+   l'espace clignotait en blanc a chaque changement de page. */
+.cadre-admin {
+  background-color: #F8F5EF;
+  color: #1A1A1A;
+}
+.dark .cadre-admin,
+.dark.cadre-admin {
+  background-color: #082F22;
+  color: #ffffff;
+}
+
+/* Les bandeaux de message (components/admin/Etats.tsx). Leurs fonds pastel
+   n'etaient couverts par aucune regle sombre : ils restaient trois taches
+   claires et criardes au milieu d'un ecran sombre. Maintenant qu'ils passent
+   tous par les memes composants, six regles suffisent pour les soixante-dix
+   emplacements. */
+.dark .bg-red-50 {
+  background-color: rgba(220, 38, 38, 0.14) !important;
+  color: #fecaca !important;
+}
+.dark .border-red-200 { border-color: rgba(248, 113, 113, 0.35) !important; }
+.dark .text-red-800 { color: #fecaca !important; }
+
+.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+  color: #a7f3d0 !important;
+}
+.dark .border-emerald-200 { border-color: rgba(52, 211, 153, 0.35) !important; }
+.dark .text-emerald-800 { color: #a7f3d0 !important; }
+
 .dark {
   background-color: #082F22 !important;
   color: #ffffff !important;
