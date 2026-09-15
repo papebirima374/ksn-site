@@ -44,8 +44,10 @@ import {
   htmlRapport,
   htmlSuivi,
   htmlVersements,
+  htmlDossier,
   type LigneSuivi,
 } from "@/lib/impression";
+import BoutonEnvoyer from "@/components/admin/BoutonEnvoyer";
 import { useAuth } from "@/lib/auth-context";
 import { SITE } from "@/lib/constants";
 
@@ -207,6 +209,11 @@ export default function AdminRapportsPage() {
             >
               <FaPrint /> Imprimer le suivi
             </button>
+            <BoutonEnvoyer
+              html={() => htmlSuivi(lignesSuivi)}
+              titre="Suivi des retours de commission"
+              message={`Suivi des retours — ${dernierPar.size} commission(s) sur ${COMMISSIONS.length} ont répondu.`}
+            />
           </div>
         </div>
         <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -326,6 +333,13 @@ export default function AdminRapportsPage() {
                 >
                   {LIBELLE_STATUT[statut]}
                 </span>
+                {dos && statut !== "brouillon" && (
+                  <BoutonEnvoyer
+                    html={() => htmlDossier(dos, c.slug)}
+                    titre={`Dossier — ${c.nom}`}
+                    message={`Dossier de la commission ${c.nom} (${LIBELLE_STATUT[statut].toLowerCase()}).`}
+                  />
+                )}
                 {statut === "transmis" && (
                   <>
                     <button
@@ -360,12 +374,19 @@ export default function AdminRapportsPage() {
               Versements de la trésorerie du Dahira
             </h2>
           </div>
-          <button
-            onClick={() => imprimer(htmlVersements(versements, "Versements aux commissions"))}
-            className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0F7C55]/5 transition"
-          >
-            <FaPrint /> Imprimer le registre
-          </button>
+          <div className="flex flex-wrap items-start gap-3">
+            <button
+              onClick={() => imprimer(htmlVersements(versements, "Versements aux commissions"))}
+              className="inline-flex items-center gap-2 border-2 border-[#0F7C55] text-[#0F7C55] px-4 py-2 rounded-xl text-sm font-bold hover:bg-[#0F7C55]/5 transition"
+            >
+              <FaPrint /> Imprimer le registre
+            </button>
+            <BoutonEnvoyer
+              html={() => htmlVersements(versements, "Versements aux commissions")}
+              titre="Registre des versements"
+              message="Registre des versements de la trésorerie du Dahira aux commissions."
+            />
+          </div>
         </div>
         <p className="text-sm text-[#5C7268] mb-5 leading-6">
           Sommes puisées sur le <b>compte principal</b> du Dahira et remises aux
@@ -525,12 +546,19 @@ export default function AdminRapportsPage() {
                     <Section titre="Moyens nécessaires" texte={r.moyens} />
                     <Section titre="Divers" texte={r.divers} />
 
-                    <button
-                      onClick={() => imprimer(htmlRapport(r))}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-[#0F7C55] hover:underline"
-                    >
-                      <FaPrint /> Imprimer ce rapport
-                    </button>
+                    <div className="flex flex-wrap items-start gap-4">
+                      <button
+                        onClick={() => imprimer(htmlRapport(r))}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-[#0F7C55] hover:underline"
+                      >
+                        <FaPrint /> Imprimer ce rapport
+                      </button>
+                      <BoutonEnvoyer
+                        html={() => htmlRapport(r)}
+                        titre={`Rapport — ${commissionNom(r.commission)}`}
+                        message={`Rapport de la commission ${commissionNom(r.commission)}, reçu le ${dateFr(r.createdAt)}.`}
+                      />
+                    </div>
                   </div>
                 )}
               </article>

@@ -23,6 +23,7 @@
 # sorties des scripts de verification (documents imprimables rendus en PDF)
 /build-impression/
 /build-reglement/
+/build-partage/
 
 # misc
 .DS_Store
