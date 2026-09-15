@@ -63,18 +63,42 @@ export default function Footer() {
     }
   };
 
-  const navLinks = [
+  // Le pied de page reprend EXACTEMENT le regroupement de la barre de
+  // navigation (components/layout/Navbar.tsx). Auparavant il alignait douze
+  // liens en une seule colonne : le visiteur y cherchait « Journee Salaatu »
+  // sous un classement qui n'existait plus nulle part ailleurs sur le site.
+  // Aucune page n'est retiree — elles sont rangees comme en haut.
+  const groupes = [
+    {
+      titre: "Dahira",
+      liens: [
+        { label: "Le Dahira", href: "/dahira" },
+        { label: "Notre Histoire", href: "/notre-histoire" },
+        { label: "Événements", href: "/evenements" },
+      ],
+    },
+    {
+      titre: t("nav.vie_spirituelle"),
+      liens: [
+        { label: t("nav.spiritualite"), href: "/spiritualite" },
+        { label: "Challenge", href: "/challenge" },
+        { label: "Journée Salaatu", href: "/journee-salaatu" },
+      ],
+    },
+    {
+      titre: t("nav.actualites"),
+      liens: [
+        { label: t("nav.media"), href: "/media" },
+        { label: t("nav.blog"), href: "/blog" },
+        { label: "FAQ", href: "/faq" },
+      ],
+    },
+  ];
+
+  /** Les pages qui n'appartiennent a aucun groupe, en une seule ligne. */
+  const liensDirects = [
     { label: t("nav.home"), href: "/" },
-    { label: t("nav.dahira"), href: "/dahira" },
-    { label: "Notre Histoire", href: "/notre-histoire" },
-    { label: t("nav.spiritualite"), href: "/spiritualite" },
-    { label: "Challenge 1 Milliard", href: "/challenge" },
-    { label: "Journée Salaatu", href: "/journee-salaatu" },
-    { label: "Événements", href: "/evenements" },
-    { label: t("nav.media"), href: "/media" },
     { label: t("nav.boutique"), href: "/boutique" },
-    { label: t("nav.blog"), href: "/blog" },
-    { label: "FAQ", href: "/faq" },
     { label: t("nav.contact"), href: "/contact" },
   ];
 
@@ -111,46 +135,60 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
+          <div className="sm:col-span-2">
             <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
               {t("footer.navigation")}
             </h4>
-            <div className="mt-4 sm:mt-5 flex flex-col gap-2.5 sm:gap-3 text-white/70 text-sm sm:text-base">
-              {navLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="hover:text-[#D4AF37] transition"
-                >
-                  {item.label}
+            <div className="mt-4 sm:mt-5 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6">
+              {groupes.map((g) => (
+                <div key={g.titre}>
+                  <p className="text-white/50 text-xs font-bold uppercase tracking-wider">
+                    {g.titre}
+                  </p>
+                  <div className="mt-2.5 flex flex-col gap-2 text-white/70 text-sm">
+                    {g.liens.map((l) => (
+                      <Link
+                        key={l.href}
+                        href={l.href}
+                        className="hover:text-[#D4AF37] transition"
+                      >
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-white/10 pt-4 text-white/70 text-sm">
+              {liensDirects.map((l) => (
+                <Link key={l.href} href={l.href} className="hover:text-[#D4AF37] transition">
+                  {l.label}
                 </Link>
               ))}
             </div>
           </div>
 
+          {/* Contact et reseaux ne font plus qu'une colonne. Trois doublons en
+              sont sortis : WhatsApp y figurait en lien ET en icone, l'adresse
+              du site y etait alors qu'elle est deja en bas a droite, et la
+              devise du Dahira s'y repetait — la barre du haut la porte deja,
+              sur le meme ecran. */}
           <div>
             <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
               {t("footer.contact")}
             </h4>
-            <div className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3 text-white/70 text-sm sm:text-base">
-              <p>📍 {t("site.location")}</p>
-              <p>🌐 {SITE.domain}</p>
-              <a
-                href={LINKS.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 hover:text-[#D4AF37] transition"
-              >
-                <FaWhatsapp /> WhatsApp
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="text-[#D4AF37] font-bold text-base sm:text-lg">
+            <p className="mt-4 sm:mt-5 text-white/70 text-sm sm:text-base">
+              📍 {t("site.location")}
+            </p>
+            <p className="mt-5 text-white/50 text-xs font-bold uppercase tracking-wider">
               {t("footer.suivez")}
-            </h4>
-            <div className="mt-4 sm:mt-5 grid grid-cols-3 gap-2">
+            </p>
+            {/* Des boutons de taille fixe, et non `aspect-square` : dans une
+                colonne etroite, trois carres elastiques donnaient des pastilles
+                de 115 px et plus de 300 px de pied de page sur un telephone.
+                44 px, c'est la taille ou le doigt vise juste. Trois par rangee,
+                donc deux rangees pleines — aucune icone esseulee. */}
+            <div className="mt-2.5 grid w-fit grid-cols-3 gap-2">
               {SOCIALS.map((s) => {
                 const Icon = s.Icon;
                 return (
@@ -161,7 +199,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     aria-label={s.name}
                     title={s.name}
-                    className="aspect-square flex items-center justify-center rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F7C55] text-white transition"
+                    className="w-11 h-11 flex items-center justify-center rounded-xl bg-white/10 hover:bg-[#D4AF37] hover:text-[#0F7C55] text-white transition"
                   >
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   </a>
@@ -169,9 +207,6 @@ export default function Footer() {
               })}
             </div>
 
-            <p className="mt-5 text-white/70 leading-7 italic text-xs sm:text-sm">
-              {SITE.motto}
-            </p>
           </div>
         </div>
 
