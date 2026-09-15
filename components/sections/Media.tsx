@@ -42,22 +42,13 @@ export default function Media() {
       className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28"
     >
       <div className="bg-white rounded-[45px] shadow-[0_20px_80px_rgba(0,0,0,0.08)] overflow-hidden">
+        {/* Pas d'en-tete ici. Ce bloc n'est utilise QUE dans l'onglet
+            « Activites » de la page /media, dont le titre affiche deja
+            « Media KSN » et « Activites du Dahira & Vie Communautaire » —
+            les memes cles de traduction, mot pour mot, deux cents pixels
+            plus haut. */}
         <div className="p-6 sm:p-12 md:p-16">
-          <div className="text-center">
-            <span className="uppercase tracking-[0.25em] text-[#B8860B] font-semibold">
-              {t("section.media_ksn")}
-            </span>
-
-            <h2 className="mt-4 text-4xl md:text-5xl font-bold text-[#0F7C55]">
-              {t("section.media_title")}
-            </h2>
-
-            <p className="mt-6 text-gray-600 max-w-3xl mx-auto leading-8">
-              {t("media.desc")}
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-8 mt-16">
+          <div className="grid lg:grid-cols-3 gap-8">
             {MEDIA_CARDS.map((card) => (
               <div
                 key={card.title}
