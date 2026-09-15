@@ -12,7 +12,6 @@ import {
   FaTrash,
   FaPenToSquare,
   FaCircleCheck,
-  FaLocationDot,
   FaFilePdf,
   FaTrashCan,
   FaCoins,
@@ -20,17 +19,30 @@ import {
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
 import { Chargement, Message } from "@/components/admin/Etats";
+import type { buildMemberCardsPdf } from "@/lib/member-cards-pdf";
+import {
+  CATEGORIE_COTISATION,
+  CATEGORIE_INSCRIPTION,
+  MOIS,
+  aPayeCotisation,
+  aPayeInscription,
+  descriptionCotisation,
+} from "@/lib/cotisations";
 import { useAuth } from "@/lib/auth-context";
-import { hasPermission, Member, FinanceEntry, FINANCE_METHODS } from "@/lib/admin-types";
+import {
+  hasPermission,
+  AppUser,
+  Member,
+  FinanceEntry,
+  FINANCE_METHODS,
+} from "@/lib/admin-types";
 import {
   listMembers,
   deleteMember,
   deleteAllMembers,
-  updateMember,
   validateMember,
   importMembersFromJson,
   backfillPublicCards,
-  backfillVilleFromDomicile,
   ImportMember,
   ImportReport,
   listFinanceEntries,
@@ -43,6 +55,10 @@ const STATUS_FR: Record<string, string> = {
   en_attente: "En attente",
   inactif: "Inactifs",
 };
+
+/** Ce que rend buildMemberCardsPdf — un document jsPDF, sans avoir a importer
+ *  jsPDF ici (la librairie ne se charge qu'a la demande, cf. ligne ~224). */
+type DocumentPdf = Awaited<ReturnType<typeof buildMemberCardsPdf>>;
 
 export default function AdminMembresPage() {
   const { user } = useAuth();
@@ -66,7 +82,9 @@ export default function AdminMembresPage() {
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
   const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
   const [previewPdfName, setPreviewPdfName] = useState<string>("");
-  const [pdfDocInstance, setPdfDocInstance] = useState<any>(null);
+  // Le type est celui que rend buildMemberCardsPdf : on le deduit d'elle plutot
+  // que de le nommer, pour qu'il suive si elle change.
+  const [pdfDocInstance, setPdfDocInstance] = useState<DocumentPdf | null>(null);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   // Planche de cartes PDF (membres avec photo)
   const [printMembers, setPrintMembers] = useState<Member[] | null>(null);
@@ -74,45 +92,15 @@ export default function AdminMembresPage() {
   const [printStatus, setPrintStatus] = useState("");
   const printRef = useRef<HTMLDivElement>(null);
 
-  const MONTHS_FR = useMemo(
-    () => [
-      "Janvier",
-      "Février",
-      "Mars",
-      "Avril",
-      "Mai",
-      "Juin",
-      "Juillet",
-      "Août",
-      "Septembre",
-      "Octobre",
-      "Novembre",
-      "Décembre",
-    ],
-    []
-  );
-
-  const hasPaidInscription = (memberId: string) => {
-    return financeEntries.some(
-      (e) =>
-        e.memberId === memberId &&
-        e.type === "income" &&
-        e.category === "Frais d'inscription"
-    );
-  };
-
-  const hasPaidCotisationThisMonth = (memberId: string) => {
-    const monthName = MONTHS_FR[new Date().getMonth()];
-    const year = new Date().getFullYear();
-    const matchStr = `${monthName} ${year}`.toLowerCase();
-    return financeEntries.some(
-      (e) =>
-        e.memberId === memberId &&
-        e.type === "income" &&
-        e.category === "Cotisation mensuelle" &&
-        e.description?.toLowerCase().includes(matchStr)
-    );
-  };
+  // La correspondance vit dans lib/cotisations.ts : c'est le meme code qui
+  // ECRIT la description et qui la RELIT. Elle etait ici, et l'ecran des
+  // Finances ecrivait autre chose de son cote.
+  // Pas de useCallback : le compilateur React est actif sur ce projet et
+  // memorise ce qu'il faut. Une memorisation ecrite a la main lui fait
+  // ABANDONNER l'optimisation de tout le composant quand il ne peut pas la
+  // reproduire — on lui laisse donc la main.
+  const hasPaidInscription = (memberId: string) => aPayeInscription(financeEntries, memberId);
+  const hasPaidCotisationThisMonth = (memberId: string) => aPayeCotisation(financeEntries, memberId);
 
   async function handleDeleteAll() {
     if (!canDelete) return;
@@ -323,7 +311,9 @@ export default function AdminMembresPage() {
     [members]
   );
 
-  const filtered = useMemo(() => {
+  // Idem : le calcul est ecrit simplement, le compilateur s'occupe de ne pas
+  // le refaire pour rien.
+  const filtered = ((): Member[] => {
     const q = search.toLowerCase().trim();
     return members.filter((m) => {
       if (fRegion !== "all" && m.region !== fRegion) return false;
@@ -343,7 +333,7 @@ export default function AdminMembresPage() {
       const hay = `${m.prenom} ${m.nom} ${m.matricule} ${m.email ?? ""} ${m.telephone ?? ""} ${m.ville ?? ""} ${m.region ?? ""} ${m.profession ?? ""}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [members, search, fRegion, fVille, fProf, fStatus, fPayment, financeEntries]);
+  })();
 
   async function handleDelete(member: Member) {
     if (!canDelete) return;
@@ -370,7 +360,7 @@ export default function AdminMembresPage() {
         <div className="p-8 text-center bg-white rounded-3xl shadow-md my-12">
           <h2 className="font-display text-2xl font-bold text-red-600 mb-2">Accès refusé</h2>
           <p className="text-gray-600">
-            Vous n'avez pas les droits nécessaires pour accéder à la liste des membres.
+            Vous n&apos;avez pas les droits nécessaires pour accéder à la liste des membres.
           </p>
         </div>
       </AdminShell>
@@ -740,7 +730,7 @@ export default function AdminMembresPage() {
               ) : (
                 <div className="w-full h-full flex flex-col gap-3">
                   <p className="text-xs text-gray-500 text-center sm:text-left">
-                    💡 Sur certains navigateurs mobiles, l'aperçu PDF peut ne pas s'afficher directement. Utilisez le bouton "Télécharger" ci-dessous pour enregistrer le fichier.
+                    💡 Sur certains navigateurs mobiles, l&apos;aperçu PDF peut ne pas s&apos;afficher directement. Utilisez le bouton «&nbsp;Télécharger&nbsp;» ci-dessous pour enregistrer le fichier.
                   </p>
                   <iframe
                     src={previewPdfUrl}
@@ -938,7 +928,7 @@ function ImportModal({
 // ============ RECORD PAYMENT MODAL ============
 interface RecordPaymentModalProps {
   member: Member;
-  user: any;
+  user: AppUser | null;
   onClose: () => void;
   onDone: () => void;
 }
@@ -949,26 +939,11 @@ function RecordPaymentModal({
   onClose,
   onDone,
 }: RecordPaymentModalProps) {
-  const MONTHS_FR = [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
-  ];
-
   const currentYear = new Date().getFullYear();
   const YEARS = [currentYear - 1, currentYear, currentYear + 1, currentYear + 2];
 
-  const [category, setCategory] = useState("Cotisation mensuelle");
-  const [selectedMonth, setSelectedMonth] = useState(MONTHS_FR[new Date().getMonth()]);
+  const [category, setCategory] = useState<string>(CATEGORIE_COTISATION);
+  const [selectedMonth, setSelectedMonth] = useState<string>(MOIS[new Date().getMonth()]);
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [amount, setAmount] = useState(500);
   const [method, setMethod] = useState("Wave");
@@ -978,10 +953,10 @@ function RecordPaymentModal({
   const [error, setError] = useState("");
 
   const generatedDescription = useMemo(() => {
-    if (category === "Cotisation mensuelle") {
-      return `Cotisation - ${selectedMonth} ${selectedYear}`;
+    if (category === CATEGORIE_COTISATION) {
+      return descriptionCotisation(selectedMonth, selectedYear);
     }
-    return "Frais d'inscription";
+    return CATEGORIE_INSCRIPTION;
   }, [category, selectedMonth, selectedYear]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -990,7 +965,9 @@ function RecordPaymentModal({
     setError("");
     setRunning(true);
     try {
-      const entryData: any = {
+      // Le type attendu par createFinanceEntry, plutot que « any » : une faute
+      // de frappe sur un champ se voyait a l'execution, pas a la compilation.
+      const entryData: Omit<FinanceEntry, "id" | "recordedAt"> = {
         type: "income",
         category,
         amount: Number(amount),
@@ -1050,11 +1027,11 @@ function RecordPaymentModal({
               <button
                 type="button"
                 onClick={() => {
-                  setCategory("Cotisation mensuelle");
+                  setCategory(CATEGORIE_COTISATION);
                   setAmount(500);
                 }}
                 className={`py-2 px-3 rounded-xl border text-xs font-bold text-center transition ${
-                  category === "Cotisation mensuelle"
+                  category === CATEGORIE_COTISATION
                     ? "border-[#0F7C55] bg-[#0F7C55]/5 text-[#0F7C55]"
                     : "border-gray-200 hover:bg-gray-50 text-gray-600"
                 }`}
@@ -1073,12 +1050,12 @@ function RecordPaymentModal({
                     : "border-gray-200 hover:bg-gray-50 text-gray-600"
                 }`}
               >
-                Frais d'inscription
+                Frais d&apos;inscription
               </button>
             </div>
           </div>
 
-          {category === "Cotisation mensuelle" && (
+          {category === CATEGORIE_COTISATION && (
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-[#0F7C55] mb-1.5">
@@ -1089,7 +1066,7 @@ function RecordPaymentModal({
                   onChange={(e) => setSelectedMonth(e.target.value)}
                   className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-[#0F7C55] bg-white"
                 >
-                  {MONTHS_FR.map((m) => (
+                  {MOIS.map((m) => (
                     <option key={m} value={m}>{m}</option>
                   ))}
                 </select>

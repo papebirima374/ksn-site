@@ -82,7 +82,11 @@ export default function AdminGaleriePage() {
   }
 
   useEffect(() => {
-    reload();
+    // Differe d'un tour de boucle : reload() met l'etat a jour des sa premiere
+    // ligne, et le faire dans le corps de l'effet declenche un rendu en
+    // cascade. Meme procede que les autres ecrans d'administration.
+    const id = setTimeout(reload, 0);
+    return () => clearTimeout(id);
   }, []);
 
   async function handleUpload(e: FormEvent<HTMLFormElement>) {

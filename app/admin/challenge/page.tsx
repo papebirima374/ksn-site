@@ -134,7 +134,9 @@ export default function AdminChallengePage() {
       }
       setLoading(false);
     });
-    reloadMedia();
+    // Differe : reloadMedia() met l'etat a jour, et l'appeler dans le corps de
+    // l'effet declenche un rendu en cascade.
+    const idMedia = setTimeout(reloadMedia, 0);
     const unsubContribs = subscribeContributions(setContribs);
 
     // Charger les paramètres (dont la date du Gàmmu)
@@ -150,10 +152,10 @@ export default function AdminChallengePage() {
     })();
 
     return () => {
+      clearTimeout(idMedia);
       unsubTotal();
       unsubContribs();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [peutGerer]);
 
   async function handleAdd() {
@@ -206,8 +208,6 @@ export default function AdminChallengePage() {
       setError(e instanceof Error ? e.message : "Erreur de suppression");
     }
   }
-
-  const contribTotal = contribs.reduce((s, c) => s + (c.amount || 0), 0);
 
   // Jours disponibles (avec compteur), triés du plus récent au plus ancien
   const availableDays = useMemo(() => {
