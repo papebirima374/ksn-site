@@ -129,7 +129,9 @@ const STYLE = `
   td{padding:1.2mm 0;vertical-align:top}
   td.k{width:42mm;font-weight:700;color:#082F22}
 
-  .signs{display:flex;gap:12mm;margin-top:14mm;padding:0 14mm}
+  /* Insecable : un trait de signature sur une feuille et sa legende sur la
+     suivante, c'est une piece qu'on ne peut plus faire signer. */
+  .signs{display:flex;gap:12mm;margin-top:14mm;padding:0 14mm;break-inside:avoid}
   .signs div{flex:1;text-align:center}
   .signs i{display:block;border-top:.3mm solid #9BB0A6;margin-bottom:1.5mm}
   .signs span{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5C7268}
