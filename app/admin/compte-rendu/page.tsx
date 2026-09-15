@@ -26,6 +26,7 @@ import {
   FaEyeSlash,
 } from "react-icons/fa6";
 import { Chargement, Message } from "@/components/admin/Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -78,11 +79,7 @@ export default function CompteRenduPage() {
       setEtat("enregistre");
       setMessage("");
     } catch (e) {
-      setMessage(
-        e instanceof Error && /permission/i.test(e.message)
-          ? "Enregistrement refusé. Les règles Firestore doivent être publiées."
-          : "Enregistrement impossible. Vérifiez votre connexion."
-      );
+      setMessage(messageEcriture(e, "l'enregistrement"));
     }
   }
 

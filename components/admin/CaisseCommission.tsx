@@ -21,6 +21,7 @@ import {
 } from "@/lib/commission-caisse";
 import type { MembreCommission } from "@/lib/commission-membres";
 import { Message } from "./Etats";
+import { messageEcriture, messageLecture } from "@/lib/message-erreur";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -47,6 +48,7 @@ export default function CaisseCommission({
 }) {
   const [ecritures, setEcritures] = useState<Ecriture[]>([]);
   const [erreur, setErreur] = useState("");
+  const [confirmation, setConfirmation] = useState("");
   const [sens, setSens] = useState<Sens>("entree");
   const [montant, setMontant] = useState("");
   const [motif, setMotif] = useState("");
@@ -57,11 +59,7 @@ export default function CaisseCommission({
   useEffect(() => {
     if (!pret) return;
     return subscribeCaisse(slug, setEcritures, (e) =>
-      setErreur(
-        /permission/i.test(e.message)
-          ? "Accès à la caisse refusé. Vérifiez que les règles Firestore publiées sont à jour."
-          : "Caisse indisponible pour le moment."
-      )
+      setErreur(messageLecture(e, "les écritures de la caisse"))
     );
   }, [slug, pret]);
 
@@ -94,8 +92,8 @@ export default function CaisseCommission({
       setMotif("");
       setMatricule("");
       setErreur("");
-    } catch {
-      setErreur("Enregistrement impossible. Vérifiez votre connexion.");
+    } catch (e) {
+      setErreur(messageEcriture(e, "l'enregistrement"));
     } finally {
       setEnvoi(false);
     }
@@ -126,9 +124,8 @@ export default function CaisseCommission({
         </p>
       </section>
 
-      {erreur && (
-        <Message ton="erreur">{erreur}</Message>
-      )}
+      <Message ton="erreur">{erreur}</Message>
+      <Message ton="succes">{confirmation}</Message>
 
       {/* ── Nouvelle écriture ───────────────────────────────────────── */}
       <form onSubmit={enregistrer} className="rounded-2xl border border-[#0F7C55]/12 bg-white p-5 sm:p-6">
@@ -264,8 +261,15 @@ export default function CaisseCommission({
                             return;
                           try {
                             await annulerEcriture(e, signature);
-                          } catch {
-                            setErreur("Annulation impossible. Vérifiez votre connexion.");
+                            // On CONFIRME. Sans cela, une annulation qui
+                            // n'aboutit pas et une qui aboutit se ressemblent :
+                            // dans les deux cas, on regarde une liste.
+                            setErreur("");
+                            setConfirmation(`« ${e.motif} » a été annulée. L'écriture inverse apparaît ci-dessous.`);
+                            setTimeout(() => setConfirmation(""), 6000);
+                          } catch (err) {
+                            setConfirmation("");
+                            setErreur(messageEcriture(err, "l'annulation"));
                           }
                         }}
                         className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:underline"

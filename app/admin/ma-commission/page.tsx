@@ -68,6 +68,7 @@ import {
   FaListCheck,
 } from "react-icons/fa6";
 import { Message } from "@/components/admin/Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 /** useSearchParams() force le rendu cote client de tout ce qui l'entoure
  *  jusqu'a la frontiere Suspense la plus proche (cf. la documentation de
@@ -219,11 +220,7 @@ function EspaceCommission() {
       setMessage("");
     } catch (e) {
       setEtat("erreur");
-      setMessage(
-        e instanceof Error && /permission/i.test(e.message)
-          ? "Enregistrement refusé. Les règles Firestore doivent être publiées (voir firestore.rules)."
-          : "Enregistrement impossible. Vérifiez votre connexion."
-      );
+      setMessage(messageEcriture(e, "l'enregistrement"));
     }
   }
 
@@ -242,8 +239,8 @@ function EspaceCommission() {
     try {
       await transmettreDossier(d.commission, signature);
       setMessage("");
-    } catch {
-      setMessage("Transmission impossible. Vérifiez votre connexion.");
+    } catch (e) {
+      setMessage(messageEcriture(e, "la transmission au Secrétariat"));
     }
   }
 

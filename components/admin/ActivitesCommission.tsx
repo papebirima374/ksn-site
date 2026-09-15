@@ -22,6 +22,7 @@ import {
 } from "@/lib/commission-activites";
 import { fcfa } from "@/lib/commission-caisse";
 import { Message } from "./Etats";
+import { messageEcriture } from "@/lib/message-erreur";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -92,7 +93,7 @@ export default function ActivitesCommission({
       setOuvert(false);
       setErreur("");
     } catch {
-      setErreur("Enregistrement impossible. Vérifiez votre connexion.");
+      setErreur(messageEcriture(e, "l'enregistrement"));
     }
   }
 
