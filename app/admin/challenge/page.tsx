@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { slugFromNom } from "@/lib/commissions";
 import {
@@ -284,7 +285,7 @@ export default function AdminChallengePage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : (
         <div className="space-y-6 max-w-xl">
           {/* CARTE PRINCIPALE DU COMPTEUR */}
@@ -373,14 +374,10 @@ export default function AdminChallengePage() {
                 </div>
 
                 {error && (
-                  <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-                    {error}
-                  </p>
+                  <Message ton="erreur">{error}</Message>
                 )}
                 {success && (
-                  <p className="text-sm text-emerald-800 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-                    {success}
-                  </p>
+                  <Message ton="succes">{success}</Message>
                 )}
 
                 <div className="flex flex-wrap gap-2 pt-2">

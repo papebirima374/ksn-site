@@ -22,10 +22,10 @@ import {
   FaPrint,
   FaFileLines,
   FaCircleCheck,
-  FaTriangleExclamation,
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa6";
+import { Chargement, Message } from "@/components/admin/Etats";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -130,17 +130,14 @@ export default function CompteRenduPage() {
       </div>
 
       {message && (
-        <p className="mb-5 flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
-          <FaTriangleExclamation className="flex-none mt-0.5" />
-          <span>{message}</span>
-        </p>
+        <Message ton="erreur" className="mb-5">{message}</Message>
       )}
 
       {/* ── Liste ─────────────────────────────────────────────────────── */}
       {!cr && (
         <div className="space-y-3">
           {liste === null ? (
-            <p className="text-[#5C7268]">Chargement…</p>
+            <Chargement />
           ) : visibles.length === 0 ? (
             <p className="bg-white rounded-2xl border border-[#0F7C55]/12 p-10 text-center text-[#5C7268]">
               Aucun compte rendu pour l&apos;instant.

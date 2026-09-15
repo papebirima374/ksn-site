@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaPlus, FaTrash, FaPenToSquare } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, Article } from "@/lib/admin-types";
 import { listArticles, deleteArticle } from "@/lib/admin-data";
@@ -64,13 +65,11 @@ export default function AdminArticlesPage() {
       </header>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : items.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 sm:p-12 text-center">
           <p className="text-gray-500">

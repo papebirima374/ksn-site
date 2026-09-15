@@ -14,6 +14,7 @@ import {
   broadcastNotificationToPerm,
 } from "@/lib/admin-data";
 import { COMMON_PROFESSIONS, SENEGAL_REGIONS } from "@/lib/regions";
+import { Message } from "./Etats";
 
 type Props = { initial?: Member };
 
@@ -438,9 +439,7 @@ export default function MemberForm({ initial }: Props) {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-          {error}
-        </p>
+        <Message ton="erreur">{error}</Message>
       )}
 
       <div className="flex flex-wrap gap-3">

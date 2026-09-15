@@ -19,6 +19,7 @@ import {
   FaXmark,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, Member, FinanceEntry, FINANCE_METHODS } from "@/lib/admin-types";
 import {
@@ -540,13 +541,11 @@ export default function AdminMembresPage() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 sm:p-12 text-center">
           <p className="text-gray-500">
@@ -890,8 +889,8 @@ function ImportModal({
         )}
 
         {report && (
-          <div className="mt-3 text-sm bg-emerald-50 rounded-xl p-3 border border-emerald-200 text-emerald-800">
-            ✅ {report.inserted} membre{report.inserted > 1 ? "s" : ""} importé
+          <Message ton="succes" className="mt-3">
+            {report.inserted} membre{report.inserted > 1 ? "s" : ""} importé
             {report.inserted > 1 ? "s" : ""}, {report.skipped} ignoré
             {report.skipped > 1 ? "s" : ""} (doublons).
             {report.errors.length > 0 && (
@@ -901,7 +900,7 @@ function ImportModal({
                 ))}
               </ul>
             )}
-          </div>
+          </Message>
         )}
 
         <div className="mt-5 flex gap-3 justify-end">

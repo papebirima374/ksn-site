@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { slugFromNom } from "@/lib/commissions";
 import {
@@ -143,18 +144,14 @@ export default function AdminParametresJourneePage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : (
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-md p-6 sm:p-8 space-y-5">
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
+            <Message ton="erreur">{error}</Message>
           )}
           {success && (
-            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-              {success}
-            </p>
+            <Message ton="succes">{success}</Message>
           )}
 
           <div className="grid sm:grid-cols-2 gap-5">
@@ -286,9 +283,7 @@ export default function AdminParametresJourneePage() {
           </div>
 
           {lienMsg && (
-            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-              {lienMsg}
-            </p>
+            <Message ton="succes">{lienMsg}</Message>
           )}
           {lienErreur && (
             <p className="text-sm text-red-700 bg-red-50 rounded-xl p-3 border border-red-200">

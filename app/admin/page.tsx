@@ -37,6 +37,7 @@ import {
   listPremiumPurchases,
 } from "@/lib/admin-data";
 import type { PremiumPurchase } from "@/lib/admin-types";
+import { Chargement } from "@/components/admin/Etats";
 
 // Sections rapides en bas (raccourcis)
 const SECTIONS = [
@@ -328,7 +329,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
           {loadingMembers ? (
-            <p className="text-gray-400 text-sm">Chargement…</p>
+            <Chargement />
           ) : recentMembers.length === 0 ? (
             <p className="text-gray-400 text-sm">Aucun membre pour l&apos;instant.</p>
           ) : (

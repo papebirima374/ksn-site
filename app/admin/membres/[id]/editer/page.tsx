@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import MemberForm from "@/components/admin/MemberForm";
 import { getMember } from "@/lib/admin-data";
 import { Member } from "@/lib/admin-types";
@@ -41,11 +42,9 @@ export default function EditMemberPage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : error ? (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-          {error}
-        </p>
+        <Message ton="erreur">{error}</Message>
       ) : member ? (
         <MemberForm initial={member} />
       ) : null}

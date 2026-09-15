@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
+import { Message } from "@/components/admin/Etats";
 
 export default function LoginPage() {
   const { signIn, user, loading, configured } = useAuth();
@@ -96,9 +97,7 @@ export default function LoginPage() {
           />
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
+            <Message ton="erreur">{error}</Message>
           )}
 
           <button

@@ -13,6 +13,7 @@ import {
   FaCircleInfo,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission } from "@/lib/admin-types";
 import type {
@@ -208,9 +209,7 @@ export default function AdminPremiumPaiementsPage() {
         </p>
       )}
       {success && (
-        <p className="text-sm text-emerald-800 bg-emerald-50 rounded-xl p-3 border border-emerald-200 mb-4">
-          {success}
-        </p>
+        <Message ton="succes" className="mb-4">{success}</Message>
       )}
 
       {/* TABS */}
@@ -239,7 +238,7 @@ export default function AdminPremiumPaiementsPage() {
 
       {/* LIST */}
       {loading ? (
-        <p className="text-sm text-gray-500">Chargement…</p>
+        <Chargement />
       ) : filtered.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center">
           <FaCrown className="text-4xl text-gray-300 mx-auto mb-3" />
