@@ -170,6 +170,32 @@ const dossier = {
   valideAt: Date.now(), validePar: "Secrétariat", updatedAt: Date.now(), updatedBy: "X",
 };
 
+/* Un versement recu et une feuille de route : ce sont les deux autres
+   documents qu'un responsable de commission envoie depuis son espace. */
+const versement = {
+  id: "v1", de: "finances", vers: "organisation", montant: 150000,
+  motif: "Dotation pour la Journée Salaatu 'Alaa Nabii",
+  moyen: "Espèces", reference: "", date: "2026-09-10",
+  envoyePar: "Serigne Massamba Mbaye", envoyeAt: Date.now(),
+  statut: "recu", recuPar: "Serigne Saliou Lô", recuAt: Date.now(),
+  observation: "Reçu en espèces, remis au trésorier de la commission",
+  ecritureEmetteur: "e1", ecritureDestinataire: "e2",
+  annulePar: "", annuleAt: 0, motifAnnulation: "",
+};
+
+const taches = [
+  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 76 528 59 11", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
+  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 11 22", "2026-09-18", 40000, 0, "en_cours", ""],
+  ["Transport des invités depuis Dakar", "Cheikh Fall", "", "2026-09-18", 120000, 60000, "en_cours", "Deux cars réservés"],
+  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 76 333 44 55", "2026-09-19", 250000, 0, "a_faire", ""],
+  ["Groupe électrogène de secours", "Ibrahima Ndoye", "", "2026-09-10", 60000, 0, "bloque", "Le loueur n'a pas confirmé"],
+  ["Affiches et banderole d'accueil", "Serigne Birima Gueye", "", "", 30000, 28500, "fait", ""],
+].map(([libelle, responsable, responsableTelephone, echeance, budget, depense, statut, detail], i) => ({
+  id: `t${i}`, commission: "organisation", libelle, detail, responsable,
+  responsableTelephone, echeance, budget, depense, statut,
+  createdAt: Date.now() - i * 1000, createdBy: "Organisation", updatedAt: Date.now(),
+}));
+
 const navigateur = await puppeteer.launch({ executablePath: CHROME, args: ["--no-sandbox"] });
 const page = await navigateur.newPage();
 // Une erreur de module se produit AVANT tout appel : sans cette écoute, le
@@ -277,6 +303,8 @@ async function fabriquer(nomTest, expression, feuillesAttendues) {
 
 await fabriquer("dossier-education", `window.I.htmlDossier(${JSON.stringify(dossier)}, "education-culture")`, 2);
 await fabriquer("fiche-vierge", `window.I.htmlFicheVierge("organisation")`, 1);
+await fabriquer("recu-versement", `window.I.htmlRecuVersement(${JSON.stringify(versement)})`, 1);
+await fabriquer("feuille-de-route", `window.I.htmlPreparation(${JSON.stringify(taches)}, "Organisation")`, 1);
 
 console.log("\n── Nom du fichier joint ──");
 const noms = await page.evaluate(() => [
