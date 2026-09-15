@@ -960,7 +960,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     // FAQ Q&As
     "faq.cat1_title": "Dahira KSN",
     "faq.q1_1": "Qu'est-ce que le Dahira Kippangog Salaatu ʿAlaa Nabii ?",
-    "faq.a1_1": "Le Dahira KSN éne organisation religieuse à but non lucratif fondée le 2 janvier 2021 à Touba, Sénégal. Sa mission est de promouvoir la prière sur le Prophète Muhammad ﷺ (Salaatu) à travers une communauté internationale structurée, des activités spirituelles régulières et un engagement collectif quotidien.",
+    "faq.a1_1": "Le Dahira KSN est une organisation religieuse à but non lucratif fondée le 2 janvier 2021 à Touba, Sénégal. Sa mission est de promouvoir la prière sur le Prophète Muhammad ﷺ (Salaatu) à travers une communauté internationale structurée, des activités spirituelles régulières et un engagement collectif quotidien.",
     "faq.q1_2": "Qui peut rejoindre le Dahira KSN ?",
     "faq.a1_2": "Toute personne aimant le Prophète Muhammad ﷺ peut rejoindre, quel que soit son pays, sa langue ou son origine. L'adhésion est ouverte aux musulmans du monde entier qui souhaitent multiplier les Salaatu individuels et participer à la dynamique communautaire du Dahira.",
     "faq.q1_3": "Le Dahira est-il rattaché à une confrérie ou à un Cheikh particulier ?",
