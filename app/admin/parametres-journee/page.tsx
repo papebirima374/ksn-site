@@ -6,9 +6,11 @@ import { useAuth } from "@/lib/auth-context";
 import {
   getJourneeSettings,
   saveJourneeSettings,
+  getStreamingLink,
+  saveStreamingLink,
   JourneeSettings,
 } from "@/lib/admin-data";
-import { FaCalendarDays, FaLocationDot, FaFloppyDisk } from "react-icons/fa6";
+import { FaCalendarDays, FaLocationDot, FaFloppyDisk, FaYoutube } from "react-icons/fa6";
 
 // Fallback hardcoded : visible si Firestore ne contient encore aucun parametre.
 // Cette valeur est aussi utilisee par EventCountdown / JourneeBanner /
@@ -48,11 +50,25 @@ export default function AdminParametresJourneePage() {
   const [location, setLocation] = useState("");
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
 
+  // Le lien du direct YouTube. Il vivait dans /admin/salaatu, c'est-a-dire
+  // sous « Salaatu du jour » — la priere quotidienne, qui n'a rien a voir avec
+  // la Journee. Deux choses portant presque le meme nom, rangees ensemble : on
+  // le cherchait la ou il n'etait pas. Sa place est ici, avec la date et le
+  // lieu de l'evenement qu'il retransmet.
+  const [lienDirect, setLienDirect] = useState("");
+  const [enregistreLien, setEnregistreLien] = useState(false);
+  const [lienMsg, setLienMsg] = useState("");
+  const [lienErreur, setLienErreur] = useState("");
+
   // Chargement initial
   useEffect(() => {
     (async () => {
       try {
-        const s = await getJourneeSettings();
+        const [s, lien] = await Promise.all([
+          getJourneeSettings(),
+          getStreamingLink().catch(() => ""),
+        ]);
+        setLienDirect(lien);
         const current = s ?? FALLBACK;
         setDateInput(isoToLocalInput(current.dateIso));
         setLabel(current.label);
@@ -111,11 +127,11 @@ export default function AdminParametresJourneePage() {
           Configuration
         </p>
         <h1 className="font-display mt-2 text-3xl sm:text-4xl font-bold text-[#0F7C55]">
-          Date de la Journée Salaatu
+          Journée Salaatu
         </h1>
         <p className="mt-2 text-gray-600 text-sm max-w-2xl">
-          Modifiez ici la date de la prochaine édition. Cela met à jour
-          automatiquement le compte à rebours de la home et de la page{" "}
+          La date, le lieu et le lien du direct de la prochaine édition. La date
+          met à jour le compte à rebours de l&apos;accueil et de la page{" "}
           <code className="bg-gray-100 px-1.5 py-0.5 rounded">/journee-salaatu</code>.
         </p>
       </header>
@@ -208,6 +224,83 @@ export default function AdminParametresJourneePage() {
         </form>
       )}
 
+      {/* ── Le direct de la Journée ─────────────────────────────────────── */}
+      {!loading && (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setEnregistreLien(true);
+            setLienMsg("");
+            setLienErreur("");
+            try {
+              await saveStreamingLink(lienDirect.trim());
+              setLienMsg("✓ Lien du direct enregistré. Rechargez la page pour le vérifier.");
+              setTimeout(() => setLienMsg(""), 6000);
+            } catch (err) {
+              // Un echec doit se VOIR. Auparavant il n'allait que dans la
+              // console du navigateur : le bouton s'arretait de tourner, rien
+              // ne s'affichait, et on repartait en croyant le lien enregistre.
+              console.error("Enregistrement du lien du direct :", err);
+              setLienErreur(
+                "Le lien n'a PAS été enregistré. Vérifiez que les règles Firestore publiées autorisent la collection « config », puis réessayez."
+              );
+            } finally {
+              setEnregistreLien(false);
+            }
+          }}
+          className="mt-8 bg-white rounded-3xl shadow-md p-6 sm:p-8 space-y-4"
+        >
+          <div>
+            <h2 className="font-display text-xl font-bold text-[#0F7C55]">
+              <FaYoutube className="inline mr-2 text-[#B8860B]" />
+              Direct YouTube de la Journée
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Le lien de la retransmission en direct, affiché sur la page{" "}
+              <code className="bg-gray-100 px-1.5 py-0.5 rounded">/journee-salaatu</code>{" "}
+              le jour de l&apos;événement. Laissez vide tant qu&apos;il n&apos;y a pas de direct.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+              Lien du direct
+            </label>
+            <input
+              type="text"
+              value={lienDirect}
+              onChange={(e) => setLienDirect(e.target.value)}
+              placeholder="ex : https://youtube.com/live/Ea-OwQNhH0I"
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-[#0F7C55] bg-white"
+            />
+            <p className="mt-1.5 text-xs text-gray-500">
+              Les trois formes conviennent : youtube.com/live/…, youtu.be/… ou
+              youtube.com/watch?v=…
+            </p>
+          </div>
+
+          {lienMsg && (
+            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+              {lienMsg}
+            </p>
+          )}
+          {lienErreur && (
+            <p className="text-sm text-red-700 bg-red-50 rounded-xl p-3 border border-red-200">
+              {lienErreur}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={enregistreLien}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#0F7C55] to-[#0A3D24] text-white font-bold px-5 py-2.5 rounded-xl shadow-md hover:scale-105 transition disabled:opacity-50 text-sm"
+          >
+            <FaFloppyDisk />
+            {enregistreLien ? "Enregistrement…" : "Enregistrer le lien du direct"}
+          </button>
+        </form>
+      )}
+
       <div className="mt-8 bg-[#F8F5EF] border border-[#D4AF37]/30 rounded-3xl p-6 text-[#0F7C55]">
         <h3 className="font-display text-lg font-bold mb-2">📋 Pages affectées</h3>
         <ul className="space-y-1.5 text-sm text-gray-700 list-disc list-inside">
@@ -215,7 +308,8 @@ export default function AdminParametresJourneePage() {
             <strong>Accueil</strong> — bannière dorée avec compte à rebours
           </li>
           <li>
-            <strong>/journee-salaatu</strong> — page dédiée à l&apos;événement
+            <strong>/journee-salaatu</strong> — page dédiée à l&apos;événement, et
+            le bloc du direct YouTube
           </li>
           <li>
             <strong>Footer & navbar</strong> — lien vers la page (libellé reste inchangé)
