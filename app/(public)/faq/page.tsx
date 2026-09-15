@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import FaqContent from "./FaqContent";
+import { TRANSLATIONS } from "@/lib/i18n/translations";
 
 export const metadata: Metadata = {
   title: "FAQ — Questions fréquentes sur le Dahira KSN",
@@ -12,117 +13,42 @@ export const metadata: Metadata = {
   },
 };
 
-const FAQ_CATEGORIES_SEO = [
-  {
-    title: "Le Dahira KSN",
-    questions: [
-      {
-        q: "Qu'est-ce que le Dahira Kippangog Salaatu ʿAlaa Nabii ?",
-        a: `Le Dahira KSN est une organisation religieuse à but non lucratif fondée le 2 janvier 2021 à Touba, Sénégal. Sa mission est de promouvoir la prière sur le Prophète Muhammad ﷺ (Salaatu) à travers une communauté internationale structurée, des activités spirituelles régulières et un engagement collectif quotidien.`,
-      },
-      {
-        q: "Qui peut rejoindre le Dahira KSN ?",
-        a: `Toute personne aimant le Prophète Muhammad ﷺ peut rejoindre, quel que soit son pays, sa langue ou son origine. L'adhésion est ouverte aux musulmans du monde entier qui souhaitent multiplier les Salaatu individuels et participer à la dynamique communautaire du Dahira.`,
-      },
-      {
-        q: "Le Dahira est-il rattaché à une confrérie ou à un Cheikh particulier ?",
-        a: `Le Dahira KSN est ancré dans la tradition spirituelle de Touba (voie mouride) et reconnaît l'héritage du Cheikh Ahmadou Bamba (qu'Allah l'agrée). Notre objet est exclusivement le Salaatu ʿAlaa Nabii — la prière sur le Prophète ﷺ — qui est commun à tous les musulmans.`,
-      },
-    ],
-  },
-  {
-    title: "Adhésion et Espace membre",
-    questions: [
-      {
-        q: "Comment devenir membre officiel du Dahira ?",
-        a: `Trois étapes : remplir le formulaire sur la page /inscription, régler votre carte de membre (1 000 FCFA) via Wave, puis accéder à votre espace membre avec votre matricule officiel et votre carte imprimable.`,
-      },
-      {
-        // Le site annoncait « 1 000 FCFA par an », ce que le Reglement
-        // Interieur contredit : les 1 000 FCFA sont la CARTE DE MEMBRE, reglee
-        // une fois. Deux montants differents dans deux documents officiels du
-        // meme Dahira — on s'en tient a ce que dit le Reglement.
-        q: "Combien coûte l'adhésion ?",
-        a: `La carte de membre coûte 1 000 FCFA, réglée une seule fois à l'inscription. S'y ajoutent une cotisation mensuelle de 500 FCFA et un renouvellement annuel de 500 FCFA, fixés par le Règlement Intérieur.`,
-      },
-      {
-        q: "Comment recevoir ma carte de membre ?",
-        a: `Une fois votre paiement validé, votre carte de membre KSN au format CR-80 (taille carte bancaire) apparaît automatiquement dans votre espace membre. Vous pouvez l'imprimer directement depuis votre profil ou la sauvegarder sur votre téléphone pour la présenter lors des événements.`,
-      },
-      {
-        q: "J'ai déjà payé mais ma page reste sur \"En attente\". Que faire ?",
-        a: `Une fois le paiement Wave effectué, cliquez sur le bouton vert « J'ai payé — Activer mon compte » dans votre espace membre. Si le bouton ne s'active pas, contactez-nous via WhatsApp avec votre reçu de paiement, nous validerons manuellement.`,
-      },
-    ],
-  },
-  {
-    title: "Challenge 1 Milliard de Salaatu",
-    questions: [
-      {
-        q: "Qu'est-ce que le Challenge 1 Milliard ?",
-        a: `C'est notre défi spirituel collectif : offrir 1 milliard de Salaatu au Prophète Muhammad ﷺ par l'effort cumulé de tous les membres KSN. Le compteur en direct sur /challenge montre la progression mondiale en temps réel.`,
-      },
-      {
-        q: "Comment contribuer au Challenge ?",
-        a: `Téléchargez l'application mobile KSN sur l'App Store ou Google Play. Chaque Salaatu que vous récitez et comptez dans l'app s'ajoute automatiquement au total mondial. Plus la communauté grandit, plus vite nous atteignons le milliard.`,
-      },
-      {
-        q: "Y a-t-il une date limite pour atteindre le milliard ?",
-        a: `Non, le Challenge est un effort continu sans deadline. Notre rythme actuel est d'environ 7 millions de Salaatu par semaine. À ce rythme, nous progressons vers le milliard de façon constante. Plus de membres = atteinte plus rapide.`,
-      },
-    ],
-  },
-  {
-    title: "Journée Salaatu ʿAlaa Nabii",
-    questions: [
-      {
-        q: "Quand a lieu la prochaine Journée Salaatu ?",
-        a: `La prochaine édition aura lieu le 26 décembre 2026 à Touba. Le programme complet est publié sur /journee-salaatu avec compte à rebours, horaires détaillés et options de participation (présence physique, distance, soutien).`,
-      },
-      {
-        q: "Faut-il être membre pour participer à la Journée ?",
-        a: `Non, la Journée Salaatu est ouverte à tous — membres KSN, sympathisants, invités étrangers et oumma locale de Touba. Cependant, l'adhésion au Dahira reste recommandée pour bénéficier de l'accompagnement spirituel toute l'année.`,
-      },
-      {
-        q: "Comment se rendre à Touba depuis l'étranger ?",
-        a: `L'aéroport international de Dakar (AIBD) est à approx. 2h de route de Touba. Pour l'hébergement, le transport depuis Dakar et les détails logistiques, contactez l'équipe via WhatsApp — nous accompagnons les visiteurs internationaux.`,
-      },
-    ],
-  },
-  {
-    title: "Application mobile KSN",
-    questions: [
-      {
-        q: "Quelle est la différence entre l'application mobile et ce site ?",
-        a: `L'application mobile (Kippaangog) est dédiée au comptage quotidien des Salaatu et synchronise avec le compteur mondial. Le site (Site KSN) est l'espace institutionnel : adhésion, carte de membre, bibliothèque, événements, boutique, dons. Les deux sont complémentaires.`,
-      },
-      {
-        q: "L'application mobile est-elle gratuite ?",
-        a: `Oui, l'application Kippaangog Salaatu ʿAlaa Nabii est entièrement gratuite sur l'App Store (iOS) et Google Play (Android). Aucun abonnement, aucun achat in-app obligatoire.`,
-      },
-    ],
-  },
-  {
-    title: "Dons et paiements",
-    questions: [
-      {
-        q: "Quels moyens de paiement acceptez-vous ?",
-        a: `Pour les utilisateurs au Sénégal : Wave, Orange Money, UBA. Pour les utilisateurs internationaux : carte bancaire (Stripe) et PayPal sont disponibles sur la page /don. Tous les paiements sont sécurisés.`,
-      },
-      {
-        q: "Mon don est-il déductible des impôts ?",
-        a: `Cela dépend de votre pays de résidence. Au Sénégal, le Dahira est une organisation religieuse à but non lucratif et les dons peuvent bénéficier d'avantages fiscaux selon la législation en vigueur. Pour les détails dans votre pays, consultez votre conseiller fiscal.`,
-      },
-      {
-        q: "Comment savoir comment mon don est utilisé ?",
-        a: `La Commission Finances publie un rapport annuel de transparence accessible sur demande à tous les membres actifs. Les principaux postes de dépense : organisation de la Journée annuelle, hébergement des invités, communication, soutien social aux membres en difficulté.`,
-      },
-    ],
-  },
-];
+/* ── Donnees structurees pour les moteurs de recherche ────────────────
+   Google lit ce bloc JSON-LD pour afficher les questions directement dans
+   ses resultats. Il doit etre rendu par le SERVEUR — le moteur ne joue pas
+   le JavaScript de la page.
+
+   Ces memes questions etaient recopiees ici EN DUR, en francais, a cote de
+   celles que le visiteur lit. Deux copies d'un meme texte ne restent pas
+   longtemps d'accord : elles avaient deja diverge (« approx. 2h » d'un cote,
+   « environ 2h » de l'autre), et corriger une reponse visible laissait Google
+   annoncer l'ancienne. On les lit donc a la source, dans les traductions
+   francaises — une seule redaction, deux usages.
+
+   Le francais et non la langue du visiteur : une page sert un seul jeu de
+   donnees structurees, et le francais est la langue de reference du site. */
+const CATEGORIES = 6;
+const QUESTIONS_PAR_CATEGORIE = 6;
+
+function questionsFaq(): { q: string; a: string }[] {
+  const fr = TRANSLATIONS.fr;
+  const sortie: { q: string; a: string }[] = [];
+  for (let c = 1; c <= CATEGORIES; c++) {
+    for (let i = 1; i <= QUESTIONS_PAR_CATEGORIE; i++) {
+      const q = fr[`faq.q${c}_${i}`];
+      const a = fr[`faq.a${c}_${i}`];
+      // Les categories n'ont pas toutes le meme nombre de questions : on
+      // s'arrete a la premiere absente plutot que de supposer une grille
+      // pleine. Une question ajoutee demain entre ici toute seule.
+      if (!q || !a) break;
+      sortie.push({ q, a });
+    }
+  }
+  return sortie;
+}
 
 export default function FAQPage() {
-  const allQuestions = FAQ_CATEGORIES_SEO.flatMap((c) => c.questions);
+  const allQuestions = questionsFaq();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
