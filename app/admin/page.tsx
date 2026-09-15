@@ -16,10 +16,11 @@ import {
   FaUserClock,
   FaSackDollar,
   FaChartLine,
-  FaUserPlus,
   FaCrown,
 } from "react-icons/fa6";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminShell, { outilsDeMaCommission } from "@/components/admin/AdminShell";
+import TableauCommission from "@/components/admin/TableauCommission";
+import { slugFromNom } from "@/lib/commissions";
 import { useAuth } from "@/lib/auth-context";
 import {
   hasPermission,
@@ -82,6 +83,17 @@ function getLast6Months(): { key: string; label: string; year: number }[] {
 export default function AdminDashboard() {
   const { user } = useAuth();
 
+  // Deux publics, deux accueils.
+  //
+  // Les quatre chiffres de cet ecran — membres, recettes, comptes admin —
+  // sont refuses par les regles Firestore a un responsable de commission. Le
+  // code avalait le refus, et il arrivait sur des cartes a zero et une courbe
+  // vide. On ne lui montre plus ce qui ne le regarde pas : il a son propre
+  // tableau, et on ne lance meme pas les requetes qui echoueraient.
+  const estAdmin = user?.role === "admin";
+  const maCommission = slugFromNom(user?.commission);
+  const vueCommission = !estAdmin && !!maCommission;
+
   const [members, setMembers] = useState<Member[]>([]);
   const [finances, setFinances] = useState<FinanceEntry[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
@@ -89,8 +101,11 @@ export default function AdminDashboard() {
   const [loadingMembers, setLoadingMembers] = useState(true);
   const [loadingFinances, setLoadingFinances] = useState(true);
 
-  // Fetch en parallele
+  // Fetch en parallele — inutile de lancer ces requetes pour un compte qui
+  // n'a pas le droit de lire ces collections : elles ne rapporteraient qu'un
+  // refus, avale en silence.
   useEffect(() => {
+    if (vueCommission) return;
     listMembers()
       .then(setMembers)
       .catch(() => setMembers([]))
@@ -108,7 +123,7 @@ export default function AdminDashboard() {
     listPremiumPurchases("pending_review")
       .then(setPendingPremium)
       .catch(() => setPendingPremium([]));
-  }, []);
+  }, [vueCommission]);
 
   // ═══ KPIs ═══════════════════════════════════════════════════════
   const activeMembers = members.filter((m) => m.status === "actif").length;
@@ -164,6 +179,11 @@ export default function AdminDashboard() {
           Bienvenue, {user?.displayName || user?.email?.split("@")[0]}
         </h1>
         <p className="mt-2 text-gray-600 text-sm sm:text-base">
+          {vueCommission && (
+            <span className="font-semibold text-[#0F7C55]">
+              Commission {user?.commission} ·{" "}
+            </span>
+          )}
           {new Date().toLocaleDateString("fr-FR", {
             weekday: "long",
             day: "numeric",
@@ -173,6 +193,16 @@ export default function AdminDashboard() {
         </p>
       </div>
 
+      {vueCommission && user && (
+        <TableauCommission
+          slug={maCommission}
+          uid={user.uid}
+          raccourcis={outilsDeMaCommission(user)}
+        />
+      )}
+
+      {!vueCommission && (
+        <>
       {/* BANDEAU ALERTE — paiements premium à valider */}
       {pendingPremium.length > 0 && (
         <Link
@@ -415,6 +445,8 @@ export default function AdminDashboard() {
             Contactez l&apos;administrateur principal.
           </p>
         </div>
+      )}
+        </>
       )}
     </AdminShell>
   );
