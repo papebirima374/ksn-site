@@ -115,8 +115,11 @@ const GROUPES: {
     titre: "Organisation",
     slug: "organisation",
     items: [
-      { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true },
-      { href: "/admin/challenge", label: "Compteur Challenge", Icon: FaBullseye, perm: null, adminOnly: true },
+      // La Journee et le Challenge sont le travail de l'Organisation. Marques
+      // adminOnly, ils laissaient son responsable devant un groupe VIDE —
+      // l'administrateur devait saisir a sa place.
+      { href: "/admin/parametres-journee", label: "Journée Salaatu", Icon: FaCalendarDays, perm: null, adminOnly: true, commission: "organisation" },
+      { href: "/admin/challenge", label: "Compteur Challenge", Icon: FaBullseye, perm: null, adminOnly: true, commission: "organisation" },
     ],
   },
 ];
@@ -134,14 +137,18 @@ export function outilVisible(user: AppUser | null, item: Outil): boolean {
   const estAdmin = user?.role === "admin";
   const maCommission = slugFromNom(user?.commission);
 
+  // L'ORDRE COMPTE. Le rattachement a une commission se lit EN PREMIER :
+  // « commission » dit a qui l'outil appartient, « adminOnly » dit qui d'autre
+  // y a droit. Dans l'autre sens, un outil marque des deux tombait sur
+  // adminOnly et sa propre commission n'y entrait jamais ; et un outil marque
+  // { commission, perm: null } serait, lui, tombe sur le repli final — visible
+  // de TOUTES les commissions. Deux erreurs opposees, meme cause.
+  if (item.commission && maCommission === item.commission) return true;
   // Reserve a l'administrateur principal
   if (item.adminOnly) return estAdmin;
   // Reserve a l'administrateur et au Secretariat : celui-ci depouille les
   // rapports de TOUTES les commissions, c'est son role a l'assemblee.
   if (item.secretariat) return estAdmin || maCommission === "secretariat-administratif";
-  // Outil rattache a une commission : elle y entre de plein droit, meme sans
-  // la permission — c'est son metier. Les autres passent par la permission.
-  if (item.commission && maCommission === item.commission) return true;
   // Membres : accessible avec members.write OU finances.write
   if (item.href === "/admin/membres") {
     return hasPermission(user, "members.write") || hasPermission(user, "finances.write");

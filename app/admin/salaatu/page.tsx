@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import {
   hasPermission,
@@ -121,7 +122,7 @@ export default function AdminSalaatuPage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : (
         <>
           {/* TOGGLE Auto/Manuel */}
@@ -272,14 +273,10 @@ export default function AdminSalaatuPage() {
               </div>
 
               {message && (
-                <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-                  {message}
-                </p>
+                <Message ton="succes">{message}</Message>
               )}
               {error && (
-                <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-                  {error}
-                </p>
+                <Message ton="erreur">{error}</Message>
               )}
 
               {canEdit && (
@@ -312,9 +309,7 @@ export default function AdminSalaatuPage() {
               </div>
 
               {message && (
-                <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-                  {message}
-                </p>
+                <Message ton="succes">{message}</Message>
               )}
 
               {dbMode === "auto" ? (

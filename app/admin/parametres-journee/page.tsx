@@ -2,7 +2,9 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
+import { slugFromNom } from "@/lib/commissions";
 import {
   getJourneeSettings,
   saveJourneeSettings,
@@ -38,7 +40,11 @@ function localInputToIso(local: string): string {
 
 export default function AdminParametresJourneePage() {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  // La Journee Salaatu et le Challenge sont le travail de la commission
+  // Organisation. L'administrateur y garde acces — il voit tout — mais il
+  // n'a plus a saisir a la place du responsable.
+  const peutGerer =
+    user?.role === "admin" || slugFromNom(user?.commission) === "organisation";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -108,12 +114,13 @@ export default function AdminParametresJourneePage() {
     }
   }
 
-  if (!isAdmin) {
+  if (!peutGerer) {
     return (
       <AdminShell>
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-600">
-            Cette section est réservée à l&apos;administrateur principal.
+            Cette section est gérée par la commission Organisation. Demandez
+            l&apos;accès à l&apos;administrateur si vous devez y intervenir.
           </p>
         </div>
       </AdminShell>
@@ -137,18 +144,14 @@ export default function AdminParametresJourneePage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : (
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl shadow-md p-6 sm:p-8 space-y-5">
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
+            <Message ton="erreur">{error}</Message>
           )}
           {success && (
-            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-              {success}
-            </p>
+            <Message ton="succes">{success}</Message>
           )}
 
           <div className="grid sm:grid-cols-2 gap-5">
@@ -280,9 +283,7 @@ export default function AdminParametresJourneePage() {
           </div>
 
           {lienMsg && (
-            <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-              {lienMsg}
-            </p>
+            <Message ton="succes">{lienMsg}</Message>
           )}
           {lienErreur && (
             <p className="text-sm text-red-700 bg-red-50 rounded-xl p-3 border border-red-200">

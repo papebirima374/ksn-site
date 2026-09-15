@@ -4,6 +4,7 @@ import { useEffect, useState, FormEvent } from "react";
 import Image from "next/image";
 import { FaPlus, FaTrash, FaPenToSquare, FaYoutube, FaVideo } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, GalleryItem } from "@/lib/admin-types";
 import {
@@ -224,9 +225,7 @@ export default function AdminGaleriePage() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {activeTab === "photos" ? (
@@ -356,7 +355,7 @@ export default function AdminGaleriePage() {
           </div>
 
           {loading ? (
-            <p className="text-gray-500">Chargement…</p>
+            <Chargement />
           ) : filtered.length === 0 ? (
             <p className="text-gray-500 bg-white rounded-3xl p-8 text-center">
               Aucune photo dans cette catégorie. Uploadez-en une ci-dessus.
@@ -469,7 +468,7 @@ export default function AdminGaleriePage() {
           )}
 
           {loading ? (
-            <p className="text-gray-500">Chargement…</p>
+            <Chargement />
           ) : ytLinks.length === 0 ? (
             <p className="text-gray-500 bg-white rounded-3xl p-8 text-center">
               Aucune vidéo enregistrée pour l&apos;instant. Ajoutez un lien YouTube ci-dessus.

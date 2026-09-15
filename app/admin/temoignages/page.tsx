@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, Testimonial } from "@/lib/admin-types";
 import {
@@ -229,9 +230,7 @@ export default function AdminTemoignagesPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
+            <Message ton="erreur">{error}</Message>
           )}
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -409,14 +408,12 @@ export default function AdminTemoignagesPage() {
       )}
 
       {error && !showForm && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {/* LISTE */}
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : items.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-500">

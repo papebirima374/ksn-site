@@ -18,6 +18,7 @@ import {
   uploadArticleCover,
   uploadArticleImage,
 } from "@/lib/admin-data";
+import { Message } from "./Etats";
 
 function slugify(s: string) {
   return s
@@ -487,9 +488,7 @@ export default function ArticleEditor({ initial }: Props) {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-          {error}
-        </p>
+        <Message ton="erreur">{error}</Message>
       )}
 
       <div className="flex gap-3">

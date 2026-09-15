@@ -11,6 +11,7 @@ import {
   createSalaatuLibraryItem,
   updateSalaatuLibraryItem,
 } from "@/lib/admin-data";
+import { Message } from "./Etats";
 
 export default function SalaatuLibraryForm({
   initial,
@@ -175,9 +176,7 @@ export default function SalaatuLibraryForm({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-          {error}
-        </p>
+        <Message ton="erreur">{error}</Message>
       )}
 
       <div className="flex gap-3">

@@ -6,7 +6,6 @@ import {
   FaArrowRightLong,
   FaCircleCheck,
   FaCircleInfo,
-  FaTriangleExclamation,
   FaPrint,
   FaHandshake,
 } from "react-icons/fa6";
@@ -22,6 +21,7 @@ import { fcfa } from "@/lib/commission-caisse";
 import { notifierCommission } from "@/lib/admin-data";
 import { imprimer, htmlVersements, htmlRecuVersement } from "@/lib/impression";
 import BoutonEnvoyer from "@/components/admin/BoutonEnvoyer";
+import { Message } from "./Etats";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -95,10 +95,7 @@ export default function VersementsCommission({
       </section>
 
       {erreur && (
-        <p className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
-          <FaTriangleExclamation className="flex-none mt-0.5" />
-          <span>{erreur}</span>
-        </p>
+        <Message ton="erreur">{erreur}</Message>
       )}
 
       {/* ── Ce qui attend un accusé de réception ─────────────────────── */}

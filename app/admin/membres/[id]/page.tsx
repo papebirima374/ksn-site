@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaPrint, FaPenToSquare, FaTrash, FaArrowLeft } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import MemberCard from "@/components/admin/MemberCard";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, Member } from "@/lib/admin-types";
@@ -82,11 +83,9 @@ export default function MemberDetailPage() {
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : error ? (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-          {error}
-        </p>
+        <Message ton="erreur">{error}</Message>
       ) : member ? (
         <>
           <div className="no-print bg-white rounded-3xl shadow-md p-6 sm:p-8 mb-6 grid sm:grid-cols-2 gap-4 text-sm">

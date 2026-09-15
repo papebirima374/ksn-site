@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { FaPlus, FaPenToSquare, FaTrash, FaStar, FaRegStar } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import {
   hasPermission,
@@ -128,9 +129,9 @@ export default function AdminBibliothequePage() {
       </header>
 
       {importSuccess && (
-        <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200 mb-4">
+        <Message ton="succes" className="mb-4">
           La bibliothèque complète a été importée avec succès !
-        </p>
+        </Message>
       )}
 
       <div className="bg-white rounded-3xl shadow-md p-4 sm:p-5 mb-6 grid sm:grid-cols-[1fr_auto] gap-3">
@@ -156,13 +157,11 @@ export default function AdminBibliothequePage() {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-500">

@@ -5,7 +5,6 @@ import {
   FaMagnifyingGlass,
   FaHandHoldingHeart,
   FaPhone,
-  FaTriangleExclamation,
   FaCircleInfo,
 } from "react-icons/fa6";
 import {
@@ -18,6 +17,7 @@ import {
 import { fcfa } from "@/lib/commission-caisse";
 import { listMembers } from "@/lib/admin-data";
 import type { Member } from "@/lib/admin-types";
+import { Message } from "./Etats";
 
 const INPUT =
   "w-full rounded-xl border border-[#0F7C55]/25 bg-white px-3.5 py-2.5 text-[#12231C] placeholder:text-[#9BB0A6] outline-none focus:border-[#0F7C55] focus:ring-2 focus:ring-[#0F7C55]/20 transition";
@@ -155,10 +155,7 @@ export default function AidesCommission({
       </section>
 
       {erreur && (
-        <p className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
-          <FaTriangleExclamation className="flex-none mt-0.5" />
-          <span>{erreur}</span>
-        </p>
+        <Message ton="erreur">{erreur}</Message>
       )}
 
       {/* ── Nouvelle aide ───────────────────────────────────────────── */}

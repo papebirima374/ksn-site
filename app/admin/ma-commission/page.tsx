@@ -67,6 +67,7 @@ import {
   FaMoneyBillTransfer,
   FaListCheck,
 } from "react-icons/fa6";
+import { Message } from "@/components/admin/Etats";
 
 /** useSearchParams() force le rendu cote client de tout ce qui l'entoure
  *  jusqu'a la frontiere Suspense la plus proche (cf. la documentation de
@@ -302,10 +303,7 @@ function EspaceCommission() {
       </div>
 
       {message && (
-        <p className="mb-5 flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm no-print">
-          <FaTriangleExclamation className="flex-none mt-0.5" />
-          <span>{message}</span>
-        </p>
+        <Message ton="erreur" className="mb-5 no-print">{message}</Message>
       )}
 
       {!d ? (

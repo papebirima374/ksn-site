@@ -9,6 +9,9 @@ import {
   envoyerMessage,
   supprimerMessage,
 } from "@/lib/commission-fil";
+// « Message » est deja pris ici : c'est le type d'un message du fil de
+// la commission. Le bandeau prend donc un autre nom.
+import { Message as Bandeau } from "./Etats";
 
 const ETIQUETTE: Record<string, { nom: string; classe: string }> = {
   presidence: { nom: "Présidence", classe: "bg-[#D4AF37]/15 border-[#D4AF37]/40 text-[#7A5E0B]" },
@@ -95,9 +98,7 @@ export default function FilCommission({
       </p>
 
       {erreur && (
-        <p className="mb-4 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-2.5 text-sm">
-          {erreur}
-        </p>
+        <Bandeau ton="erreur" className="mb-4">{erreur}</Bandeau>
       )}
 
       <div className="space-y-3 max-h-[26rem] overflow-y-auto pr-1">

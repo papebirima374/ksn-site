@@ -66,6 +66,14 @@ service cloud.firestore {
       return monSlug() == "secretariat-administratif";
     }
 
+    // L'Organisation prepare la Journee Salaatu et anime le Challenge : la
+    // date, le lieu, le lien du direct, le compteur et les annonces du jour J
+    // sont SON travail. Ils etaient reserves a l'administrateur, qui devait
+    // donc saisir a sa place.
+    function estOrganisation() {
+      return monSlug() == "organisation";
+    }
+
     // hasPerm renvoie true si :
     //   - l'utilisateur est admin (bypass complet), OU
     //   - la permission est dans son tableau users/<uid>.permissions[]
@@ -268,13 +276,23 @@ service cloud.firestore {
     // visiteurs qui ne sont pas connectes.
     match /config/{id} {
       allow read: if true;
-      allow write: if hasPerm("salaatu.write");
+      allow write: if hasPerm("salaatu.write") || estOrganisation();
     }
 
     // ─── Settings divers (live stream, theme, etc.) ─────────────────────
     match /settings/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // La date, le lieu et l'heure de la Journee Salaatu : c'est la commission
+    // Organisation qui les arrete. Regle SEPAREE plutot qu'elargissement de
+    // celle ci-dessus — Firestore prend l'union des regles qui correspondent,
+    // donc « settings/journee » s'ouvre a l'Organisation sans que le reste de
+    // « settings » bouge d'un pouce.
+    match /settings/journee {
+      allow read: if true;
+      allow write: if isAdmin() || estOrganisation();
     }
 
     // Compteur du Challenge : lecture publique, écriture admin (règle ci-dessus),
@@ -288,7 +306,7 @@ service cloud.firestore {
     // que la limite tient vraiment.
     match /settings/challenge {
       allow read: if true;
-      allow update: if isAdmin() || (
+      allow update: if isAdmin() || estOrganisation() || (
         request.resource.data.total is number &&
         resource.data.total is number &&
         request.resource.data.total > resource.data.total &&
@@ -676,7 +694,7 @@ service cloud.firestore {
     // publiquement, gérés par l'admin.
     match /challengeMedia/{id} {
       allow read: if true;
-      allow write: if isAdmin() || hasPerm("gallery.write");
+      allow write: if isAdmin() || hasPerm("gallery.write") || estOrganisation();
     }
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
 import { hasPermission, OfficialDocument } from "@/lib/admin-types";
 import {
@@ -188,9 +189,7 @@ export default function AdminDocumentsPage() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-              {error}
-            </p>
+            <Message ton="erreur">{error}</Message>
           )}
 
           <div>
@@ -265,20 +264,16 @@ export default function AdminDocumentsPage() {
       )}
 
       {success && (
-        <p className="text-sm text-emerald-700 bg-emerald-50 rounded-xl p-3 border border-emerald-200 mb-4">
-          {success}
-        </p>
+        <Message ton="succes" className="mb-4">{success}</Message>
       )}
 
       {error && !showForm && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {/* LISTE */}
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : items.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 text-center">
           <FaFilePdf className="mx-auto text-4xl text-gray-300 mb-3" />

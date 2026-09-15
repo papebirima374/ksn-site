@@ -14,6 +14,7 @@ import {
   FaFileInvoice,
 } from "react-icons/fa6";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import VentesBoutique from "@/components/admin/VentesBoutique";
 import { useAuth } from "@/lib/auth-context";
 import { slugFromNom, aModuleSocial, commissionNom } from "@/lib/commissions";
@@ -175,13 +176,11 @@ function ProductsTab({ canEdit }: { canEdit: boolean }) {
       )}
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : products.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-500">Aucun produit. Cliquez « Nouveau produit ».</p>
@@ -460,9 +459,7 @@ function ProductFormModal({
         </label>
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-            {error}
-          </p>
+          <Message ton="erreur">{error}</Message>
         )}
 
         <button
@@ -537,13 +534,11 @@ function OrdersTab({ canEdit }: { canEdit: boolean }) {
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100 mb-4">
-          {error}
-        </p>
+        <Message ton="erreur" className="mb-4">{error}</Message>
       )}
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : filtered.length === 0 ? (
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-500">

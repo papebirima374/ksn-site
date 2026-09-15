@@ -27,9 +27,9 @@ import {
   FaTrash,
   FaCopy,
   FaCircleCheck,
-  FaTriangleExclamation,
   FaArrowsRotate,
 } from "react-icons/fa6";
+import { Message } from "@/components/admin/Etats";
 
 const dateFr = (ms: number) =>
   new Date(ms).toLocaleDateString("fr-FR", {
@@ -172,9 +172,7 @@ export default function AdminNewsletterPage() {
         </div>
       )}
       {erreur && (
-        <div className="mb-5 flex items-start gap-2 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
-          <FaTriangleExclamation className="mt-0.5 shrink-0" /> <span>{erreur}</span>
-        </div>
+        <Message ton="erreur" className="mb-5">{erreur}</Message>
       )}
 
       {/* ── Chiffres ───────────────────────────────────────────────────── */}

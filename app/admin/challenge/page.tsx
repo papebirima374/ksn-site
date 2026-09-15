@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import AdminShell from "@/components/admin/AdminShell";
+import { Chargement, Message } from "@/components/admin/Etats";
 import { useAuth } from "@/lib/auth-context";
+import { slugFromNom } from "@/lib/commissions";
 import {
   setChallengeTotal,
   CHALLENGE_TARGET,
@@ -54,7 +56,11 @@ function formatDayLabel(key: string): string {
 
 export default function AdminChallengePage() {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  // La Journee Salaatu et le Challenge sont le travail de la commission
+  // Organisation. L'administrateur y garde acces — il voit tout — mais il
+  // n'a plus a saisir a la place du responsable.
+  const peutGerer =
+    user?.role === "admin" || slugFromNom(user?.commission) === "organisation";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -117,7 +123,7 @@ export default function AdminChallengePage() {
   }
 
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!peutGerer) return;
     let first = true;
     // Valeur actuelle EN DIRECT (reflète contributions/suppressions immédiatement)
     const unsubTotal = subscribeChallengeTotal((n) => {
@@ -148,7 +154,7 @@ export default function AdminChallengePage() {
       unsubContribs();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin]);
+  }, [peutGerer]);
 
   async function handleAdd() {
     const amt = parseInt(amountToAdd.replace(/\D+/g, ""), 10);
@@ -246,12 +252,13 @@ export default function AdminChallengePage() {
     }
   }
 
-  if (!isAdmin) {
+  if (!peutGerer) {
     return (
       <AdminShell>
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-600">
-            Cette section est réservée à l&apos;administrateur principal.
+            Cette section est gérée par la commission Organisation. Demandez
+            l&apos;accès à l&apos;administrateur si vous devez y intervenir.
           </p>
         </div>
       </AdminShell>
@@ -278,7 +285,7 @@ export default function AdminChallengePage() {
       </header>
 
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : (
         <div className="space-y-6 max-w-xl">
           {/* CARTE PRINCIPALE DU COMPTEUR */}
@@ -367,14 +374,10 @@ export default function AdminChallengePage() {
                 </div>
 
                 {error && (
-                  <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3 border border-red-100">
-                    {error}
-                  </p>
+                  <Message ton="erreur">{error}</Message>
                 )}
                 {success && (
-                  <p className="text-sm text-emerald-800 bg-emerald-50 rounded-xl p-3 border border-emerald-200">
-                    {success}
-                  </p>
+                  <Message ton="succes">{success}</Message>
                 )}
 
                 <div className="flex flex-wrap gap-2 pt-2">

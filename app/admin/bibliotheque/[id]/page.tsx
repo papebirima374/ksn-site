@@ -6,6 +6,7 @@ import AdminShell from "@/components/admin/AdminShell";
 import SalaatuLibraryForm from "@/components/admin/SalaatuLibraryForm";
 import { getSalaatuLibraryItem } from "@/lib/admin-data";
 import { SalaatuLibraryItem } from "@/lib/admin-types";
+import { Chargement } from "@/components/admin/Etats";
 
 export default function EditSalaatuPage() {
   const params = useParams<{ id: string }>();
@@ -40,7 +41,7 @@ export default function EditSalaatuPage() {
         </h1>
       </header>
       {loading ? (
-        <p className="text-gray-500">Chargement…</p>
+        <Chargement />
       ) : error ? (
         <p className="text-sm text-red-600 bg-red-50 rounded-xl p-3">{error}</p>
       ) : item ? (

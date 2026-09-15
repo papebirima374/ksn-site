@@ -7,7 +7,6 @@ import {
   FaTrash,
   FaPhone,
   FaUsers,
-  FaTriangleExclamation,
 } from "react-icons/fa6";
 import {
   type MembreCommission,
@@ -20,6 +19,7 @@ import {
 import { cleMembre } from "@/lib/commission-membres";
 import { listMembers } from "@/lib/admin-data";
 import type { Member } from "@/lib/admin-types";
+import { Message } from "./Etats";
 
 /** Recherche insensible a la casse ET aux accents : on tape « Sene », on
  *  trouve « Sène ». */
@@ -115,10 +115,7 @@ export default function MembresCommission({
 
         {chargement && <p className="mt-3 text-sm text-[#5C7268]">Chargement de l&apos;annuaire…</p>}
         {msg && (
-          <p className="mt-3 flex items-start gap-2 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-2.5 text-sm">
-            <FaTriangleExclamation className="flex-none mt-0.5" />
-            <span>{msg}</span>
-          </p>
+          <Message ton="erreur" className="mt-3">{msg}</Message>
         )}
 
         {!chargement && tous && (
@@ -185,9 +182,7 @@ export default function MembresCommission({
         </div>
 
         {erreur && (
-          <p className="mb-4 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-2.5 text-sm">
-            {erreur}
-          </p>
+          <Message ton="erreur" className="mb-4">{erreur}</Message>
         )}
 
         {membres.length === 0 ? (
