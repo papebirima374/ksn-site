@@ -73,6 +73,9 @@ export default function AdminRapportsPage() {
   /** Numeros des responsables : servis par /api/commission-contacts apres
    *  verification du jeton, jamais embarques dans le JavaScript public. */
   const [contacts, setContacts] = useState<Record<string, string>>({});
+  /** Date a laquelle la Presidence a arrete cette liste. Sert a departager
+   *  ce numero-la et celui qu'une commission a laisse dans son rapport. */
+  const [contactsMaj, setContactsMaj] = useState(0);
   const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [versements, setVersements] = useState<Transfert[]>([]);
   const [filtre, setFiltre] = useState<string>("");
@@ -94,7 +97,10 @@ export default function AdminRapportsPage() {
         const res = await fetch("/api/commission-contacts", { headers: await authHeader() });
         if (!res.ok) return; // 403 pour un compte sans droit : on n'affiche rien
         const d = await res.json();
-        if (!annule) setContacts(d?.contacts ?? {});
+        if (!annule) {
+          setContacts(d?.contacts ?? {});
+          setContactsMaj(typeof d?.misAJour === "number" ? d.misAJour : 0);
+        }
       } catch {
         // Sans les numeros, la relance ouvre WhatsApp sans destinataire :
         // degrade, mais pas bloquant.
@@ -151,18 +157,37 @@ export default function AdminRapportsPage() {
    *  du responsable et le message part directement vers lui ; sinon WhatsApp
    *  demande a qui l'envoyer. */
   async function relancer(slug: string, nom: string) {
-    // Le numero du responsable est connu d'avance (lib/commissions.ts), donc la
-    // relance part vers la bonne personne meme si elle n'a encore rien envoye.
-    // Si elle a deja transmis un rapport, on prefere le numero qu'elle y a
-    // laisse : c'est le plus a jour.
-    const tel =
-      (dernierPar.get(slug)?.telephone ?? "").replace(/\D+/g, "") ||
-      (contacts[slug] ?? "").replace(/\D+/g, "");
+    // DEUX numeros possibles, et l'ordre compte.
+    //
+    // Celui du dernier rapport est le plus a jour TANT QUE le rapport est
+    // posterieur a la liste de la Presidence : un responsable qui change de
+    // ligne le corrige dans son rapport avant de prevenir qui que ce soit.
+    // Mais un rapport ANTERIEUR au renouvellement du bureau porte le numero
+    // du responsable SORTANT. Le prendre, c'est relancer quelqu'un qui n'est
+    // plus en charge et croire le nouveau prevenu — le defaut exact qu'on a
+    // voulu supprimer en retirant les anciens numeros.
+    const rapport = dernierPar.get(slug);
+    const duRapport =
+      rapport && rapport.createdAt > contactsMaj
+        ? (rapport.telephone ?? "").replace(/\D+/g, "")
+        : "";
+    const tel = duRapport || (contacts[slug] ?? "").replace(/\D+/g, "");
     const texte = encodeURIComponent(
       `As-salaamu 'alaykum.\n\nRappel : le rapport de la commission ${nom} est attendu ` +
         `pour l'Assemblée Générale du 19 septembre 2026.\n\n${SITE.url}/commissions/${slug}\n\n` +
         `Jazaakumu Laahu khayran.`
     );
+    // Aucun numero connu : on le DIT. Ouvrir WhatsApp sans destinataire, en
+    // silence, laisse croire que la relance est partie — et la trace ci-dessous
+    // s'ecrirait quand meme, marquant la commission comme relancee.
+    if (!tel) {
+      alert(
+        `Aucun numéro connu pour la commission ${nom}.\n\n` +
+          `WhatsApp va s'ouvrir sans destinataire : à vous de le choisir. ` +
+          `Pour que la relance parte seule la prochaine fois, transmettez le ` +
+          `numéro du responsable — il s'ajoute dans app/api/commission-contacts.`
+      );
+    }
     window.open(tel ? `https://wa.me/${tel}?text=${texte}` : `https://wa.me/?text=${texte}`, "_blank");
     try {
       await marquerRelance(slug, user?.displayName || user?.email || "");

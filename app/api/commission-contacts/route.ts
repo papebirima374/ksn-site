@@ -38,6 +38,18 @@ const CONTACTS: Record<string, string> = {
   "secretariat-administratif": "+221 77 838 07 68", // El Hadji Malick Mbaye
 };
 
+/** Quand cette liste a ete arretee par la Presidence.
+ *
+ *  Elle est servie avec les numeros parce qu'elle tranche un conflit reel.
+ *  L'ecran des rapports connait DEUX numeros pour une commission : celui-ci,
+ *  et celui que le responsable a inscrit dans son dernier rapport. Sans date,
+ *  impossible de savoir lequel est le plus recent — et prendre le rapport a
+ *  l'aveugle, apres un renouvellement du bureau, c'est relancer le
+ *  responsable SORTANT en croyant avoir prevenu le nouveau.
+ *
+ *  A mettre a jour en meme temps que les numeros, jamais separement. */
+const MIS_A_JOUR = Date.parse("2026-09-15T00:00:00Z");
+
 /** Libelles de commission acceptes, anciens compris (cf. lib/commissions.ts). */
 const AUTORISEES = [
   "Secrétariat et Administratif",
@@ -72,7 +84,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
   }
   return NextResponse.json(
-    { contacts: CONTACTS },
+    { contacts: CONTACTS, misAJour: MIS_A_JOUR },
     { headers: { "Cache-Control": "no-store" } }
   );
 }
