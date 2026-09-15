@@ -18,25 +18,24 @@ import { verifyRequest } from "@/lib/server/verify-auth";
 
 const PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
-/** Numeros transmis par la Presidence.
+/** Numeros transmis par la Presidence, septembre 2026.
  *
  *  ATTENTION : un numero ne vaut que pour la personne a qui il appartient.
- *  Le renouvellement du bureau (septembre 2026) a change trois responsables —
- *  Organisation, Communication et Secretariat. Leurs anciens numeros ont ete
- *  RETIRES plutot que conserves : garder un numero perime, c'est envoyer la
- *  relance du Dahira a quelqu'un qui n'est plus en charge, et croire l'avoir
- *  prevenu. Sans numero, le bouton ouvre WhatsApp sans destinataire — genant,
- *  mais honnete.
+ *  Le renouvellement du bureau a change trois responsables — Organisation,
+ *  Communication et Secretariat. Leurs anciens numeros avaient ete RETIRES
+ *  plutot que conserves : garder un numero perime, c'est envoyer la relance
+ *  du Dahira a quelqu'un qui n'est plus en charge, et croire l'avoir prevenu.
+ *  La Presidence a transmis les trois nouveaux, ils sont ici.
  *
- *  Des que la Presidence transmet les trois nouveaux numeros, on les ajoute
- *  ici, et nulle part ailleurs. */
+ *  Les six sont donc a jour. A la prochaine passation, on remplace la ligne
+ *  concernee — ici, et nulle part ailleurs. */
 const CONTACTS: Record<string, string> = {
-  "education-culture": "+221 76 438 28 84", // Mame Cheikh Anta Sall — inchangé
-  finances: "+221 77 670 54 86", // Serigne Massamba Mbaye — inchangé
-  "social-developpement": "+221 76 010 09 58", // Serigne Cheikhouna Sock — inchangé
-  // organisation : Serigne Saliou Lô — numéro à transmettre
-  // communication : Modou Thiaré — numéro à transmettre
-  // secretariat-administratif : El Hadji Malick Mbaye — numéro à transmettre
+  "education-culture": "+221 76 438 28 84", // Mame Cheikh Anta Sall
+  finances: "+221 77 670 54 86", // Serigne Massamba Mbaye
+  "social-developpement": "+221 76 010 09 58", // Serigne Cheikhouna Sock
+  organisation: "+221 76 528 59 11", // Serigne Saliou Lô
+  communication: "+221 77 335 14 14", // Modou Thiaré
+  "secretariat-administratif": "+221 77 838 07 68", // El Hadji Malick Mbaye
 };
 
 /** Libelles de commission acceptes, anciens compris (cf. lib/commissions.ts). */

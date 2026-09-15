@@ -44,6 +44,14 @@ for (const f of fs.readdirSync(tmp).filter((f) => f.endsWith(".js"))) {
 }
 const I = await import(path.join(tmp, "impression.mjs"));
 
+// AVERTISSEMENT — LES NUMEROS DE CE FICHIER SONT FICTIFS.
+// Ils ont la forme +221 77 000 00 0X, qu'aucune ligne reelle ne porte. Deux
+// vrais numeros de responsables avaient servi de donnees d'essai ici, dont
+// l'un attribue au mauvais nom. Un jeu d'essai n'a aucun besoin d'un numero
+// qui sonne quelque part : il lui faut la bonne FORME, pas la bonne personne.
+// Les vrais numeros vivent a un seul endroit, cote serveur :
+// app/api/commission-contacts/route.ts
+
 /* ── Jeux d'essai : le pire cas, pas le cas facile ────────────────────── */
 const ligne = (t) => ({ id: Math.random().toString(36).slice(2), texte: t });
 const long = "Récitation collective du Salaatu chaque vendredi après la prière, "
@@ -52,7 +60,7 @@ const long = "Récitation collective du Salaatu chaque vendredi après la prièr
 const dossier = {
   commission: "education-culture",
   responsable: "Serigne Mame Cheikh Anta Sall",
-  telephone: "+221 76 438 28 84",
+  telephone: "+221 77 000 00 01",
   membres: "18",
   activites: [ligne(long), ligne("Deux conférences publiques"), ligne("Cours du samedi matin")],
   difficultes: [ligne("Manque de salles"), ligne("Transport des intervenants")],
@@ -70,7 +78,7 @@ const dossier = {
 
 const rapport = {
   id: "r1", commission: "organisation", responsable: "Serigne Assane Samb",
-  telephone: "+221 76 528 59 11", membres: 30,
+  telephone: "+221 77 000 00 02", membres: 30,
   activites: long + "\n" + long, difficultes: "Le matériel arrive tard.",
   salaatu: null, salaatuPrecisions: "",
   cellulesActives: 4, cellules: "Les cellules doivent être relancées.",
@@ -106,7 +114,7 @@ const versements = [
 const ventes = [
   {
     id: "v1", commission: "social-developpement", numero: "FA-2026-0007",
-    date: "2026-09-12", clientNom: "Sokhna Aminata Fall", clientTelephone: "+221 77 123 45 67",
+    date: "2026-09-12", clientNom: "Sokhna Aminata Fall", clientTelephone: "+221 77 000 00 03",
     lignes: [
       { designation: "Café Touba moulu — sachet 250 g", quantite: 12, prixUnitaire: 2500 },
       { designation: "Thé Kinkeliba — boîte", quantite: 3, prixUnitaire: 4000 },
@@ -136,7 +144,7 @@ const ventes = [
 ];
 
 const commande = {
-  id: "a1b2c3d4e5f6", customerName: "Ibrahima Diop", customerPhone: "+221 76 000 00 00",
+  id: "a1b2c3d4e5f6", customerName: "Ibrahima Diop", customerPhone: "+221 77 000 00 04",
   customerEmail: "", deliveryAddress: "Quartier Darou Khoudoss, Touba",
   paymentMethod: "wave", transactionId: "TXN-99182736", total: 31000, status: "pending",
   createdAt: Date.now(),
@@ -147,10 +155,10 @@ const commande = {
 };
 
 const taches = [
-  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 76 528 59 11", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
-  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 11 22", "2026-09-18", 40000, 0, "en_cours", ""],
+  ["Louer la sonorisation (2 enceintes + micro)", "Serigne Assane Samb", "+221 77 000 00 02", "2026-09-16", 75000, 75000, "fait", "Fournisseur habituel de Tuuba Saam"],
+  ["Monter les tentes et installer les nattes", "Moustapha Diagne", "+221 77 000 00 05", "2026-09-18", 40000, 0, "en_cours", ""],
   ["Transport des invités depuis Dakar", "Cheikh Fall", "", "2026-09-18", 120000, 60000, "en_cours", "Deux cars réservés"],
-  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 76 333 44 55", "2026-09-19", 250000, 0, "a_faire", ""],
+  ["Repas de l'assemblée — 300 couverts", "Sokhna Bineta Sow", "+221 77 000 00 06", "2026-09-19", 250000, 0, "a_faire", ""],
   ["Groupe électrogène de secours", "Ibrahima Ndoye", "", "2026-09-10", 60000, 0, "bloque", "Le loueur n'a pas confirmé"],
   ["Affiches et banderole d'accueil", "Serigne Birima Gueye", "", "", 30000, 28500, "fait", ""],
 ].map(([libelle, responsable, responsableTelephone, echeance, budget, depense, statut, detail], i) => ({
