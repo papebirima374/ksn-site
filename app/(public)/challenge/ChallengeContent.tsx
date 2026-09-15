@@ -70,6 +70,20 @@ export default function ChallengeContent() {
       {/* COMPTEUR LIVE — toujours visible */}
       <ChallengeCounter entete={false} />
 
+      {/* OFFRIR SES SALAATU — collé au compteur qu'il alimente.
+          Il se trouvait apres le compte a rebours et le compteur personnel :
+          il fallait faire defiler deux ecrans pour le trouver, et beaucoup
+          ne le trouvaient pas. C'est le geste principal de cette page, il
+          vient donc juste sous « Partager le defi ». */}
+      <section className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 -mt-10 sm:-mt-16 pb-14 sm:pb-20">
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[40px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-5 sm:p-8">
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#B8860B]/10 blur-3xl pointer-events-none" />
+          <div className="relative z-10">
+            <ContributionForm />
+          </div>
+        </div>
+      </section>
+
       {/* COMPTE DE REBOURS GAMOU */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 -mt-10 sm:-mt-14">
         <div className="max-w-3xl mx-auto">
@@ -89,18 +103,13 @@ export default function ChallengeContent() {
         </div>
       </div>
 
-      {/* MON COMPTEUR DU JOUR + CONTRIBUTION (toujours visibles) */}
+      {/* MON COMPTEUR DU JOUR — le decompte personnel, qui ne touche pas au
+          total de la communaute. */}
       <section className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pb-20 sm:pb-28 -mt-8 sm:-mt-12 space-y-6">
         <div className="relative overflow-hidden rounded-[28px] sm:rounded-[40px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-5 sm:p-8">
           <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
           <div className="relative z-10">
             <MonCompteurDuJour />
-          </div>
-        </div>
-        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[40px] bg-gradient-to-br from-[#0F7C55] via-[#0A3D24] to-[#082F22] p-5 sm:p-8">
-          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-[#B8860B]/10 blur-3xl pointer-events-none" />
-          <div className="relative z-10">
-            <ContributionForm />
           </div>
         </div>
       </section>
