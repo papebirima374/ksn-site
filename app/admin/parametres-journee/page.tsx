@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAuth } from "@/lib/auth-context";
+import { slugFromNom } from "@/lib/commissions";
 import {
   getJourneeSettings,
   saveJourneeSettings,
@@ -38,7 +39,11 @@ function localInputToIso(local: string): string {
 
 export default function AdminParametresJourneePage() {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  // La Journee Salaatu et le Challenge sont le travail de la commission
+  // Organisation. L'administrateur y garde acces — il voit tout — mais il
+  // n'a plus a saisir a la place du responsable.
+  const peutGerer =
+    user?.role === "admin" || slugFromNom(user?.commission) === "organisation";
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -108,12 +113,13 @@ export default function AdminParametresJourneePage() {
     }
   }
 
-  if (!isAdmin) {
+  if (!peutGerer) {
     return (
       <AdminShell>
         <div className="bg-white rounded-3xl p-8 text-center">
           <p className="text-gray-600">
-            Cette section est réservée à l&apos;administrateur principal.
+            Cette section est gérée par la commission Organisation. Demandez
+            l&apos;accès à l&apos;administrateur si vous devez y intervenir.
           </p>
         </div>
       </AdminShell>

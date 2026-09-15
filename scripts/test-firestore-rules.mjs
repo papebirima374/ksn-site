@@ -28,6 +28,9 @@ await env.withSecurityRulesDisabled(async (c) => {
   // Le Secretariat qui tient reellement le fichier des membres en a une.
   await setDoc(doc(db, "users/sec2"), { role: "commission", commission: "Secrétariat et Administratif", permissions: ["members.write"] });
   await setDoc(doc(db, "settings/challenge"), { total: 395192860, updatedAt: 1 });
+  await setDoc(doc(db, "settings/journee"), { dateIso: "2026-12-26T08:00:00Z", label: "26 décembre 2026", location: "Touba" });
+  await setDoc(doc(db, "settings/theme"), { mode: "clair" });
+  await setDoc(doc(db, "challengeMedia/m1"), { url: "https://x/y.jpg", commentaire: "Jour J", createdAt: 1 });
   await setDoc(doc(db, "newsletter/insc1"), { email: "deja@inscrit.sn", source: "pied de page", subscribedAt: 1 });
   await setDoc(doc(db, "commissionDossiers/finances"), { commission: "finances", responsable: "X" });
   await setDoc(doc(db, "commissionDossiers/communication"), { commission: "communication", responsable: "Y" });
@@ -395,8 +398,10 @@ await t("Le lien du direct se lit sans être connecté (page publique)",
   assertSucceeds(getDoc(doc(anon(), "config/streaming"))));
 await t("Un visiteur N'ÉCRIT PAS le lien du direct",
   assertFails(setDoc(doc(anon(), "config/streaming"), { url: "https://pirate", updatedAt: 1 })));
+// Contre-exemple : PAS l'Organisation, qui gere desormais le direct de la
+// Journee, mais une commission qui n'a rien a y voir.
 await t("Une commission sans droit non plus",
-  assertFails(setDoc(doc(as("org1"), "config/streaming"), { url: "https://pirate", updatedAt: 1 })));
+  assertFails(setDoc(doc(as("fin1"), "config/streaming"), { url: "https://pirate", updatedAt: 1 })));
 await t("L'administrateur enregistre le lien du direct",
   assertSucceeds(setDoc(doc(as("admin1"), "config/streaming"), { url: "https://youtu.be/xyz", updatedAt: Date.now() })));
 await t("N'importe qui s'inscrit à la newsletter depuis le pied de page",
@@ -428,6 +433,32 @@ await t("La Communication désinscrit une adresse",
   assertSucceeds(deleteDoc(doc(as("com1"), "newsletter/insc1"))));
 await t("Un visiteur ne désinscrit personne",
   assertFails(deleteDoc(doc(anon(), "newsletter/insc1"))));
+
+console.log("\n── La commission Organisation gère SON travail ──");
+// La Journee Salaatu et le Challenge sont son metier. Ils etaient reserves a
+// l'administrateur, qui saisissait a sa place. On verifie que la porte s'ouvre
+// pour elle — et pour elle seule.
+await t("Organisation fixe la date et le lieu de la Journée",
+  assertSucceeds(updateDoc(doc(as("org1"), "settings/journee"), { label: "27 décembre 2026", location: "Tuuba Saam" })));
+await t("Organisation enregistre le lien du direct",
+  assertSucceeds(setDoc(doc(as("org1"), "config/streaming"), { url: "https://youtu.be/abc", updatedAt: Date.now() })));
+await t("Organisation corrige le total du Challenge à la main",
+  assertSucceeds(setDoc(doc(as("org1"), "settings/challenge"), { total: 400000000, updatedAt: Date.now() }, { merge: true })));
+await t("Organisation publie une annonce du Jour J",
+  assertSucceeds(setDoc(doc(as("org1"), "challengeMedia/m2"), { url: "https://x/z.jpg", commentaire: "Bienvenue", createdAt: Date.now() })));
+
+await t("Communication NE TOUCHE PAS à la date de la Journée",
+  assertFails(updateDoc(doc(as("com1"), "settings/journee"), { label: "pirate" })));
+await t("Finances non plus",
+  assertFails(updateDoc(doc(as("fin1"), "settings/journee"), { label: "pirate" })));
+await t("Un visiteur encore moins",
+  assertFails(updateDoc(doc(anon(), "settings/journee"), { label: "pirate" })));
+// Le reste de « settings » ne devait PAS s'ouvrir au passage : la regle de la
+// Journee est separee exprès. On le verifie plutot que de le supposer.
+await t("… et l'Organisation ne touche pas au RESTE des réglages du site",
+  assertFails(updateDoc(doc(as("org1"), "settings/theme"), { mode: "sombre" })));
+await t("L'administrateur garde la main sur tout",
+  assertSucceeds(updateDoc(doc(as("admin1"), "settings/journee"), { label: "26 décembre 2026" })));
 
 console.log("\n── Compteur du Challenge : contribution publique ──");
 // Le plafond vit a TROIS endroits : la constante que lit le formulaire, et
@@ -464,7 +495,13 @@ console.log("\n── Compteur du Challenge : contribution publique ──");
 // trois endroits qui doivent s'accorder (cf. MAX_CONTRIBUTION).
 const PLAFOND = 1000000;
 const contribution = (montant) => ({ amount: montant, name: "Aminata", createdAt: Date.now() });
-const totalPlus = (n) => ({ total: 395192860 + n, updatedAt: Date.now() });
+// On REMET le total a une valeur connue : les tests precedents l'ont fait
+// bouger, et une borne calculee depuis la graine ne voudrait plus rien dire.
+const DEPART = 395192860;
+await env.withSecurityRulesDisabled(async (c) => {
+  await setDoc(doc(c.firestore(), "settings/challenge"), { total: DEPART, updatedAt: 1 });
+});
+const totalPlus = (n) => ({ total: DEPART + n, updatedAt: Date.now() });
 
 await t("Un visiteur offre 1 Salaatu",
   assertSucceeds(addDoc(collection(anon(), "challengeContributions"), contribution(1))));
