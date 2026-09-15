@@ -27,6 +27,7 @@ export default function BoutonEnvoyer({
   message,
   telephone = "",
   className = "",
+  libelle = "Envoyer sur WhatsApp",
 }: {
   /** Le document, produit par lib/impression.ts. Fabrique a la demande : on
    *  ne construit pas tous les documents de l'ecran au cas ou. */
@@ -35,6 +36,9 @@ export default function BoutonEnvoyer({
   message: string;
   telephone?: string;
   className?: string;
+  /** Texte du bouton. A raccourcir la ou la place manque — dans une ligne de
+   *  liste, « Envoyer sur WhatsApp » deborde et pousse le reste. */
+  libelle?: string;
 }) {
   const [etat, setEtat] = useState<Etat>("repos");
   const [detail, setDetail] = useState("");
@@ -74,7 +78,7 @@ export default function BoutonEnvoyer({
         }
       >
         {occupe ? <FaSpinner className="animate-spin" /> : <FaWhatsapp />}
-        {occupe ? "Préparation du PDF…" : "Envoyer sur WhatsApp"}
+        {occupe ? "Préparation du PDF…" : libelle}
       </button>
 
       {etat === "partage" && (

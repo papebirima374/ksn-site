@@ -37,6 +37,7 @@ import {
   subscribeMembresCommission,
 } from "@/lib/commission-membres";
 import { htmlDossier, htmlFicheVierge, imprimer, AG } from "@/lib/impression";
+import BoutonEnvoyer from "@/components/admin/BoutonEnvoyer";
 import { type Ecriture, fcfa, soldeDe, totalPar, subscribeCaisse } from "@/lib/commission-caisse";
 import {
   type Lot,
@@ -369,6 +370,11 @@ function EspaceCommission() {
             >
               <FaPrint /> Imprimer / PDF rempli
             </button>
+            <BoutonEnvoyer
+              html={() => htmlDossier(d, slug, resume)}
+              titre={`Dossier — ${commissionNom(slug)}`}
+              message={`Dossier de la commission ${commissionNom(slug)} — Assemblée du ${AG.date}.`}
+            />
             <button
               onClick={transmettre}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-[#B8860B] to-[#D4AF37] text-[#082F22] px-5 py-2.5 rounded-xl font-bold hover:brightness-105 transition"
