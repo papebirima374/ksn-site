@@ -79,7 +79,11 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-[#0B2E1F]/90 backdrop-blur-xl mt-16 sm:mt-24">
+    <footer /* Pas de marge haute : les sections de contenu finissent deja par
+         pb-20/pb-28, soit 80 a 112 px de respiration. La marge du pied
+         s'ajoutait par-dessus et creusait plus de 200 px de vide vert sur
+         chaque page. Le pied a son propre py-12/py-16 a l'interieur. */
+      className="relative z-10 border-t border-white/10 bg-[#0B2E1F]/90 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10">
           <div>

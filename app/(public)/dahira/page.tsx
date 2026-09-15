@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import DahiraHero from "@/components/sections/DahiraHero";
-import Stats from "@/components/sections/Stats";
 import DahiraTabs from "./DahiraTabs";
 
 export const metadata: Metadata = {
@@ -13,8 +12,12 @@ export default function DahiraPage() {
   return (
     <>
       <DahiraHero />
+      {/* Le bloc de chiffres « Une Communaute Spirituelle Internationale » a
+          ete retire d'ici : il est deja sur l'accueil, a l'identique. Cette
+          page repond a « comment le Dahira est-il organise » — la presidence,
+          les commissions, le reglement. Les chiffres du rayonnement n'y
+          repondent pas, ils la rallongent. */}
       <DahiraTabs />
-      <Stats />
     </>
   );
 }

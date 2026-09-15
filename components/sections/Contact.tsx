@@ -5,7 +5,14 @@ import { FaWhatsapp } from "react-icons/fa6";
 import { LINKS, SITE, buildWhatsAppLink } from "@/lib/constants";
 import { useT } from "@/lib/i18n/context";
 
-export default function Contact() {
+/** `entete` : le bloc badge + titre + description a gauche du formulaire.
+ *
+ *  Sur l'accueil il presente la section. Sur la page /contact, le titre de
+ *  page porte deja le meme badge, presque le meme titre, et la description
+ *  MOT POUR MOT : « Une question, une adhesion, une collaboration ou une
+ *  demande d'information ? Notre equipe est disponible pour vous
+ *  accompagner. » Une fois suffit. */
+export default function Contact({ entete = true }: { entete?: boolean }) {
   const { t } = useT();
   const [nom, setNom] = useState("");
   const [email, setEmail] = useState("");
@@ -34,20 +41,33 @@ export default function Contact() {
     >
       <div className="overflow-hidden rounded-[28px] sm:rounded-[45px] bg-[#0F7C55] text-white">
         <div className="grid lg:grid-cols-2">
-          <div className="p-6 sm:p-12 md:p-16">
-            <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
-              {t("contact.badge")}
-            </span>
+          {/* Sans son en-tete, la colonne de gauche est plus courte que le
+              formulaire : on centre ses trois encarts au lieu de les laisser
+              en haut avec un grand vide dessous. */}
+          <div
+            className={
+              entete
+                ? "p-6 sm:p-12 md:p-16"
+                : "p-6 sm:p-12 md:p-16 flex flex-col justify-center"
+            }
+          >
+            {entete && (
+              <>
+                <span className="uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#D4AF37] font-semibold text-xs sm:text-sm">
+                  {t("contact.badge")}
+                </span>
 
-            <h2 className="font-display mt-4 sm:mt-5 text-3xl sm:text-4xl md:text-5xl font-bold">
-              {t("contact.title")}
-            </h2>
+                <h2 className="font-display mt-4 sm:mt-5 text-3xl sm:text-4xl md:text-5xl font-bold">
+                  {t("contact.title")}
+                </h2>
 
-            <p className="mt-5 sm:mt-6 text-white/70 leading-7 sm:leading-8 text-sm sm:text-base">
-              {t("contact.desc")}
-            </p>
+                <p className="mt-5 sm:mt-6 text-white/70 leading-7 sm:leading-8 text-sm sm:text-base">
+                  {t("contact.desc")}
+                </p>
+              </>
+            )}
 
-            <div className="mt-8 sm:mt-10 space-y-4 sm:space-y-5">
+            <div className={entete ? "mt-8 sm:mt-10 space-y-4 sm:space-y-5" : "space-y-4 sm:space-y-5"}>
               <div className="bg-white/10 rounded-[20px] sm:rounded-[25px] p-4 sm:p-5">
                 <h3 className="font-bold text-[#D4AF37] text-sm sm:text-base">
                   {t("contact.hq")}

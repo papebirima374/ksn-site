@@ -12,7 +12,7 @@ export default function ContactPage() {
   return (
     <>
       <ContactHero />
-      <Contact />
+      <Contact entete={false} />
     </>
   );
 }

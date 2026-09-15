@@ -15,7 +15,13 @@ import ShareButton from "@/components/ui/ShareButton";
  *  Total réel piloté par l'admin (Firestore settings/challenge), lu en
  *  temps réel via onSnapshot. Démarre à 0 tant que l'admin ne l'a pas défini.
  *  La mise à jour du chiffre se fait côté ADMIN (/admin/challenge). */
-export default function ChallengeCounter() {
+/** `entete` : le bloc calligraphie + badge + titre au-dessus du compteur.
+ *
+ *  Sur l'accueil il est indispensable — rien d'autre n'annonce le Challenge.
+ *  Sur la page /challenge, le titre de page vient de dire exactement la meme
+ *  chose, avec la meme calligraphie : l'afficher deux fois a trois cents
+ *  pixels d'intervalle ne renseigne personne. */
+export default function ChallengeCounter({ entete = true }: { entete?: boolean }) {
   const { t } = useT();
 
   const [total, setTotal] = useState<number | null>(null);
@@ -61,16 +67,20 @@ export default function ChallengeCounter() {
         <div className="absolute -bottom-32 -left-32 w-[400px] h-[400px] rounded-full bg-[#B8860B]/10 blur-[140px]" />
 
         <div className="relative z-10 text-center">
-          <SalaatuCalligraphy className="mx-auto h-12 sm:h-14 md:h-16 mb-3" />
-          <p className="uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#D4AF37] text-xs sm:text-sm font-bold">
-            {t("compteur.badge")}
-          </p>
-          <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            {t("challenge.title")}
-          </h2>
+          {entete && (
+            <>
+              <SalaatuCalligraphy className="mx-auto h-12 sm:h-14 md:h-16 mb-3" />
+              <p className="uppercase tracking-[0.25em] sm:tracking-[0.3em] text-[#D4AF37] text-xs sm:text-sm font-bold">
+                {t("compteur.badge")}
+              </p>
+              <h2 className="font-display mt-3 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                {t("challenge.title")}
+              </h2>
+            </>
+          )}
 
           {/* COMPTEUR PRINCIPAL */}
-          <div className="mt-8 sm:mt-12">
+          <div className={entete ? "mt-8 sm:mt-12" : ""}>
             <p className="text-xs sm:text-sm uppercase tracking-widest text-white/60 font-semibold">
               {t("challenge.community_total")}
             </p>

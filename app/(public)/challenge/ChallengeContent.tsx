@@ -68,7 +68,7 @@ export default function ChallengeContent() {
       />
 
       {/* COMPTEUR LIVE — toujours visible */}
-      <ChallengeCounter />
+      <ChallengeCounter entete={false} />
 
       {/* COMPTE DE REBOURS GAMOU */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24 -mt-10 sm:-mt-14">
