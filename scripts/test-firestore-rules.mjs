@@ -27,6 +27,7 @@ await env.withSecurityRulesDisabled(async (c) => {
   // sec1 n'a aucune permission : c'est volontaire ailleurs dans ce fichier.
   // Le Secretariat qui tient reellement le fichier des membres en a une.
   await setDoc(doc(db, "users/sec2"), { role: "commission", commission: "Secrétariat et Administratif", permissions: ["members.write"] });
+  await setDoc(doc(db, "settings/challenge"), { total: 395192860, updatedAt: 1 });
   await setDoc(doc(db, "newsletter/insc1"), { email: "deja@inscrit.sn", source: "pied de page", subscribedAt: 1 });
   await setDoc(doc(db, "commissionDossiers/finances"), { commission: "finances", responsable: "X" });
   await setDoc(doc(db, "commissionDossiers/communication"), { commission: "communication", responsable: "Y" });
@@ -427,6 +428,69 @@ await t("La Communication désinscrit une adresse",
   assertSucceeds(deleteDoc(doc(as("com1"), "newsletter/insc1"))));
 await t("Un visiteur ne désinscrit personne",
   assertFails(deleteDoc(doc(anon(), "newsletter/insc1"))));
+
+console.log("\n── Compteur du Challenge : contribution publique ──");
+// Le plafond vit a TROIS endroits : la constante que lit le formulaire, et
+// deux bornes dans les regles. S'ils divergent, le visiteur saisit un nombre
+// que l'ecran accepte et que la base refuse — ou, pire, la regle est plus
+// large que ce que le formulaire laisse croire.
+{
+  const lib = fs.readFileSync("lib/challenge.ts", "utf8");
+  const regles = fs.readFileSync("firestore.rules", "utf8");
+  const constante = Number(
+    (lib.match(/MAX_CONTRIBUTION\s*=\s*([\d_]+)/) ?? [])[1]?.replace(/_/g, "")
+  );
+  // On cherche DANS LE BLOC concerne : « total <= » et « amount <= » existent
+  // ailleurs dans les regles, pour la caisse et les ventes, avec d'autres
+  // plafonds. Une recherche globale attrapait le premier venu.
+  const bloc = (nom) => {
+    const d = regles.indexOf("match /" + nom);
+    return d === -1 ? "" : regles.slice(d, regles.indexOf("\n    }", d));
+  };
+  const bornes = [
+    Number((bloc("settings/challenge").match(/resource\.data\.total\s*<=\s*(\d+)/) ?? [])[1]),
+    Number((bloc("challengeContributions").match(/resource\.data\.amount\s*<=\s*(\d+)/) ?? [])[1]),
+  ];
+  await t(
+    `Le plafond est le même partout : ${constante} dans lib/challenge.ts, ${bornes.join(" et ")} dans les règles`,
+    (constante && bornes.every((b) => b === constante))
+      ? Promise.resolve()
+      : Promise.reject(new Error("le plafond diverge entre le code et les règles"))
+  );
+}
+
+// Ce formulaire est ouvert a des visiteurs non connectes, et il ecrit dans le
+// compteur du Dahira. La borne est donc la SEULE protection, et elle vit a
+// trois endroits qui doivent s'accorder (cf. MAX_CONTRIBUTION).
+const PLAFOND = 1000000;
+const contribution = (montant) => ({ amount: montant, name: "Aminata", createdAt: Date.now() });
+const totalPlus = (n) => ({ total: 395192860 + n, updatedAt: Date.now() });
+
+await t("Un visiteur offre 1 Salaatu",
+  assertSucceeds(addDoc(collection(anon(), "challengeContributions"), contribution(1))));
+await t(`Un visiteur offre ${PLAFOND.toLocaleString("fr-FR")} Salaatu — le plafond exact`,
+  assertSucceeds(addDoc(collection(anon(), "challengeContributions"), contribution(PLAFOND))));
+await t("… mais pas un de plus",
+  assertFails(addDoc(collection(anon(), "challengeContributions"), contribution(PLAFOND + 1))));
+await t("… ni zéro, ni un nombre négatif",
+  assertFails(addDoc(collection(anon(), "challengeContributions"), contribution(0))));
+await t("… ni autre chose qu'un nombre",
+  assertFails(addDoc(collection(anon(), "challengeContributions"), contribution("beaucoup"))));
+// ATTENTION A L'ORDRE : une mise a jour REUSSIE change le total, donc les
+// bornes qui suivent ne se calculent plus depuis la meme base. Les refus
+// d'abord — ils ne touchent a rien — et la reussite en dernier.
+await t("Un visiteur ne monte pas le total au-delà du plafond",
+  assertFails(updateDoc(doc(anon(), "settings/challenge"), totalPlus(PLAFOND + 1))));
+await t("Le total ne peut pas BAISSER — personne n'efface le travail de la communauté",
+  assertFails(updateDoc(doc(anon(), "settings/challenge"), { total: 1000, updatedAt: Date.now() })));
+await t("Le total monte du plafond d'un coup",
+  assertSucceeds(updateDoc(doc(anon(), "settings/challenge"), totalPlus(PLAFOND))));
+await t("Le total se lit sans être connecté (il s'affiche sur la page publique)",
+  assertSucceeds(getDoc(doc(anon(), "settings/challenge"))));
+await t("Un visiteur NE LIT PAS le journal des contributions",
+  assertFails(getDocs(collection(anon(), "challengeContributions"))));
+await t("L'administrateur, si — c'est ainsi qu'une saisie fantaisiste se retrouve",
+  assertSucceeds(getDocs(collection(as("admin1"), "challengeContributions"))));
 
 console.log("\n── Notifications adressées à une commission ──");
 await t("Organisation lit la notification adressée à sa commission", assertSucceeds(getDoc(doc(as("org1"), "notifications/n-org"))));

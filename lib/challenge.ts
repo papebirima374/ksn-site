@@ -35,9 +35,22 @@ import {
   increment,
 } from "firebase/firestore";
 
-/** Plafond par contribution (anti-abus) : un visiteur ajoute au plus ce nombre
- *  de Salaatu en une fois. L'admin peut toujours corriger/supprimer. */
-export const MAX_CONTRIBUTION = 5000;
+/** Plafond par contribution : un visiteur ajoute au plus ce nombre de Salaatu
+ *  en une fois.
+ *
+ *  Il etait de 5 000, ce qui obligeait un membre assidu a remplir le
+ *  formulaire dix fois de suite. Porte a 1 000 000 sur decision de la
+ *  Presidence.
+ *
+ *  CE PLAFOND EST AUSSI DANS firestore.rules, a DEUX endroits : l'increment
+ *  du total et le montant journalise. Le formulaire s'execute chez le
+ *  visiteur, donc rien n'empeche de contourner cette constante — c'est la
+ *  regle qui protege reellement. Les trois valeurs doivent rester egales,
+ *  sinon la saisie est acceptee a l'ecran et refusee par la base.
+ *
+ *  Chaque contribution est journalisee dans challengeContributions :
+ *  une saisie fantaisiste se retrouve et s'annule. */
+export const MAX_CONTRIBUTION = 1_000_000;
 
 /** Abonnement temps réel au total du challenge. Renvoie une fonction
  *  de désabonnement. Le total vaut 0 tant que l'admin ne l'a pas défini. */
